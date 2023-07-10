@@ -1,7 +1,6 @@
 # Upbrella_back
 
-<p align="center"><img src="<img width="476" alt="스크린샷 2023-07-11 오전 8 40 54" src="https://user-images.githubusercontent.com/115435784/252513876-ba308695-fc8a-486f-970c-3792a6d9b234.png">
-" width=550px/>
+<p align="center"><img src="https://user-images.githubusercontent.com/115435784/252514581-a097e8f7-08a7-42e8-a790-365e428ce382.png" width=550px/>
 
 <br>
 
