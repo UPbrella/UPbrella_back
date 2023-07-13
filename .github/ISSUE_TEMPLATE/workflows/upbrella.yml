@@ -6,7 +6,11 @@ on:
     
 
 env:
-  working-directory: ./
+  WORKING_DIRECTORY: ./
+  APPLICATION_NAME: UPBRELLA_SERVER_DEV
+  DOCKERFILE_DIRECTORY: ./.github/workflows
+  CODE_DEPLOY_APPLICATION_NAME: UpbrellaCodeDeploy
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
 
 permissions:
   contents: read
@@ -26,15 +30,15 @@ jobs:
         distribution: 'adopt'
 
     - uses: actions/checkout@v3
-    - run: touch ${{ env.working-directory }}src/main/resources/application.properties
-    - run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ${{ env.working-directory }}src/main/resources/application.properties
+    - run: touch ${{ env.WORKING_DIRECTORY }}src/main/resources/application.properties
+    - run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ${{ env.WORKING_DIRECTORY }}src/main/resources/application.properties
      
 
     - name: Build with Gradle
       run: |
         chmod +x gradlew
         ./gradlew clean build
-      working-directory: ${{ env.working-directory }}
+      WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -43,12 +47,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         aws-region: ${{ secrets.AWS_REGION }} 
 
-    - name: Docker Image Build and Push to AWS ECR
-      run: |
-        sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        sudo docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -f ${{ env.working-directory }}/Dockerfile -t ${{secrets.DOCKER_USERNAME}}/second-hand .
-        sudo docker push ${{ secrets.DOCKER_USERNAME }}/second-hand
-
+    - name: Build Docker Image and Push Docker Image to AWS ECR
+      run:  docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }}  
+            | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+            docker tag ${{ env.APPLICATION_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/upbrella
+            docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/upbrella
 
 
     - name: executing remote ssh commands using password
@@ -62,7 +66,6 @@ jobs:
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/second-hand 
           sudo docker-compose up -d
           sudo docker image prune -a -f
-
 
 
     - name: Docker Image to Code Deploy
