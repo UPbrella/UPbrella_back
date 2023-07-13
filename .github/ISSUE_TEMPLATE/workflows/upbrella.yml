@@ -1,0 +1,77 @@
+name: Upbrella DEV CI
+
+on:
+  push:
+    branches: [ "release-dev" ]
+    
+
+env:
+  working-directory: ./
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - uses: actions/checkout@v3
+    - run: touch ${{ env.working-directory }}src/main/resources/application.properties
+    - run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ${{ env.working-directory }}src/main/resources/application.properties
+     
+
+    - name: Build with Gradle
+      run: |
+        chmod +x gradlew
+        ./gradlew clean build
+      working-directory: ${{ env.working-directory }}
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+        aws-region: ${{ secrets.AWS_REGION }} 
+
+    - name: Docker Image Build and Push to AWS ECR
+      run: |
+        sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        sudo docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -f ${{ env.working-directory }}/Dockerfile -t ${{secrets.DOCKER_USERNAME}}/second-hand .
+        sudo docker push ${{ secrets.DOCKER_USERNAME }}/second-hand
+
+
+
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ubuntu
+        key: ${{ secrets.KEY }}
+        script: |
+          sudo docker rm -f was-application
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/second-hand 
+          sudo docker-compose up -d
+          sudo docker image prune -a -f
+
+
+
+    - name: Docker Image to Code Deploy
+      run: | 
+        aws deploy create-deployment \
+        --deployment-config-name CodeDeployDefault.AllAtOnce \
+        --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+        --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+        --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
+        
+
+   
