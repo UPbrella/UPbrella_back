@@ -1,7 +1,15 @@
 version: 0.0
 os: linux
+files:
+  - source: /
+    destination: /
+permissions:
+  - object: /
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
 hooks:
-  ApplicationStart:
+  AfterInstall:
     - location: scripts/start-process.sh
     - runas: root
 timeout: 60
