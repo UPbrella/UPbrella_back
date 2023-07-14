@@ -35,7 +35,7 @@ jobs:
         echo "${{ secrets.APPLICATION_PROPERTIES }}" > ${{ env.WORKING_DIRECTORY }}src/main/resources/application.properties
      
     - name: Build with Gradle
-      run:
+      run: |
         chmod +x gradlew
         ./gradlew clean build -x test
       env:
