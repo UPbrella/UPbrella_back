@@ -7,7 +7,9 @@ import lombok.*;
 @Builder
 public class UserInfoResponse {
 
+    private long id;
+    private long socialId;
     private String name;
     private String phoneNumber;
-    private boolean isAdmin;
+    private boolean adminStatus;
 }
