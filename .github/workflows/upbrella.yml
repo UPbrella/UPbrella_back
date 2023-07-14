@@ -11,7 +11,7 @@ env:
   DOCKERFILE_DIRECTORY: ./.github/workflows
   CODE_DEPLOY_APPLICATION_NAME: UpbrellaCodeDeploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
-  S3_BUCKET_NAME: upbrella-storage.s3.ap-northeast-2.amazonaws.com/server-dev-deploy
+  S3_BUCKET_NAME: upbrella-storage/server-dev-deploy
 
 permissions:
   contents: read
