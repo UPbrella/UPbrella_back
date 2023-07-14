@@ -7,9 +7,8 @@ on:
 
 env:
   WORKING_DIRECTORY: ./
-  APPLICATION_NAME: upbrella-server-dev
   DOCKERFILE_DIRECTORY: ./.github/workflows
-  CODE_DEPLOY_APPLICATION_NAME: UpbrellaCodeDeploy
+  CODE_DEPLOY_APPLICATION_NAME: upbrella-dev-deploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
   S3_BUCKET_NAME: upbrella-storage/server-dev-deploy
 
@@ -48,11 +47,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         aws-region: ${{ secrets.AWS_REGION }} 
-#
-#    - name: Build and tar Docker Image
-#      run: |
-#        docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -t ${{ env.APPLICATION_NAME }}:latest -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile .
-#        docker save -o $GITHUB_SHA.tar ${{ env.APPLICATION_NAME }}:latest
+
     - name: Make zip file
       run: zip -r ./$GITHUB_SHA.zip .
       shell: bash
