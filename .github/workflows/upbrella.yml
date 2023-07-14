@@ -55,7 +55,7 @@ jobs:
 
     - name: Upload to S3
       run:
-        aws s3 cp $GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip --region ${{ secrets.AWS_REGION }}
+        aws s3 cp $GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/server-dev-deploy/$GITHUB_SHA.zip --region ${{ secrets.AWS_REGION }}
 
     - name: Docker Image to Code Deploy
       run: | 
