@@ -11,6 +11,7 @@ env:
   DOCKERFILE_DIRECTORY: ./.github/workflows
   CODE_DEPLOY_APPLICATION_NAME: UpbrellaCodeDeploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
+  S3_BUCKET_NAME: upbrella-storage
 
 permissions:
   contents: read
@@ -30,7 +31,7 @@ jobs:
         distribution: 'adopt'
 
     - name: Set application properties
-      run:
+      run: |
         touch ${{ env.WORKING_DIRECTORY }}src/main/resources/application.properties
         echo "${{ secrets.APPLICATION_PROPERTIES }}" > ${{ env.WORKING_DIRECTORY }}src/main/resources/application.properties
      
@@ -48,12 +49,15 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         aws-region: ${{ secrets.AWS_REGION }} 
 
-    - name: Build Docker Image and Push Docker Image to AWS ECR
+    - name: Zip Docker Image and Push to S3
       run: |
         docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -t ${{ env.APPLICATION_NAME }}:latest -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile .
-        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-        docker tag ${{ env.APPLICATION_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/upbrella
+        docker save -o ${{ env.APPLICATION_NAME }}.tar ${{ env.APPLICATION_NAME }}:1.0.0 hyperledger/fabric-tools:latest
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/upbrella
+
+    - name: Upload to S3
+      run:
+        aws s3 cp --region ${{ secrets.AWS_REGION }} ./$GITHUB_SHA.tar s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.tar
 
     - name: Docker Image to Code Deploy
       run: | 
@@ -61,3 +65,4 @@ jobs:
         --deployment-config-name CodeDeployDefault.AllAtOnce \
         --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
         --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
+        --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=$GITHUB_SHA.zip
