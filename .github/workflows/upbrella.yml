@@ -11,7 +11,7 @@ env:
   DOCKERFILE_DIRECTORY: ./.github/workflows
   CODE_DEPLOY_APPLICATION_NAME: UpbrellaCodeDeploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
-  S3_BUCKET_NAME: upbrella-storage
+  S3_BUCKET_NAME: upbrella-storage.s3.ap-northeast-2.amazonaws.com/server-dev-deploy
 
 permissions:
   contents: read
@@ -49,7 +49,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         aws-region: ${{ secrets.AWS_REGION }} 
 
-    - name: Zip Docker Image and Push to S3
+    - name: Build and tar Docker Image
       run: |
         docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -t ${{ env.APPLICATION_NAME }}:latest -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile .
         docker save -o ${{ env.APPLICATION_NAME }}.tar ${{ env.APPLICATION_NAME }}:latest ${{ env.APPLICATION_NAME }}:latest
