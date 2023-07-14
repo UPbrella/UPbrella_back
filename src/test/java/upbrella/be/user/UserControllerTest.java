@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.RestDocsSupport;
+import upbrella.be.user.controller.UserController;
 import upbrella.be.user.dto.response.UserInfoResponse;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
