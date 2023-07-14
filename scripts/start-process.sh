@@ -1,16 +1,22 @@
 #!/bin/bash
 container_name=upbrella-server-dev
 
-#ECR Login
-#aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin awsaccountid.dkr.ecr.us-east-1.am
+APP_NAME=action_codedeploy
+JAR_NAME=$(ls build/libs/ | grep '.jar' | tail -n 1)
+JAR_PATH=build/libs/$JAR_NAME
 
-#Pulling image from ECR
-docker pull .dkr.ecr.ap-northeast-2.amazonaws.com/upbrella-server-dev:latest
+CURRENT_PID=$(pgrep -f $APP_NAME)
 
-##Changing image tag
-# docker image tag awsaccountid.dkr.ecr.us-east-1.amazonaws.com/image:latest $container_name:latest
+if [ -z $CURRENT_PID ]
+then
+  echo "> 종료할것 없음."
+else
+  echo "> kill -9 $CURRENT_PID"
+  kill -15 $CURRENT_PID
+  sleep 5
+fi
 
-#stop and remove the current container docker rm -f $container_name
-
+echo "> $JAR_PATH 배포"
+nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
 #Creating and starting a docker container using a new image
 docker run -d -p 80:80 --name $container_name $container_name:latest
