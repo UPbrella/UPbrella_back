@@ -1,7 +1,7 @@
 #!/bin/bash
 container_name=upbrella-server-dev
 
-REPOSITORY=/opt/testapp/be
+REPOSITORY=/opt/testapp
 cd $REPOSITORY
 
 APP_NAME=action_codedeploy
