@@ -1,15 +1,17 @@
 version: 0.0
 os: linux
+
 files:
   - source: /
-    destination: /
+    destination: /opt/testapp
 permissions:
-  - object: /
+  - object: /opt/testapp/
     owner: ubuntu
     group: ubuntu
     mode: 755
 hooks:
   AfterInstall:
-    - location: scripts/start-process.sh
-    - runas: root
-timeout: 60
+    # location은 프로젝트의 root경로를 기준
+    - location: deploy.sh
+      timeout: 60
+      runas: root
