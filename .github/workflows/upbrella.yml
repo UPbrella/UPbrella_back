@@ -50,13 +50,9 @@ jobs:
 
     - name: Build Docker Image and Push Docker Image to AWS ECR
       run:  |
-        docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile .
+        docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile . -t ${{ env.APPLICATION_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/upbrella
         aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-        docker tag ${{ env.APPLICATION_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/upbrella
-        docker ps -a
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/upbrella
-      
-
 
     - name: Docker Image to Code Deploy
       run: | 
