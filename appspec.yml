@@ -3,4 +3,5 @@ os: linux
 hooks:
   ApplicationStart:
     - location: start-process.sh
+    - runas: root
 timeout: 60
