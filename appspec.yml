@@ -2,6 +2,6 @@ version: 0.0
 os: linux
 hooks:
   ApplicationStart:
-    - location: start-process.sh
+    - location: scripts/start-process.sh
     - runas: root
 timeout: 60
