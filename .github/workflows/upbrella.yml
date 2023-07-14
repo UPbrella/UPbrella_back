@@ -2,7 +2,7 @@ name: Upbrella DEV CI
 
 on:
   push:
-    branches: [ "release-dev" ]
+    branches: [ "feat/#9-CICD-setting" ]
     
 
 env:
