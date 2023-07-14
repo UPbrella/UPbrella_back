@@ -49,14 +49,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         aws-region: ${{ secrets.AWS_REGION }} 
 
-#    - name: Build and tar Docker Image
-#      run: |
-#        docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -t ${{ env.APPLICATION_NAME }}:latest -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile .
-#        docker save -o ${{ env.APPLICATION_NAME }}.tar ${{ env.APPLICATION_NAME }}:latest ${{ env.APPLICATION_NAME }}:latest
-#
-#    - name: Upload to S3
-#      run:
-#        aws s3 cp --region ${{ secrets.AWS_REGION }} ./$GITHUB_SHA.tar s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.tar
     - name: Build and tar Docker Image
       run: |
         docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -t ${{ env.APPLICATION_NAME }}:latest -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile .
@@ -71,5 +63,5 @@ jobs:
         aws deploy create-deployment \
         --deployment-config-name CodeDeployDefault.AllAtOnce \
         --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-        --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
+        --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
         --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=$GITHUB_SHA.tar
