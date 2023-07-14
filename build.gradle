@@ -42,7 +42,7 @@ dependencies {
 }
 
 ext {
-	snippetsDir = file('build/generated-snippets')
+	snippetsDir = file('../build/generated-snippets')
 }
 
 test {
