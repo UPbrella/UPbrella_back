@@ -1,23 +1,23 @@
 version: 0.0
 os: linux
+
 files:
-  - source: /index.html
-    destination: /var/www/html
+  - source: / # 인스턴스에 복사할 디렉터리 경로
+    destination: /home/ubuntu/app # 인스턴스에서 파일이 복사되는 위치
+    overwrite: yes # 복사할 위치에 파일이 있는 경우 대체
+
+permissions:
+  - object: / # 권한이 지정되는 파일 or 디렉터리
+    pattern: "**" # 매칭되는 패턴에만 권한 부여
+    owner: ubuntu # object의 소유자
+    group: ubuntu # object의 그룹 이름
+
 hooks:
-  BeforeInstall:
-    - location: scripts/install_dependencies.sh
-      timeout: 300
-      runas: root
-  AfterInstall:
-    - location: scripts/change_permissions.sh
-      timeout: 300
-      runas: root
-  ApplicationStart:
-    - location: scripts/start_server.sh
-    - location: scripts/create_test_db.sh
-      timeout: 300
-      runas: root
-  ApplicationStop:
-    - location: scripts/stop_server.sh
-      timeout: 300
+  AfterInstall: # CodeDeploy의 AfterInstall 단계에서 실행
+    - location: scripts/stop.sh # hooks에서 실행할 스크립트의 위치
+      timeout: 60 # 스크립트 실행에 허용되는 최대 시간, 넘으면 배포 실패
+      runas: root # 스크립트를 실행하는 사용자
+  ApplicationStart: # CodeDeploy의 ApplicationStart 단계에서 실행
+    - location: scripts/start.sh
+      timeout: 60
       runas: root
