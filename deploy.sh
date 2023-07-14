@@ -20,4 +20,5 @@ else
 fi
 echo "> $JAR_PATH 배포"
 
-docker run -d -p 80:80 --name $container_name $container_name:latest
+
+nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
