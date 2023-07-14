@@ -10,7 +10,7 @@ env:
   DOCKERFILE_DIRECTORY: ./.github/workflows
   CODE_DEPLOY_APPLICATION_NAME: upbrella-dev-deploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
-  S3_BUCKET_NAME: upbrella-storage/server-dev-deploy
+  S3_BUCKET_NAME: upbrella-storage
 
 permissions:
   contents: read
@@ -63,4 +63,4 @@ jobs:
         --deployment-config-name CodeDeployDefault.AllAtOnce \
         --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
         --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-        --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=$GITHUB_SHA.zip
+        --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=server-dev-deploy/$GITHUB_SHA.zip
