@@ -3,7 +3,7 @@
 ==== HTTP Request
 
 include::{snippets}/find-umbrella-borrowed-by-user-doc/http-request.adoc[]
-include::{snippets}/find-umbrella-borrowed-by-user-doc/request-fields.adoc[]
+// include::{snippets}/find-umbrella-borrowed-by-user-doc/request-fields.adoc[]
 
 ==== HTTP Response
 

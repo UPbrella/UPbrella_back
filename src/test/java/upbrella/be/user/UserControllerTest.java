@@ -81,17 +81,10 @@ public class UserControllerTest extends RestDocsSupport {
         // when
         mockMvc.perform(
                         get("/users/umbrella")
-                                .content("{\"userId\": 1}")
-                                .contentType("application/json")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-umbrella-borrowed-by-user-doc",
-                        preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("userId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 식별자")
-                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
