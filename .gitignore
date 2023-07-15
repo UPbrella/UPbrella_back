@@ -2,7 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,java,gradle
 
 ### Secret ###
-.properties
+*.properties
+application.properties
 
 ### Java ###
 # Compiled class file
