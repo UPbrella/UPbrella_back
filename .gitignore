@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,java,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,java,gradle
 
+### Secret ###
+.properties
+
 ### Java ###
 # Compiled class file
 *.class
