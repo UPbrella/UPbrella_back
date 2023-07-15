@@ -3,6 +3,7 @@
 ==== HTTP Request
 
 include::{snippets}/kakao-login-doc/http-request.adoc[]
+include::{snippets}/kakao-login-doc/request-parameters.adoc[]
 
 ==== HTTP Response
 
