@@ -27,3 +27,9 @@ include::api/login/naver_login.adoc[]
 [[Store-API]]
 == Store Find By Id API
 include::api/store/store_find_by_id.adoc[]
+
+== Current Umbrella Location API
+include::api/store/current_umbrella_location.adoc[]
+
+== Find All Store by Admin API
+include::api/store/admin_find_all_store.adoc[]
