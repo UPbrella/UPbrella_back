@@ -1,0 +1,12 @@
+=== 관리자 페이지에서 전체 대여점 조회
+
+==== HTTP Request
+
+include::{snippets}/store-create-doc/httpie-request.adoc[]
+include::{snippets}/store-create-doc/request-parameters.adoc[]
+include::{snippets}/store-create-doc/request-parts.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/store-create-doc/response-body.adoc[]
+include::{snippets}/store-create-doc/response-fields.adoc[]

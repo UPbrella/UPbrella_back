@@ -33,3 +33,6 @@ include::api/store/current_umbrella_location.adoc[]
 
 == Find All Store by Admin API
 include::api/store/admin_find_all_store.adoc[]
+
+== Create Store by Admin API
+include::api/store/create_store.adoc[]
