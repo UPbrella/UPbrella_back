@@ -74,7 +74,7 @@ class StoreControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("우산의 현위치를 조회할 수 있다. ")
-    void findCurrentUmbrellaStore() throws Exception {
+    void findCurrentUmbrellaStoreTest() throws Exception {
         // given
 
 
@@ -111,7 +111,7 @@ class StoreControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("관리자 페이지에서 전체 협업지점 목록을 보여줄 수 있다.")
-    void test() throws Exception {
+    void findAllStoreTest() throws Exception {
         // given
 
 
