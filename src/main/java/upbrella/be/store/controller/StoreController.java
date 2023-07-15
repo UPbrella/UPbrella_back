@@ -5,9 +5,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import upbrella.be.store.dto.response.AllStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStore;
+import upbrella.be.store.dto.response.SingleStoreResponse;
 import upbrella.be.store.dto.response.StoreFindByIdResponse;
 import upbrella.be.util.CustomResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/stores")
@@ -47,5 +51,39 @@ public class StoreController {
                                     .storeId(1L)
                                     .storeName("업브렐라")
                                     .build()));
+    }
+
+    @GetMapping
+    public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores() {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "가게 전체 조회 성공",
+                        AllStoreResponse.builder()
+                                .stores(List.of(
+                                        SingleStoreResponse.builder()
+                                                .id(1L)
+                                                .name("업브렐라")
+                                                .classification("신촌")
+                                                .activateStatus(true)
+                                                .address("서울특별시 강남구 테헤란로 427")
+                                                .umbrellaLocation("가게 앞")
+                                                .businessHours("09:00 ~ 18:00")
+                                                .contactNumber("010-0000-0000")
+                                                .instagramId("upbrella")
+                                                .coordinate("37.503716, 127.053718")
+                                                .imageUrls(
+                                                        List.of(
+                                                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/1.jpg",
+                                                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/2.jpg",
+                                                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/3.jpg"
+                                                        )
+                                                )
+                                                .build()
+                                ))
+                                .build()));
     }
 }
