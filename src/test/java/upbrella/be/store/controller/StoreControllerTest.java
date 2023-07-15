@@ -215,4 +215,65 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("데이터 값이 없습니다.")
                         )));
     }
+
+    // TODO: put 어떻게 처리할지 고민해보기 1. 이미지 API 변경,
+    @Test
+    @DisplayName("관리자는 협업지점 정보를 수정할 수 있다.")
+    void updateStoreTest() throws Exception {
+        // given
+
+
+        // when
+
+
+        // then
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "images", "sample.jpg", "image/jpeg", "sample-image".getBytes());
+
+        mockMvc.perform(multipart("/stores/{storedId}", 1L)
+                        .file(imageFile)
+                        .param("id", "1")
+                        .param("name", "스타벅스")
+                        .param("classification", "카페")
+                        .param("activateStatus", "true")
+                        .param("address", "서울시 강남구")
+                        .param("umbrellaLocation", "1층")
+                        .param("businessHours", "10:00 ~ 22:00")
+                        .param("contactNumber", "010-1234-5678")
+                        .param("instagramId", "starbucks")
+                        .param("coordinate", "127.123, 37.123"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("store-create-doc",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("images").description("이미지 파일")
+                        ),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업지점 아이디")
+                        ),
+                        requestParameters(
+                                parameterWithName("id").description("아이디"),
+                                parameterWithName("name").description("협업지점명"),
+                                parameterWithName("classification").description("분류"),
+                                parameterWithName("activateStatus").description("활성화 여부"),
+                                parameterWithName("address").description("주소"),
+                                parameterWithName("umbrellaLocation").description("우산 위치"),
+                                parameterWithName("businessHours").description("영업시간"),
+                                parameterWithName("contactNumber").description("연락처"),
+                                parameterWithName("instagramId").description("인스타그램 아이디"),
+                                parameterWithName("coordinate").description("네이버 길찾기를 위한 좌표")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL)
+                                        .description("데이터 값이 없습니다.")
+                        )));
+    }
 }

@@ -96,4 +96,16 @@ public class StoreController {
                         "새로운 협업지점 등록 성공"
                 ));
     }
+
+    @PutMapping("/{storeId}")
+    public ResponseEntity<CustomResponse> updateStore(@PathVariable int storeId, CreateStoreRequest updateStore) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 정보 수정 성공"
+                ));
+    }
 }
