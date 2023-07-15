@@ -7,11 +7,10 @@ on:
 
 env:
   WORKING_DIRECTORY: ./
-  APPLICATION_NAME: upbrella-server-dev
   DOCKERFILE_DIRECTORY: ./.github/workflows
-  CODE_DEPLOY_APPLICATION_NAME: UpbrellaCodeDeploy
+  CODE_DEPLOY_APPLICATION_NAME: upbrella-dev-deploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
-  S3_BUCKET_NAME: upbrella-storage/server-dev-deploy
+  S3_BUCKET_NAME: upbrella-storage
 
 permissions:
   contents: read
@@ -48,11 +47,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         aws-region: ${{ secrets.AWS_REGION }} 
-#
-#    - name: Build and tar Docker Image
-#      run: |
-#        docker build --platform amd64 --build-arg DEPENDENCY=build/dependency -t ${{ env.APPLICATION_NAME }}:latest -f ${{ env.DOCKERFILE_DIRECTORY }}/Dockerfile .
-#        docker save -o $GITHUB_SHA.tar ${{ env.APPLICATION_NAME }}:latest
+
     - name: Make zip file
       run: zip -r ./$GITHUB_SHA.zip .
       shell: bash
@@ -60,7 +55,7 @@ jobs:
 
     - name: Upload to S3
       run:
-        aws s3 cp $GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/$GITHUB_SHA.zip --region ${{ secrets.AWS_REGION }}
+        aws s3 cp $GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/server-dev-deploy/$GITHUB_SHA.zip --region ${{ secrets.AWS_REGION }}
 
     - name: Docker Image to Code Deploy
       run: | 
@@ -68,4 +63,4 @@ jobs:
         --deployment-config-name CodeDeployDefault.AllAtOnce \
         --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
         --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-        --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=$GITHUB_SHA.zip
+        --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=server-dev-deploy/$GITHUB_SHA.zip
