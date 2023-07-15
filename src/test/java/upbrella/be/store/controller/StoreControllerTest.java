@@ -2,17 +2,15 @@ package upbrella.be.store.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.RestDocsSupport;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -159,5 +157,62 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("이미지 URL")
                         )));
 
+    }
+
+    @Test
+    @DisplayName("관리자는 새로운 협업지점을 등록할 수 있다.")
+    void createStoreTest() throws Exception {
+        // given
+
+
+        // when
+
+
+        // then
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "images", "sample.jpg", "image/jpeg", "sample-image".getBytes());
+
+        mockMvc.perform(multipart("/stores")
+                        .file(imageFile)
+                        .param("id", "1")
+                        .param("name", "스타벅스")
+                        .param("classification", "카페")
+                        .param("activateStatus", "true")
+                        .param("address", "서울시 강남구")
+                        .param("umbrellaLocation", "1층")
+                        .param("businessHours", "10:00 ~ 22:00")
+                        .param("contactNumber", "010-1234-5678")
+                        .param("instagramId", "starbucks")
+                        .param("coordinate", "127.123, 37.123"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("store-create-doc",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("images").description("이미지 파일")
+                        ),
+                        requestParameters(
+                                parameterWithName("id").description("아이디"),
+                                parameterWithName("name").description("협업지점명"),
+                                parameterWithName("classification").description("분류"),
+                                parameterWithName("activateStatus").description("활성화 여부"),
+                                parameterWithName("address").description("주소"),
+                                parameterWithName("umbrellaLocation").description("우산 위치"),
+                                parameterWithName("businessHours").description("영업시간"),
+                                parameterWithName("contactNumber").description("연락처"),
+                                parameterWithName("instagramId").description("인스타그램 아이디"),
+                                parameterWithName("coordinate").description("네이버 길찾기를 위한 좌표")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.NULL)
+                                        .description("데이터 값이 없습니다.")
+                        )));
     }
 }

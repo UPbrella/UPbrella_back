@@ -1,10 +1,8 @@
 package upbrella.be.store.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.response.AllStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStore;
 import upbrella.be.store.dto.response.SingleStoreResponse;
@@ -39,18 +37,18 @@ public class StoreController {
     }
 
     @GetMapping("/location/{umbrellaName}")
-    public ResponseEntity<CustomResponse<CurrentUmbrellaStore>> findCurrentUmbrellaStore(@PathVariable String umbrellaName){
+    public ResponseEntity<CustomResponse<CurrentUmbrellaStore>> findCurrentUmbrellaStore(@PathVariable String umbrellaName) {
 
-            return ResponseEntity
-                    .ok()
-                    .body(new CustomResponse<>(
-                            "success",
-                            200,
-                            "현재 우산 가게 조회 성공",
-                            CurrentUmbrellaStore.builder()
-                                    .storeId(1L)
-                                    .storeName("업브렐라")
-                                    .build()));
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "현재 우산 가게 조회 성공",
+                        CurrentUmbrellaStore.builder()
+                                .storeId(1L)
+                                .storeName("업브렐라")
+                                .build()));
     }
 
     @GetMapping
@@ -85,5 +83,17 @@ public class StoreController {
                                                 .build()
                                 ))
                                 .build()));
+    }
+
+    @PostMapping
+    public ResponseEntity<CustomResponse> createStore(CreateStoreRequest newStore) {
+        // TODO : form data 형식인지, json 형식으로 들어오는지
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "새로운 협업지점 등록 성공"
+                ));
     }
 }
