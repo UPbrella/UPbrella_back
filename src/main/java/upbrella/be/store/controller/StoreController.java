@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import upbrella.be.store.dto.response.CurrentUmbrellaStore;
 import upbrella.be.store.dto.response.StoreFindByIdResponse;
 import upbrella.be.util.CustomResponse;
 
@@ -31,5 +32,20 @@ public class StoreController {
                                 .openStatus(true)
                                 .coordinate("37.503716, 127.053718")
                                 .build()));
+    }
+
+    @GetMapping("/location/{umbrellaName}")
+    public ResponseEntity<CustomResponse<CurrentUmbrellaStore>> findCurrentUmbrellaStore(@PathVariable String umbrellaName){
+
+            return ResponseEntity
+                    .ok()
+                    .body(new CustomResponse<>(
+                            "success",
+                            200,
+                            "현재 우산 가게 조회 성공",
+                            CurrentUmbrellaStore.builder()
+                                    .storeId(1L)
+                                    .storeName("업브렐라")
+                                    .build()));
     }
 }
