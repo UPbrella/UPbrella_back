@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CurrentUmbrellaStore {
+public class CurrentUmbrellaStoreReponse {
 
-    private long storeId;
+    private int storeId;
     private String storeName;
 }
