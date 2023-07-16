@@ -30,6 +30,7 @@ public class UmbrellaController {
                                                 .storeMetaId(2)
                                                 .umbrellaId(30)
                                                 .rentable(true)
+                                                .deleted(false)
                                                 .build())
                 ).build()));
     }
@@ -82,6 +83,7 @@ public class UmbrellaController {
                                                 .storeMetaId(2)
                                                 .umbrellaId(30)
                                                 .rentable(true)
+                                                .deleted(false)
                                                 .build())
                                 ).build()));
     }
