@@ -1,17 +1,14 @@
 package upbrella.be.umbrella.controller;
 
 
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaPageResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
-import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
-import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
