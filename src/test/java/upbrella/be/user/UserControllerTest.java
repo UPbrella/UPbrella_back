@@ -3,7 +3,6 @@ package upbrella.be.user;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import upbrella.be.docs.RestDocsSupport;
 import upbrella.be.user.controller.UserController;
 import upbrella.be.user.dto.response.UserInfoResponse;
