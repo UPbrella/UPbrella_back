@@ -24,7 +24,7 @@ public class StoreController {
                         200,
                         "가게 조회 성공",
                         StoreFindByIdResponse.builder()
-                                .id(1L)
+                                .id(1)
                                 .name("업브렐라")
                                 .businessHours("09:00 ~ 18:00")
                                 .contactNumber("010-0000-0000")
@@ -47,7 +47,7 @@ public class StoreController {
                         AllCurrentLocationStoreResponse.builder()
                                 .stores(List.of(
                                         SingleCurrentLocationStoreResponse.builder()
-                                                .id(1L)
+                                                .id(1)
                                                 .name("업브렐라")
                                                 .latitude(37.503716)
                                                 .longitude(127.053718)
@@ -57,7 +57,7 @@ public class StoreController {
     }
 
     @GetMapping("/location/{umbrellaName}")
-    public ResponseEntity<CustomResponse<CurrentUmbrellaStore>> findCurrentUmbrellaStore(@PathVariable String umbrellaName) {
+    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreReponse>> findCurrentUmbrellaStore(@PathVariable String umbrellaName) {
 
         return ResponseEntity
                 .ok()
@@ -65,8 +65,8 @@ public class StoreController {
                         "success",
                         200,
                         "현재 우산 가게 조회 성공",
-                        CurrentUmbrellaStore.builder()
-                                .storeId(1L)
+                        CurrentUmbrellaStoreReponse.builder()
+                                .storeId(1)
                                 .storeName("업브렐라")
                                 .build()));
     }
@@ -83,7 +83,7 @@ public class StoreController {
                         AllStoreResponse.builder()
                                 .stores(List.of(
                                         SingleStoreResponse.builder()
-                                                .id(1L)
+                                                .id(1)
                                                 .name("업브렐라")
                                                 .classification("신촌")
                                                 .activateStatus(true)
@@ -130,7 +130,7 @@ public class StoreController {
     }
 
     @PostMapping("/images")
-    public ResponseEntity<CustomResponse<ImageUrls>> uploadStoreImages(List<MultipartFile> images) {
+    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(List<MultipartFile> images) {
 
         return ResponseEntity
                 .ok()
@@ -138,7 +138,7 @@ public class StoreController {
                         "success",
                         200,
                         "협업지점 이미지 업로드 성공",
-                        ImageUrls.builder()
+                        ImageUrlsResponse.builder()
                                 .imageUrls(List.of(
                                         "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/1.jpg",
                                         "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/2.jpg",

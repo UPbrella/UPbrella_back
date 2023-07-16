@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 public class SingleCurrentLocationStoreResponse {
 
-    private long id;
+    private int id;
     private String name;
     private boolean openStatus;
     private double latitude;
