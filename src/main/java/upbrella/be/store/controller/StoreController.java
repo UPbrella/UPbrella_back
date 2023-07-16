@@ -57,7 +57,7 @@ public class StoreController {
     }
 
     @GetMapping("/location/{umbrellaName}")
-    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreReponse>> findCurrentUmbrellaStore(@PathVariable String umbrellaName) {
+    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(@PathVariable String umbrellaName) {
 
         return ResponseEntity
                 .ok()
@@ -65,7 +65,7 @@ public class StoreController {
                         "success",
                         200,
                         "현재 우산 가게 조회 성공",
-                        CurrentUmbrellaStoreReponse.builder()
+                        CurrentUmbrellaStoreResponse.builder()
                                 .storeId(1)
                                 .storeName("업브렐라")
                                 .build()));
