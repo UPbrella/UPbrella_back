@@ -3,6 +3,7 @@ package upbrella.be.store.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.util.CustomResponse;
@@ -31,6 +32,27 @@ public class StoreController {
                                 .availableUmbrellaCount(10)
                                 .openStatus(true)
                                 .coordinate("37.503716, 127.053718")
+                                .build()));
+    }
+
+    @GetMapping("/location")
+    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(@ModelAttribute CoordinateRequest coordinateRequest) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "현재 위치 기준 가게 조회 성공",
+                        AllCurrentLocationStoreResponse.builder()
+                                .stores(List.of(
+                                        SingleCurrentLocationStoreResponse.builder()
+                                                .id(1L)
+                                                .name("업브렐라")
+                                                .latitude(37.503716)
+                                                .longitude(127.053718)
+                                                .openStatus(true)
+                                                .build()))
                                 .build()));
     }
 

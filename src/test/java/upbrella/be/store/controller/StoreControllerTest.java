@@ -76,6 +76,56 @@ class StoreControllerTest extends RestDocsSupport {
     }
 
     @Test
+    @DisplayName("사용자는 우산의 위도, 경도, 확대 정도를 기반으로 협업지점을 조회할 수 있다.")
+    void test() throws Exception {
+        // given
+
+
+        // when
+
+
+        // then
+        mockMvc.perform(
+                        get("/stores/location")
+                                .param("latitude", "37.5666103")
+                                .param("longitude", "126.9783882")
+                                .param("zoom", "1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-find-by-location-doc",
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("latitude")
+                                        .description("위도"),
+                                parameterWithName("longitude")
+                                        .description("경도"),
+                                parameterWithName("zoom")
+                                        .description("확대 정도")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data.stores[]").type(JsonFieldType.ARRAY)
+                                        .description("데이터"),
+                                fieldWithPath("data.stores[].id").type(JsonFieldType.NUMBER)
+                                        .description("아이디"),
+                                fieldWithPath("data.stores[].name").type(JsonFieldType.STRING)
+                                        .description("이름"),
+                                fieldWithPath("data.stores[].openStatus").type(JsonFieldType.BOOLEAN)
+                                        .description("오픈 여부"),
+                                fieldWithPath("data.stores[].latitude").type(JsonFieldType.NUMBER)
+                                        .description("위도"),
+                                fieldWithPath("data.stores[].longitude").type(JsonFieldType.NUMBER)
+                                        .description("경도")
+                        )));
+    }
+
+    @Test
     @DisplayName("우산의 현위치를 조회할 수 있다. ")
     void findCurrentUmbrellaStoreTest() throws Exception {
         // given
@@ -188,7 +238,7 @@ class StoreControllerTest extends RestDocsSupport {
         mockMvc.perform(post("/stores")
                         .content(objectMapper.writeValueAsString(store))
                         .contentType(MediaType.APPLICATION_JSON)
-                       )
+                )
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-create-doc",
