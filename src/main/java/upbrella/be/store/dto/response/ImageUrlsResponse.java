@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class ImageUrls {
+public class ImageUrlsResponse {
 
     private List<String> imageUrls;
 }
