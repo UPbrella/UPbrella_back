@@ -5,7 +5,7 @@ plugins {
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
-group = 'Upbrella_back'
+group = 'upbrella-server-dev'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -42,7 +42,7 @@ dependencies {
 }
 
 ext {
-	snippetsDir = file('build/generated-snippets')
+	snippetsDir = file('../build/generated-snippets')
 }
 
 test {
