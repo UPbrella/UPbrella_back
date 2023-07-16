@@ -36,3 +36,6 @@ include::api/store/admin_find_all_store.adoc[]
 
 == Create Store by Admin API
 include::api/store/create_store.adoc[]
+
+== Upload Images by Admin API
+include::api/store/upload_images.adoc[]
