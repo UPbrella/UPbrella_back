@@ -1,0 +1,12 @@
+=== 관리자 페이지에서 협업지점 변경
+
+==== HTTP Request
+
+include::{snippets}/store-update-doc/http-request.adoc[]
+include::{snippets}/store-update-doc/request-fields.adoc[]
+
+
+==== HTTP Response
+
+include::{snippets}/store-update-doc/response-body.adoc[]
+include::{snippets}/store-update-doc/response-fields.adoc[]

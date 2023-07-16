@@ -7,5 +7,5 @@ include::{snippets}/upload-file/httpie-request.adoc[]
 
 ==== HTTP Response
 
+include::{snippets}/upload-file/http-response.adoc[]
 include::{snippets}/upload-file/response-fields.adoc[]
-정

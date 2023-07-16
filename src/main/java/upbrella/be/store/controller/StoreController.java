@@ -125,4 +125,16 @@ public class StoreController {
                                 .build()
                 ));
     }
+
+    @DeleteMapping("/{storeId}")
+    public ResponseEntity<CustomResponse> deleteStore(@PathVariable int storeId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 삭제 성공"
+                ));
+    }
 }
