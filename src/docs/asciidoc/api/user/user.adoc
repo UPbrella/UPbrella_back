@@ -9,4 +9,3 @@ include::{snippets}/find-user-info-doc/http-request.adoc[]
 
 include::{snippets}/find-user-info-doc/http-response.adoc[]
 include::{snippets}/find-user-info-doc/response-fields.adoc[]
-include::{snippets}/find-user-info-doc/response-fields.adoc[]

@@ -13,3 +13,7 @@ endif::[]
 [[User-API]]
 == User API
 include::api/user/user.adoc[]
+
+[[Umbrella-API]]
+== Umbrella API
+include::api/umbrella/umbrella.adoc[]
