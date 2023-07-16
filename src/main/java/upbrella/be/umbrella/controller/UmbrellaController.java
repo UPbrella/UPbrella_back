@@ -19,7 +19,7 @@ import java.util.List;
 public class UmbrellaController {
 
     @GetMapping
-    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showAllUmbrellas(HttpSession httpSession, Pageable pageable) {
+    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showAllUmbrellas(HttpSession httpSession) {
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -28,44 +28,46 @@ public class UmbrellaController {
                         "전체 우산 현황 조회 성공",
                         UmbrellaPageResponse.builder()
                                 .umbrellaResponsePage(
-                                        new PageImpl<>(List.of(UmbrellaResponse.builder()
+                                        List.of(UmbrellaResponse.builder()
                                                 .id(1)
                                                 .storeMetaId(2)
                                                 .umbrellaId(30)
                                                 .rentable(true)
-                                                .build()))
+                                                .build())
                 ).build()));
     }
 
     @PostMapping
-    public ResponseEntity<CustomResponse> addUmbrella(HttpSession httpSession, UmbrellaRequest umbrellaRequest) {
+    public ResponseEntity<CustomResponse> addUmbrella(HttpSession httpSession, @RequestBody UmbrellaRequest umbrellaRequest) {
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "새로운 우산 추가 성공"));
+                        "새로운 우산 추가 성공",
+                        null));
     }
 
-    @PatchMapping("/{umbrellaId}")
-    public ResponseEntity<CustomResponse> modifyUmbrella(HttpSession httpSession, UmbrellaRequest umbrellaRequest, @PathVariable int umbrellaId) {
-        return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "우산 정보 변경 성공"));
-    }
-
-    @DeleteMapping("/{umbrellaId}")
-    public ResponseEntity<CustomResponse> deleteUmbrella(HttpSession httpSession, UmbrellaRequest umbrellaRequest, @PathVariable int umbrellaId) {
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomResponse> modifyUmbrella(HttpSession httpSession, @RequestBody UmbrellaRequest umbrellaRequest, @PathVariable int id) {
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
                         "우산 정보 변경 성공",
-                        UmbrellaBorrowedByUserResponse.builder().build()));
+                        null));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CustomResponse> deleteUmbrella(HttpSession httpSession, @PathVariable int id) {
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "우산 삭제 성공",
+                        null));
     }
 
     @GetMapping("/{storeId}")
@@ -78,26 +80,12 @@ public class UmbrellaController {
                         "지점 우산 현황 조회 성공",
                         UmbrellaPageResponse.builder()
                                 .umbrellaResponsePage(
-                                        new PageImpl<>(List.of(UmbrellaResponse.builder()
+                                        List.of(UmbrellaResponse.builder()
                                                 .id(1)
                                                 .storeMetaId(2)
                                                 .umbrellaId(30)
                                                 .rentable(true)
-                                                .build()))
+                                                .build())
                                 ).build()));
-    }
-
-    @GetMapping("/status")
-    public ResponseEntity<CustomResponse> showUmbrellaStatusReport(HttpSession httpSession) {
-        return ResponseEntity
-                .ok()
-                .body(null);
-    }
-
-    @GetMapping("/improvements")
-    public ResponseEntity<CustomResponse> showUmbrellaImprovements(HttpSession httpSession) {
-        return ResponseEntity
-                .ok()
-                .body(null);
     }
 }
