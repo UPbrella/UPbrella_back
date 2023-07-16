@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class SingleStoreResponse {
 
-    private long id;
+    private int id;
     private String name;
     private String classification;
     private boolean activateStatus;
@@ -18,6 +18,7 @@ public class SingleStoreResponse {
     private String businessHours;
     private String contactNumber;
     private String instagramId;
-    private String coordinate; //  좌표를 줘서 프론에서 네이버 지도 api를 이용해서 좌표로 지도를 띄워줄 수 있도록
+    private double latitude;
+    private double longitude;
     private List<String> imageUrls;
 }
