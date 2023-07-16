@@ -155,9 +155,9 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("데이터"),
-                                fieldWithPath("data.storeId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
                                         .description("협업지점 아이디"),
-                                fieldWithPath("data.storeName").type(JsonFieldType.STRING)
+                                fieldWithPath("data.name").type(JsonFieldType.STRING)
                                         .description("협업지점 이름")
                         )));
     }

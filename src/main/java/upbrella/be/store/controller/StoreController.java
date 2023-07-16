@@ -66,8 +66,8 @@ public class StoreController {
                         200,
                         "현재 우산 가게 조회 성공",
                         CurrentUmbrellaStoreResponse.builder()
-                                .storeId(1)
-                                .storeName("업브렐라")
+                                .id(1)
+                                .name("업브렐라")
                                 .build()));
     }
 
