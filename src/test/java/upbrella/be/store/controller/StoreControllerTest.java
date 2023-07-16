@@ -211,9 +211,7 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.stores[].longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
                                 fieldWithPath("data.stores[].imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록"),
-                                fieldWithPath("data.stores[].imagesUrls[].url").type(JsonFieldType.STRING)
-                                        .description("이미지 URL")
+                                        .description("이미지 URL 목록")
                         )));
     }
 
