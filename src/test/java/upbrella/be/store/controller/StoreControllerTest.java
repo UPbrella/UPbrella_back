@@ -115,7 +115,7 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.stores[].id").type(JsonFieldType.NUMBER)
                                         .description("아이디"),
                                 fieldWithPath("data.stores[].name").type(JsonFieldType.STRING)
-                                        .description("이름"),
+                                        .description("협업지점명"),
                                 fieldWithPath("data.stores[].openStatus").type(JsonFieldType.BOOLEAN)
                                         .description("오픈 여부"),
                                 fieldWithPath("data.stores[].latitude").type(JsonFieldType.NUMBER)
@@ -156,9 +156,9 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("데이터"),
                                 fieldWithPath("data.storeId").type(JsonFieldType.NUMBER)
-                                        .description("스토어 아이디"),
+                                        .description("협업지점 아이디"),
                                 fieldWithPath("data.storeName").type(JsonFieldType.STRING)
-                                        .description("스토어 이름")
+                                        .description("협업지점 이름")
                         )));
     }
 

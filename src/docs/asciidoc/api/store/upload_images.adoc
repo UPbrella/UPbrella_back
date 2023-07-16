@@ -2,8 +2,8 @@
 
 ==== HTTP Request
 
-include::{snippets}/upload-file/request-parts.adoc[]
 include::{snippets}/upload-file/httpie-request.adoc[]
+include::{snippets}/upload-file/request-parts.adoc[]
 
 ==== HTTP Response
 
