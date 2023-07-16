@@ -206,12 +206,15 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("연락처"),
                                 fieldWithPath("data.stores[].instagramId").type(JsonFieldType.STRING)
                                         .description("인스타그램 아이디"),
-                                fieldWithPath("data.stores[].coordinate").type(JsonFieldType.STRING)
-                                        .description("네이버 길찾기를 위한 좌표"),
+                                fieldWithPath("data.stores[].latitude").type(JsonFieldType.NUMBER)
+                                        .description("위도"),
+                                fieldWithPath("data.stores[].longitude").type(JsonFieldType.NUMBER)
+                                        .description("경도"),
                                 fieldWithPath("data.stores[].imageUrls[]").type(JsonFieldType.ARRAY)
+                                        .description("이미지 URL 목록"),
+                                fieldWithPath("data.stores[].imagesUrls[].url").type(JsonFieldType.STRING)
                                         .description("이미지 URL")
                         )));
-
     }
 
     @Test
