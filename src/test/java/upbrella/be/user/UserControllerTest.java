@@ -3,7 +3,6 @@ package upbrella.be.user;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import upbrella.be.docs.RestDocsSupport;
 import upbrella.be.user.controller.UserController;
 import upbrella.be.user.dto.response.UserInfoResponse;
@@ -34,7 +33,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // given
         UserInfoResponse user = UserInfoResponse.builder()
-                .id(1L)
+                .id(1)
                 .socialId(1L)
                 .name("일반사용자")
                 .phoneNumber("010-0000-0000")
