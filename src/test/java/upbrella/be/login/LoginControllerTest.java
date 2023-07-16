@@ -1,52 +1,45 @@
-package upbrella.be.user;
+package upbrella.be.login;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import upbrella.be.docs.RestDocsSupport;
-import upbrella.be.user.controller.UserController;
-import upbrella.be.user.dto.response.UserInfoResponse;
-import upbrella.be.user.service.UserService;
+import upbrella.be.login.controller.LoginController;
+import upbrella.be.login.dto.response.LoggedInUserResponse;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UserControllerTest extends RestDocsSupport {
-
-    private final UserService userService = mock(UserService.class);
-
+public class LoginControllerTest extends RestDocsSupport {
     @Override
     protected Object initController() {
-        return new UserController(userService);
+        return new LoginController();
     }
 
-    @DisplayName("테스트")
     @Test
-    void test() throws Exception {
-
+    @DisplayName("사용자는 카카오 소셜 로그인을 할 수 있다.")
+    void kakoLoginTest() throws Exception {
         // given
-        UserInfoResponse user = UserInfoResponse.builder()
+        LoggedInUserResponse.builder()
                 .id(1L)
                 .socialId(1L)
-                .name("일반사용자")
+                .name("카카오 사용자")
                 .phoneNumber("010-0000-0000")
                 .adminStatus(false)
                 .build();
 
         // when
         mockMvc.perform(
-                        get("/users")
+                        get("/oauth/kakao")
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("find-user-info-doc",
+                .andDo(document("kakao-login-doc",
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -67,31 +60,28 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("사용자 전화번호"),
                                 fieldWithPath("data.adminStatus").type(JsonFieldType.BOOLEAN)
                                         .description("관리자 여부")
-                        )));
+                                )));
     }
 
     @Test
-    @DisplayName("사용자는 유저가 빌린 우산을 조회할 수 있다.")
-    void findUmbrellaBorrowedByUserTest() throws Exception {
+    @DisplayName("사용자는 네이버 소셜 로그인을 할 수 있다.")
+    void naverLoginTest() throws Exception {
         // given
-
-        given(userService.findUmbrellaBorrowedByUser(anyLong()))
-                .willReturn(1);
+        LoggedInUserResponse.builder()
+                .id(1L)
+                .socialId(1L)
+                .name("네이버 사용자")
+                .phoneNumber("010-0000-0000")
+                .adminStatus(false)
+                .build();
 
         // when
         mockMvc.perform(
-                        get("/users/umbrella")
-                                .content("{\"userId\": 1}")
-                                .contentType("application/json")
+                        get("/oauth/naver")
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("find-umbrella-borrowed-by-user-doc",
-                        preprocessRequest(prettyPrint()),
+                .andDo(document("naver-login-doc",
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("userId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 식별자")
-                        ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -101,8 +91,16 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("데이터"),
-                                fieldWithPath("data.name").type(JsonFieldType.NUMBER)
-                                        .description("사용자가 빌린 우산 이름")
+                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                        .description("사용자 식별자"),
+                                fieldWithPath("data.socialId").type(JsonFieldType.NUMBER)
+                                        .description("사용자 소셜 식별자"),
+                                fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                        .description("사용자 이름"),
+                                fieldWithPath("data.phoneNumber").type(JsonFieldType.STRING)
+                                        .description("사용자 전화번호"),
+                                fieldWithPath("data.adminStatus").type(JsonFieldType.BOOLEAN)
+                                        .description("관리자 여부")
                         )));
     }
 }

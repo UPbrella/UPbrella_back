@@ -1,5 +1,4 @@
 === 유저 정보 조회
-// include::api/product/product.adoc[]
 
 ==== HTTP Request
 
@@ -8,5 +7,5 @@ include::{snippets}/find-user-info-doc/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/find-user-info-doc/http-response.adoc[]
-include::{snippets}/find-user-info-doc/response-fields.adoc[]
+
 include::{snippets}/find-user-info-doc/response-fields.adoc[]
