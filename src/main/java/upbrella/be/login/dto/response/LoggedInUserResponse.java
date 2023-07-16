@@ -1,11 +1,13 @@
-package upbrella.be.user.dto.response;
+package upbrella.be.login.dto.response;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
 @Builder
-public class UserInfoResponse {
+public class LoggedInUserResponse {
 
     private long id;
     private long socialId;
