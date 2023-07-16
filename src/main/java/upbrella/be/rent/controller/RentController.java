@@ -10,11 +10,11 @@ import upbrella.be.util.CustomResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/rent")
+@RequestMapping("/rents")
 public class RentController {
 
     @PostMapping
-    public ResponseEntity<CustomResponse> rentUmbrellaByUser(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
         return ResponseEntity
                 .ok()
