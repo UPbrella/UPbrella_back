@@ -17,3 +17,13 @@ include::api/user/user.adoc[]
 [[Umbrella-API]]
 == Umbrella API
 include::api/umbrella/umbrella.adoc[]
+
+== Umbrella Borrowed By User API
+include::api/user/find_umbrella_borrowed_by_user.adoc[]
+
+[[Auth-API]]
+== Kakao Login API
+include::api/login/kakao_login.adoc[]
+
+== Naver Login API
+include::api/login/naver_login.adoc[]
