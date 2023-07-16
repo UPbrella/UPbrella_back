@@ -92,7 +92,8 @@ public class StoreController {
                                                 .businessHours("09:00 ~ 18:00")
                                                 .contactNumber("010-0000-0000")
                                                 .instagramId("upbrella")
-                                                .coordinate("37.503716, 127.053718")
+                                                .latitude(37.503716)
+                                                .longitude(127.053718)
                                                 .imageUrls(
                                                         List.of(
                                                                 "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/1.jpg",
