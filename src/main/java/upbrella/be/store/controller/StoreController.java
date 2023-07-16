@@ -2,11 +2,9 @@ package upbrella.be.store.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import upbrella.be.store.dto.request.CreateStoreRequest;
-import upbrella.be.store.dto.response.AllStoreResponse;
-import upbrella.be.store.dto.response.CurrentUmbrellaStore;
-import upbrella.be.store.dto.response.SingleStoreResponse;
-import upbrella.be.store.dto.response.StoreFindByIdResponse;
+import upbrella.be.store.dto.response.*;
 import upbrella.be.util.CustomResponse;
 
 import java.util.List;
@@ -86,7 +84,7 @@ public class StoreController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomResponse> createStore(CreateStoreRequest newStore) {
+    public ResponseEntity<CustomResponse> createStore(@RequestBody CreateStoreRequest newStore) {
         // TODO : form data 형식인지, json 형식으로 들어오는지
         return ResponseEntity
                 .ok()
@@ -97,7 +95,7 @@ public class StoreController {
                 ));
     }
 
-    @PutMapping("/{storeId}")
+    @PatchMapping("/{storeId}")
     public ResponseEntity<CustomResponse> updateStore(@PathVariable int storeId, CreateStoreRequest updateStore) {
 
         return ResponseEntity
@@ -106,6 +104,25 @@ public class StoreController {
                         "success",
                         200,
                         "협업지점 정보 수정 성공"
+                ));
+    }
+
+    @PostMapping("/images")
+    public ResponseEntity<CustomResponse<ImageUrls>> uploadStoreImages(List<MultipartFile> images) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 이미지 업로드 성공",
+                        ImageUrls.builder()
+                                .imageUrls(List.of(
+                                        "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/1.jpg",
+                                        "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/2.jpg",
+                                        "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/3.jpg"
+                                ))
+                                .build()
                 ));
     }
 }
