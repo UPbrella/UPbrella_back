@@ -44,7 +44,6 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         .storeMetaId(2)
                         .umbrellaId(30)
                         .rentable(true)
-                        .deleted(false)
                         .build())
                 ).build();
 
@@ -75,9 +74,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.umbrellaResponsePage[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 관리 번호"),
                                 fieldWithPath("data.umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
-                                        .description("대여 가능 상태"),
-                                fieldWithPath("data.umbrellaResponsePage[].deleted").type(JsonFieldType.BOOLEAN)
-                                        .description("삭제 여부")
+                                        .description("대여 가능 상태")
                         )));
         // then
     }
@@ -211,7 +208,6 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         .storeMetaId(2)
                         .umbrellaId(30)
                         .rentable(true)
-                        .deleted(false)
                         .build())
                 ).build();
 
@@ -245,9 +241,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.umbrellaResponsePage[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 관리 번호"),
                                 fieldWithPath("data.umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
-                                        .description("대여 가능 상태"),
-                                fieldWithPath("data.umbrellaResponsePage[].deleted").type(JsonFieldType.BOOLEAN)
-                                        .description("삭제 여부")
+                                        .description("대여 가능 상태")
                                 )));
         // then
     }

@@ -30,7 +30,6 @@ public class UmbrellaController {
                                                 .storeMetaId(2)
                                                 .umbrellaId(30)
                                                 .rentable(true)
-                                                .deleted(false)
                                                 .build())
                 ).build()));
     }
@@ -46,7 +45,7 @@ public class UmbrellaController {
                         null));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<CustomResponse> modifyUmbrella(HttpSession httpSession, @RequestBody UmbrellaRequest umbrellaRequest, @PathVariable int id) {
         return ResponseEntity
                 .ok()
@@ -83,7 +82,6 @@ public class UmbrellaController {
                                                 .storeMetaId(2)
                                                 .umbrellaId(30)
                                                 .rentable(true)
-                                                .deleted(false)
                                                 .build())
                                 ).build()));
     }
