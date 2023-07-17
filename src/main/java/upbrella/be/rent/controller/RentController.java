@@ -4,6 +4,7 @@ package upbrella.be.rent.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.user.dto.response.UserInfoResponse;
 import upbrella.be.util.CustomResponse;
 
@@ -26,7 +27,7 @@ public class RentController {
     }
 
     @PatchMapping
-    public ResponseEntity<CustomResponse> returnUmbrellaByUser(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
 
         return ResponseEntity
                 .ok()
