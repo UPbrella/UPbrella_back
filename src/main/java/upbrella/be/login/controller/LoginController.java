@@ -5,12 +5,14 @@ import org.springframework.web.bind.annotation.*;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.util.CustomResponse;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/oauth")
 public class LoginController {
 
     @PostMapping("/kakao")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLogin(@RequestBody String code) {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLogin(HttpSession session,  @RequestBody String code) {
 
         return ResponseEntity
                 .ok()
@@ -28,7 +30,7 @@ public class LoginController {
     }
 
     @PostMapping("/naver")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(@RequestBody String code) {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(HttpSession session, @RequestBody String code) {
 
         return ResponseEntity
                 .ok()
