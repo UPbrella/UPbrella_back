@@ -3,7 +3,7 @@
 ==== HTTP Request
 
 include::{snippets}/naver-login-doc/http-request.adoc[]
-include::{snippets}/naver-login-doc/request-parameters.adoc[]
+include::{snippets}/naver-login-doc/request-fields.adoc[]
 
 ==== HTTP Response
 
@@ -15,7 +15,7 @@ include::{snippets}/naver-login-doc/response-fields.adoc[]
 ==== HTTP Request
 
 include::{snippets}/kakao-login-doc/http-request.adoc[]
-include::{snippets}/kakao-login-doc/request-parameters.adoc[]
+include::{snippets}/kakao-login-doc/request-fields.adoc[]
 
 ==== HTTP Response
 
