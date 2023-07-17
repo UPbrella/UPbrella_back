@@ -1,0 +1,11 @@
+=== 협업지점의 이미지 업로드 API
+
+==== HTTP Request
+
+include::{snippets}/upload-file/httpie-request.adoc[]
+include::{snippets}/upload-file/request-parts.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/upload-file/http-response.adoc[]
+include::{snippets}/upload-file/response-fields.adoc[]

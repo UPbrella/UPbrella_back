@@ -12,7 +12,7 @@ import upbrella.be.util.CustomResponse;
 public class LoginController {
 
     @GetMapping("/kakao")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLogin() {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLogin(String code) {
 
         return ResponseEntity
                 .ok()
@@ -30,7 +30,7 @@ public class LoginController {
     }
 
     @GetMapping("/naver")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin() {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(String code) {
 
         return ResponseEntity
                 .ok()

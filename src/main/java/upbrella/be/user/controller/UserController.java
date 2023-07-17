@@ -28,7 +28,7 @@ public class UserController {
                         200,
                         "로그인 유저 정보 조회 성공",
                         UserInfoResponse.builder()
-                                .id(1L)
+                                .id(1)
                                 .socialId(1L)
                                 .name("사용자")
                                 .phoneNumber("010-0000-0000")
