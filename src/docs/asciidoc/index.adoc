@@ -23,3 +23,29 @@ include::api/login/kakao_login.adoc[]
 
 == Naver Login API
 include::api/login/naver_login.adoc[]
+
+[[Store-API]]
+== Store Find By Id API
+include::api/store/store_find_by_id.adoc[]
+
+== Store Find By Location API
+include::api/store/current_location_store.adoc[]
+
+== Current Umbrella Location API
+include::api/store/current_umbrella_location.adoc[]
+
+== Find All Store by Admin API
+include::api/store/admin_find_all_store.adoc[]
+
+== Upload Images by Admin API
+include::api/store/upload_images.adoc[]
+
+== Create Store by Admin API
+include::api/store/create_store.adoc[]
+
+== Update Store by Admin API
+include::api/store/update_store.adoc[]
+
+== Delete Store by Admin API
+include::api/store/delete_store.adoc[]
+
