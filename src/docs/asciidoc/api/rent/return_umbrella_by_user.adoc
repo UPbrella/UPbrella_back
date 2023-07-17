@@ -1,0 +1,11 @@
+=== 우산 반납
+
+==== HTTP Request
+
+include::{snippets}/return-umbrella-doc/http-request.adoc[]
+include::{snippets}/return-umbrella-doc/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/return-umbrella-doc/http-response.adoc[]
+include::{snippets}/return-umbrella-doc/response-fields.adoc[]
