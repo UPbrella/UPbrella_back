@@ -70,7 +70,7 @@ public class RentControllerTest extends RestDocsSupport {
                         )));
     }
 
-    @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
+    @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     @Test
     void returnUmbrella() throws Exception {
         ReturnUmbrellaByUserRequest request = ReturnUmbrellaByUserRequest.builder()
