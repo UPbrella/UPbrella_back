@@ -39,7 +39,7 @@ public class RentControllerTest extends RestDocsSupport {
                 .build();
 
         mockMvc.perform(
-                        post("/rents")
+                        post("/rent")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -81,7 +81,7 @@ public class RentControllerTest extends RestDocsSupport {
 
 
         mockMvc.perform(
-                        patch("/rents")
+                        patch("/rent")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
