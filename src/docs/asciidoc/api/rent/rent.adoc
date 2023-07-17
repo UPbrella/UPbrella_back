@@ -1,0 +1,21 @@
+=== 우산 대여 신청
+==== HTTP Request
+
+include::{snippets}/rent-umbrella-doc/http-request.adoc[]
+include::{snippets}/rent-umbrella-doc/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/rent-umbrella-doc/http-response.adoc[]
+include::{snippets}/rent-umbrella-doc/response-fields.adoc[]
+
+=== 우산 반납 신청
+==== HTTP Request
+
+include::{snippets}/return-umbrella-doc/http-request.adoc[]
+include::{snippets}/return-umbrella-doc/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/return-umbrella-doc/http-response.adoc[]
+include::{snippets}/return-umbrella-doc/response-fields.adoc[]

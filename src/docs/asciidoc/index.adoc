@@ -26,11 +26,10 @@ include::api/login/kakao_login.adoc[]
 include::api/login/naver_login.adoc[]
 
 [[Rent-API]]
-== 우산 대여 API
-include::api/rent/rent_umbrella_borrowed_by_user.adoc[]
+== 대여 API
+include::api/rent/rent.adoc[]
 
-== 우산 반납 API
-include::api/rent/return_umbrella_by_user.adoc[]
+[[Return-API]]
 
 [[Store-API]]
 == Store Find By Id API
