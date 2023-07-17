@@ -1,0 +1,10 @@
+=== 관리자 페이지에서 전체 대여점 조회
+
+==== HTTP Request
+
+include::{snippets}/store-find-all-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/store-find-all-doc/http-response.adoc[]
+include::{snippets}/store-find-all-doc/response-fields.adoc[]

@@ -1,0 +1,12 @@
+=== 관리자 페이지에서 새로운 협업지점 등록
+
+==== HTTP Request
+
+include::{snippets}/store-create-doc/http-request.adoc[]
+include::{snippets}/store-create-doc/request-fields.adoc[]
+
+
+==== HTTP Response
+
+include::{snippets}/store-create-doc/response-body.adoc[]
+include::{snippets}/store-create-doc/response-fields.adoc[]

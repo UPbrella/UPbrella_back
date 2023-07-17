@@ -1,0 +1,11 @@
+=== 대여점 상세 조회 API
+
+==== HTTP Request
+
+include::{snippets}/store-find-by-id-doc/http-request.adoc[]
+include::{snippets}/store-find-by-id-doc/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/store-find-by-id-doc/http-response.adoc[]
+include::{snippets}/store-find-by-id-doc/response-fields.adoc[]

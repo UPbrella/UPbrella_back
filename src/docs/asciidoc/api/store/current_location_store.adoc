@@ -1,0 +1,12 @@
+=== 현위치에서 보여지는 협업지점 API
+
+==== HTTP Request
+
+include::{snippets}/store-find-by-location-doc/http-request.adoc[]
+include::{snippets}/store-find-by-location-doc/request-parameters.adoc[]
+
+
+==== HTTP Response
+
+include::{snippets}/store-find-by-location-doc/response-body.adoc[]
+include::{snippets}/store-find-by-location-doc/response-fields.adoc[]
