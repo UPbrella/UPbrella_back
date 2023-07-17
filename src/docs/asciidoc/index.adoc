@@ -23,9 +23,8 @@ include::api/login/kakao_login.adoc[]
 include::api/login/naver_login.adoc[]
 
 [[Rent-API]]
-== Umbrella Borrowed By User API
+== 우산 대여 API
 include::api/rent/find_umbrella_borrowed_by_user.adoc[]
-
 
 [[Store-API]]
 == Store Find By Id API
