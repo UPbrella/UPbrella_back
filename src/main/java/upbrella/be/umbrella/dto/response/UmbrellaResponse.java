@@ -13,5 +13,4 @@ public class UmbrellaResponse {
     private int storeMetaId;
     private int umbrellaId;
     private boolean rentable;
-    private boolean deleted;
 }
