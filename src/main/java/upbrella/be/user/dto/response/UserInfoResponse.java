@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 public class UserInfoResponse {
 
-    private long id;
+    private int id;
     private long socialId;
     private String name;
     private String phoneNumber;
