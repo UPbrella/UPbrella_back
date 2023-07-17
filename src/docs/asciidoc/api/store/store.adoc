@@ -1,4 +1,4 @@
-=== 대여점 상세 조회 API
+=== 대여점 상세 조회
 
 ==== HTTP Request
 
@@ -23,7 +23,7 @@ include::{snippets}/store-find-by-location-doc/request-parameters.adoc[]
 include::{snippets}/store-find-by-location-doc/response-body.adoc[]
 include::{snippets}/store-find-by-location-doc/response-fields.adoc[]
 
-=== 우산의 현위치 조회 API
+=== 우산의 현위치 조회
 
 ==== HTTP Request
 
@@ -47,7 +47,7 @@ include::{snippets}/store-find-all-doc/http-request.adoc[]
 include::{snippets}/store-find-all-doc/http-response.adoc[]
 include::{snippets}/store-find-all-doc/response-fields.adoc[]
 
-=== 협업지점의 이미지 업로드 API
+=== 협업지점의 이미지 업로드
 
 ==== HTTP Request
 
