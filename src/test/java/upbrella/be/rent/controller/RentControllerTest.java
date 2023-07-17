@@ -30,8 +30,6 @@ public class RentControllerTest extends RestDocsSupport {
     void rentUmbrella() throws Exception {
 
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
-                .name("일반사용자")
-                .phoneNumber("010-0000-0000")
                 .region("신촌")
                 .storeId(1)
                 .umbrellaId(1)
@@ -48,10 +46,6 @@ public class RentControllerTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("name").type(JsonFieldType.STRING)
-                                        .description("사용자 이름"),
-                                fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
-                                        .description("사용자 전화번호"),
                                 fieldWithPath("region").type(JsonFieldType.STRING)
                                         .description("지역"),
                                 fieldWithPath("storeId").type(JsonFieldType.NUMBER)

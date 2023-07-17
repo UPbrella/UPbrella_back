@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RentUmbrellaByUserRequest {
 
-    private String name;
-    private String phoneNumber;
     private String region;
     private int storeId;
     private int umbrellaId;
