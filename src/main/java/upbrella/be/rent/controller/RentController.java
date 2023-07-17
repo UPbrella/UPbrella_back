@@ -11,7 +11,7 @@ import upbrella.be.util.CustomResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/rents")
+@RequestMapping("/rent")
 public class RentController {
 
     @PostMapping
