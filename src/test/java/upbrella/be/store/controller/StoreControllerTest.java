@@ -89,7 +89,7 @@ class StoreControllerTest extends RestDocsSupport {
                         get("/stores/location")
                                 .param("latitude", "37.5666103")
                                 .param("longitude", "126.9783882")
-                                .param("zoom", "1")
+                                .param("zoomLevel", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -100,7 +100,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("위도"),
                                 parameterWithName("longitude")
                                         .description("경도"),
-                                parameterWithName("zoom")
+                                parameterWithName("zoomLevel")
                                         .description("확대 정도")
                         ),
                         responseFields(
