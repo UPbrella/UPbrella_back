@@ -1,9 +1,7 @@
 package upbrella.be.login.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.util.CustomResponse;
 
@@ -11,8 +9,8 @@ import upbrella.be.util.CustomResponse;
 @RequestMapping("/oauth")
 public class LoginController {
 
-    @GetMapping("/kakao")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLogin(String code) {
+    @PostMapping("/kakao")
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLogin(@RequestBody String code) {
 
         return ResponseEntity
                 .ok()
@@ -29,8 +27,8 @@ public class LoginController {
                                 .build()));
     }
 
-    @GetMapping("/naver")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(String code) {
+    @PostMapping("/naver")
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(@RequestBody String code) {
 
         return ResponseEntity
                 .ok()
