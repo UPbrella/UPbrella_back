@@ -18,38 +18,12 @@ include::api/user/user.adoc[]
 == Umbrella API
 include::api/umbrella/umbrella.adoc[]
 
-== Umbrella Borrowed By User API
-include::api/user/find_umbrella_borrowed_by_user.adoc[]
-
-[[Auth-API]]
-== Kakao Login API
-include::api/login/kakao_login.adoc[]
-
-== Naver Login API
-include::api/login/naver_login.adoc[]
+[[OAuth-API]]
+== OAuth API
+include::api/login/oauth.adoc[]
 
 [[Store-API]]
-== Store Find By Id API
-include::api/store/store_find_by_id.adoc[]
+== Store API
+include::api/store/store.adoc[]
 
-== Store Find By Location API
-include::api/store/current_location_store.adoc[]
-
-== Current Umbrella Location API
-include::api/store/current_umbrella_location.adoc[]
-
-== Find All Store by Admin API
-include::api/store/admin_find_all_store.adoc[]
-
-== Upload Images by Admin API
-include::api/store/upload_images.adoc[]
-
-== Create Store by Admin API
-include::api/store/create_store.adoc[]
-
-== Update Store by Admin API
-include::api/store/update_store.adoc[]
-
-== Delete Store by Admin API
-include::api/store/delete_store.adoc[]
 
