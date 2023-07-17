@@ -135,7 +135,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.put("/umbrellas/{id}", 1)
+                        RestDocumentationRequestBuilders.patch("/umbrellas/{id}", 1)
                                 .content(objectMapper.writeValueAsString(umbrellaRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
