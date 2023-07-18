@@ -29,7 +29,7 @@ public class RentControllerTest extends RestDocsSupport {
 
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
     @Test
-    void rentUmbrella() throws Exception {
+    void rentUmbrellaTest() throws Exception {
 
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
                 .region("신촌")
@@ -72,7 +72,7 @@ public class RentControllerTest extends RestDocsSupport {
 
     @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     @Test
-    void returnUmbrella() throws Exception {
+    void returnUmbrellaTest() throws Exception {
         ReturnUmbrellaByUserRequest request = ReturnUmbrellaByUserRequest.builder()
                 .umbrellaId(1)
                 .storeId(1)
