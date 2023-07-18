@@ -1,5 +1,9 @@
 package upbrella.be.rent.controller;
 
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -11,8 +15,8 @@ import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.service.RentService;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -22,6 +26,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +37,17 @@ public class RentControllerTest extends RestDocsSupport {
     @Override
     protected Object initController() {
         return new RentController();
+    }
+
+    @BeforeEach
+    public void setup() {
+        // Configure Jackson LocalDateTime serialization/deserialization
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(LocalDateTime.class,
+                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        module.addDeserializer(LocalDateTime.class,
+                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        objectMapper.registerModule(module);
     }
 
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
@@ -139,7 +155,9 @@ public class RentControllerTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/rent/histories")
-                ).andDo(print())
+                                .content(objectMapper.writeValueAsString(response))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-rental-histories-doc",
                         preprocessResponse(prettyPrint()),
@@ -162,8 +180,10 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("사용자 전화번호"),
                                 fieldWithPath("data.rentalHistoryResponsePage[].rentStoreName").type(JsonFieldType.STRING)
                                         .description("대여점 이름"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].rentAt").type(JsonFieldType.STRING)
-                                        .description("대여 시간"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].rentAt")
+                                        .description("대여 시간")
+                                        .attributes(key("type").value("String"))
+                                        .attributes(key("format").value("yyyy-MM-dd HH:mm:ss")),
                                 fieldWithPath("data.rentalHistoryResponsePage[].elapsedDay").type(JsonFieldType.NUMBER)
                                         .description("대여 기간"),
                                 fieldWithPath("data.rentalHistoryResponsePage[].umbrellaId").type(JsonFieldType.NUMBER)
@@ -171,9 +191,11 @@ public class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.rentalHistoryResponsePage[].returnStoreName").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("반납점 이름"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].returnAt").type(JsonFieldType.STRING)
+                                fieldWithPath("data.rentalHistoryResponsePage[].returnAt")
                                         .optional()
-                                        .description("반납 시간"),
+                                        .description("반납 시간")
+                                        .attributes(key("type").value("String"))
+                                        .attributes(key("format").value("yyyy-MM-dd HH:mm:ss")),
                                 fieldWithPath("data.rentalHistoryResponsePage[].totalRentalDay").type(JsonFieldType.NUMBER)
                                         .optional()
                                         .description("총 대여 기간"),
