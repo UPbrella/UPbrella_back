@@ -18,15 +18,18 @@ include::api/user/user.adoc[]
 == Umbrella API
 include::api/umbrella/umbrella.adoc[]
 
-== Umbrella Borrowed By User API
-include::api/user/find_umbrella_borrowed_by_user.adoc[]
-
 [[Auth-API]]
 == Kakao Login API
 include::api/login/kakao_login.adoc[]
 
 == Naver Login API
 include::api/login/naver_login.adoc[]
+
+[[Rent-API]]
+== 대여 API
+include::api/rent/rent.adoc[]
+
+[[Return-API]]
 
 [[Store-API]]
 == Store Find By Id API
@@ -52,4 +55,3 @@ include::api/store/update_store.adoc[]
 
 == Delete Store by Admin API
 include::api/store/delete_store.adoc[]
-
