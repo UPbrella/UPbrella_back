@@ -8,7 +8,7 @@ include::{snippets}/find-user-info-doc/http-request.adoc[]
 
 include::{snippets}/find-user-info-doc/http-response.adoc[]
 
-include::{snippets}/find-user-info-doc/response-fields.adoc[]
+include::{snippets}/find-user-info-doc/response-fields-data.adoc[]
 
 
 === 사용자가 빌린 우산 조회
@@ -20,4 +20,4 @@ include::{snippets}/find-umbrella-borrowed-by-user-doc/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/find-umbrella-borrowed-by-user-doc/http-response.adoc[]
-include::{snippets}/find-umbrella-borrowed-by-user-doc/response-fields.adoc[]
+include::{snippets}/find-umbrella-borrowed-by-user-doc/response-fields-data.adoc[]

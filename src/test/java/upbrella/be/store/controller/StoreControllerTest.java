@@ -50,29 +50,22 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("가져올 스토어의 아이디")
                         ),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("아이디"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("이름"),
-                                fieldWithPath("data.businessHours").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHours").type(JsonFieldType.STRING)
                                         .description("영업시간"),
-                                fieldWithPath("data.contactNumber").type(JsonFieldType.STRING)
+                                fieldWithPath("contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
-                                fieldWithPath("data.address").type(JsonFieldType.STRING)
+                                fieldWithPath("address").type(JsonFieldType.STRING)
                                         .description("주소"),
-                                fieldWithPath("data.availableUmbrellaCount").type(JsonFieldType.NUMBER)
+                                fieldWithPath("availableUmbrellaCount").type(JsonFieldType.NUMBER)
                                         .description("사용가능한 우산 개수"),
-                                fieldWithPath("data.openStatus").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("openStatus").type(JsonFieldType.BOOLEAN)
                                         .description("오픈 여부"),
-                                fieldWithPath("data.coordinate").type(JsonFieldType.STRING)
+                                fieldWithPath("coordinate").type(JsonFieldType.STRING)
                                         .description("네이버 길찾기를 위한 좌표")
                         )));
     }
@@ -107,23 +100,18 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("확대 정도")
                         ),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data.stores[]").type(JsonFieldType.ARRAY)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("stores[]").type(JsonFieldType.ARRAY)
                                         .description("데이터"),
-                                fieldWithPath("data.stores[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("stores[].id").type(JsonFieldType.NUMBER)
                                         .description("아이디"),
-                                fieldWithPath("data.stores[].name").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].name").type(JsonFieldType.STRING)
                                         .description("협업지점명"),
-                                fieldWithPath("data.stores[].openStatus").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("stores[].openStatus").type(JsonFieldType.BOOLEAN)
                                         .description("오픈 여부"),
-                                fieldWithPath("data.stores[].latitude").type(JsonFieldType.NUMBER)
+                                fieldWithPath("stores[].latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
-                                fieldWithPath("data.stores[].longitude").type(JsonFieldType.NUMBER)
+                                fieldWithPath("stores[].longitude").type(JsonFieldType.NUMBER)
                                         .description("경도")
                         )));
     }
@@ -151,17 +139,10 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("현재 우산의 이름")
                         ),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("협업지점 아이디"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("협업지점 이름")
                         )));
     }
@@ -185,37 +166,32 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data.stores[]").type(JsonFieldType.ARRAY)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("stores[]").type(JsonFieldType.ARRAY)
                                         .description("데이터"),
-                                fieldWithPath("data.stores[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("stores[].id").type(JsonFieldType.NUMBER)
                                         .description("아이디"),
-                                fieldWithPath("data.stores[].name").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].name").type(JsonFieldType.STRING)
                                         .description("협업지점명"),
-                                fieldWithPath("data.stores[].classification").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].classification").type(JsonFieldType.STRING)
                                         .description("분류"),
-                                fieldWithPath("data.stores[].activateStatus").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("stores[].activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
-                                fieldWithPath("data.stores[].address").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].address").type(JsonFieldType.STRING)
                                         .description("주소"),
-                                fieldWithPath("data.stores[].umbrellaLocation").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
-                                fieldWithPath("data.stores[].businessHours").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].businessHours").type(JsonFieldType.STRING)
                                         .description("영업시간"),
-                                fieldWithPath("data.stores[].contactNumber").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
-                                fieldWithPath("data.stores[].instagramId").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].instagramId").type(JsonFieldType.STRING)
                                         .description("인스타그램 아이디"),
-                                fieldWithPath("data.stores[].latitude").type(JsonFieldType.NUMBER)
+                                fieldWithPath("stores[].latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
-                                fieldWithPath("data.stores[].longitude").type(JsonFieldType.NUMBER)
+                                fieldWithPath("stores[].longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
-                                subsectionWithPath("data.stores[].imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
+                                subsectionWithPath("stores[].imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 
@@ -272,16 +248,6 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
                                 subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
                         )));
     }
 
@@ -338,16 +304,6 @@ class StoreControllerTest extends RestDocsSupport {
                         ),
                         pathParameters(
                                 parameterWithName("id").description("협업지점 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
                         )));
     }
 
@@ -372,15 +328,8 @@ class StoreControllerTest extends RestDocsSupport {
                                 partWithName("files").description("The files to upload")
                         ),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                subsectionWithPath("data.imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
+                                beneathPath("data").withSubsectionId("data"),
+                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 
@@ -402,16 +351,6 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("id").description("협업지점 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
                         )));
     }
 }

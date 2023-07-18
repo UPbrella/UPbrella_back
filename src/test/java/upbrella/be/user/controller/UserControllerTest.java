@@ -12,8 +12,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
@@ -50,23 +49,16 @@ public class UserControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("사용자 식별자"),
-                                fieldWithPath("data.socialId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("socialId").type(JsonFieldType.NUMBER)
                                         .description("사용자 소셜 식별자"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
-                                fieldWithPath("data.phoneNumber").type(JsonFieldType.STRING)
+                                fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
-                                fieldWithPath("data.adminStatus").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("adminStatus").type(JsonFieldType.BOOLEAN)
                                         .description("관리자 여부")
                         )));
     }
@@ -88,15 +80,8 @@ public class UserControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.name").type(JsonFieldType.NUMBER)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("name").type(JsonFieldType.NUMBER)
                                         .description("사용자가 빌린 우산 이름")
                         )));
     }
