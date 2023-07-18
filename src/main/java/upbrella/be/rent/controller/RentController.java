@@ -4,10 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
-import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
-import upbrella.be.rent.dto.response.RentalHistoryResponse;
-import upbrella.be.rent.dto.response.StatusDeclarationPageResponse;
-import upbrella.be.rent.dto.response.StatusDeclarationResponse;
+import upbrella.be.rent.dto.response.*;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
@@ -77,13 +74,33 @@ public class RentController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "상태 신고 내용 조회 성공",
+                        "상태 신고 내역 조회 성공",
                         StatusDeclarationPageResponse.builder()
                                 .statusDeclarationPage(
                                         List.of(StatusDeclarationResponse.builder()
                                                 .id(1L)
                                                 .umbrellaId(30)
                                                 .content("우산이 망가졌어요")
+                                                .etc("기타 사항")
+                                                .build()
+                                        )).build()));
+    }
+
+    @GetMapping("/histories/improvements")
+    public ResponseEntity<CustomResponse<ImprovementPageResponse>> findImprovements(HttpSession httpSession) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "개선 요청 내역 조회 성공",
+                        ImprovementPageResponse.builder()
+                                .improvementPage(
+                                        List.of(ImprovementResponse.builder()
+                                                .id(1L)
+                                                .umbrellaId(30)
+                                                .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
                                                 .etc("기타 사항")
                                                 .build()
                                         )).build()));
