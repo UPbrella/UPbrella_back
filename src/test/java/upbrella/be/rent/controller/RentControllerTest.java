@@ -154,8 +154,7 @@ public class RentControllerTest extends RestDocsSupport {
 
         mockMvc.perform(
                         get("/rent/histories")
-                                .content(objectMapper.writeValueAsString(response))
-                                .accept(MediaType.APPLICATION_JSON))
+                )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-rental-histories-doc",
