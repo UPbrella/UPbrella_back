@@ -8,6 +8,7 @@ import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.util.CustomResponse;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -15,7 +16,7 @@ import java.util.List;
 public class StoreController {
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable int storeId) {
+    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable int storeId) {
 
         return ResponseEntity
                 .ok()
@@ -36,7 +37,7 @@ public class StoreController {
     }
 
     @GetMapping("/location")
-    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(@ModelAttribute CoordinateRequest coordinateRequest) {
+    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(HttpSession session, @ModelAttribute CoordinateRequest coordinateRequest) {
 
         return ResponseEntity
                 .ok()
@@ -57,7 +58,7 @@ public class StoreController {
     }
 
     @GetMapping("/location/{umbrellaName}")
-    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(@PathVariable String umbrellaName) {
+    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(HttpSession session, @PathVariable String umbrellaName) {
 
         return ResponseEntity
                 .ok()
@@ -72,7 +73,7 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores() {
+    public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores(HttpSession session) {
 
         return ResponseEntity
                 .ok()
@@ -107,7 +108,7 @@ public class StoreController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomResponse> createStore(@RequestBody CreateStoreRequest newStore) {
+    public ResponseEntity<CustomResponse> createStore(HttpSession session, @RequestBody CreateStoreRequest newStore) {
         // TODO : form data 형식인지, json 형식으로 들어오는지
         return ResponseEntity
                 .ok()
@@ -119,7 +120,7 @@ public class StoreController {
     }
 
     @PatchMapping("/{storeId}")
-    public ResponseEntity<CustomResponse> updateStore(@PathVariable int storeId, CreateStoreRequest updateStore) {
+    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable int storeId, CreateStoreRequest updateStore) {
 
         return ResponseEntity
                 .ok()
@@ -131,7 +132,7 @@ public class StoreController {
     }
 
     @PostMapping("/images")
-    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(List<MultipartFile> images) {
+    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, List<MultipartFile> images) {
 
         return ResponseEntity
                 .ok()
@@ -150,7 +151,7 @@ public class StoreController {
     }
 
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<CustomResponse> deleteStore(@PathVariable int storeId) {
+    public ResponseEntity<CustomResponse> deleteStore(HttpSession session, @PathVariable int storeId) {
 
         return ResponseEntity
                 .ok()
