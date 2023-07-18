@@ -18,12 +18,18 @@ include::api/user/user.adoc[]
 == Umbrella API
 include::api/umbrella/umbrella.adoc[]
 
+
 [[OAuth-API]]
 == OAuth API
 include::api/login/oauth.adoc[]
 
+
+[[Rent-API]]
+== 대여 API
+include::api/rent/rent.adoc[]
+
+[[Return-API]]
+
 [[Store-API]]
 == Store API
 include::api/store/store.adoc[]
-
-
