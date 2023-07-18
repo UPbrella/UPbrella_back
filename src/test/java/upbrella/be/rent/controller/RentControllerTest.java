@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import upbrella.be.docs.RestDocsSupport;
+import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.service.RentService;
@@ -13,10 +13,11 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 public class RentControllerTest extends RestDocsSupport {
 
@@ -46,8 +47,8 @@ public class RentControllerTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("rent-umbrella-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("region").type(JsonFieldType.STRING)
                                         .description("지역"),
@@ -88,8 +89,8 @@ public class RentControllerTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("return-umbrella-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 아이디"),

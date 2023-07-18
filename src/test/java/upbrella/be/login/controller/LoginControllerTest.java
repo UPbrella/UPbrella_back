@@ -1,21 +1,22 @@
-package upbrella.be.login;
+package upbrella.be.login.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import upbrella.be.docs.RestDocsSupport;
-import upbrella.be.login.controller.LoginController;
+import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 public class LoginControllerTest extends RestDocsSupport {
     @Override
@@ -43,8 +44,8 @@ public class LoginControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("kakao-login-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestParameters(
                                 parameterWithName("code")
                                         .description("네이버 로그인 인증 코드")
@@ -91,8 +92,8 @@ public class LoginControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("naver-login-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestParameters(
                                 parameterWithName("code").description("네이버 로그인 인증 코드")
                                         .description("네이버 로그인 인증 코드")

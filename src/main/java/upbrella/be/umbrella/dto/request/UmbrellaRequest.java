@@ -10,6 +10,6 @@ import lombok.*;
 public class UmbrellaRequest {
 
     private int storeMetaId;
-    private int umbrellaId;
+    private int uuid;
     private boolean rentable;
 }
