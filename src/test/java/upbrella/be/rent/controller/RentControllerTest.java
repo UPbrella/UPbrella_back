@@ -7,10 +7,17 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
+import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
+import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.service.RentService;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -107,6 +114,71 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.NULL)
                                         .description("데이터 값이 없습니다.")
+                        )));
+    }
+
+    @DisplayName("사용자는 우산 대여 내역을 조회 할 수 있다.")
+    @Test
+    void showAllRentalHistoriesTest() throws Exception {
+
+        RentalHistoriesPageResponse response = RentalHistoriesPageResponse.builder()
+                .rentalHistoryResponsePage(List.of(RentalHistoryResponse.builder()
+                        .id(1L)
+                        .name("사용자")
+                        .phoneNumber("010-1234-5678")
+                        .rentStoreName("대여점 이름")
+                        .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
+                        .elapsedDay(3)
+                        .umbrellaId(30)
+                        .returnStoreName("반납점 이름")
+                        .returnAt(LocalDateTime.of(2023, 7, 23, 0, 0, 0))
+                        .totalRentalDay(5)
+                        .refundCompleted(true)
+                        .build())
+                ).build();
+
+        mockMvc.perform(
+                        get("/rent/histories")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("show-all-rental-histories-doc",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("데이터"),
+                                fieldWithPath("data.rentalHistoryResponsePage").type(JsonFieldType.ARRAY)
+                                        .description("대여 내역 페이지"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].id").type(JsonFieldType.NUMBER)
+                                        .description("대여 내역 아이디"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].name").type(JsonFieldType.STRING)
+                                        .description("사용자 이름"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].phoneNumber").type(JsonFieldType.STRING)
+                                        .description("사용자 전화번호"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].rentStoreName").type(JsonFieldType.STRING)
+                                        .description("대여점 이름"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].rentAt").type(JsonFieldType.STRING)
+                                        .description("대여 시간"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].elapsedDay").type(JsonFieldType.NUMBER)
+                                        .description("대여 기간"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                        .description("우산 아이디"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].returnStoreName").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("반납점 이름"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].returnAt").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("반납 시간"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].totalRentalDay").type(JsonFieldType.NUMBER)
+                                        .optional()
+                                        .description("총 대여 기간"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].refundCompleted").type(JsonFieldType.BOOLEAN)
+                                        .description("환불 완료 여부")
                         )));
     }
 }
