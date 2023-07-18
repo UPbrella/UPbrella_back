@@ -29,3 +29,13 @@ include::{snippets}/show-all-rental-histories-doc/http-request.adoc[]
 
 include::{snippets}/show-all-rental-histories-doc/http-response.adoc[]
 include::{snippets}/show-all-rental-histories-doc/response-fields.adoc[]
+
+=== 신고 내역 조회
+==== HTTP Request
+
+include::{snippets}/show-all-status-declarations-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/show-all-status-declarations-doc/http-response.adoc[]
+include::{snippets}/show-all-status-declarations-doc/response-fields.adoc[]
