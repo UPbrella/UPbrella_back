@@ -13,6 +13,8 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
+import upbrella.be.rent.dto.response.StatusDeclarationPageResponse;
+import upbrella.be.rent.dto.response.StatusDeclarationResponse;
 import upbrella.be.rent.service.RentService;
 
 import java.time.LocalDateTime;
@@ -202,5 +204,48 @@ public class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.rentalHistoryResponsePage[].refundCompleted").type(JsonFieldType.BOOLEAN)
                                         .description("환불 완료 여부")
                         )));
+    }
+
+    @DisplayName("사용자는 신고 내역을 조회할 수 있다.")
+    @Test
+    void showAllStatusDeclarationsTest() throws Exception {
+
+        StatusDeclarationPageResponse response = StatusDeclarationPageResponse.builder()
+                .statusDeclarationPage(List.of(StatusDeclarationResponse.builder()
+                        .id(1L)
+                        .umbrellaId(1)
+                        .content("우산이 망가졌습니다.")
+                        .etc("기타 사항")
+                        .build())
+                ).build();
+
+        mockMvc.perform(
+                        get("/rent/histories/status")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("show-all-status-declarations-doc",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("데이터"),
+                                fieldWithPath("data.statusDeclarationPage").type(JsonFieldType.ARRAY)
+                                        .description("신고 내역"),
+                                fieldWithPath("data.statusDeclarationPage[].id").type(JsonFieldType.NUMBER)
+                                        .description("신고 내역 아이디"),
+                                fieldWithPath("data.statusDeclarationPage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                        .description("우산 아이디"),
+                                fieldWithPath("data.statusDeclarationPage[].content").type(JsonFieldType.STRING)
+                                        .description("신고 내용"),
+                                fieldWithPath("data.statusDeclarationPage[].etc").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("기타 사항")
+                        )));
+
     }
 }
