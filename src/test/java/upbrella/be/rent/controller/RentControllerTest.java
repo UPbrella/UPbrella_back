@@ -11,10 +11,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
-import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
-import upbrella.be.rent.dto.response.RentalHistoryResponse;
-import upbrella.be.rent.dto.response.StatusDeclarationPageResponse;
-import upbrella.be.rent.dto.response.StatusDeclarationResponse;
+import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.RentService;
 
 import java.time.LocalDateTime;
@@ -243,6 +240,49 @@ public class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("data.statusDeclarationPage[].content").type(JsonFieldType.STRING)
                                         .description("신고 내용"),
                                 fieldWithPath("data.statusDeclarationPage[].etc").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("기타 사항")
+                        )));
+
+    }
+
+    @DisplayName("사용자는 개선 요청 내역을 조회할 수 있다.")
+    @Test
+    void showAllImprovementsTest() throws Exception {
+
+        ImprovementPageResponse response = ImprovementPageResponse.builder()
+                .improvementPage(List.of(ImprovementResponse.builder()
+                        .id(1L)
+                        .umbrellaId(1)
+                        .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
+                        .etc("기타 사항")
+                        .build())
+                ).build();
+
+        mockMvc.perform(
+                        get("/rent/histories/improvements")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("show-all-improvements-doc",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("코드"),
+                                fieldWithPath("status").type(JsonFieldType.STRING)
+                                        .description("상태"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("데이터"),
+                                fieldWithPath("data.improvementPage").type(JsonFieldType.ARRAY)
+                                        .description("개선 요청 내역"),
+                                fieldWithPath("data.improvementPage[].id").type(JsonFieldType.NUMBER)
+                                        .description("개선 요청 내역 아이디"),
+                                fieldWithPath("data.improvementPage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                        .description("우산 아이디"),
+                                fieldWithPath("data.improvementPage[].content").type(JsonFieldType.STRING)
+                                        .description("개선 요청 내용"),
+                                fieldWithPath("data.improvementPage[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
                         )));
