@@ -149,6 +149,7 @@ public class RentControllerTest extends RestDocsSupport {
                         .returnAt(LocalDateTime.of(2023, 7, 23, 0, 0, 0))
                         .totalRentalDay(5)
                         .refundCompleted(true)
+                        .etc("기타")
                         .build())
                 ).build();
 
@@ -198,7 +199,10 @@ public class RentControllerTest extends RestDocsSupport {
                                         .optional()
                                         .description("총 대여 기간"),
                                 fieldWithPath("data.rentalHistoryResponsePage[].refundCompleted").type(JsonFieldType.BOOLEAN)
-                                        .description("환불 완료 여부")
+                                        .description("환불 완료 여부"),
+                                fieldWithPath("data.rentalHistoryResponsePage[].etc").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("기타 사항")
                         )));
     }
 

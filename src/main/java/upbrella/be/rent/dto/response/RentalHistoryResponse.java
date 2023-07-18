@@ -22,4 +22,5 @@ public class RentalHistoryResponse {
     private LocalDateTime returnAt;
     private int totalRentalDay;
     private boolean refundCompleted;
+    private String etc;
 }
