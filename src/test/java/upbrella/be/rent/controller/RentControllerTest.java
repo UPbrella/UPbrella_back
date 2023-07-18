@@ -1,9 +1,5 @@
 package upbrella.be.rent.controller;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -15,7 +11,6 @@ import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.RentService;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -36,17 +31,6 @@ public class RentControllerTest extends RestDocsSupport {
     @Override
     protected Object initController() {
         return new RentController();
-    }
-
-    @BeforeEach
-    public void setup() {
-        // Configure Jackson LocalDateTime serialization/deserialization
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(LocalDateTime.class,
-                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        module.addDeserializer(LocalDateTime.class,
-                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        objectMapper.registerModule(module);
     }
 
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
