@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
-import upbrella.be.docs.RestDocsSupport;
+import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 
@@ -13,11 +13,12 @@ import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 class StoreControllerTest extends RestDocsSupport {
 
@@ -42,7 +43,8 @@ class StoreControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-find-by-id-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("storeId")
                                         .description("가져올 스토어의 아이디")
@@ -94,7 +96,8 @@ class StoreControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-find-by-location-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestParameters(
                                 parameterWithName("latitude")
                                         .description("위도"),
@@ -141,7 +144,8 @@ class StoreControllerTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-find-current-umbrella-store-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("umbrellaName")
                                         .description("현재 우산의 이름")
@@ -178,7 +182,8 @@ class StoreControllerTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-find-all-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -243,8 +248,8 @@ class StoreControllerTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-create-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("협업지점명"),
@@ -308,8 +313,8 @@ class StoreControllerTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-update-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("협업지점명"),
@@ -362,8 +367,8 @@ class StoreControllerTest extends RestDocsSupport {
                         .file(secondFile))
                 .andExpect(status().isOk())
                 .andDo(document("upload-file",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestParts(
                                 partWithName("files").description("The files to upload")
                         ),
@@ -395,8 +400,8 @@ class StoreControllerTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("id").description("협업지점 ID")
                         ),

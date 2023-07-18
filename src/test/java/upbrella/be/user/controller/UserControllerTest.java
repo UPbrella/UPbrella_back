@@ -1,10 +1,9 @@
-package upbrella.be.user;
+package upbrella.be.user.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
-import upbrella.be.docs.RestDocsSupport;
-import upbrella.be.user.controller.UserController;
+import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.user.dto.response.UserInfoResponse;
 import upbrella.be.user.service.UserService;
 
@@ -13,10 +12,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 public class UserControllerTest extends RestDocsSupport {
 
@@ -46,7 +47,8 @@ public class UserControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-user-info-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
@@ -83,7 +85,8 @@ public class UserControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-umbrella-borrowed-by-user-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
                                         .description("코드"),
