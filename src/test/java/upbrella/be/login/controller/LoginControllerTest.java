@@ -42,23 +42,16 @@ public class LoginControllerTest extends RestDocsSupport {
                                         .description("카카오 로그인 인증 코드")
                         ),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("사용자 식별자"),
-                                fieldWithPath("data.socialId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("socialId").type(JsonFieldType.NUMBER)
                                         .description("사용자 소셜 식별자"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
-                                fieldWithPath("data.phoneNumber").type(JsonFieldType.STRING)
+                                fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
-                                fieldWithPath("data.adminStatus").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("adminStatus").type(JsonFieldType.BOOLEAN)
                                         .description("관리자 여부")
                         )));
     }
@@ -84,23 +77,16 @@ public class LoginControllerTest extends RestDocsSupport {
                                         fieldWithPath("code").description("네이버 로그인 인증 코드")
                         ),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("사용자 식별자"),
-                                fieldWithPath("data.socialId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("socialId").type(JsonFieldType.NUMBER)
                                         .description("사용자 소셜 식별자"),
-                                fieldWithPath("data.name").type(JsonFieldType.STRING)
+                                fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
-                                fieldWithPath("data.phoneNumber").type(JsonFieldType.STRING)
+                                fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
-                                fieldWithPath("data.adminStatus").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("adminStatus").type(JsonFieldType.BOOLEAN)
                                         .description("관리자 여부")
                         )));
     }

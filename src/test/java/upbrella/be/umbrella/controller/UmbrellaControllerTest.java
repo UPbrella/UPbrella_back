@@ -58,24 +58,16 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .optional()
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.umbrellaResponsePage[]").type(JsonFieldType.ARRAY)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("umbrellaResponsePage[]").type(JsonFieldType.ARRAY)
                                         .description("우산 목록"),
-                                fieldWithPath("data.umbrellaResponsePage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("umbrellaResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("우산 고유 번호"),
-                                fieldWithPath("data.umbrellaResponsePage[].storeMetaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("umbrellaResponsePage[].storeMetaId").type(JsonFieldType.NUMBER)
                                         .description("보관 지점 번호"),
-                                fieldWithPath("data.umbrellaResponsePage[].uuid").type(JsonFieldType.NUMBER)
+                                fieldWithPath("umbrellaResponsePage[].uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 관리 번호"),
-                                fieldWithPath("data.umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
                                         .description("대여 가능 상태")
                         )));
         // then
@@ -109,24 +101,16 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                 parameterWithName("storeId").description("지점 고유 번호")
                         ),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .optional()
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.umbrellaResponsePage[]").type(JsonFieldType.ARRAY)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("umbrellaResponsePage[]").type(JsonFieldType.ARRAY)
                                         .description("우산 목록"),
-                                fieldWithPath("data.umbrellaResponsePage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("umbrellaResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("우산 고유 번호"),
-                                fieldWithPath("data.umbrellaResponsePage[].storeMetaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("umbrellaResponsePage[].storeMetaId").type(JsonFieldType.NUMBER)
                                         .description("보관 지점 번호"),
-                                fieldWithPath("data.umbrellaResponsePage[].uuid").type(JsonFieldType.NUMBER)
+                                fieldWithPath("umbrellaResponsePage[].uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 관리 번호"),
-                                fieldWithPath("data.umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
                                         .description("대여 가능 상태")
                         )));
         // then
@@ -160,18 +144,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                 fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
                                         .description("지점 고유 번호"),
                                 fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                        .description("대여 가능 여부")),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .optional()
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
-                        )));
+                                        .description("대여 가능 여부"))));
         // then
     }
 
@@ -206,17 +179,6 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                         .description("대여 가능 여부")),
                         pathParameters(
                                 parameterWithName("id").description("우산 고유 번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .optional()
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
                         )));
         // then
     }
@@ -235,17 +197,6 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("id").description("우산 고유 번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .optional()
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
                         )));
         // then
     }

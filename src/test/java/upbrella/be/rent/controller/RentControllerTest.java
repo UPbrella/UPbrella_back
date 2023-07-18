@@ -58,17 +58,8 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("우산 아이디"),
                                 fieldWithPath("statusDeclaration").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("상태 신고")),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
-                        )));
+                                        .description("상태 신고"))
+                        ));
     }
 
     @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
@@ -98,16 +89,7 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("대여점 아이디"),
                                 fieldWithPath("improvement").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("개선 사항")),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
-                        )));
+                                        .description("개선 사항"))
+                        ));
     }
 }
