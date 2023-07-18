@@ -6,6 +6,8 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
+import upbrella.be.rent.dto.response.StatusDeclarationPageResponse;
+import upbrella.be.rent.dto.response.StatusDeclarationResponse;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
@@ -63,6 +65,26 @@ public class RentController {
                                                 .returnAt(LocalDateTime.of(2023, 7, 23, 0, 0, 0))
                                                 .totalRentalDay(5)
                                                 .refundCompleted(true)
+                                                .build()
+                                        )).build()));
+    }
+
+    @GetMapping("/histories/status")
+    public ResponseEntity<CustomResponse<StatusDeclarationPageResponse>> findStatusDeclarations(HttpSession httpSession) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "상태 신고 내용 조회 성공",
+                        StatusDeclarationPageResponse.builder()
+                                .statusDeclarationPage(
+                                        List.of(StatusDeclarationResponse.builder()
+                                                .id(1L)
+                                                .umbrellaId(30)
+                                                .content("우산이 망가졌어요")
+                                                .etc("기타 사항")
                                                 .build()
                                         )).build()));
     }
