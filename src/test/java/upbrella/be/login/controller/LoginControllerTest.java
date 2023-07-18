@@ -5,14 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.login.dto.response.LoggedInUserResponse;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
@@ -28,27 +24,22 @@ public class LoginControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 카카오 소셜 로그인을 할 수 있다.")
     void kakoLoginTest() throws Exception {
         // given
-        LoggedInUserResponse.builder()
-                .id(1L)
-                .socialId(1L)
-                .name("카카오 사용자")
-                .phoneNumber("010-0000-0000")
-                .adminStatus(false)
-                .build();
+        String code = "{\"code\":\"1kdfjq0243f\"}";
+
 
         // when
         mockMvc.perform(
-                        get("/oauth/kakao")
-                                .param("code", "1234")
+                        post("/oauth/kakao")
+                                .content(code)
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("kakao-login-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        requestParameters(
-                                parameterWithName("code")
-                                        .description("네이버 로그인 인증 코드")
+                        requestFields(
+                                fieldWithPath("code")
+                                        .description("카카오 로그인 인증 코드")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -76,27 +67,21 @@ public class LoginControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 네이버 소셜 로그인을 할 수 있다.")
     void naverLoginTest() throws Exception {
         // given
-        LoggedInUserResponse.builder()
-                .id(1L)
-                .socialId(1L)
-                .name("네이버 사용자")
-                .phoneNumber("010-0000-0000")
-                .adminStatus(false)
-                .build();
+        String code = "{\"code\":\"1kdfjq0243f\"}";
+
 
         // when
         mockMvc.perform(
-                        get("/oauth/naver")
-                                .param("code", "1234")
+                        post("/oauth/naver")
+                                .content(code)
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("naver-login-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        requestParameters(
-                                parameterWithName("code").description("네이버 로그인 인증 코드")
-                                        .description("네이버 로그인 인증 코드")
+                                requestFields(
+                                        fieldWithPath("code").description("네이버 로그인 인증 코드")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)

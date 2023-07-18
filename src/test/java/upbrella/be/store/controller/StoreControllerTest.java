@@ -215,8 +215,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("위도"),
                                 fieldWithPath("data.stores[].longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
-                                fieldWithPath("data.stores[].imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록")
+                                subsectionWithPath("data.stores[].imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 
@@ -233,7 +232,8 @@ class StoreControllerTest extends RestDocsSupport {
                 .businessHours("영업시간")
                 .contactNumber("연락처")
                 .instagramId("인스타그램 아이디")
-                .coordinate("네이버 길찾기를 위한 좌표")
+                .latitude(33.33)
+                .longitude(33.33)
                 .imageUrls(List.of("이미지 URL"))
                 .build();
 
@@ -267,10 +267,11 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("연락처"),
                                 fieldWithPath("instagramId").type(JsonFieldType.STRING)
                                         .description("인스타그램 아이디"),
-                                fieldWithPath("coordinate").type(JsonFieldType.STRING)
-                                        .description("네이버 길찾기를 위한 좌표"),
-                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL")
+                                fieldWithPath("latitude").type(JsonFieldType.NUMBER)
+                                        .description("위도"),
+                                fieldWithPath("longitude").type(JsonFieldType.NUMBER)
+                                        .description("경도"),
+                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER)
@@ -284,7 +285,6 @@ class StoreControllerTest extends RestDocsSupport {
                         )));
     }
 
-    // TODO: patch 어떻게 처리할지 고민해보기 1. 이미지 API 변경,
     @Test
     @DisplayName("관리자는 협업지점 정보를 수정할 수 있다.")
     void updateStoreTest() throws Exception {
@@ -334,8 +334,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("인스타그램 아이디"),
                                 fieldWithPath("coordinate").type(JsonFieldType.STRING)
                                         .description("네이버 길찾기를 위한 좌표"),
-                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL")
+                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         ),
                         pathParameters(
                                 parameterWithName("id").description("협업지점 ID")
@@ -381,8 +380,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("메시지"),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("데이터"),
-                                fieldWithPath("data.imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 url")
+                                subsectionWithPath("data.imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 
