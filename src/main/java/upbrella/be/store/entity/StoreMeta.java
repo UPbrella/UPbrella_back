@@ -12,7 +12,7 @@ public class StoreMeta {
 
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private String name;
     private String thumbnail;
     private boolean activated;

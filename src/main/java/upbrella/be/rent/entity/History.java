@@ -15,7 +15,7 @@ public class History {
 
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     @ManyToOne
     @JoinColumn(name = "umbrella_id")
     private Umbrella umbrella;

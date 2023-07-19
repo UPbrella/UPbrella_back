@@ -12,7 +12,7 @@ public class User {
 
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     private long socialId;
     private String name;
     private String phoneNumber;

@@ -10,7 +10,7 @@ import lombok.*;
 public class ImprovementResponse {
 
     private long id;
-    private int umbrellaId;
+    private long umbrellaId;
     private String content;
     private String etc;
 }

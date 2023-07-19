@@ -19,7 +19,7 @@ public class RentalHistoryResponse {
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime rentAt;
     private int elapsedDay; // 경과 시간
-    private int umbrellaId;
+    private long umbrellaId;
     private String returnStoreName;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime returnAt;
