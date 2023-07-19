@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class CurrentUmbrellaStoreResponse {
 
-    private int id;
+    private long id;
     private String name;
 }

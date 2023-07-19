@@ -10,7 +10,7 @@ import lombok.Setter;
 public class UmbrellaStatusResponse {
 
     private int id;
-    private int umbrellaName;
+    private int uuid;
     private String statusContent;
     private String etc;
 }

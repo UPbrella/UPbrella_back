@@ -44,9 +44,9 @@ public class LoginControllerTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
-                                        .description("사용자 식별자"),
+                                        .description("사용자 고유번호"),
                                 fieldWithPath("socialId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 소셜 식별자"),
+                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
@@ -79,9 +79,9 @@ public class LoginControllerTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
-                                        .description("사용자 식별자"),
+                                        .description("사용자 고유번호"),
                                 fieldWithPath("socialId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 소셜 식별자"),
+                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)

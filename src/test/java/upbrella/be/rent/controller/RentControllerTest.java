@@ -17,7 +17,6 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
@@ -57,9 +56,9 @@ public class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("region").type(JsonFieldType.STRING)
                                         .description("지역"),
                                 fieldWithPath("storeId").type(JsonFieldType.NUMBER)
-                                        .description("대여점 아이디"),
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
-                                        .description("우산 아이디"),
+                                        .description("우산 고유번호"),
                                 fieldWithPath("statusDeclaration").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("상태 신고"))
@@ -88,9 +87,9 @@ public class RentControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
-                                        .description("우산 아이디"),
+                                        .description("우산 고유번호"),
                                 fieldWithPath("storeId").type(JsonFieldType.NUMBER)
-                                        .description("대여점 아이디"),
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("improvement").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("개선 사항"))
@@ -129,31 +128,27 @@ public class RentControllerTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("rentalHistoryResponsePage").type(JsonFieldType.ARRAY)
-                                        .description("대여 내역 페이지"),
+                                        .description("대여 내역 페이지 목록"),
                                 fieldWithPath("rentalHistoryResponsePage[].id").type(JsonFieldType.NUMBER)
-                                        .description("대여 내역 아이디"),
+                                        .description("대여 내역 고유번호"),
                                 fieldWithPath("rentalHistoryResponsePage[].name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("rentalHistoryResponsePage[].phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
                                 fieldWithPath("rentalHistoryResponsePage[].rentStoreName").type(JsonFieldType.STRING)
-                                        .description("대여점 이름"),
+                                        .description("대여 지점 이름"),
                                 fieldWithPath("rentalHistoryResponsePage[].rentAt")
-                                        .description("대여 시간")
-                                        .attributes(key("type").value("String"))
-                                        .attributes(key("format").value("yyyy-MM-dd HH:mm:ss")),
+                                        .description("대여 시간"),
                                 fieldWithPath("rentalHistoryResponsePage[].elapsedDay").type(JsonFieldType.NUMBER)
                                         .description("대여 기간"),
                                 fieldWithPath("rentalHistoryResponsePage[].umbrellaId").type(JsonFieldType.NUMBER)
-                                        .description("우산 아이디"),
+                                        .description("우산 고유번호"),
                                 fieldWithPath("rentalHistoryResponsePage[].returnStoreName").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("반납점 이름"),
+                                        .description("반납 지점 이름"),
                                 fieldWithPath("rentalHistoryResponsePage[].returnAt")
                                         .optional()
-                                        .description("반납 시간")
-                                        .attributes(key("type").value("String"))
-                                        .attributes(key("format").value("yyyy-MM-dd HH:mm:ss")),
+                                        .description("반납 시간"),
                                 fieldWithPath("rentalHistoryResponsePage[].totalRentalDay").type(JsonFieldType.NUMBER)
                                         .optional()
                                         .description("총 대여 기간"),
@@ -190,9 +185,9 @@ public class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("statusDeclarationPage").type(JsonFieldType.ARRAY)
                                         .description("신고 내역"),
                                 fieldWithPath("statusDeclarationPage[].id").type(JsonFieldType.NUMBER)
-                                        .description("신고 내역 아이디"),
+                                        .description("신고 내역 고유번호"),
                                 fieldWithPath("statusDeclarationPage[].umbrellaId").type(JsonFieldType.NUMBER)
-                                        .description("우산 아이디"),
+                                        .description("우산 고유번호"),
                                 fieldWithPath("statusDeclarationPage[].content").type(JsonFieldType.STRING)
                                         .description("신고 내용"),
                                 fieldWithPath("statusDeclarationPage[].etc").type(JsonFieldType.STRING)
@@ -225,11 +220,11 @@ public class RentControllerTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("improvementPage").type(JsonFieldType.ARRAY)
-                                        .description("개선 요청 내역"),
+                                        .description("개선 요청 목록"),
                                 fieldWithPath("improvementPage[].id").type(JsonFieldType.NUMBER)
-                                        .description("개선 요청 내역 아이디"),
+                                        .description("개선 요청 고유번호"),
                                 fieldWithPath("improvementPage[].umbrellaId").type(JsonFieldType.NUMBER)
-                                        .description("우산 아이디"),
+                                        .description("우산 고유번호"),
                                 fieldWithPath("improvementPage[].content").type(JsonFieldType.STRING)
                                         .description("개선 요청 내용"),
                                 fieldWithPath("improvementPage[].etc").type(JsonFieldType.STRING)

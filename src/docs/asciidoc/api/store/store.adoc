@@ -1,4 +1,4 @@
-=== 대여점 상세 조회
+=== 협업지점 상세 조회
 
 ==== HTTP Request
 
@@ -10,7 +10,7 @@ include::{snippets}/store-find-by-id-doc/path-parameters.adoc[]
 include::{snippets}/store-find-by-id-doc/http-response.adoc[]
 include::{snippets}/store-find-by-id-doc/response-fields-data.adoc[]
 
-=== 현위치에서 보여지는 협업지점 목록
+=== 현 위치에서 보여지는 협업 지점 목록
 
 ==== HTTP Request
 
@@ -23,7 +23,7 @@ include::{snippets}/store-find-by-location-doc/request-parameters.adoc[]
 include::{snippets}/store-find-by-location-doc/http-response.adoc[]
 include::{snippets}/store-find-by-location-doc/response-fields-data.adoc[]
 
-=== 우산의 현위치 조회
+=== 우산의 현 위치 조회
 
 ==== HTTP Request
 
@@ -36,7 +36,7 @@ include::{snippets}/store-find-current-umbrella-store-doc/http-response.adoc[]
 include::{snippets}/store-find-current-umbrella-store-doc/response-fields-data.adoc[]
 
 
-=== 관리자 페이지에서 전체 대여점 조회
+=== 관리자 페이지에서 전체 협업 지점 조회
 
 ==== HTTP Request
 
@@ -60,21 +60,23 @@ include::{snippets}/upload-file/http-response.adoc[]
 include::{snippets}/upload-file/response-fields-data.adoc[]
 
 
-=== 관리자 페이지에서 새로운 협업지점 등록
+=== 관리자 페이지에서 새로운 협업 지점 등록
 
 ==== HTTP Request
 
 include::{snippets}/store-create-doc/http-request.adoc[]
 include::{snippets}/store-create-doc/request-fields.adoc[]
 
-=== 관리자 페이지에서 협업지점 변경
+=== 관리자 페이지에서 협업 지점 변경
 
 ==== HTTP Request
 
 include::{snippets}/store-update-doc/http-request.adoc[]
+include::{snippets}/store-update-doc/path-parameters.adoc[]
 include::{snippets}/store-update-doc/request-fields.adoc[]
 
-=== 관리자 페이지에서 협업지점 삭제
+
+=== 관리자 페이지에서 협업 지점 삭제
 
 ==== HTTP Request
 

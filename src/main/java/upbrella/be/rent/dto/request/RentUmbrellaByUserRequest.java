@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class RentUmbrellaByUserRequest {
 
     private String region;
-    private int storeId;
-    private int umbrellaId;
+    private long storeId;
+    private long umbrellaId;
     private String statusDeclaration;
 }
