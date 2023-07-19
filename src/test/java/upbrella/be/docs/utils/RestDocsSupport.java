@@ -1,4 +1,4 @@
-package upbrella.be.docs;
+package upbrella.be.docs.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

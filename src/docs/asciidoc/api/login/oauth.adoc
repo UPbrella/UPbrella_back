@@ -8,7 +8,7 @@ include::{snippets}/naver-login-doc/request-fields.adoc[]
 ==== HTTP Response
 
 include::{snippets}/naver-login-doc/http-response.adoc[]
-include::{snippets}/naver-login-doc/response-fields.adoc[]
+include::{snippets}/naver-login-doc/response-fields-data.adoc[]
 
 === 카카오 소셜 로그인
 
@@ -20,4 +20,4 @@ include::{snippets}/kakao-login-doc/request-fields.adoc[]
 ==== HTTP Response
 
 include::{snippets}/kakao-login-doc/http-response.adoc[]
-include::{snippets}/kakao-login-doc/response-fields.adoc[]
+include::{snippets}/kakao-login-doc/response-fields-data.adoc[]

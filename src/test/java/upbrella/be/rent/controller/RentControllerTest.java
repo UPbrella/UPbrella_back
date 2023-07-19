@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import upbrella.be.docs.RestDocsSupport;
+import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
@@ -18,11 +18,12 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
+import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 public class RentControllerTest extends RestDocsSupport {
 
@@ -52,8 +53,8 @@ public class RentControllerTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("rent-umbrella-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("region").type(JsonFieldType.STRING)
                                         .description("지역"),
@@ -63,17 +64,8 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("우산 아이디"),
                                 fieldWithPath("statusDeclaration").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("상태 신고")),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
-                        )));
+                                        .description("상태 신고"))
+                        ));
     }
 
     @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
@@ -94,8 +86,8 @@ public class RentControllerTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("return-umbrella-doc",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 아이디"),
@@ -103,17 +95,8 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("대여점 아이디"),
                                 fieldWithPath("improvement").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("개선 사항")),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.NULL)
-                                        .description("데이터 값이 없습니다.")
-                        )));
+                                        .description("개선 사항"))
+                        ));
     }
 
     @DisplayName("사용자는 우산 대여 내역을 조회 할 수 있다.")

@@ -11,6 +11,6 @@ public class UmbrellaResponse {
 
     private int id;
     private int storeMetaId;
-    private int umbrellaId;
+    private int uuid;
     private boolean rentable;
 }
