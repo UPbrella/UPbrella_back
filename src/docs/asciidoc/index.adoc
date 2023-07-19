@@ -33,8 +33,6 @@ include::api/login/oauth.adoc[]
 == 대여 API
 include::api/rent/rent.adoc[]
 
-[[Return-API]]
-
 [[Store-API]]
 == Store API
 include::api/store/store.adoc[]
