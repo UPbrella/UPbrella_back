@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class UserInfoResponse {
 
-    private int id;
+    private long id;
     private long socialId;
     private String name;
     private String phoneNumber;

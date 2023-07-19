@@ -16,7 +16,7 @@ import java.util.List;
 public class StoreController {
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable int storeId) {
+    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
 
         return ResponseEntity
                 .ok()
@@ -57,8 +57,8 @@ public class StoreController {
                                 .build()));
     }
 
-    @GetMapping("/location/{umbrellaName}")
-    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(HttpSession session, @PathVariable String umbrellaName) {
+    @GetMapping("/location/{umbrellaId}")
+    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(HttpSession session, @PathVariable long umbrellaId) {
 
         return ResponseEntity
                 .ok()
@@ -120,7 +120,7 @@ public class StoreController {
     }
 
     @PatchMapping("/{storeId}")
-    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable int storeId, CreateStoreRequest updateStore) {
+    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, CreateStoreRequest updateStore) {
 
         return ResponseEntity
                 .ok()
@@ -151,7 +151,7 @@ public class StoreController {
     }
 
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<CustomResponse> deleteStore(HttpSession session, @PathVariable int storeId) {
+    public ResponseEntity<CustomResponse> deleteStore(HttpSession session, @PathVariable long storeId) {
 
         return ResponseEntity
                 .ok()

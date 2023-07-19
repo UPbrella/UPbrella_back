@@ -10,7 +10,7 @@ public class StoreImage {
 
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     @ManyToOne
     @JoinColumn(name = "store_detail_id")
     private StoreDetail storeDetail;
