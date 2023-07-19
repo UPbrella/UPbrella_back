@@ -15,9 +15,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -126,48 +124,42 @@ public class RentControllerTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-rental-histories-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.rentalHistoryResponsePage").type(JsonFieldType.ARRAY)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("rentalHistoryResponsePage").type(JsonFieldType.ARRAY)
                                         .description("대여 내역 페이지"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("rentalHistoryResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("대여 내역 아이디"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].name").type(JsonFieldType.STRING)
+                                fieldWithPath("rentalHistoryResponsePage[].name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].phoneNumber").type(JsonFieldType.STRING)
+                                fieldWithPath("rentalHistoryResponsePage[].phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].rentStoreName").type(JsonFieldType.STRING)
+                                fieldWithPath("rentalHistoryResponsePage[].rentStoreName").type(JsonFieldType.STRING)
                                         .description("대여점 이름"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].rentAt")
+                                fieldWithPath("rentalHistoryResponsePage[].rentAt")
                                         .description("대여 시간")
                                         .attributes(key("type").value("String"))
                                         .attributes(key("format").value("yyyy-MM-dd HH:mm:ss")),
-                                fieldWithPath("data.rentalHistoryResponsePage[].elapsedDay").type(JsonFieldType.NUMBER)
+                                fieldWithPath("rentalHistoryResponsePage[].elapsedDay").type(JsonFieldType.NUMBER)
                                         .description("대여 기간"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("rentalHistoryResponsePage[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 아이디"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].returnStoreName").type(JsonFieldType.STRING)
+                                fieldWithPath("rentalHistoryResponsePage[].returnStoreName").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("반납점 이름"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].returnAt")
+                                fieldWithPath("rentalHistoryResponsePage[].returnAt")
                                         .optional()
                                         .description("반납 시간")
                                         .attributes(key("type").value("String"))
                                         .attributes(key("format").value("yyyy-MM-dd HH:mm:ss")),
-                                fieldWithPath("data.rentalHistoryResponsePage[].totalRentalDay").type(JsonFieldType.NUMBER)
+                                fieldWithPath("rentalHistoryResponsePage[].totalRentalDay").type(JsonFieldType.NUMBER)
                                         .optional()
                                         .description("총 대여 기간"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].refundCompleted").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("rentalHistoryResponsePage[].refundCompleted").type(JsonFieldType.BOOLEAN)
                                         .description("환불 완료 여부"),
-                                fieldWithPath("data.rentalHistoryResponsePage[].etc").type(JsonFieldType.STRING)
+                                fieldWithPath("rentalHistoryResponsePage[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
                         )));
@@ -191,25 +183,19 @@ public class RentControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-status-declarations-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.statusDeclarationPage").type(JsonFieldType.ARRAY)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("statusDeclarationPage").type(JsonFieldType.ARRAY)
                                         .description("신고 내역"),
-                                fieldWithPath("data.statusDeclarationPage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("statusDeclarationPage[].id").type(JsonFieldType.NUMBER)
                                         .description("신고 내역 아이디"),
-                                fieldWithPath("data.statusDeclarationPage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("statusDeclarationPage[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 아이디"),
-                                fieldWithPath("data.statusDeclarationPage[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("statusDeclarationPage[].content").type(JsonFieldType.STRING)
                                         .description("신고 내용"),
-                                fieldWithPath("data.statusDeclarationPage[].etc").type(JsonFieldType.STRING)
+                                fieldWithPath("statusDeclarationPage[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
                         )));
@@ -234,25 +220,19 @@ public class RentControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-improvements-doc",
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER)
-                                        .description("코드"),
-                                fieldWithPath("status").type(JsonFieldType.STRING)
-                                        .description("상태"),
-                                fieldWithPath("message").type(JsonFieldType.STRING)
-                                        .description("메시지"),
-                                fieldWithPath("data").type(JsonFieldType.OBJECT)
-                                        .description("데이터"),
-                                fieldWithPath("data.improvementPage").type(JsonFieldType.ARRAY)
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("improvementPage").type(JsonFieldType.ARRAY)
                                         .description("개선 요청 내역"),
-                                fieldWithPath("data.improvementPage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("improvementPage[].id").type(JsonFieldType.NUMBER)
                                         .description("개선 요청 내역 아이디"),
-                                fieldWithPath("data.improvementPage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("improvementPage[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 아이디"),
-                                fieldWithPath("data.improvementPage[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("improvementPage[].content").type(JsonFieldType.STRING)
                                         .description("개선 요청 내용"),
-                                fieldWithPath("data.improvementPage[].etc").type(JsonFieldType.STRING)
+                                fieldWithPath("improvementPage[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
                         )));

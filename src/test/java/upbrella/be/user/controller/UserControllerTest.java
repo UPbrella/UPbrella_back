@@ -27,9 +27,9 @@ public class UserControllerTest extends RestDocsSupport {
         return new UserController(userService);
     }
 
-    @DisplayName("테스트")
+    @DisplayName("사용자는 유저 정보를 조회할 수 있다.")
     @Test
-    void test() throws Exception {
+    void findUserInfoTest() throws Exception {
 
         // given
         UserInfoResponse user = UserInfoResponse.builder()

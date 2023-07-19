@@ -17,9 +17,6 @@ include::{snippets}/return-umbrella-doc/request-fields.adoc[]
 
 
 include::{snippets}/return-umbrella-doc/http-response.adoc[]
-=======
-include::{snippets}/return-umbrella-doc/http-response.adoc[]
-include::{snippets}/return-umbrella-doc/response-fields.adoc[]
 
 === 우산 대여 기록 조회
 ==== HTTP Request
@@ -29,7 +26,7 @@ include::{snippets}/show-all-rental-histories-doc/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/show-all-rental-histories-doc/http-response.adoc[]
-include::{snippets}/show-all-rental-histories-doc/response-fields.adoc[]
+include::{snippets}/show-all-rental-histories-doc/response-fields-data.adoc[]
 
 === 신고 내역 조회
 ==== HTTP Request
@@ -39,7 +36,7 @@ include::{snippets}/show-all-status-declarations-doc/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/show-all-status-declarations-doc/http-response.adoc[]
-include::{snippets}/show-all-status-declarations-doc/response-fields.adoc[]
+include::{snippets}/show-all-status-declarations-doc/response-fields-data.adoc[]
 
 === 개선 요청 내역 조회
 ==== HTTP Request
@@ -49,5 +46,5 @@ include::{snippets}/show-all-improvements-doc/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/show-all-improvements-doc/http-response.adoc[]
-include::{snippets}/show-all-improvements-doc/response-fields.adoc[]
+include::{snippets}/show-all-improvements-doc/response-fields-data.adoc[]
 
