@@ -116,7 +116,7 @@ public class RentControllerTest extends RestDocsSupport {
                         .etc("기타")
                         .build())
                 ).build();
-        System.out.println("response = " + response.getRentalHistoryResponsePage().get(0).getReturnAt());
+
         mockMvc.perform(
                         get("/rent/histories")
                 )

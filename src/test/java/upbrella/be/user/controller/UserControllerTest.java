@@ -69,7 +69,7 @@ public class UserControllerTest extends RestDocsSupport {
         // given
 
         given(userService.findUmbrellaBorrowedByUser(anyLong()))
-                .willReturn(1);
+                .willReturn(1L);
 
         // when
         mockMvc.perform(
