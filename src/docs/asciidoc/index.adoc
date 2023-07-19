@@ -10,6 +10,11 @@ endif::[]
 
 :sectlinks:
 
+[[Common-API]]
+== 공통 API
+include::common.adoc[]
+
+
 [[User-API]]
 == User API
 include::api/user/user.adoc[]

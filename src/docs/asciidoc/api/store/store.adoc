@@ -8,7 +8,7 @@ include::{snippets}/store-find-by-id-doc/path-parameters.adoc[]
 ==== HTTP Response
 
 include::{snippets}/store-find-by-id-doc/http-response.adoc[]
-include::{snippets}/store-find-by-id-doc/response-fields.adoc[]
+include::{snippets}/store-find-by-id-doc/response-fields-data.adoc[]
 
 === 현위치에서 보여지는 협업지점 목록
 
@@ -21,7 +21,7 @@ include::{snippets}/store-find-by-location-doc/request-parameters.adoc[]
 ==== HTTP Response
 
 include::{snippets}/store-find-by-location-doc/response-body.adoc[]
-include::{snippets}/store-find-by-location-doc/response-fields.adoc[]
+include::{snippets}/store-find-by-location-doc/response-fields-data.adoc[]
 
 === 우산의 현위치 조회
 
@@ -33,7 +33,7 @@ include::{snippets}/store-find-current-umbrella-store-doc/path-parameters.adoc[]
 ==== HTTP Response
 
 include::{snippets}/store-find-current-umbrella-store-doc/http-response.adoc[]
-include::{snippets}/store-find-current-umbrella-store-doc/response-fields.adoc[]
+include::{snippets}/store-find-current-umbrella-store-doc/response-fields-data.adoc[]
 
 
 === 관리자 페이지에서 전체 대여점 조회
@@ -45,7 +45,7 @@ include::{snippets}/store-find-all-doc/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/store-find-all-doc/http-response.adoc[]
-include::{snippets}/store-find-all-doc/response-fields.adoc[]
+include::{snippets}/store-find-all-doc/response-fields-data.adoc[]
 
 === 협업지점의 이미지 업로드
 
@@ -57,7 +57,7 @@ include::{snippets}/upload-file/request-parts.adoc[]
 ==== HTTP Response
 
 include::{snippets}/upload-file/http-response.adoc[]
-include::{snippets}/upload-file/response-fields.adoc[]
+include::{snippets}/upload-file/response-fields-data.adoc[]
 
 
 === 관리자 페이지에서 새로운 협업지점 등록
@@ -71,8 +71,6 @@ include::{snippets}/store-create-doc/request-fields.adoc[]
 ==== HTTP Response
 
 include::{snippets}/store-create-doc/response-body.adoc[]
-include::{snippets}/store-create-doc/response-fields.adoc[]
-
 
 === 관리자 페이지에서 협업지점 변경
 
@@ -85,7 +83,6 @@ include::{snippets}/store-update-doc/request-fields.adoc[]
 ==== HTTP Response
 
 include::{snippets}/store-update-doc/response-body.adoc[]
-include::{snippets}/store-update-doc/response-fields.adoc[]
 
 === 관리자 페이지에서 협업지점 삭제
 
@@ -98,4 +95,3 @@ include::{snippets}/store-delete-doc/path-parameters.adoc[]
 ==== HTTP Response
 
 include::{snippets}/store-delete-doc/response-body.adoc[]
-include::{snippets}/store-delete-doc/response-fields.adoc[]

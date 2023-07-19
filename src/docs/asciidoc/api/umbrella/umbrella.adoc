@@ -6,8 +6,7 @@ include::{snippets}/show-all-umbrellas-doc/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/show-all-umbrellas-doc/http-response.adoc[]
-include::{snippets}/show-all-umbrellas-doc/response-fields.adoc[]
-
+include::{snippets}/show-all-umbrellas-doc/response-fields-data.adoc[]
 === 지점 우산 현황 조회
 ==== HTTP Request
 
@@ -18,7 +17,7 @@ include::{snippets}/show-umbrellas-by-store-id-doc/path-parameters.adoc[]
 ==== HTTP Response
 
 include::{snippets}/show-umbrellas-by-store-id-doc/http-response.adoc[]
-include::{snippets}/show-umbrellas-by-store-id-doc/response-fields.adoc[]
+include::{snippets}/show-umbrellas-by-store-id-doc/response-fields-data.adoc[]
 
 === 우산 추가
 ==== HTTP Request
@@ -31,7 +30,6 @@ include::{snippets}/add-umbrellas-doc/request-fields.adoc[]
 
 include::{snippets}/add-umbrellas-doc/http-response.adoc[]
 
-include::{snippets}/add-umbrellas-doc/response-fields.adoc[]
 
 
 === 우산 정보 수정
@@ -46,8 +44,6 @@ include::{snippets}/modify-umbrella-doc/request-fields.adoc[]
 
 include::{snippets}/modify-umbrella-doc/http-response.adoc[]
 
-include::{snippets}/modify-umbrella-doc/response-fields.adoc[]
-
 === 우산 삭제
 ==== HTTP Request
 
@@ -58,5 +54,3 @@ include::{snippets}/delete-umbrella-doc/path-parameters.adoc[]
 ==== HTTP Response
 
 include::{snippets}/delete-umbrella-doc/http-response.adoc[]
-
-include::{snippets}/delete-umbrella-doc/response-fields.adoc[]
