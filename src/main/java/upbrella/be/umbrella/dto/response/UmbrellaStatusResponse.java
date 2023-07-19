@@ -9,8 +9,8 @@ import lombok.Setter;
 @Builder
 public class UmbrellaStatusResponse {
 
-    private int id;
-    private int umbrellaName;
+    private long id;
+    private long uuid;
     private String statusContent;
     private String etc;
 }

@@ -45,7 +45,7 @@ public class UserController {
                         200,
                         "사용자가 빌린 우산 조회 성공",
                         UmbrellaBorrowedByUserResponse.builder()
-                                .name(1)
+                                .id(1L)
                                 .build()));
     }
 }

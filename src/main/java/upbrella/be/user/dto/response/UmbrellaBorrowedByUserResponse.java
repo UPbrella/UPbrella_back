@@ -9,5 +9,5 @@ import lombok.Setter;
 @Builder
 public class UmbrellaBorrowedByUserResponse {
 
-    private int name;
+    private long id;
 }

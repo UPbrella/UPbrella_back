@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class UmbrellaRequest {
 
-    private int storeMetaId;
-    private int uuid;
+    private long storeMetaId;
+    private long uuid;
     private boolean rentable;
 }

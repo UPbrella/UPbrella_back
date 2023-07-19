@@ -16,11 +16,11 @@ include::common.adoc[]
 
 
 [[User-API]]
-== User API
+== 유저 API
 include::api/user/user.adoc[]
 
 [[Umbrella-API]]
-== Umbrella API
+== 우산 API
 include::api/umbrella/umbrella.adoc[]
 
 
@@ -34,5 +34,5 @@ include::api/login/oauth.adoc[]
 include::api/rent/rent.adoc[]
 
 [[Store-API]]
-== Store API
+== 협업 지점 API
 include::api/store/store.adoc[]

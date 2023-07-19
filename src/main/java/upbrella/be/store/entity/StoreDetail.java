@@ -11,7 +11,7 @@ public class StoreDetail {
 
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
     @OneToOne
     @JoinColumn(name = "store_meta_id")
     private StoreMeta storeMeta;

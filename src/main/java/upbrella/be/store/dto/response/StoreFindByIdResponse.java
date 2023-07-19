@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class StoreFindByIdResponse {
 
-    private int id;
+    private long id;
     private String name;
     private String businessHours;
     private String contactNumber;

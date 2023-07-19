@@ -27,9 +27,9 @@ public class UserControllerTest extends RestDocsSupport {
         return new UserController(userService);
     }
 
-    @DisplayName("테스트")
+    @DisplayName("사용자는 유저 정보를 조회할 수 있다.")
     @Test
-    void test() throws Exception {
+    void findUserInfoTest() throws Exception {
 
         // given
         UserInfoResponse user = UserInfoResponse.builder()
@@ -51,9 +51,9 @@ public class UserControllerTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
-                                        .description("사용자 식별자"),
+                                        .description("사용자 고유번호"),
                                 fieldWithPath("socialId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 소셜 식별자"),
+                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
@@ -69,7 +69,7 @@ public class UserControllerTest extends RestDocsSupport {
         // given
 
         given(userService.findUmbrellaBorrowedByUser(anyLong()))
-                .willReturn(1);
+                .willReturn(1L);
 
         // when
         mockMvc.perform(
@@ -81,8 +81,8 @@ public class UserControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("name").type(JsonFieldType.NUMBER)
-                                        .description("사용자가 빌린 우산 이름")
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
+                                        .description("우산 고유번호")
                         )));
     }
 }

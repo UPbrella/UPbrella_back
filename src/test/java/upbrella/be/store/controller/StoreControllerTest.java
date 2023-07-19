@@ -47,16 +47,16 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("storeId")
-                                        .description("가져올 스토어의 아이디")
+                                        .description("협업 지점 고유번호")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
-                                        .description("아이디"),
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("이름"),
                                 fieldWithPath("businessHours").type(JsonFieldType.STRING)
-                                        .description("영업시간"),
+                                        .description("영업 시간"),
                                 fieldWithPath("contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
@@ -102,11 +102,11 @@ class StoreControllerTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("stores[]").type(JsonFieldType.ARRAY)
-                                        .description("데이터"),
+                                        .description("협업 지점 목록"),
                                 fieldWithPath("stores[].id").type(JsonFieldType.NUMBER)
-                                        .description("아이디"),
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("stores[].name").type(JsonFieldType.STRING)
-                                        .description("협업지점명"),
+                                        .description("협업 지점명"),
                                 fieldWithPath("stores[].openStatus").type(JsonFieldType.BOOLEAN)
                                         .description("오픈 여부"),
                                 fieldWithPath("stores[].latitude").type(JsonFieldType.NUMBER)
@@ -127,7 +127,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        get("/stores/location/{umbrellaName}", "1")
+                        get("/stores/location/{umbrellaId}", 1)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -135,15 +135,15 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("umbrellaName")
-                                        .description("현재 우산의 이름")
+                                parameterWithName("umbrellaId")
+                                        .description("우산 고유번호")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
-                                        .description("협업지점 아이디"),
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
-                                        .description("협업지점 이름")
+                                        .description("협업 지점 이름")
                         )));
     }
 
@@ -168,11 +168,11 @@ class StoreControllerTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("stores[]").type(JsonFieldType.ARRAY)
-                                        .description("데이터"),
+                                        .description("협업 지점 목록"),
                                 fieldWithPath("stores[].id").type(JsonFieldType.NUMBER)
-                                        .description("아이디"),
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("stores[].name").type(JsonFieldType.STRING)
-                                        .description("협업지점명"),
+                                        .description("협업 지점명"),
                                 fieldWithPath("stores[].classification").type(JsonFieldType.STRING)
                                         .description("분류"),
                                 fieldWithPath("stores[].activateStatus").type(JsonFieldType.BOOLEAN)
@@ -182,7 +182,7 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("stores[].umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
                                 fieldWithPath("stores[].businessHours").type(JsonFieldType.STRING)
-                                        .description("영업시간"),
+                                        .description("영업 시간"),
                                 fieldWithPath("stores[].contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
                                 fieldWithPath("stores[].instagramId").type(JsonFieldType.STRING)
@@ -200,12 +200,12 @@ class StoreControllerTest extends RestDocsSupport {
     void createStoreTest() throws Exception {
         // given
         CreateStoreRequest store = CreateStoreRequest.builder()
-                .name("협업지점명")
+                .name("협업 지점명")
                 .classification("분류")
                 .activateStatus(true)
                 .address("주소")
                 .umbrellaLocation("우산 위치")
-                .businessHours("영업시간")
+                .businessHours("영업 시간")
                 .contactNumber("연락처")
                 .instagramId("인스타그램 아이디")
                 .latitude(33.33)
@@ -228,7 +228,7 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING)
-                                        .description("협업지점명"),
+                                        .description("협업 지점명"),
                                 fieldWithPath("classification").type(JsonFieldType.STRING)
                                         .description("분류"),
                                 fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
@@ -238,7 +238,7 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
                                 fieldWithPath("businessHours").type(JsonFieldType.STRING)
-                                        .description("영업시간"),
+                                        .description("영업 시간"),
                                 fieldWithPath("contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
                                 fieldWithPath("instagramId").type(JsonFieldType.STRING)
@@ -272,7 +272,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
 
-        mockMvc.perform(patch("/stores/{id}", 1L)
+        mockMvc.perform(patch("/stores/{storeId}", 1L)
                         .content(objectMapper.writeValueAsString(store))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -281,9 +281,13 @@ class StoreControllerTest extends RestDocsSupport {
                 .andDo(document("store-update-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId")
+                                        .description("협업 지점 고유번호")
+                        ),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING)
-                                        .description("협업지점명"),
+                                        .description("협업 지점명"),
                                 fieldWithPath("classification").type(JsonFieldType.STRING)
                                         .description("분류"),
                                 fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
@@ -293,7 +297,7 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
                                 fieldWithPath("businessHours").type(JsonFieldType.STRING)
-                                        .description("영업시간"),
+                                        .description("영업 시간"),
                                 fieldWithPath("contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
                                 fieldWithPath("instagramId").type(JsonFieldType.STRING)
@@ -301,9 +305,6 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("coordinate").type(JsonFieldType.STRING)
                                         .description("네이버 길찾기를 위한 좌표"),
                                 subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
-                        ),
-                        pathParameters(
-                                parameterWithName("id").description("협업지점 ID")
                         )));
     }
 
@@ -343,14 +344,14 @@ class StoreControllerTest extends RestDocsSupport {
 
 
         // then
-        mockMvc.perform(delete("/stores/{id}", 1L))
+        mockMvc.perform(delete("/stores/{storeId}", 1L))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("협업지점 ID")
+                                parameterWithName("storeId").description("협업 지점 고유번호")
                         )));
     }
 }

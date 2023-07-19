@@ -9,8 +9,8 @@ import lombok.Setter;
 @Builder
 public class UmbrellaResponse {
 
-    private int id;
-    private int storeMetaId;
-    private int uuid;
+    private long id;
+    private long storeMetaId;
+    private long uuid;
     private boolean rentable;
 }
