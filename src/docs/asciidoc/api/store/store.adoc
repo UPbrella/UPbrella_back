@@ -20,7 +20,7 @@ include::{snippets}/store-find-by-location-doc/request-parameters.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/store-find-by-location-doc/response-body.adoc[]
+include::{snippets}/store-find-by-location-doc/http-response.adoc[]
 include::{snippets}/store-find-by-location-doc/response-fields-data.adoc[]
 
 === 우산의 현위치 조회
@@ -67,11 +67,6 @@ include::{snippets}/upload-file/response-fields-data.adoc[]
 include::{snippets}/store-create-doc/http-request.adoc[]
 include::{snippets}/store-create-doc/request-fields.adoc[]
 
-
-==== HTTP Response
-
-include::{snippets}/store-create-doc/response-body.adoc[]
-
 === 관리자 페이지에서 협업지점 변경
 
 ==== HTTP Request
@@ -79,19 +74,9 @@ include::{snippets}/store-create-doc/response-body.adoc[]
 include::{snippets}/store-update-doc/http-request.adoc[]
 include::{snippets}/store-update-doc/request-fields.adoc[]
 
-
-==== HTTP Response
-
-include::{snippets}/store-update-doc/response-body.adoc[]
-
 === 관리자 페이지에서 협업지점 삭제
 
 ==== HTTP Request
 
 include::{snippets}/store-delete-doc/http-request.adoc[]
 include::{snippets}/store-delete-doc/path-parameters.adoc[]
-
-
-==== HTTP Response
-
-include::{snippets}/store-delete-doc/response-body.adoc[]

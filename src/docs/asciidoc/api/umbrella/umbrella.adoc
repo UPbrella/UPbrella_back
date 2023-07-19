@@ -26,12 +26,6 @@ include::{snippets}/add-umbrellas-doc/http-request.adoc[]
 
 include::{snippets}/add-umbrellas-doc/request-fields.adoc[]
 
-==== HTTP Response
-
-include::{snippets}/add-umbrellas-doc/http-response.adoc[]
-
-
-
 === 우산 정보 수정
 ==== HTTP Request
 
@@ -40,9 +34,6 @@ include::{snippets}/modify-umbrella-doc/path-parameters.adoc[]
 
 include::{snippets}/modify-umbrella-doc/request-fields.adoc[]
 
-==== HTTP Response
-
-include::{snippets}/modify-umbrella-doc/http-response.adoc[]
 
 === 우산 삭제
 ==== HTTP Request
@@ -51,6 +42,3 @@ include::{snippets}/delete-umbrella-doc/http-request.adoc[]
 
 include::{snippets}/delete-umbrella-doc/path-parameters.adoc[]
 
-==== HTTP Response
-
-include::{snippets}/delete-umbrella-doc/http-response.adoc[]
