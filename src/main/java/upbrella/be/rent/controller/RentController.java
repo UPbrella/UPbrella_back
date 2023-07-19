@@ -59,7 +59,7 @@ public class RentController {
                                                 .elapsedDay(3)
                                                 .umbrellaId(30)
                                                 .returnStoreName("반납점 이름")
-                                                .returnAt(LocalDateTime.of(2023, 7, 23, 0, 0, 0))
+                                                .returnAt(LocalDateTime.now())
                                                 .totalRentalDay(5)
                                                 .refundCompleted(true)
                                                 .build()
