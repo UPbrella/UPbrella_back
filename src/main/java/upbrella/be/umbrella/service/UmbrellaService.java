@@ -11,12 +11,12 @@ public class UmbrellaService {
     public List<UmbrellaResponse> findAllUmbrellas() {
         return null;
     }
-    public List<UmbrellaResponse> findUmbrellasByStoreId(int storeId) {
+    public List<UmbrellaResponse> findUmbrellasByStoreId(long storeId) {
         return null;
     }
 
     public void addUmbrella(UmbrellaRequest umbrellaRequest) {}
-    public void modifyUmbrella(int id, UmbrellaRequest umbrellaRequest) {}
-    public void deleteUmbrella(int id) {}
+    public void modifyUmbrella(long id, UmbrellaRequest umbrellaRequest) {}
+    public void deleteUmbrella(long id) {}
 
 }
