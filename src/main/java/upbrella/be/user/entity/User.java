@@ -13,7 +13,6 @@ public class User {
     @Id
     @GeneratedValue
     private long id;
-    private long socialId;
     private String name;
     private String phoneNumber;
     private boolean adminStatus;

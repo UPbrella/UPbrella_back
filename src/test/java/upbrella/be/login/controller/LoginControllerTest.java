@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.login.service.OauthLoginService;
 
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -15,9 +17,12 @@ import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 public class LoginControllerTest extends RestDocsSupport {
+
+    private final OauthLoginService oauthLoginService = mock(OauthLoginService.class);
+
     @Override
     protected Object initController() {
-        return new LoginController();
+        return new LoginController(oauthLoginService);
     }
 
     @Test
@@ -45,8 +50,6 @@ public class LoginControllerTest extends RestDocsSupport {
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("사용자 고유번호"),
-                                fieldWithPath("socialId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
@@ -80,8 +83,6 @@ public class LoginControllerTest extends RestDocsSupport {
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("사용자 고유번호"),
-                                fieldWithPath("socialId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
