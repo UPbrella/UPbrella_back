@@ -1,16 +1,15 @@
 package upbrella.be.umbrella.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import upbrella.be.store.entity.StoreMeta;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class Umbrella {
 
     @Id
@@ -23,8 +22,12 @@ public class Umbrella {
     private boolean rentable;
     private boolean deleted;
 
-    public static Umbrella createOf(StoreMeta storeMeta, long uuid, boolean rentable) {
-
-        return new Umbrella(null, storeMeta, uuid, rentable, false);
+    public static Umbrella ofCreated(StoreMeta storeMeta, long uuid, boolean rentable) {
+        return Umbrella.builder()
+                .storeMeta(storeMeta)
+                .uuid(uuid)
+                .rentable(rentable)
+                .deleted(false)
+                .build();
     }
 }
