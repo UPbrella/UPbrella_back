@@ -7,6 +7,7 @@ import upbrella.be.login.dto.response.LoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.login.dto.token.NaverToken;
 import upbrella.be.login.service.OauthLoginService;
+import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 public class LoginController {
 
     private final OauthLoginService oauthLoginService;
+    private final UserService userService;
 
     @PostMapping("/kakao")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLogin(HttpSession session, @RequestBody String code) {
@@ -57,6 +59,7 @@ public class LoginController {
 
         NaverToken naverToken = oauthLoginService.getAccessToken(code, state);
         LoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
+        LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
 
         return ResponseEntity
                 .ok()
@@ -64,11 +67,6 @@ public class LoginController {
                         "success",
                         200,
                         "네이버 로그인 성공",
-                        LoggedInUserResponse.builder()
-                                .id(1L)
-                                .name("네이버 사용자")
-                                .phoneNumber("010-0000-0000")
-                                .adminStatus(false)
-                                .build()));
+                        loggedInUserResponse));
     }
 }

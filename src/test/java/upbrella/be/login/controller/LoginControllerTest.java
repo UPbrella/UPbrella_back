@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.login.service.OauthLoginService;
+import upbrella.be.user.service.UserService;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -19,10 +20,11 @@ import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 public class LoginControllerTest extends RestDocsSupport {
 
     private final OauthLoginService oauthLoginService = mock(OauthLoginService.class);
+    private final UserService userService = mock(UserService.class);
 
     @Override
     protected Object initController() {
-        return new LoginController(oauthLoginService);
+        return new LoginController(oauthLoginService, userService);
     }
 
     @Test
