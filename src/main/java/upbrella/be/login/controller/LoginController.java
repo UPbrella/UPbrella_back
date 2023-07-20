@@ -3,6 +3,7 @@ package upbrella.be.login.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import upbrella.be.login.dto.response.LoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.login.dto.token.NaverToken;
 import upbrella.be.login.service.OauthLoginService;
@@ -54,7 +55,8 @@ public class LoginController {
     @GetMapping("/naver")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLoginDev(HttpSession session, @RequestParam String code, @RequestParam String state) {
 
-        NaverToken accessToken = oauthLoginService.getAccessToken(code, state);
+        NaverToken naverToken = oauthLoginService.getAccessToken(code, state);
+        LoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
 
         return ResponseEntity
                 .ok()

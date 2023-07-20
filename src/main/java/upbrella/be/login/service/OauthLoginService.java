@@ -1,14 +1,13 @@
 package upbrella.be.login.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import upbrella.be.login.dto.response.LoggedInUser;
+import upbrella.be.login.dto.response.NaverLoginResponse;
 import upbrella.be.login.dto.token.NaverOauthInfo;
 import upbrella.be.login.dto.token.NaverToken;
 
@@ -22,7 +21,7 @@ public class OauthLoginService {
     private final NaverOauthInfo naverOauthInfo;
 
     public NaverToken getAccessToken(String code, String state) {
-        checkNaverState(state);
+
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> header = new HashMap<>();
         header.put("Accept", "application/json");
@@ -44,8 +43,27 @@ public class OauthLoginService {
         return response.getBody();
     }
 
+    public LoggedInUser processLogin(String accessToken) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+
+        return new RestTemplate().exchange(
+                        "https://openapi.naver.com/v1/nid/me",
+                        HttpMethod.GET,
+                        requestEntity,
+                        NaverLoginResponse.class)
+                .getBody()
+                .getResponse();
+    }
+
+    // TODO: state 회의하기
     private void checkNaverState(String state) {
-        if (state != naverOauthInfo.getNaverState()) {
+
+        if (state.equals(naverOauthInfo.getNaverState())) {
             // TODO: 401 커스텀 에러 만들기
             throw new IllegalArgumentException("잘못된 접근입니다.");
         }
