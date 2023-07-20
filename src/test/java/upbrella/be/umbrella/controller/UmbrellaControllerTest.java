@@ -2,9 +2,7 @@ package upbrella.be.umbrella.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
@@ -13,9 +11,11 @@ import upbrella.be.umbrella.service.UmbrellaService;
 
 import java.util.List;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -45,7 +45,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         .rentable(true)
                         .build());
 
-        BDDMockito.given(umbrellaService.findAllUmbrellas())
+        given(umbrellaService.findAllUmbrellas())
                         .willReturn(umbrellaResponseList);
         // when
 
@@ -85,13 +85,13 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                 .rentable(true)
                 .build());
 
-        BDDMockito.given(umbrellaService.findUmbrellasByStoreId(2))
+        given(umbrellaService.findUmbrellasByStoreId(2))
                 .willReturn(umbrellaResponseList);
 
         // when
 
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.get("/umbrellas/{storeId}", 2)
+                        get("/umbrellas/{storeId}", 2)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-umbrellas-by-store-id-doc",
@@ -127,6 +127,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                 .rentable(true)
                 .build();
 
+        doNothing().when(umbrellaService).addUmbrella(umbrellaRequest);
         // when
         mockMvc.perform(
                         post("/umbrellas")
@@ -161,7 +162,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.patch("/umbrellas/{umbrellaId}", 1L)
+                        patch("/umbrellas/{umbrellaId}", 1L)
                                 .content(objectMapper.writeValueAsString(umbrellaRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
@@ -189,7 +190,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.delete("/umbrellas/{umbrellaId}", 1)
+                        delete("/umbrellas/{umbrellaId}", 1)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("delete-umbrella-doc",
