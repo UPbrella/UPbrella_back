@@ -54,7 +54,7 @@ public class LoginController {
     @GetMapping("/naver")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLoginDev(HttpSession session, @RequestParam String code, @RequestParam String state) {
 
-        NaverToken accessToken = oauthLoginService.getAccessToken(code);
+        NaverToken accessToken = oauthLoginService.getAccessToken(code, state);
 
         return ResponseEntity
                 .ok()
