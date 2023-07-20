@@ -5,9 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.login.dto.request.NaverLoginCodeRequest;
+import upbrella.be.login.dto.response.LoggedInUser;
+import upbrella.be.login.dto.response.LoggedInUserResponse;
+import upbrella.be.login.dto.token.NaverToken;
 import upbrella.be.login.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -65,21 +71,36 @@ public class LoginControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 네이버 소셜 로그인을 할 수 있다.")
     void naverLoginTest() throws Exception {
         // given
-        String code = "{\"code\":\"1kdfjq0243f\"}";
+        NaverLoginCodeRequest request = NaverLoginCodeRequest.builder()
+                .code("1kdfjq0243f")
+                .state("upbrellaDev")
+                .build();
 
+        given(oauthLoginService.getAccessToken(anyString(), anyString()))
+                .willReturn(new NaverToken("accessToken", "refreshToken", "tokenType", 3600L));
+        given(oauthLoginService.processLogin(anyString()))
+                .willReturn(new LoggedInUser("네이버 사용자", "010-0000-0000"));
+        given(userService.joinService(anyString(), anyString()))
+                .willReturn(LoggedInUserResponse.builder()
+                        .id(1L)
+                        .name("네이버 사용자")
+                        .phoneNumber("010-0000-0000")
+                        .adminStatus(false)
+                        .build());
 
         // when
         mockMvc.perform(
                         post("/oauth/naver")
-                                .content(code)
+                                .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("naver-login-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                                requestFields(
-                                        fieldWithPath("code").description("네이버 로그인 인증 코드")
+                        requestFields(
+                                fieldWithPath("code").description("네이버 로그인 인증 코드"),
+                                fieldWithPath("state").description("네이버 로그인 상태 검증 코드")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),

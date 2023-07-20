@@ -1,9 +1,6 @@
 package upbrella.be.user.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,9 +9,7 @@ import javax.persistence.Id;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -30,5 +25,12 @@ public class User {
                 .phoneNumber(phoneNumber)
                 .adminStatus(false)
                 .build();
+    }
+
+    @Builder
+    protected User(String name, String phoneNumber, boolean adminStatus) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.adminStatus = adminStatus;
     }
 }
