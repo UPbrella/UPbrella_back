@@ -38,7 +38,12 @@ public class LoginController {
     }
 
     @PostMapping("/naver")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(HttpSession session, @RequestBody String code) {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(HttpSession session, @RequestBody String code, @RequestBody String state) {
+
+        NaverToken naverToken = oauthLoginService.getAccessToken(code, state);
+        LoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
+        LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
+        session.setAttribute("userId", loggedInUserResponse.getId());
 
         return ResponseEntity
                 .ok()
@@ -46,20 +51,17 @@ public class LoginController {
                         "success",
                         200,
                         "네이버 로그인 성공",
-                        LoggedInUserResponse.builder()
-                                .id(1L)
-                                .name("네이버 사용자")
-                                .phoneNumber("010-0000-0000")
-                                .adminStatus(false)
-                                .build()));
+                        loggedInUserResponse));
     }
 
+    // 로컬 be 개발용
     @GetMapping("/naver")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLoginDev(HttpSession session, @RequestParam String code, @RequestParam String state) {
 
         NaverToken naverToken = oauthLoginService.getAccessToken(code, state);
         LoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
+        session.setAttribute("userId", loggedInUserResponse.getId());
 
         return ResponseEntity
                 .ok()
