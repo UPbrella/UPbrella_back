@@ -34,7 +34,6 @@ public class UserControllerTest extends RestDocsSupport {
         // given
         UserInfoResponse user = UserInfoResponse.builder()
                 .id(1)
-                .socialId(1L)
                 .name("일반사용자")
                 .phoneNumber("010-0000-0000")
                 .adminStatus(false)
@@ -52,8 +51,6 @@ public class UserControllerTest extends RestDocsSupport {
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("id").type(JsonFieldType.NUMBER)
                                         .description("사용자 고유번호"),
-                                fieldWithPath("socialId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
