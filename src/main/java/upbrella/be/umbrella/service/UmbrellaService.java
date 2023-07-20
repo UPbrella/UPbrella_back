@@ -23,7 +23,7 @@ public class UmbrellaService {
         return null;
     }
 
-    public void addUmbrella(UmbrellaRequest umbrellaRequest) {
+    public Umbrella addUmbrella(UmbrellaRequest umbrellaRequest) {
 
         StoreMeta storeMeta = storeMetaRepository.findById(umbrellaRequest.getStoreMetaId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
@@ -32,13 +32,13 @@ public class UmbrellaService {
             throw new IllegalArgumentException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
-        Umbrella umbrella = Umbrella.createOf(
-                storeMeta,
-                umbrellaRequest.getUuid(),
-                umbrellaRequest.isRentable()
+        return umbrellaRepository.save(
+                Umbrella.ofCreated(
+                        storeMeta,
+                        umbrellaRequest.getUuid(),
+                        umbrellaRequest.isRentable()
+                )
         );
-
-        umbrellaRepository.save(umbrella);
     }
     public void modifyUmbrella(long id, UmbrellaRequest umbrellaRequest) {
 
