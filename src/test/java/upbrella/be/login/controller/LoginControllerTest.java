@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.login.dto.request.NaverLoginCodeRequest;
-import upbrella.be.login.dto.response.LoggedInUser;
+import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.login.dto.token.NaverToken;
 import upbrella.be.login.service.OauthLoginService;
@@ -79,7 +79,7 @@ public class LoginControllerTest extends RestDocsSupport {
         given(oauthLoginService.getAccessToken(anyString(), anyString()))
                 .willReturn(new NaverToken("accessToken", "refreshToken", "tokenType", 3600L));
         given(oauthLoginService.processLogin(anyString()))
-                .willReturn(new LoggedInUser("네이버 사용자", "010-0000-0000"));
+                .willReturn(new NaverLoggedInUser("네이버 사용자", "010-0000-0000"));
         given(userService.joinService(anyString(), anyString()))
                 .willReturn(LoggedInUserResponse.builder()
                         .id(1L)
