@@ -16,5 +16,6 @@ public class StoreFindByIdResponse {
     private String address;
     private int availableUmbrellaCount;
     private boolean openStatus;
-    private String coordinate; // 네이버 길찾기 누르면 바로 좌표 길찾기로 이용할 수 있도록
+    private String latitude;
+    private String longitude;
 }
