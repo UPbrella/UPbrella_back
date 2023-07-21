@@ -5,14 +5,13 @@ import org.springframework.stereotype.Service;
 import upbrella.be.store.StoreRepository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class StoreMetaService {
     private final StoreMetaRepository storeMetaRepository;
 
-    public Optional<StoreMeta> findByStoreMetaId(long id) {
-        return storeMetaRepository.findById(id);
+    public StoreMeta findById(long id) {
+        return storeMetaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
     }
 }
