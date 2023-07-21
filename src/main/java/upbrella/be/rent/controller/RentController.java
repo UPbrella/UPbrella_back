@@ -84,13 +84,8 @@ public class RentController {
                         "상태 신고 내역 조회 성공",
                         ConditionReportPageResponse.builder()
                                 .conditionReports(
-                                        List.of(ConditionReportResponse.builder()
-                                                .id(1L)
-                                                .umbrellaId(30)
-                                                .content("우산이 망가졌어요")
-                                                .etc("기타 사항")
-                                                .build()
-                                        )).build()));
+                                        conditionReportService.findAllConditionReport()
+                                        ).build()));
     }
 
     @GetMapping("/histories/improvements")
@@ -103,7 +98,7 @@ public class RentController {
                         200,
                         "개선 요청 내역 조회 성공",
                         ImprovementReportPageResponse.builder()
-                                .improvementReportPage(
+                                .improvementReports(
                                         List.of(ImprovementReportResponse.builder()
                                                 .id(1L)
                                                 .umbrellaId(30)
