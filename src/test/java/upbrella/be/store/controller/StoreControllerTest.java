@@ -65,8 +65,10 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("사용가능한 우산 개수"),
                                 fieldWithPath("openStatus").type(JsonFieldType.BOOLEAN)
                                         .description("오픈 여부"),
-                                fieldWithPath("coordinate").type(JsonFieldType.STRING)
-                                        .description("네이버 길찾기를 위한 좌표")
+                                fieldWithPath("latitude").type(JsonFieldType.STRING)
+                                        .description("위도"),
+                                fieldWithPath("longitude").type(JsonFieldType.STRING)
+                                        .description("경도")
                         )));
     }
 
