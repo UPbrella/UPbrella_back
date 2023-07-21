@@ -76,7 +76,7 @@ public class RentController {
                         200,
                         "상태 신고 내역 조회 성공",
                         ConditionReportPageResponse.builder()
-                                .statusDeclarationPage(
+                                .conditionReportResponses(
                                         List.of(ConditionReportResponse.builder()
                                                 .id(1L)
                                                 .umbrellaId(30)
@@ -96,7 +96,7 @@ public class RentController {
                         200,
                         "개선 요청 내역 조회 성공",
                         ImprovementReportPageResponse.builder()
-                                .improvementPage(
+                                .improvementReportPage(
                                         List.of(ImprovementReportResponse.builder()
                                                 .id(1L)
                                                 .umbrellaId(30)

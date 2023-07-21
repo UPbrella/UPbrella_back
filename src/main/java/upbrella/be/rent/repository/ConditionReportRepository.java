@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ConditionReportRepository extends JpaRepository<ConditionReport, Long> {
 
-    List<ConditionReport>  findAllConditionReport();
+    List<ConditionReport> findAllConditionReport();
 }
