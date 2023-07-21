@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class ImprovementPageResponse {
+public class ConditionReportPageResponse {
 
-    private List<ImprovementResponse> improvementPage;
+    private List<ConditionReportResponse> conditionReportResponses;
 }

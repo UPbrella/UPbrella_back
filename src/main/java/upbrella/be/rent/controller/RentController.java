@@ -67,7 +67,7 @@ public class RentController {
     }
 
     @GetMapping("/histories/status")
-    public ResponseEntity<CustomResponse<StatusDeclarationPageResponse>> findStatusDeclarations(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> findStatusDeclarations(HttpSession httpSession) {
 
         return ResponseEntity
                 .ok()
@@ -75,9 +75,9 @@ public class RentController {
                         "success",
                         200,
                         "상태 신고 내역 조회 성공",
-                        StatusDeclarationPageResponse.builder()
+                        ConditionReportPageResponse.builder()
                                 .statusDeclarationPage(
-                                        List.of(StatusDeclarationResponse.builder()
+                                        List.of(ConditionReportResponse.builder()
                                                 .id(1L)
                                                 .umbrellaId(30)
                                                 .content("우산이 망가졌어요")
@@ -87,7 +87,7 @@ public class RentController {
     }
 
     @GetMapping("/histories/improvements")
-    public ResponseEntity<CustomResponse<ImprovementPageResponse>> findImprovements(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ImprovementReportPageResponse>> findImprovements(HttpSession httpSession) {
 
         return ResponseEntity
                 .ok()
@@ -95,9 +95,9 @@ public class RentController {
                         "success",
                         200,
                         "개선 요청 내역 조회 성공",
-                        ImprovementPageResponse.builder()
+                        ImprovementReportPageResponse.builder()
                                 .improvementPage(
-                                        List.of(ImprovementResponse.builder()
+                                        List.of(ImprovementReportResponse.builder()
                                                 .id(1L)
                                                 .umbrellaId(30)
                                                 .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")

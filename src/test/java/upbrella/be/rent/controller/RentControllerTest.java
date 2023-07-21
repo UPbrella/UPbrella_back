@@ -164,8 +164,8 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     void showAllStatusDeclarationsTest() throws Exception {
 
-        StatusDeclarationPageResponse response = StatusDeclarationPageResponse.builder()
-                .statusDeclarationPage(List.of(StatusDeclarationResponse.builder()
+        ConditionReportPageResponse response = ConditionReportPageResponse.builder()
+                .statusDeclarationPage(List.of(ConditionReportResponse.builder()
                         .id(1L)
                         .umbrellaId(1)
                         .content("우산이 망가졌습니다.")
@@ -201,8 +201,8 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     void showAllImprovementsTest() throws Exception {
 
-        ImprovementPageResponse response = ImprovementPageResponse.builder()
-                .improvementPage(List.of(ImprovementResponse.builder()
+        ImprovementReportPageResponse response = ImprovementReportPageResponse.builder()
+                .improvementPage(List.of(ImprovementReportResponse.builder()
                         .id(1L)
                         .umbrellaId(1)
                         .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
