@@ -5,6 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
@@ -12,15 +16,20 @@ import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UmbrellaServiceTest {
-    private final UmbrellaRepository umbrellaRepository = mock(UmbrellaRepository.class);
-    private final StoreMetaService storeMetaService = mock(StoreMetaService.class);
-    private final UmbrellaService umbrellaService = new UmbrellaService(umbrellaRepository, storeMetaService);
+    @Mock
+    private UmbrellaRepository umbrellaRepository;
+    @Mock
+    private StoreMetaService storeMetaService;
+    @InjectMocks
+    private UmbrellaService umbrellaService;
 
     @Test
     void findAllUmbrellas() {
@@ -36,6 +45,7 @@ class UmbrellaServiceTest {
         private UmbrellaRequest umbrellaRequest;
         private StoreMeta foundStoreMeta;
         private Umbrella umbrella;
+
         @BeforeEach
         void setUp() {
             umbrellaRequest = UmbrellaRequest.builder()
@@ -92,12 +102,14 @@ class UmbrellaServiceTest {
                     .isEqualTo(false);
             softly.assertAll();
 
-            then(umbrellaRepository).should(times(1))
-                    .existsByUuid(43);
-            then(storeMetaService).should(times(1))
-                    .findById(2L);
-            then(umbrellaRepository).should(times(1))
-                    .save(any(Umbrella.class));
+            assertAll(
+                    () -> then(umbrellaRepository).should(times(1))
+                    .existsByUuid(43),
+                    () -> then(storeMetaService).should(times(1))
+                    .findById(2L),
+                    () -> then(umbrellaRepository).should(times(1))
+                    .save(any(Umbrella.class))
+            );
         }
 
         @Test
@@ -114,12 +126,14 @@ class UmbrellaServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
 
             // then
-            then(storeMetaService).should(times(1))
-                    .findById(2L);
-            then(umbrellaRepository).should(times(1))
-                    .existsByUuid(43);
-            then(umbrellaRepository).should(never())
-                    .save(any(Umbrella.class));
+            assertAll(
+                    () -> then(storeMetaService).should(times(1))
+                            .findById(2L),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .existsByUuid(43),
+                    () -> then(umbrellaRepository).should(never())
+                            .save(any(Umbrella.class))
+            );
         }
 
         @Test
@@ -130,13 +144,14 @@ class UmbrellaServiceTest {
             given(storeMetaService.findById(2L))
                     .willThrow(new IllegalArgumentException());
 
-            // when
-            assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
-            //then
-            then(storeMetaService).should(times(1))
-                    .findById(2L);
-            then(umbrellaRepository).shouldHaveNoInteractions();
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaRequest))
+                            .isInstanceOf(IllegalArgumentException.class),
+                    () -> then(storeMetaService).should(times(1))
+                            .findById(2L),
+                    () -> then(umbrellaRepository).shouldHaveNoInteractions()
+            );
         }
     }
 
@@ -146,6 +161,7 @@ class UmbrellaServiceTest {
         private UmbrellaRequest umbrellaRequest;
         private StoreMeta foundStoreMeta;
         private Umbrella umbrella;
+
         @BeforeEach
         void setUp() {
 
@@ -206,14 +222,16 @@ class UmbrellaServiceTest {
                     .isEqualTo(false);
             softly.assertAll();
 
-            then(umbrellaRepository).should(times(1))
-                    .existsByUuid(50L);
-            then(umbrellaRepository).should(times(1))
-                    .existsById(1L);
-            then(storeMetaService).should(times(1))
-                    .findById(5L);
-            then(umbrellaRepository).should(times(1))
-                    .save(any(Umbrella.class));
+            assertAll(
+                    () -> then(umbrellaRepository).should(times(1))
+                            .existsByUuid(50L),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .existsById(1L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findById(5L),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .save(any(Umbrella.class))
+            );
         }
 
         @Test
@@ -225,24 +243,21 @@ class UmbrellaServiceTest {
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsById(1L))
                     .willReturn(false);
-            given(umbrellaRepository.existsByUuid(50L))
-                    .willReturn(false);
-            given(umbrellaRepository.save(any(Umbrella.class)))
-                    .willReturn(umbrella);
 
-            // when
-            assertThatThrownBy(() -> umbrellaService.modifyUmbrella(1L, umbrellaRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-            // then
-            then(umbrellaRepository).should(never())
-                    .existsByUuid(50L);
-            then(umbrellaRepository).should(times(1))
-                    .existsById(1L);
-            then(storeMetaService).should(times(1))
-                    .findById(5L);
-            then(umbrellaRepository).should(never())
-                    .save(any(Umbrella.class));
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() ->
+                            umbrellaService.modifyUmbrella(1L, umbrellaRequest))
+                            .isInstanceOf(IllegalArgumentException.class),
+                    () -> then(umbrellaRepository).should(never())
+                            .existsByUuid(50L),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .existsById(1L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findById(5L),
+                    () -> then(umbrellaRepository).should(never())
+                            .save(any(Umbrella.class))
+            );
         }
 
         @Test
@@ -256,22 +271,21 @@ class UmbrellaServiceTest {
                     .willReturn(true);
             given(umbrellaRepository.existsByUuid(50L))
                     .willReturn(true);
-            given(umbrellaRepository.save(any(Umbrella.class)))
-                    .willReturn(umbrella);
 
-            // when
-            assertThatThrownBy(() -> umbrellaService.modifyUmbrella(1L, umbrellaRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-            // then
-            then(umbrellaRepository).should(times(1))
-                    .existsByUuid(50L);
-            then(umbrellaRepository).should(times(1))
-                    .existsById(1L);
-            then(storeMetaService).should(times(1))
-                    .findById(5L);
-            then(umbrellaRepository).should(never())
-                    .save(any(Umbrella.class));
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() ->
+                            umbrellaService.modifyUmbrella(1L, umbrellaRequest))
+                            .isInstanceOf(IllegalArgumentException.class),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .existsByUuid(50L),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .existsById(1L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findById(5L),
+                    () -> then(umbrellaRepository).should(never())
+                            .save(any(Umbrella.class))
+            );
         }
 
         @Test
@@ -281,21 +295,16 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findById(5L))
                     .willThrow(new IllegalArgumentException());
-            given(umbrellaRepository.existsById(1L))
-                    .willReturn(true);
-            given(umbrellaRepository.existsByUuid(50L))
-                    .willReturn(false);
-            given(umbrellaRepository.save(any(Umbrella.class)))
-                    .willReturn(umbrella);
 
-            // when
-            assertThatThrownBy(() -> umbrellaService.modifyUmbrella(1L, umbrellaRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-            // then
-            then(storeMetaService).should(times(1))
-                    .findById(5L);
-            then(umbrellaRepository).shouldHaveNoInteractions();
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() ->
+                            umbrellaService.modifyUmbrella(1L, umbrellaRequest))
+                            .isInstanceOf(IllegalArgumentException.class),
+                    () -> then(storeMetaService).should(times(1))
+                            .findById(5L),
+                    () -> then(umbrellaRepository).shouldHaveNoInteractions()
+            );
         }
     }
 
