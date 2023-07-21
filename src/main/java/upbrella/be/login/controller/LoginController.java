@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.login.dto.request.NaverLoginCodeRequest;
-import upbrella.be.login.dto.response.LoggedInUser;
+import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.login.dto.token.NaverToken;
 import upbrella.be.login.service.OauthLoginService;
@@ -42,7 +42,7 @@ public class LoginController {
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(HttpSession session, @RequestBody NaverLoginCodeRequest request) {
 
         NaverToken naverToken = oauthLoginService.getAccessToken(request.getCode(), request.getState());
-        LoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
+        NaverLoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
         session.setAttribute("userId", loggedInUserResponse.getId());
 
@@ -60,7 +60,7 @@ public class LoginController {
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLoginDev(HttpSession session, @RequestBody NaverLoginCodeRequest request) {
 
         NaverToken naverToken = oauthLoginService.getAccessToken(request.getCode(), request.getState());
-        LoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
+        NaverLoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
         session.setAttribute("userId", loggedInUserResponse.getId());
 

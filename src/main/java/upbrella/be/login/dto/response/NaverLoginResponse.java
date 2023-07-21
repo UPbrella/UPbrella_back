@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NaverLoginResponse {
 
-    private LoggedInUser response;
+    private NaverLoggedInUser response;
 }
