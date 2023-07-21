@@ -3,7 +3,6 @@ package upbrella.be.rent.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import upbrella.be.rent.dto.response.ConditionReportResponse;
-import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.repository.ConditionReportRepository;
 
 import java.util.List;
