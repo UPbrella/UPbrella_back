@@ -76,7 +76,7 @@ public class LoginControllerTest extends RestDocsSupport {
                 .state("upbrellaDev")
                 .build();
 
-        given(oauthLoginService.getAccessToken(anyString(), anyString()))
+        given(oauthLoginService.getNaverAccessToken(anyString(), anyString()))
                 .willReturn(new NaverToken("accessToken", "refreshToken", "tokenType", 3600L));
         given(oauthLoginService.processNaverLogin(anyString()))
                 .willReturn(new NaverLoggedInUser("네이버 사용자", "010-0000-0000"));

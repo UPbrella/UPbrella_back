@@ -44,7 +44,7 @@ public class LoginController {
     @PostMapping("/naver")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(HttpSession session, @RequestBody NaverLoginCodeRequest request) {
 
-        NaverToken naverToken = oauthLoginService.getAccessToken(request.getCode(), request.getState());
+        NaverToken naverToken = oauthLoginService.getNaverAccessToken(request.getCode(), request.getState());
         NaverLoggedInUser loggedInUser = oauthLoginService.processNaverLogin(naverToken.getAccessToken());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
         session.setAttribute("userId", loggedInUserResponse.getId());
@@ -65,7 +65,7 @@ public class LoginController {
         System.out.println("naverLoginCodeRequest = " + naverLoginCodeRequest.getCode());
         System.out.println("naverLoginCodeRequest = " + naverLoginCodeRequest.getState());
 
-        NaverToken naverToken = oauthLoginService.getAccessToken(naverLoginCodeRequest.getCode(), naverLoginCodeRequest.getState());
+        NaverToken naverToken = oauthLoginService.getNaverAccessToken(naverLoginCodeRequest.getCode(), naverLoginCodeRequest.getState());
         NaverLoggedInUser loggedInUser = oauthLoginService.processNaverLogin(naverToken.getAccessToken());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
         session.setAttribute("userId", loggedInUserResponse.getId());

@@ -24,7 +24,7 @@ public class OauthLoginService {
     private final NaverOauthInfo naverOauthInfo;
     private final KakaoOauthInfo kakaoOauthInfo;
 
-    public NaverToken getAccessToken(String code, String state) {
+    public NaverToken getNaverAccessToken(String code, String state) {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> header = new HashMap<>();
