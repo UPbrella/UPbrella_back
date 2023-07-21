@@ -1,16 +1,23 @@
 package upbrella.be.umbrella.entity;
 
-import lombok.Getter;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import upbrella.be.store.entity.StoreMeta;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@SQLDelete(sql = "UPDATE umbrella SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Umbrella {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
     @JoinColumn(name = "store_meta_id")
@@ -18,4 +25,23 @@ public class Umbrella {
     private long uuid;
     private boolean rentable;
     private boolean deleted;
+
+    public static Umbrella ofCreated(StoreMeta storeMeta, long uuid, boolean rentable) {
+        return Umbrella.builder()
+                .storeMeta(storeMeta)
+                .uuid(uuid)
+                .rentable(rentable)
+                .deleted(false)
+                .build();
+    }
+
+    public static Umbrella ofUpdated(long id, StoreMeta storeMeta, long uuid, boolean rentable) {
+        return Umbrella.builder()
+                .id(id)
+                .storeMeta(storeMeta)
+                .uuid(uuid)
+                .rentable(rentable)
+                .deleted(false)
+                .build();
+    }
 }
