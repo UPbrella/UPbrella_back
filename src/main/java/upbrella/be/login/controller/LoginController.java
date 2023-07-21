@@ -1,6 +1,5 @@
 package upbrella.be.login.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.login.dto.request.NaverLoginCodeRequest;
@@ -8,21 +7,28 @@ import upbrella.be.login.dto.response.KakoLoginResponse;
 import upbrella.be.login.dto.response.Properties;
 import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
-import upbrella.be.login.dto.token.KakaoToken;
-import upbrella.be.login.dto.token.NaverToken;
+import upbrella.be.login.dto.token.*;
 import upbrella.be.login.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/oauth")
 public class LoginController {
 
     private final OauthLoginService oauthLoginService;
     private final UserService userService;
+    private final CommonOauthInfo kakaoOauthInfo;
+    private final CommonOauthInfo naveroauthInfo;
+
+    public LoginController(OauthLoginService oauthLoginService, UserService userService, KakaoOauthInfo kakaoOauthInfo, NaverOauthInfo naveroauthInfo) {
+        this.oauthLoginService = oauthLoginService;
+        this.userService = userService;
+        this.kakaoOauthInfo = kakaoOauthInfo;
+        this.naveroauthInfo = naveroauthInfo;
+    }
 
     @PostMapping("/kakao")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLogin(HttpSession session, @RequestBody String code) {
@@ -42,10 +48,10 @@ public class LoginController {
     }
 
     @PostMapping("/naver")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(HttpSession session, @RequestBody NaverLoginCodeRequest request) {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(HttpSession session, @RequestBody String code) {
 
-        NaverToken naverToken = oauthLoginService.getNaverAccessToken(request.getCode(), request.getState());
-        NaverLoggedInUser loggedInUser = oauthLoginService.processNaverLogin(naverToken.getAccessToken());
+        OauthToken naverAccessToken = oauthLoginService.getOauthToken(code, naveroauthInfo);
+        NaverLoggedInUser loggedInUser = oauthLoginService.processNaverLogin(naverAccessToken.getAccessToken(), naveroauthInfo.getLoginUri());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
         session.setAttribute("userId", loggedInUserResponse.getId());
 
@@ -60,13 +66,10 @@ public class LoginController {
 
     // 로컬 be 개발용
     @GetMapping("/naver")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLoginDev(HttpSession session, @ModelAttribute NaverLoginCodeRequest naverLoginCodeRequest) {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLoginDev(HttpSession session, String code) {
 
-        System.out.println("naverLoginCodeRequest = " + naverLoginCodeRequest.getCode());
-        System.out.println("naverLoginCodeRequest = " + naverLoginCodeRequest.getState());
-
-        NaverToken naverToken = oauthLoginService.getNaverAccessToken(naverLoginCodeRequest.getCode(), naverLoginCodeRequest.getState());
-        NaverLoggedInUser loggedInUser = oauthLoginService.processNaverLogin(naverToken.getAccessToken());
+        OauthToken naverAccessToken = oauthLoginService.getOauthToken(code, naveroauthInfo);
+        NaverLoggedInUser loggedInUser = oauthLoginService.processNaverLogin(naverAccessToken.getAccessToken(), naveroauthInfo.getLoginUri());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
         session.setAttribute("userId", loggedInUserResponse.getId());
 
@@ -82,8 +85,9 @@ public class LoginController {
     @GetMapping("/kakao")
     public ResponseEntity<CustomResponse<Properties>> kakaoLoginDev(HttpSession session, String code) {
 
-        KakaoToken kakaoAccessToken = oauthLoginService.getKakaoAccessToken(code);
-        KakoLoginResponse kakaoUserProfile = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken());
+        OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
+        KakoLoginResponse kakaoUserProfile = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
+        // TODO: 비즈앱으로 전환 후 로그인 처리하기
 
         return ResponseEntity
                 .ok()
