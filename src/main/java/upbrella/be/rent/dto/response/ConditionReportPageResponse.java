@@ -11,5 +11,5 @@ import java.util.List;
 @Builder
 public class ConditionReportPageResponse {
 
-    private List<ConditionReportResponse> conditionReportResponses;
+    private List<ConditionReportResponse> conditionReports;
 }

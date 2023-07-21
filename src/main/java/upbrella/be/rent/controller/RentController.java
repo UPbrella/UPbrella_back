@@ -1,19 +1,24 @@
 package upbrella.be.rent.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
+import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/rent")
 public class RentController {
+
+    private final ConditionReportService conditionReportService;
 
     @PostMapping
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
@@ -67,7 +72,9 @@ public class RentController {
     }
 
     @GetMapping("/histories/status")
-    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> findStatusDeclarations(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> showAllConditionReports(HttpSession httpSession) {
+
+        // TODO: 세션 정보로 관리자 식별
 
         return ResponseEntity
                 .ok()
@@ -76,7 +83,7 @@ public class RentController {
                         200,
                         "상태 신고 내역 조회 성공",
                         ConditionReportPageResponse.builder()
-                                .conditionReportResponses(
+                                .conditionReports(
                                         List.of(ConditionReportResponse.builder()
                                                 .id(1L)
                                                 .umbrellaId(30)

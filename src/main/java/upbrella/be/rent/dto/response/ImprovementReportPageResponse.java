@@ -11,5 +11,5 @@ import java.util.List;
 @Builder
 public class ImprovementReportPageResponse {
 
-    private List<ImprovementReportResponse> improvementReportPage;
+    private List<ImprovementReportResponse> improvementReports;
 }

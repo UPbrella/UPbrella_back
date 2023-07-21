@@ -8,6 +8,7 @@ import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
+import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.RentService;
 
 import java.time.LocalDateTime;
@@ -25,10 +26,11 @@ import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 public class RentControllerTest extends RestDocsSupport {
 
     private final RentService rentService = mock(RentService.class);
+    private final ConditionReportService conditionReportService = mock(ConditionReportService.class);
 
     @Override
     protected Object initController() {
-        return new RentController();
+        return new RentController(conditionReportService);
     }
 
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
@@ -165,7 +167,7 @@ public class RentControllerTest extends RestDocsSupport {
     void showAllStatusDeclarationsTest() throws Exception {
 
         ConditionReportPageResponse response = ConditionReportPageResponse.builder()
-                .statusDeclarationPage(List.of(ConditionReportResponse.builder()
+                .conditionReports(List.of(ConditionReportResponse.builder()
                         .id(1L)
                         .umbrellaId(1)
                         .content("우산이 망가졌습니다.")
@@ -202,7 +204,7 @@ public class RentControllerTest extends RestDocsSupport {
     void showAllImprovementsTest() throws Exception {
 
         ImprovementReportPageResponse response = ImprovementReportPageResponse.builder()
-                .improvementPage(List.of(ImprovementReportResponse.builder()
+                .improvementReports(List.of(ImprovementReportResponse.builder()
                         .id(1L)
                         .umbrellaId(1)
                         .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
