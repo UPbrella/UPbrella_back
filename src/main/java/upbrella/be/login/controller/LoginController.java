@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.login.dto.request.NaverLoginCodeRequest;
+import upbrella.be.login.dto.response.KakoLoginResponse;
+import upbrella.be.login.dto.response.Properties;
 import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
+import upbrella.be.login.dto.token.KakaoToken;
 import upbrella.be.login.dto.token.NaverToken;
 import upbrella.be.login.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
@@ -42,7 +45,7 @@ public class LoginController {
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLogin(HttpSession session, @RequestBody NaverLoginCodeRequest request) {
 
         NaverToken naverToken = oauthLoginService.getAccessToken(request.getCode(), request.getState());
-        NaverLoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
+        NaverLoggedInUser loggedInUser = oauthLoginService.processNaverLogin(naverToken.getAccessToken());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
         session.setAttribute("userId", loggedInUserResponse.getId());
 
@@ -57,10 +60,13 @@ public class LoginController {
 
     // 로컬 be 개발용
     @GetMapping("/naver")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLoginDev(HttpSession session, @RequestBody NaverLoginCodeRequest request) {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> naverLoginDev(HttpSession session, @ModelAttribute NaverLoginCodeRequest naverLoginCodeRequest) {
 
-        NaverToken naverToken = oauthLoginService.getAccessToken(request.getCode(), request.getState());
-        NaverLoggedInUser loggedInUser = oauthLoginService.processLogin(naverToken.getAccessToken());
+        System.out.println("naverLoginCodeRequest = " + naverLoginCodeRequest.getCode());
+        System.out.println("naverLoginCodeRequest = " + naverLoginCodeRequest.getState());
+
+        NaverToken naverToken = oauthLoginService.getAccessToken(naverLoginCodeRequest.getCode(), naverLoginCodeRequest.getState());
+        NaverLoggedInUser loggedInUser = oauthLoginService.processNaverLogin(naverToken.getAccessToken());
         LoggedInUserResponse loggedInUserResponse = userService.joinService(loggedInUser.getName(), loggedInUser.getMobile());
         session.setAttribute("userId", loggedInUserResponse.getId());
 
@@ -71,5 +77,20 @@ public class LoginController {
                         200,
                         "네이버 로그인 성공",
                         loggedInUserResponse));
+    }
+
+    @GetMapping("/kakao")
+    public ResponseEntity<CustomResponse<Properties>> kakaoLoginDev(HttpSession session, String code) {
+
+        KakaoToken kakaoAccessToken = oauthLoginService.getKakaoAccessToken(code);
+        KakoLoginResponse kakaoUserProfile = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "카카오 로그인 성공",
+                        kakaoUserProfile.getProperties()));
     }
 }
