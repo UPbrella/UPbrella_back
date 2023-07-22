@@ -41,7 +41,7 @@ public class RentControllerTest extends RestDocsSupport {
                 .region("신촌")
                 .storeId(1)
                 .umbrellaId(1)
-                .statusDeclaration("필요하다면 상태 신고를 해주세요.")
+                .conditonReport("필요하다면 상태 신고를 해주세요.")
                 .build();
 
         mockMvc.perform(
