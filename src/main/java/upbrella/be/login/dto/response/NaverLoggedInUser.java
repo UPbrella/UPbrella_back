@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoggedInUser {
+public class NaverLoggedInUser {
 
     private String name;
     private String mobile;

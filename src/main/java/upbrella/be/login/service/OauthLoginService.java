@@ -6,10 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import upbrella.be.login.dto.response.LoggedInUser;
+import upbrella.be.login.dto.response.KakoLoginResponse;
+import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.NaverLoginResponse;
-import upbrella.be.login.dto.token.NaverOauthInfo;
-import upbrella.be.login.dto.token.NaverToken;
+import upbrella.be.login.dto.response.Properties;
+import upbrella.be.login.dto.token.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,32 +19,31 @@ import java.util.Map;
 @Service
 public class OauthLoginService {
 
-    private final NaverOauthInfo naverOauthInfo;
+    private final RestTemplate restTemplate;
 
-    public NaverToken getAccessToken(String code, String state) {
+    public OauthToken getOauthToken(String code, CommonOauthInfo oauthInfo) {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> header = new HashMap<>();
         header.put("Accept", "application/json");
+        header.put("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
         headers.setAll(header);
 
         MultiValueMap<String, String> requestPayloads = new LinkedMultiValueMap<>();
         Map<String, String> requestPayload = new HashMap<>();
-        requestPayload.put("client_id", naverOauthInfo.getNaverClientId());
-        requestPayload.put("client_secret", naverOauthInfo.getNaverClientSecret());
-        requestPayload.put("state", naverOauthInfo.getNaverState());
-        requestPayload.put("code", code);
         requestPayload.put("grant_type", "authorization_code");
+        requestPayload.put("client_id", oauthInfo.getClientId());
+        requestPayload.put("client_secret", oauthInfo.getClientSecret());
+        requestPayload.put("code", code);
         requestPayloads.setAll(requestPayload);
 
         HttpEntity<?> request = new HttpEntity<>(requestPayloads, headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<NaverToken> response = restTemplate.postForEntity(naverOauthInfo.getNaverUrl(), request, NaverToken.class);
+        ResponseEntity<OauthToken> response = restTemplate.postForEntity(oauthInfo.getRedirectUri(), request, OauthToken.class);
 
         return response.getBody();
     }
 
-    public LoggedInUser processLogin(String accessToken) {
+    private  <T> T processLogin(String accessToken, String loginUri, Class<T> responseType) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
@@ -51,21 +51,21 @@ public class OauthLoginService {
 
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
-        return new RestTemplate().exchange(
-                        "https://openapi.naver.com/v1/nid/me",
+        return restTemplate.exchange(
+                        loginUri,
                         HttpMethod.GET,
                         requestEntity,
-                        NaverLoginResponse.class)
-                .getBody()
-                .getResponse();
+                        responseType)
+                .getBody();
     }
 
-    // TODO: state 회의하기
-    private void checkNaverState(String state) {
+    public NaverLoggedInUser processNaverLogin(String accessToken, String loginUri) {
+        NaverLoginResponse response = processLogin(accessToken, loginUri, NaverLoginResponse.class);
+        return response.getResponse();
+    }
 
-        if (state.equals(naverOauthInfo.getNaverState())) {
-            // TODO: 401 커스텀 에러 만들기
-            throw new IllegalArgumentException("잘못된 접근입니다.");
-        }
+    public Properties processKakaoLogin(String accessToken, String loginUri) {
+        KakoLoginResponse response = processLogin(accessToken, loginUri, KakoLoginResponse.class);
+        return response.getProperties();
     }
 }

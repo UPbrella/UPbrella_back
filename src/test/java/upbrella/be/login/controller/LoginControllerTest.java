@@ -1,20 +1,25 @@
 package upbrella.be.login.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.*;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.login.dto.request.NaverLoginCodeRequest;
-import upbrella.be.login.dto.response.LoggedInUser;
+import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
-import upbrella.be.login.dto.token.NaverToken;
+import upbrella.be.login.dto.token.*;
 import upbrella.be.login.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
-import static org.mockito.ArgumentMatchers.anyString;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -27,10 +32,12 @@ public class LoginControllerTest extends RestDocsSupport {
 
     private final OauthLoginService oauthLoginService = mock(OauthLoginService.class);
     private final UserService userService = mock(UserService.class);
+    private final KakaoOauthInfo kakaoOauthInfo = mock(KakaoOauthInfo.class);
+    private final NaverOauthInfo naveroauthInfo = mock(NaverOauthInfo.class);
 
     @Override
     protected Object initController() {
-        return new LoginController(oauthLoginService, userService);
+        return new LoginController(oauthLoginService, userService, kakaoOauthInfo, naveroauthInfo);
     }
 
     @Test
@@ -38,7 +45,6 @@ public class LoginControllerTest extends RestDocsSupport {
     void kakoLoginTest() throws Exception {
         // given
         String code = "{\"code\":\"1kdfjq0243f\"}";
-
 
         // when
         mockMvc.perform(
@@ -71,15 +77,20 @@ public class LoginControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 네이버 소셜 로그인을 할 수 있다.")
     void naverLoginTest() throws Exception {
         // given
-        NaverLoginCodeRequest request = NaverLoginCodeRequest.builder()
-                .code("1kdfjq0243f")
-                .state("upbrellaDev")
-                .build();
+        String code = "{\"code\":\"1kdfjq0243f\"}";
 
-        given(oauthLoginService.getAccessToken(anyString(), anyString()))
-                .willReturn(new NaverToken("accessToken", "refreshToken", "tokenType", 3600L));
-        given(oauthLoginService.processLogin(anyString()))
-                .willReturn(new LoggedInUser("네이버 사용자", "010-0000-0000"));
+        given(oauthLoginService.getOauthToken(anyString(), any(CommonOauthInfo.class)))
+                .willReturn(new OauthToken("accessToken", "refreshToken", "tokenType", 3600L));
+        given(naveroauthInfo.getClientId())
+                .willReturn("clientId");
+        given(naveroauthInfo.getClientSecret())
+                .willReturn("clientSecret");
+        given(naveroauthInfo.getRedirectUri())
+                .willReturn("redirectUri");
+        given(naveroauthInfo.getLoginUri())
+                .willReturn("loginUri");
+        given(oauthLoginService.processNaverLogin(anyString(), anyString()))
+                .willReturn(new NaverLoggedInUser("네이버 사용자", "010-0000-0000"));
         given(userService.joinService(anyString(), anyString()))
                 .willReturn(LoggedInUserResponse.builder()
                         .id(1L)
@@ -88,10 +99,10 @@ public class LoginControllerTest extends RestDocsSupport {
                         .adminStatus(false)
                         .build());
 
-        // when
+        // then
         mockMvc.perform(
                         post("/oauth/naver")
-                                .content(objectMapper.writeValueAsString(request))
+                                .content(code)
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -99,8 +110,7 @@ public class LoginControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("code").description("네이버 로그인 인증 코드"),
-                                fieldWithPath("state").description("네이버 로그인 상태 검증 코드")
+                                fieldWithPath("code").description("네이버 로그인 인증 코드")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),

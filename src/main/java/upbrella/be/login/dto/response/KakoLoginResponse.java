@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NaverLoginResponse {
+public class KakoLoginResponse {
 
-    private NaverLoggedInUser response;
+    private Properties properties;
 }

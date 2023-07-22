@@ -32,7 +32,8 @@ public class StoreController {
                                 .address("서울특별시 강남구 테헤란로 427")
                                 .availableUmbrellaCount(10)
                                 .openStatus(true)
-                                .coordinate("37.503716, 127.053718")
+                                .latitude("37.503716")
+                                .longitude("127.053718")
                                 .build()));
     }
 
