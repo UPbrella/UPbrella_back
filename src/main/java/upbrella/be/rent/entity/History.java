@@ -38,13 +38,12 @@ public class History {
     private LocalDateTime returnedAt;
     private String etc;
 
-    public static History ofCreatedByNewRent(Umbrella umbrella, User user, StoreMeta rentStoreMetaId, LocalDateTime rentedAt, String etc) {
+    public static History ofCreatedByNewRent(Umbrella umbrella, User user, StoreMeta rentStoreMetaId) {
         return History.builder()
                 .umbrella(umbrella)
                 .user(user)
                 .rentStoreMetaId(rentStoreMetaId)
                 .rentedAt(LocalDateTime.now())
-                .etc(etc)
                 .build();
     }
 }
