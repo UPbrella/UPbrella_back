@@ -14,5 +14,5 @@ public class RentUmbrellaByUserRequest {
     private String region;
     private long storeId;
     private long umbrellaId;
-    private String statusDeclaration;
+    private String conditonReport;
 }

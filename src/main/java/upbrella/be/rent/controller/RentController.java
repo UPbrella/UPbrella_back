@@ -23,6 +23,10 @@ public class RentController {
     @PostMapping
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
+        // TODO: 예외 처리
+
+
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
