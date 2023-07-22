@@ -15,12 +15,15 @@ import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class UmbrellaServiceTest {
@@ -76,7 +79,7 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findById(2L))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsByUuid(43))
+            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(43))
                     .willReturn(false);
             given(umbrellaRepository.save(any(Umbrella.class)))
                     .willReturn(umbrella);
@@ -104,11 +107,11 @@ class UmbrellaServiceTest {
 
             assertAll(
                     () -> then(umbrellaRepository).should(times(1))
-                    .existsByUuid(43),
+                            .existsByUuidAndDeletedIsFalse(43),
                     () -> then(storeMetaService).should(times(1))
-                    .findById(2L),
+                            .findById(2L),
                     () -> then(umbrellaRepository).should(times(1))
-                    .save(any(Umbrella.class))
+                            .save(any(Umbrella.class))
             );
         }
 
@@ -119,7 +122,7 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findById(2L))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsByUuid(43))
+            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(43))
                     .willReturn(true);
             // when
             assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaRequest))
@@ -130,7 +133,7 @@ class UmbrellaServiceTest {
                     () -> then(storeMetaService).should(times(1))
                             .findById(2L),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByUuid(43),
+                            .existsByUuidAndDeletedIsFalse(43),
                     () -> then(umbrellaRepository).should(never())
                             .save(any(Umbrella.class))
             );
@@ -194,9 +197,9 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findById(5L))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsById(1L))
+            given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(true);
-            given(umbrellaRepository.existsByUuid(50L))
+            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(50L))
                     .willReturn(false);
             given(umbrellaRepository.save(any(Umbrella.class)))
                     .willReturn(umbrella);
@@ -224,9 +227,9 @@ class UmbrellaServiceTest {
 
             assertAll(
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByUuid(50L),
+                            .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsById(1L),
+                            .existsByIdAndDeletedIsFalse(1L),
                     () -> then(storeMetaService).should(times(1))
                             .findById(5L),
                     () -> then(umbrellaRepository).should(times(1))
@@ -241,7 +244,7 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findById(5L))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsById(1L))
+            given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(false);
 
             // when & then
@@ -250,9 +253,9 @@ class UmbrellaServiceTest {
                             umbrellaService.modifyUmbrella(1L, umbrellaRequest))
                             .isInstanceOf(IllegalArgumentException.class),
                     () -> then(umbrellaRepository).should(never())
-                            .existsByUuid(50L),
+                            .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsById(1L),
+                            .existsByIdAndDeletedIsFalse(1L),
                     () -> then(storeMetaService).should(times(1))
                             .findById(5L),
                     () -> then(umbrellaRepository).should(never())
@@ -267,9 +270,9 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findById(5L))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsById(1L))
+            given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(true);
-            given(umbrellaRepository.existsByUuid(50L))
+            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(50L))
                     .willReturn(true);
 
             // when & then
@@ -278,9 +281,9 @@ class UmbrellaServiceTest {
                             umbrellaService.modifyUmbrella(1L, umbrellaRequest))
                             .isInstanceOf(IllegalArgumentException.class),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByUuid(50L),
+                            .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsById(1L),
+                            .existsByIdAndDeletedIsFalse(1L),
                     () -> then(storeMetaService).should(times(1))
                             .findById(5L),
                     () -> then(umbrellaRepository).should(never())
@@ -308,7 +311,63 @@ class UmbrellaServiceTest {
         }
     }
 
-    @Test
-    void deleteUmbrella() {
+    @Nested
+    @DisplayName("우산의 고유번호를 입력받아")
+    class deleteUmbrellaTest {
+        private Umbrella umbrella;
+
+        @BeforeEach
+        void setUp() {
+
+            umbrella = Umbrella.builder()
+                    .id(1L)
+                    .uuid(50L)
+                    .deleted(false)
+                    .storeMeta(null)
+                    .rentable(true)
+                    .build();
+        }
+
+        @Test
+        @DisplayName("우산을 정상적으로 삭제한다.")
+        void success() {
+
+            // given
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(1L))
+                    .willReturn(Optional.of(umbrella));
+
+            // when
+            umbrellaService.deleteUmbrella(1L);
+
+            // then
+            SoftAssertions softly = new SoftAssertions();
+            softly.assertThat(umbrella.getId())
+                    .isEqualTo(1L);
+            softly.assertThat(umbrella.isDeleted())
+                    .isEqualTo(true);
+            softly.assertAll();
+
+            assertAll(
+                    () -> then(umbrellaRepository).should(times(1))
+                            .findByIdAndDeletedIsFalse(1L)
+            );
+        }
+
+        @Test
+        @DisplayName("우산이 이미 삭제되었거나 고유번호가 존재하지 않는 경우 예외를 발생시킨다.")
+        void alreadyDeletedOrNonExistingId() {
+
+            // given
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(1L))
+                    .willReturn(Optional.ofNullable(null));
+
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() -> umbrellaService.deleteUmbrella(1L))
+                            .isInstanceOf(IllegalArgumentException.class),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .findByIdAndDeletedIsFalse(1L)
+            );
+        }
     }
 }
