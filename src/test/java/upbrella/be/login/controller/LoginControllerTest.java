@@ -1,10 +1,9 @@
 package upbrella.be.login.controller;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.*;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -18,8 +17,6 @@ import upbrella.be.user.service.UserService;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -28,12 +25,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
+@ExtendWith(MockitoExtension.class)
 public class LoginControllerTest extends RestDocsSupport {
 
-    private final OauthLoginService oauthLoginService = mock(OauthLoginService.class);
-    private final UserService userService = mock(UserService.class);
-    private final KakaoOauthInfo kakaoOauthInfo = mock(KakaoOauthInfo.class);
-    private final NaverOauthInfo naveroauthInfo = mock(NaverOauthInfo.class);
+    @Mock
+    private OauthLoginService oauthLoginService;
+    @Mock
+    private UserService userService;
+    @Mock
+    private KakaoOauthInfo kakaoOauthInfo;
+    @Mock
+    private NaverOauthInfo naveroauthInfo;
+
 
     @Override
     protected Object initController() {
@@ -76,17 +79,12 @@ public class LoginControllerTest extends RestDocsSupport {
     @Test
     @DisplayName("사용자는 네이버 소셜 로그인을 할 수 있다.")
     void naverLoginTest() throws Exception {
+
         // given
         String code = "{\"code\":\"1kdfjq0243f\"}";
 
         given(oauthLoginService.getOauthToken(anyString(), any(CommonOauthInfo.class)))
                 .willReturn(new OauthToken("accessToken", "refreshToken", "tokenType", 3600L));
-        given(naveroauthInfo.getClientId())
-                .willReturn("clientId");
-        given(naveroauthInfo.getClientSecret())
-                .willReturn("clientSecret");
-        given(naveroauthInfo.getRedirectUri())
-                .willReturn("redirectUri");
         given(naveroauthInfo.getLoginUri())
                 .willReturn("loginUri");
         given(oauthLoginService.processNaverLogin(anyString(), anyString()))
