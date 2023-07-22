@@ -17,6 +17,7 @@ import upbrella.be.rent.service.RentService;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -172,13 +173,13 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     void showAllStatusConditionTest() throws Exception {
 
-        ConditionReportPageResponse response = ConditionReportPageResponse.builder()
-                .conditionReports(List.of(ConditionReportResponse.builder()
+        List<ConditionReportResponse> response = List.of(ConditionReportResponse.builder()
                         .id(1L)
                         .umbrellaId(1L)
                         .content("우산이 망가졌습니다.")
-                        .build())
-                ).build();
+                        .build());
+
+        given(conditionReportService.findAllConditionReport()).willReturn(response);
 
         mockMvc.perform(
                         get("/rent/histories/status")
