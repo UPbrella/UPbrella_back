@@ -145,7 +145,7 @@ public class StoreController {
         List<String> imageUrls = new ArrayList<>();
 
         for (MultipartFile image : images) {
-            imageUrls.add(storeImageService.uploadFile(image));
+            imageUrls.add(storeImageService.uploadFile(image, storeId));
         }
 
         return ResponseEntity

@@ -8,6 +8,10 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import upbrella.be.store.entity.StoreDetail;
+import upbrella.be.store.entity.StoreImage;
+import upbrella.be.store.repository.StoreDetailRepository;
+import upbrella.be.store.repository.StoreImageRepository;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -17,11 +21,13 @@ import java.util.UUID;
 public class StoreImageService {
 
     private final S3Client s3Client;
+    private final StoreImageRepository storeImageRepository;
+    private final StoreDetailRepository storeDetailRepository;
 
     @Value("${AWS_S3_BUCKET}")
     private String bucketName;
 
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file, long storeDetailId) {
 
         String randomId = UUID.randomUUID().toString().substring(0, 10);
         String fileName = file.getOriginalFilename() + randomId;
@@ -40,6 +46,7 @@ public class StoreImageService {
 
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            saveStoreImage(url, storeDetailId);
             return url;
         } catch (IOException e) {
             throw new IllegalStateException("Failed to upload file", e);
@@ -56,6 +63,11 @@ public class StoreImageService {
                 .build();
 
         s3Client.deleteObject(deleteObjectRequest);
+    }
+
+    private void saveStoreImage(String imgUrl, long storeDetailId) {
+        StoreDetail storeDetail = storeDetailRepository.getReferenceById(storeDetailId);
+        storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imgUrl));
     }
 
     private String parseKey(String url) {
