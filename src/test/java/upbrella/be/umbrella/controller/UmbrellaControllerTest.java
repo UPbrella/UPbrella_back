@@ -12,7 +12,6 @@ import upbrella.be.umbrella.service.UmbrellaService;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -127,7 +126,8 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                 .rentable(true)
                 .build();
 
-        doNothing().when(umbrellaService).addUmbrella(umbrellaRequest);
+        given(umbrellaService.addUmbrella(umbrellaRequest))
+                .willReturn(null);
         // when
         mockMvc.perform(
                         post("/umbrellas")
