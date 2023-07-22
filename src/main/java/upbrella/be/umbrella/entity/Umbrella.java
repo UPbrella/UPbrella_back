@@ -22,6 +22,11 @@ public class Umbrella {
     private boolean rentable;
     private boolean deleted;
 
+    public static Umbrella delete(Umbrella umbrella) {
+        umbrella.deleted = true;
+        return umbrella;
+    }
+
     public static Umbrella ofCreated(StoreMeta storeMeta, long uuid, boolean rentable) {
         return Umbrella.builder()
                 .storeMeta(storeMeta)
