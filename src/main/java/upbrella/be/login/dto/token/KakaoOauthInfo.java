@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Component
-public class NaverOauthInfo implements CommonOauthInfo {
+public class KakaoOauthInfo implements CommonOauthInfo {
 
-    @Value("${NAVER_CLIENT_ID_DEV}")
+    @Value("${KAKAO_CLIENT_ID_DEV}")
     private String clientId;
-    @Value("${NAVER_CLIENT_SECRET_DEV}")
+    @Value("${KAKAO_CLIENT_SECRET_DEV}")
     private String clientSecret;
-    @Value("${NAVER_REDIRECT_URI_DEV}")
+    @Value("${KAKAO_REDIRECT_URI_DEV}")
     private String redirectUri;
-    @Value("${NAVER_LOGIN_URI_DEV}")
+    @Value("${KAKAO_LOGIN_URI_DEV}")
     private String loginUri;
 }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import upbrella.be.login.dto.response.LoggedInUser;
+import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
@@ -30,7 +30,7 @@ class UserServiceTest {
     @DisplayName("신규 회원은 새로 회원가입할 수 있다.")
     Collection<DynamicTest> test() {
         // given
-        LoggedInUser user = LoggedInUser.builder()
+        NaverLoggedInUser user = NaverLoggedInUser.builder()
                 .name("이름")
                 .mobile("010-1234-5678")
                 .build();
