@@ -71,7 +71,7 @@ public class UmbrellaService {
         // 이미 삭제된 경우도 포함
         Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
-        Umbrella.delete(foundUmbrella);
+        foundUmbrella.delete();
     }
 
 }
