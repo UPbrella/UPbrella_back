@@ -2,6 +2,9 @@ package upbrella.be.rent.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
@@ -23,14 +26,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
+@ExtendWith(MockitoExtension.class)
 public class RentControllerTest extends RestDocsSupport {
 
-    private final RentService rentService = mock(RentService.class);
-    private final ConditionReportService conditionReportService = mock(ConditionReportService.class);
+    @Mock
+    private ConditionReportService conditionReportService;
+    @Mock
+    private RentService rentService;
 
     @Override
     protected Object initController() {
-        return new RentController(conditionReportService);
+        return new RentController(conditionReportService, rentService);
     }
 
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
@@ -41,7 +47,7 @@ public class RentControllerTest extends RestDocsSupport {
                 .region("신촌")
                 .storeId(1)
                 .umbrellaId(1)
-                .conditonReport("필요하다면 상태 신고를 해주세요.")
+                .conditionReport("필요하다면 상태 신고를 해주세요.")
                 .build();
 
         mockMvc.perform(
@@ -61,7 +67,7 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("협업 지점 고유번호"),
                                 fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
-                                fieldWithPath("statusDeclaration").type(JsonFieldType.STRING)
+                                fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("상태 신고"))
                         ));
@@ -164,14 +170,13 @@ public class RentControllerTest extends RestDocsSupport {
 
     @DisplayName("사용자는 신고 내역을 조회할 수 있다.")
     @Test
-    void showAllStatusDeclarationsTest() throws Exception {
+    void showAllStatusConditionTest() throws Exception {
 
         ConditionReportPageResponse response = ConditionReportPageResponse.builder()
                 .conditionReports(List.of(ConditionReportResponse.builder()
                         .id(1L)
-                        .umbrellaId(1)
+                        .umbrellaId(1L)
                         .content("우산이 망가졌습니다.")
-                        .etc("기타 사항")
                         .build())
                 ).build();
 
@@ -179,20 +184,20 @@ public class RentControllerTest extends RestDocsSupport {
                         get("/rent/histories/status")
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("show-all-status-declarations-doc",
+                .andDo(document("show-all-condtion-reports-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("statusDeclarationPage").type(JsonFieldType.ARRAY)
-                                        .description("신고 내역"),
-                                fieldWithPath("statusDeclarationPage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("conditionReports").type(JsonFieldType.ARRAY)
+                                        .description("신고 내역 페이지"),
+                                fieldWithPath("conditionReports[].id").type(JsonFieldType.NUMBER)
                                         .description("신고 내역 고유번호"),
-                                fieldWithPath("statusDeclarationPage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("conditionReports[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
-                                fieldWithPath("statusDeclarationPage[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("conditionReports[].content").type(JsonFieldType.STRING)
                                         .description("신고 내용"),
-                                fieldWithPath("statusDeclarationPage[].etc").type(JsonFieldType.STRING)
+                                fieldWithPath("conditionReports[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
                         )));
@@ -217,19 +222,18 @@ public class RentControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-improvements-doc",
-                        getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("improvementPage").type(JsonFieldType.ARRAY)
+                                fieldWithPath("improvementReports").type(JsonFieldType.ARRAY)
                                         .description("개선 요청 목록"),
-                                fieldWithPath("improvementPage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("improvementReports[].id").type(JsonFieldType.NUMBER)
                                         .description("개선 요청 고유번호"),
-                                fieldWithPath("improvementPage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("improvementReports[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
-                                fieldWithPath("improvementPage[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("improvementReports[].content").type(JsonFieldType.STRING)
                                         .description("개선 요청 내용"),
-                                fieldWithPath("improvementPage[].etc").type(JsonFieldType.STRING)
+                                fieldWithPath("improvementReports[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
                         )));

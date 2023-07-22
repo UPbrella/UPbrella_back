@@ -7,6 +7,7 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
@@ -19,13 +20,14 @@ import java.util.List;
 public class RentController {
 
     private final ConditionReportService conditionReportService;
+    private final RentService rentService;
 
     @PostMapping
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
         // TODO: 예외 처리
 
-
+        rentService.addRental(rentUmbrellaByUserRequest);
 
         return ResponseEntity
                 .ok()
