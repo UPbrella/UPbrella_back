@@ -14,6 +14,7 @@ import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -66,8 +67,20 @@ public class StoreImageService {
     }
 
     private void saveStoreImage(String imgUrl, long storeDetailId) {
+
         StoreDetail storeDetail = storeDetailRepository.getReferenceById(storeDetailId);
         storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imgUrl));
+    }
+
+    public void deleteImagesBeforeSave(long storeDetailId) {
+
+        List<StoreImage> storeImages = storeImageRepository.findByStoreDetailId(storeDetailId);
+        if (storeImages.size() > 0) {
+            for (StoreImage storeImage : storeImages) {
+                deleteFile(storeImage.getImageUrl());
+                storeImageRepository.delete(storeImage);
+            }
+        }
     }
 
     private String parseKey(String url) {

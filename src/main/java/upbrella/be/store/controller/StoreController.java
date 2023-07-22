@@ -143,7 +143,7 @@ public class StoreController {
     public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, @RequestPart List<MultipartFile> images, @PathVariable long storeId) {
 
         List<String> imageUrls = new ArrayList<>();
-
+        storeImageService.deleteImagesBeforeSave(storeId);
         for (MultipartFile image : images) {
             imageUrls.add(storeImageService.uploadFile(image, storeId));
         }
