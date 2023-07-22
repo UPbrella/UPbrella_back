@@ -89,12 +89,10 @@ public class LoginControllerTest extends RestDocsSupport {
                 .willReturn("redirectUri");
         given(naveroauthInfo.getLoginUri())
                 .willReturn("loginUri");
-
-        // when
-        when(oauthLoginService.processNaverLogin(anyString(), anyString()))
-                .thenReturn(new NaverLoggedInUser("네이버 사용자", "010-0000-0000"));
-        when(userService.joinService(anyString(), anyString()))
-                .thenReturn(LoggedInUserResponse.builder()
+        given(oauthLoginService.processNaverLogin(anyString(), anyString()))
+                .willReturn(new NaverLoggedInUser("네이버 사용자", "010-0000-0000"));
+        given(userService.joinService(anyString(), anyString()))
+                .willReturn(LoggedInUserResponse.builder()
                         .id(1L)
                         .name("네이버 사용자")
                         .phoneNumber("010-0000-0000")
