@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import upbrella.be.login.dto.response.KakoLoginResponse;
 import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.NaverLoginResponse;
+import upbrella.be.login.dto.response.Properties;
 import upbrella.be.login.dto.token.*;
 
 import java.util.HashMap;
@@ -17,9 +18,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class OauthLoginService {
-
-    private final NaverOauthInfo naverOauthInfo;
-    private final KakaoOauthInfo kakaoOauthInfo;
 
     public OauthToken getOauthToken(String code, CommonOauthInfo oauthInfo) {
 
@@ -43,7 +41,7 @@ public class OauthLoginService {
         return response.getBody();
     }
 
-    public <T> T processLogin(String accessToken, String loginUri, Class<T> responseType) {
+    private  <T> T processLogin(String accessToken, String loginUri, Class<T> responseType) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
@@ -64,7 +62,8 @@ public class OauthLoginService {
         return response.getResponse();
     }
 
-    public KakoLoginResponse processKakaoLogin(String accessToken, String loginUri) {
-        return processLogin(accessToken, loginUri, KakoLoginResponse.class);
+    public Properties processKakaoLogin(String accessToken, String loginUri) {
+        KakoLoginResponse response = processLogin(accessToken, loginUri, KakoLoginResponse.class);
+        return response.getProperties();
     }
 }
