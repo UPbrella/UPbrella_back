@@ -2,8 +2,6 @@ package upbrella.be.login.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import upbrella.be.login.dto.request.NaverLoginCodeRequest;
-import upbrella.be.login.dto.response.KakoLoginResponse;
 import upbrella.be.login.dto.response.Properties;
 import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
@@ -86,7 +84,7 @@ public class LoginController {
     public ResponseEntity<CustomResponse<Properties>> kakaoLoginDev(HttpSession session, String code) {
 
         OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
-        KakoLoginResponse kakaoUserProfile = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
+        Properties kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
         // TODO: 비즈앱으로 전환 후 로그인 처리하기
 
         return ResponseEntity
@@ -95,6 +93,6 @@ public class LoginController {
                         "success",
                         200,
                         "카카오 로그인 성공",
-                        kakaoUserProfile.getProperties()));
+                        kakaoLoggedInUser));
     }
 }
