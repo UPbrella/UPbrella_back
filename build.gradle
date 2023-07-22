@@ -40,6 +40,11 @@ dependencies {
 	//RestDocs
 	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+	// aws service
+	implementation 'com.amazonaws:aws-java-sdk-core:1.12.429'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.429'
+	implementation 'software.amazon.awssdk:s3:2.16.83'
 }
 
 ext {
