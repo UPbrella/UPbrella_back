@@ -19,6 +19,8 @@ import java.util.Map;
 @Service
 public class OauthLoginService {
 
+    private final RestTemplate restTemplate;
+
     public OauthToken getOauthToken(String code, CommonOauthInfo oauthInfo) {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -36,7 +38,7 @@ public class OauthLoginService {
         requestPayloads.setAll(requestPayload);
 
         HttpEntity<?> request = new HttpEntity<>(requestPayloads, headers);
-        ResponseEntity<OauthToken> response = new RestTemplate().postForEntity(oauthInfo.getRedirectUri(), request, OauthToken.class);
+        ResponseEntity<OauthToken> response = restTemplate.postForEntity(oauthInfo.getRedirectUri(), request, OauthToken.class);
 
         return response.getBody();
     }
@@ -49,7 +51,7 @@ public class OauthLoginService {
 
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
 
-        return new RestTemplate().exchange(
+        return restTemplate.exchange(
                         loginUri,
                         HttpMethod.GET,
                         requestEntity,
