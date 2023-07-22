@@ -15,7 +15,7 @@ public class Umbrella {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_meta_id")
     private StoreMeta storeMeta;
     private long uuid;
