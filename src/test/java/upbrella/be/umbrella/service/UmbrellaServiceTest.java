@@ -1,6 +1,5 @@
 package upbrella.be.umbrella.service;
 
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +16,7 @@ import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -88,24 +88,21 @@ class UmbrellaServiceTest {
             Umbrella addedUmbrella = umbrellaService.addUmbrella(umbrellaRequest);
 
             // then
-            SoftAssertions softly = new SoftAssertions();
-            softly.assertThat(addedUmbrella.getUuid())
-                    .isEqualTo(43);
-            softly.assertThat(addedUmbrella.getStoreMeta().getId())
-                    .isEqualTo(2L);
-            softly.assertThat(addedUmbrella.getStoreMeta().getName())
-                    .isEqualTo("name");
-            softly.assertThat(addedUmbrella.getStoreMeta().getThumbnail())
-                    .isEqualTo("thumb");
-            softly.assertThat(addedUmbrella.getStoreMeta().isDeleted())
-                    .isEqualTo(false);
-            softly.assertThat(addedUmbrella.isRentable())
-                    .isEqualTo(true);
-            softly.assertThat(addedUmbrella.isDeleted())
-                    .isEqualTo(false);
-            softly.assertAll();
-
             assertAll(
+                    () -> assertThat(addedUmbrella.getUuid())
+                            .isEqualTo(43),
+                    () -> assertThat(addedUmbrella.getStoreMeta().getId())
+                            .isEqualTo(2L),
+                    () -> assertThat(addedUmbrella.getStoreMeta().getName())
+                            .isEqualTo("name"),
+                    () -> assertThat(addedUmbrella.getStoreMeta().getThumbnail())
+                            .isEqualTo("thumb"),
+                    () -> assertThat(addedUmbrella.getStoreMeta().isDeleted())
+                            .isEqualTo(false),
+                    () -> assertThat(addedUmbrella.isRentable())
+                            .isEqualTo(true),
+                    () -> assertThat(addedUmbrella.isDeleted())
+                            .isEqualTo(false),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(43),
                     () -> then(storeMetaService).should(times(1))
@@ -208,24 +205,21 @@ class UmbrellaServiceTest {
             Umbrella modifiedUmbrella = umbrellaService.modifyUmbrella(1L, umbrellaRequest);
 
             // then
-            SoftAssertions softly = new SoftAssertions();
-            softly.assertThat(modifiedUmbrella.getUuid())
-                    .isEqualTo(50L);
-            softly.assertThat(modifiedUmbrella.getStoreMeta().getId())
-                    .isEqualTo(5L);
-            softly.assertThat(modifiedUmbrella.getStoreMeta().getName())
-                    .isEqualTo("연세대학교 파스쿠치");
-            softly.assertThat(modifiedUmbrella.getStoreMeta().getThumbnail())
-                    .isEqualTo("정면사진.jpg");
-            softly.assertThat(modifiedUmbrella.getStoreMeta().isDeleted())
-                    .isEqualTo(false);
-            softly.assertThat(modifiedUmbrella.isRentable())
-                    .isEqualTo(true);
-            softly.assertThat(modifiedUmbrella.isDeleted())
-                    .isEqualTo(false);
-            softly.assertAll();
-
             assertAll(
+                    () -> assertThat(modifiedUmbrella.getUuid())
+                            .isEqualTo(50L),
+                    () -> assertThat(modifiedUmbrella.getStoreMeta().getId())
+                            .isEqualTo(5L),
+                    () -> assertThat(modifiedUmbrella.getStoreMeta().getName())
+                            .isEqualTo("연세대학교 파스쿠치"),
+                    () -> assertThat(modifiedUmbrella.getStoreMeta().getThumbnail())
+                            .isEqualTo("정면사진.jpg"),
+                    () -> assertThat(modifiedUmbrella.getStoreMeta().isDeleted())
+                            .isEqualTo(false),
+                    () -> assertThat(modifiedUmbrella.isRentable())
+                            .isEqualTo(true),
+                    () -> assertThat(modifiedUmbrella.isDeleted())
+                            .isEqualTo(false),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
@@ -340,14 +334,11 @@ class UmbrellaServiceTest {
             umbrellaService.deleteUmbrella(1L);
 
             // then
-            SoftAssertions softly = new SoftAssertions();
-            softly.assertThat(umbrella.getId())
-                    .isEqualTo(1L);
-            softly.assertThat(umbrella.isDeleted())
-                    .isEqualTo(true);
-            softly.assertAll();
-
             assertAll(
+                    () -> assertThat(umbrella.getId())
+                            .isEqualTo(1L),
+                    () -> assertThat(umbrella.isDeleted())
+                            .isEqualTo(true),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(1L)
             );
