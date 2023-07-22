@@ -31,7 +31,7 @@ public class UmbrellaService {
 
         StoreMeta storeMeta = storeMetaService.findById(umbrellaRequest.getStoreMetaId());
 
-        if (umbrellaRepository.existsByUuid(umbrellaRequest.getUuid())) {
+        if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid())) {
             throw new IllegalArgumentException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
@@ -48,10 +48,10 @@ public class UmbrellaService {
     public Umbrella modifyUmbrella(long id, UmbrellaRequest umbrellaRequest) {
 
         StoreMeta storeMeta = storeMetaService.findById(umbrellaRequest.getStoreMetaId());
-        if (!umbrellaRepository.existsById(id)) {
+        if (!umbrellaRepository.existsByIdAndDeletedIsFalse(id)) {
             throw new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다.");
         }
-        if (umbrellaRepository.existsByUuid(umbrellaRequest.getUuid())) {
+        if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid())) {
             throw new IllegalArgumentException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
@@ -65,7 +65,13 @@ public class UmbrellaService {
         );
     }
 
+    @Transactional
     public void deleteUmbrella(long id) {
+
+        // 이미 삭제된 경우도 포함
+        Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
+        foundUmbrella.delete();
     }
 
 }

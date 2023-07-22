@@ -11,7 +11,7 @@ public class StoreMetaService {
     private final StoreMetaRepository storeMetaRepository;
 
     public StoreMeta findById(long id) {
-        return storeMetaRepository.findById(id)
+        return storeMetaRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
     }
 }
