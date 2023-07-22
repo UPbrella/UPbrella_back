@@ -1,19 +1,25 @@
 package upbrella.be.store.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.response.*;
+import upbrella.be.store.service.StoreImageService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/stores")
 public class StoreController {
+
+    private final StoreImageService storeImageService;
 
     @GetMapping("/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
@@ -132,8 +138,15 @@ public class StoreController {
                 ));
     }
 
-    @PostMapping("/{storeId}/images")
-    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, List<MultipartFile> images,@PathVariable long storeId) {
+    // TODO : 협업지점의 사진 조회해서 삭제 후 등록한다.
+    @PostMapping(value = "/{storeId}/images", consumes = {"multipart/form-data"})
+    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, @RequestPart List<MultipartFile> images, @PathVariable long storeId) {
+
+        List<String> imageUrls = new ArrayList<>();
+
+        for (MultipartFile image : images) {
+            imageUrls.add(storeImageService.uploadFile(image));
+        }
 
         return ResponseEntity
                 .ok()
@@ -142,11 +155,7 @@ public class StoreController {
                         200,
                         "협업지점 이미지 업로드 성공",
                         ImageUrlsResponse.builder()
-                                .imageUrls(List.of(
-                                        "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/1.jpg",
-                                        "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/2.jpg",
-                                        "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/3.jpg"
-                                ))
+                                .imageUrls(imageUrls)
                                 .build()
                 ));
     }

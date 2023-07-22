@@ -2,15 +2,20 @@ package upbrella.be.store.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.service.StoreImageService;
 
 import java.util.List;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -20,12 +25,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
+@ExtendWith(MockitoExtension.class)
 class StoreControllerTest extends RestDocsSupport {
 
+    @Mock
+    private StoreImageService storeImageService;
 
     @Override
     protected Object initController() {
-        return new StoreController();
+        return new StoreController(storeImageService);
     }
 
     @Test
@@ -314,15 +322,17 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 협업지점의 사진을 등록해서 사진의 url을 받을 수 있다.")
     void uploadStorageImages() throws Exception {
         // given
-        MockMultipartFile firstFile = new MockMultipartFile("files", "filename-1.jpeg", "text/plain", "some-image".getBytes());
-        MockMultipartFile secondFile = new MockMultipartFile("files", "filename-2.jpeg", "text/plain", "some-image".getBytes());
+        MockMultipartFile firstFile = new MockMultipartFile("images", "filename-1.jpeg", "text/plain", "some-image".getBytes());
+
+        given(storeImageService.uploadFile(firstFile))
+                .willReturn("https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-1.jpeg");
 
         // when
 
         // then
         mockMvc.perform(multipart("/stores/{storeId}/images", 1L)
                         .file(firstFile)
-                        .file(secondFile))
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
                 .andDo(document("upload-file",
                         getDocumentRequest(),
@@ -331,7 +341,7 @@ class StoreControllerTest extends RestDocsSupport {
                                 parameterWithName("storeId").description("협업 지점 고유번호")
                         ),
                         requestParts(
-                                partWithName("files").description("The files to upload")
+                                partWithName("images").description("협업지점의 사진")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),

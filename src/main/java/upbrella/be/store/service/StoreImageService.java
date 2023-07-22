@@ -30,13 +30,13 @@ public class StoreImageService {
         // Upload file
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key("img/" + fileName)
+                .key("store-image/" + fileName)
                 .acl("public-read")
                 .contentDisposition("inline")
                 .contentType(contentType)
                 .build();
 
-        String url = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/img/" + fileName;
+        String url = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/store-image/" + fileName;
 
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
