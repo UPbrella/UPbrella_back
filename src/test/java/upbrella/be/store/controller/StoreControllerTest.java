@@ -320,13 +320,16 @@ class StoreControllerTest extends RestDocsSupport {
         // when
 
         // then
-        mockMvc.perform(multipart("/stores/images")
+        mockMvc.perform(multipart("/stores/{storeId}/images", 1L)
                         .file(firstFile)
                         .file(secondFile))
                 .andExpect(status().isOk())
                 .andDo(document("upload-file",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업 지점 고유번호")
+                        ),
                         requestParts(
                                 partWithName("files").description("The files to upload")
                         ),

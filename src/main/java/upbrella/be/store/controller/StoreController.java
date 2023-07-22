@@ -132,8 +132,8 @@ public class StoreController {
                 ));
     }
 
-    @PostMapping("/images")
-    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, List<MultipartFile> images) {
+    @PostMapping("/{storeId}/images")
+    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, List<MultipartFile> images,@PathVariable long storeId) {
 
         return ResponseEntity
                 .ok()
