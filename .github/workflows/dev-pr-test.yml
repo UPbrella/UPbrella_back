@@ -5,7 +5,7 @@ on:
     branches: [ "dev", "chore/#60-pr-test-automation" ]
   push:
     branches: ["chore/#60-pr-test-automation"]
-
+# 확인
 permissions:
   contents: read
   pull-requests: write
