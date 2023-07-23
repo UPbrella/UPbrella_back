@@ -35,14 +35,18 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --info test
+        with:
+          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
       - name: 🐳 테스트 결과 Report
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: ${{ always() }}
         with:
           files: 'build/test-results/**/*.xml'
+          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
 
       - name: 🐳 테스트 실패 Comment
         uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           report_paths: 'build/test-results/test/TEST-*.xml'
+          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
