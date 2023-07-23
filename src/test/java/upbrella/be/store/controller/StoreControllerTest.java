@@ -12,6 +12,7 @@ import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.service.StoreImageService;
+import upbrella.be.store.service.StoreMetaService;
 
 import java.util.List;
 
@@ -30,10 +31,12 @@ class StoreControllerTest extends RestDocsSupport {
 
     @Mock
     private StoreImageService storeImageService;
+    @Mock
+    private StoreMetaService storeMetaService;
 
     @Override
     protected Object initController() {
-        return new StoreController(storeImageService);
+        return new StoreController(storeImageService, storeMetaService);
     }
 
     @Test
@@ -218,7 +221,9 @@ class StoreControllerTest extends RestDocsSupport {
         // given
         CreateStoreRequest store = CreateStoreRequest.builder()
                 .name("협업 지점명")
+                .category("카테고리")
                 .classification("분류")
+                .subClassification("세부 분류")
                 .activateStatus(true)
                 .address("주소")
                 .umbrellaLocation("우산 위치")
@@ -228,6 +233,7 @@ class StoreControllerTest extends RestDocsSupport {
                 .latitude(33.33)
                 .longitude(33.33)
                 .imageUrls(List.of("이미지 URL"))
+                .content("내용")
                 .build();
 
         // when
@@ -246,8 +252,12 @@ class StoreControllerTest extends RestDocsSupport {
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("협업 지점명"),
+                                fieldWithPath("category").type(JsonFieldType.STRING)
+                                        .description("카테고리"),
                                 fieldWithPath("classification").type(JsonFieldType.STRING)
                                         .description("분류"),
+                                fieldWithPath("subClassification").type(JsonFieldType.STRING)
+                                        .description("세부 분류"),
                                 fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
@@ -264,7 +274,10 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("위도"),
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
-                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
+                                fieldWithPath("content").type(JsonFieldType.STRING)
+                                        .description("내용"),
+                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
+                                        .description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 
@@ -321,7 +334,8 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("인스타그램 아이디"),
                                 fieldWithPath("coordinate").type(JsonFieldType.STRING)
                                         .description("네이버 길찾기를 위한 좌표"),
-                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
+                                fieldWithPath("imageUrls").type(JsonFieldType.ARRAY)
+                                        .description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 

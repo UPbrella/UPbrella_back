@@ -8,6 +8,7 @@ import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.service.StoreImageService;
+import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
@@ -20,6 +21,7 @@ import java.util.List;
 public class StoreController {
 
     private final StoreImageService storeImageService;
+    private final StoreMetaService storeMetaService;
 
     @GetMapping("/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
@@ -119,7 +121,9 @@ public class StoreController {
 
     @PostMapping
     public ResponseEntity<CustomResponse> createStore(HttpSession session, @RequestBody CreateStoreRequest newStore) {
-        // TODO : form data 형식인지, json 형식으로 들어오는지
+
+        storeMetaService.createStore(newStore);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(

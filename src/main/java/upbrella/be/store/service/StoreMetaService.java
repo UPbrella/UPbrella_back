@@ -2,17 +2,48 @@ package upbrella.be.store.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import upbrella.be.store.storeRepository.StoreMetaRepository;
+import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.entity.StoreDetail;
+import upbrella.be.store.entity.StoreImage;
+import upbrella.be.store.repository.StoreDetailRepository;
+import upbrella.be.store.repository.StoreImageRepository;
+import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class StoreMetaService {
 
     private final StoreMetaRepository storeMetaRepository;
+    private final StoreDetailRepository storeDetailRepository;
+    private final StoreImageRepository storeImageRepository;
 
     public StoreMeta findById(long id) {
         return storeMetaRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
+    }
+
+    public void createStore(CreateStoreRequest store) {
+
+        StoreMeta storeMeta = saveStoreMeta(store);
+        StoreDetail storeDetail = saveStoreDetail(store, storeMeta);
+        saveStoreImage(store.getImageUrls(), storeDetail);
+    }
+
+    private StoreMeta saveStoreMeta(CreateStoreRequest store) {
+        return storeMetaRepository.save(StoreMeta.createForSave(store));
+    }
+
+    private StoreDetail saveStoreDetail(CreateStoreRequest store, StoreMeta storeMeta) {
+        return storeDetailRepository.save(StoreDetail.createForSave(store, storeMeta));
+    }
+
+    private void saveStoreImage(List<String> urls, StoreDetail storeDetail) {
+
+        for (String imageUrl : urls) {
+            storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imageUrl));
+        }
     }
 }

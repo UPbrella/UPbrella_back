@@ -12,7 +12,9 @@ import java.util.List;
 public class CreateStoreRequest {
 
     private String name;
+    private String category;
     private String classification;
+    private String subClassification;
     private boolean activateStatus;
     private String address;
     private String umbrellaLocation;
@@ -21,5 +23,6 @@ public class CreateStoreRequest {
     private String instagramId;
     private double latitude;
     private double longitude;
+    private String content;
     private List<String> imageUrls;
 }
