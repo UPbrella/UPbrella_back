@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
@@ -13,12 +15,14 @@ import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.RentService;
+import upbrella.be.user.entity.User;
+import upbrella.be.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -34,10 +38,12 @@ public class RentControllerTest extends RestDocsSupport {
     private ConditionReportService conditionReportService;
     @Mock
     private RentService rentService;
+    @Mock
+    private UserRepository userRepository;
 
     @Override
     protected Object initController() {
-        return new RentController(conditionReportService, rentService);
+        return new RentController(conditionReportService, rentService, userRepository);
     }
 
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
@@ -46,10 +52,20 @@ public class RentControllerTest extends RestDocsSupport {
 
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
                 .region("신촌")
-                .storeId(1)
-                .umbrellaId(1)
+                .storeId(1L)
+                .umbrellaId(1L)
                 .conditionReport("필요하다면 상태 신고를 해주세요.")
                 .build();
+
+        User newUser = User.builder()
+                        .id(1L)
+                        .name("테스터1")
+                        .phoneNumber("010-1111-1111")
+                        .adminStatus(false)
+                        .build();
+
+
+        given(userRepository.findById(1L)).willReturn(Optional.of(newUser));
 
         mockMvc.perform(
                         post("/rent")
@@ -82,7 +98,6 @@ public class RentControllerTest extends RestDocsSupport {
                 .storeId(1)
                 .improvement("불편하셨다면 개선 사항을 입력해주세요.")
                 .build();
-
 
         mockMvc.perform(
                         patch("/rent")
