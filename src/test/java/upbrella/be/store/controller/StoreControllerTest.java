@@ -1,6 +1,5 @@
 package upbrella.be.store.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,12 +13,15 @@ import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -36,10 +38,13 @@ class StoreControllerTest extends RestDocsSupport {
     private StoreImageService storeImageService;
     @Mock
     private StoreMetaService storeMetaService;
+    @Mock
+    private ClassificationService classificationService;
+
 
     @Override
     protected Object initController() {
-        return new StoreController(storeImageService, storeMetaService);
+        return new StoreController(storeImageService, storeMetaService, classificationService);
     }
 
     @Test
@@ -439,6 +444,8 @@ class StoreControllerTest extends RestDocsSupport {
                 .longitude(33.33)
                 .build();
 
+        doNothing().when(classificationService).createClassification(any(CreateClassificationRequest.class));
+
         // when
 
 
@@ -523,7 +530,7 @@ class StoreControllerTest extends RestDocsSupport {
                 .name("소분류 이름")
                 .build();
 
-        // when
+        doNothing().when(classificationService).createSubClassification(any(CreateSubClassificationRequest.class));
 
 
         // then

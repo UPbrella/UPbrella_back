@@ -9,6 +9,7 @@ import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.*;
+import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.CustomResponse;
@@ -24,6 +25,7 @@ public class StoreController {
 
     private final StoreImageService storeImageService;
     private final StoreMetaService storeMetaService;
+    private final ClassificationService classificationService;
 
     @GetMapping("/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
@@ -207,6 +209,8 @@ public class StoreController {
     @PostMapping("/classifications")
     public ResponseEntity<CustomResponse> createClassification(HttpSession session, @RequestBody CreateClassificationRequest newClassification) {
 
+        classificationService.createClassification(newClassification);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -250,6 +254,8 @@ public class StoreController {
 
     @PostMapping("/subClassifications")
     public ResponseEntity<CustomResponse> createSubClassification(HttpSession session, @RequestBody CreateSubClassificationRequest newSubClassification) {
+
+        classificationService.createSubClassification(newSubClassification);
 
         return ResponseEntity
                 .ok()
