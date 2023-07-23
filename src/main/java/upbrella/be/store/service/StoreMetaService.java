@@ -2,7 +2,7 @@ package upbrella.be.store.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import upbrella.be.store.StoreRepository.StoreMetaRepository;
+import upbrella.be.store.storeRepository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
 
 @Service

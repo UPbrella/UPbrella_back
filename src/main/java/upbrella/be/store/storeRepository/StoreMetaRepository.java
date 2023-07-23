@@ -1,4 +1,4 @@
-package upbrella.be.store.StoreRepository;
+package upbrella.be.store.storeRepository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import upbrella.be.store.entity.StoreMeta;
