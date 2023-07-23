@@ -9,51 +9,46 @@ permissions:
   pull-requests: write
 
 jobs:
-  print-token:
-    permissions: write-all
-    name: print-token
-    environment: dev
-    # needs: pre-pkr
-    runs-on: ubuntu-latest
+    test:
+      permissions: write-all
+      environment: dev
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out code
+          uses: actions/checkout@v2
 
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+        - name: Get registration token
+          id: getRegToken
+          run: |
+            curl -X POST -H \"Accept: application/vnd.github.v3+json\"  -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/myprofile/myrepo/actions/runners/registration-token
 
-      - name: Get registration token
-        id: getRegToken
-        run: |
-          curl -X POST -H \"Accept: application/vnd.github.v3+json\"  -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/myprofile/myrepo/actions/runners/registration-token
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
+        - name: checkout
+          uses: actions/checkout@v3
 
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'adopt'
+        - name: Set up JDK 11
+          uses: actions/setup-java@v3
+          with:
+            java-version: '11'
+            distribution: 'adopt'
 
-      - name: Set application properties
-        run: |
-          touch src/main/resources/application.properties
-          echo "${{ secrets.APPLICATION_PROPERTIES_DEV }}" | base64 --decode > src/main/resources/application.properties
+        - name: Set application properties
+          run: |
+            touch src/main/resources/application.properties
+            echo "${{ secrets.APPLICATION_PROPERTIES_DEV }}" | base64 --decode > src/main/resources/application.properties
 
-      - name: Test with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew --info test
+        - name: Test with Gradle
+          run: |
+            chmod +x gradlew
+            ./gradlew --info test
 
-      - name: 🐳 테스트 결과 Report
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: ${{ always() }}
-        with:
-          files: 'build/test-results/**/*.xml'
+        - name: 🐳 테스트 결과 Report
+          uses: EnricoMi/publish-unit-test-result-action@v2
+          if: ${{ always() }}
+          with:
+            files: 'build/test-results/**/*.xml'
 
-      - name: 🐳 테스트 실패 Comment
-        uses: mikepenz/action-junit-report@v3
-        if: always()
-        with:
-          report_paths: 'build/test-results/test/TEST-*.xml'
+        - name: 🐳 테스트 실패 Comment
+          uses: mikepenz/action-junit-report@v3
+          if: always()
+          with:
+            report_paths: 'build/test-results/test/TEST-*.xml'
