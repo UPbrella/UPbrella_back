@@ -13,6 +13,10 @@ import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.dto.response.AllClassificationResponse;
+import upbrella.be.store.dto.response.AllSubClassificationResponse;
+import upbrella.be.store.dto.response.SingleClassificationResponse;
+import upbrella.be.store.dto.response.SingleSubClassificationResponse;
 import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
@@ -404,7 +408,18 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 대분류 목록을 조회할 수 있다.")
     void findAllClassificationTest() throws Exception {
         // given
-
+        given(classificationService.findAllClassification("classification"))
+                .willReturn(AllClassificationResponse.builder()
+                        .classifications(List.of(
+                                SingleClassificationResponse.builder()
+                                        .id(1L)
+                                        .type("대분류 타입")
+                                        .name("대분류 이름")
+                                        .latitude(33.33)
+                                        .longitude(33.33)
+                                        .build()
+                        ))
+                        .build());
 
         // when
 
@@ -496,7 +511,16 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 소분류 목록을 조회할 수 있다.")
     void findAllSubClassificationTest() throws Exception {
         // given
-
+        given(classificationService.findAllSubClassification("subClassification"))
+                .willReturn(AllSubClassificationResponse.builder()
+                        .subClassifications(List.of(
+                                SingleSubClassificationResponse.builder()
+                                        .id(1L)
+                                        .type("소분류 타입")
+                                        .name("소분류 이름")
+                                        .build()
+                        ))
+                        .build());
 
         // when
 

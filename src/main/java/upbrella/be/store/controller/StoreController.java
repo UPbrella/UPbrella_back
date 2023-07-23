@@ -187,23 +187,15 @@ public class StoreController {
     @GetMapping("/classifications")
     public ResponseEntity<CustomResponse<AllClassificationResponse>> findAllClassification(HttpSession session) {
 
+        AllClassificationResponse classifications = classificationService.findAllClassification("classification");
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
                         "대분류 전체 조회 성공",
-                        AllClassificationResponse.builder()
-                                .classifications(List.of(
-                                        SingleClassificationResponse.builder()
-                                                .id(1)
-                                                .type("classification")
-                                                .name("신촌")
-                                                .latitude(37.503716)
-                                                .longitude(127.053718)
-                                                .build()
-                                ))
-                                .build()));
+                        classifications));
     }
 
     @PostMapping("/classifications")
@@ -237,21 +229,15 @@ public class StoreController {
     @GetMapping("/subClassifications")
     public ResponseEntity<CustomResponse<AllSubClassificationResponse>> findAllSubClassification(HttpSession session) {
 
+        AllSubClassificationResponse subClassifications = classificationService.findAllSubClassification("subClassification");
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
                         "소분류 전체 조회 성공",
-                        AllSubClassificationResponse.builder()
-                                .subClassifications(List.of(
-                                        SingleSubClassificationResponse.builder()
-                                                .id(1)
-                                                .type("subClassification")
-                                                .name("연세대학교")
-                                                .build()
-                                ))
-                                .build()));
+                        subClassifications));
     }
 
     @PostMapping("/subClassifications")
