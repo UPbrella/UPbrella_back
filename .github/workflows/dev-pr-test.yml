@@ -1,0 +1,38 @@
+name: Upbrella DEV PR Test
+
+on:
+  pull_request:
+    branches: [ "dev" ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Set application properties
+      run: |
+        touch src/main/resources/application.properties
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" | base64 --decode > src/main/resources/application.properties
+     
+    - name: Test with Gradle
+      run: |
+        chmod +x gradlew
+        ./gradlew --info test
+
+    - name: 🐳 테스트 결과 Report
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: ${{ always() }}
+      with:
+        files: 'build/test-results/**/*.xml'
