@@ -42,11 +42,9 @@ jobs:
         if: ${{ always() }}
         with:
           files: 'build/test-results/**/*.xml'
-          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
 
       - name: 🐳 테스트 실패 Comment
         uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           report_paths: 'build/test-results/test/TEST-*.xml'
-          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
