@@ -3,6 +3,8 @@ name: Upbrella DEV PR Test
 on:
   pull_request:
     branches: [ "dev", "chore/#60-pr-test-automation" ]
+  push:
+    branches: ["chore/#60-pr-test-automation"]
 
 permissions:
   contents: read
