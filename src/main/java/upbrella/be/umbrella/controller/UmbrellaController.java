@@ -2,6 +2,7 @@ package upbrella.be.umbrella.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
@@ -19,7 +20,7 @@ public class UmbrellaController {
     private final UmbrellaService umbrellaService;
 
     @GetMapping
-    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showAllUmbrellas(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showAllUmbrellas(Pageable pageable, HttpSession httpSession) {
 
         return ResponseEntity
                 .ok()
@@ -29,12 +30,12 @@ public class UmbrellaController {
                         "전체 우산 현황 조회 성공",
                         UmbrellaPageResponse.builder()
                                 .umbrellaResponsePage(
-                                        umbrellaService.findAllUmbrellas()
+                                        umbrellaService.findAllUmbrellas(pageable)
                 ).build()));
     }
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showUmbrellasByStoreId(HttpSession httpSession, @PathVariable long storeId) {
+    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showUmbrellasByStoreId(@PathVariable long storeId, Pageable pageable, HttpSession httpSession) {
 
         return ResponseEntity
                 .ok()
@@ -44,7 +45,7 @@ public class UmbrellaController {
                         "지점 우산 현황 조회 성공",
                         UmbrellaPageResponse.builder()
                                 .umbrellaResponsePage(
-                                        umbrellaService.findUmbrellasByStoreId(storeId)
+                                        umbrellaService.findUmbrellasByStoreId(storeId, pageable)
                                 ).build()));
     }
 
