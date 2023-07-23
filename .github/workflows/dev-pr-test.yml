@@ -2,7 +2,7 @@ name: Upbrella DEV PR Test
 
 on:
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "dev", "release-dev", "release-production" ]
 
 jobs:
     test:
