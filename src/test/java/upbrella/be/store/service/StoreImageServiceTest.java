@@ -11,6 +11,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.repository.StoreDetailRepository;
@@ -18,6 +19,8 @@ import upbrella.be.store.repository.StoreImageRepository;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -61,5 +64,27 @@ class StoreImageServiceTest {
         verify(storeDetailRepository, times(1)).getReferenceById(storeDetailId);
         verify(s3Client, times(1)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
         verify(storeImageRepository, times(1)).save(any(StoreImage.class));
+    }
+
+    @Test
+    @DisplayName("새로 사진을 등록할 때 기존에 있던 사진들을 삭제하는 테스트")
+    void deleteFileTest() {
+        // given
+        StoreImage url1 = StoreImage.builder()
+                .storeDetail(StoreDetail.builder().build())
+                .imageUrl("url1")
+                .build();
+        StoreImage url2 = StoreImage.builder()
+                .storeDetail(StoreDetail.builder().build())
+                .imageUrl("url1")
+                .build();
+        storeImageRepository.save(url1);
+        storeImageRepository.save(url2);
+
+        // when
+        storeImageService.deleteImagesBeforeSave(1L);
+
+        // then
+        Assertions.assertThat(storeImageRepository.findAll().size()).isEqualTo(0);
     }
 }
