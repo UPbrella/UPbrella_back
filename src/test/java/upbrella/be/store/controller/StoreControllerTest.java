@@ -183,6 +183,8 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("협업 지점 고유번호"),
                                 fieldWithPath("stores[].name").type(JsonFieldType.STRING)
                                         .description("협업 지점명"),
+                                fieldWithPath("stores[].category").type(JsonFieldType.STRING)
+                                        .description("카테고리"),
                                 fieldWithPath("stores[].classification").type(JsonFieldType.STRING)
                                         .description("분류"),
                                 fieldWithPath("stores[].activateStatus").type(JsonFieldType.BOOLEAN)
@@ -201,7 +203,10 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("위도"),
                                 fieldWithPath("stores[].longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
-                                subsectionWithPath("stores[].imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
+                                fieldWithPath("stores[].content").type(JsonFieldType.STRING)
+                                        .description("내용"),
+                                fieldWithPath("stores[].imageUrls").type(JsonFieldType.ARRAY)
+                                        .description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 

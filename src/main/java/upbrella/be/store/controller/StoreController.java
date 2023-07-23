@@ -93,6 +93,7 @@ public class StoreController {
                                         SingleStoreResponse.builder()
                                                 .id(1)
                                                 .name("업브렐라")
+                                                .category("카페")
                                                 .classification("신촌")
                                                 .activateStatus(true)
                                                 .address("서울특별시 강남구 테헤란로 427")
@@ -102,6 +103,7 @@ public class StoreController {
                                                 .instagramId("upbrella")
                                                 .latitude(37.503716)
                                                 .longitude(127.053718)
+                                                .content("업브렐라입니다.")
                                                 .imageUrls(
                                                         List.of(
                                                                 "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/1.jpg",

@@ -11,6 +11,7 @@ public class SingleStoreResponse {
 
     private long id;
     private String name;
+    private String category;
     private String classification;
     private boolean activateStatus;
     private String address;
@@ -20,5 +21,6 @@ public class SingleStoreResponse {
     private String instagramId;
     private double latitude;
     private double longitude;
+    private String content;
     private List<String> imageUrls;
 }

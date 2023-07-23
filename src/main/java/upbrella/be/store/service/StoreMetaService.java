@@ -8,6 +8,7 @@ import upbrella.be.store.entity.StoreMeta;
 @Service
 @RequiredArgsConstructor
 public class StoreMetaService {
+
     private final StoreMetaRepository storeMetaRepository;
 
     public StoreMeta findById(long id) {
