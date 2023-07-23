@@ -13,10 +13,8 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE storeMeta SET deleted = true WHERE id = ?")
-@Where(clause = "deleted = false")
 public class StoreMeta {
 
     @Id
@@ -31,19 +29,6 @@ public class StoreMeta {
     private String category;
     private double latitude;
     private double longitude;
-
-    @Builder
-    private StoreMeta(String name, String thumbnail, boolean activated, boolean deleted, String classification, String subClassification, String category, double latitude, double longitude) {
-        this.name = name;
-        this.thumbnail = thumbnail;
-        this.activated = activated;
-        this.deleted = deleted;
-        this.classification = classification;
-        this.subClassification = subClassification;
-        this.category = category;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
 
     public static StoreMeta createForSave(CreateStoreRequest request){
         return StoreMeta.builder()

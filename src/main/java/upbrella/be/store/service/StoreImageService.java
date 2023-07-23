@@ -28,9 +28,8 @@ public class StoreImageService {
     @Value("${AWS_S3_BUCKET}")
     private String bucketName;
 
-    public String uploadFile(MultipartFile file, long storeDetailId) {
+    public String uploadFile(MultipartFile file, long storeDetailId, String randomId) {
 
-        String randomId = UUID.randomUUID().toString().substring(0, 10);
         String fileName = file.getOriginalFilename() + randomId;
         String contentType = file.getContentType();
 
@@ -54,7 +53,22 @@ public class StoreImageService {
         }
     }
 
-    public void deleteFile(String imgUrl) {
+    public void deleteImagesBeforeSave(long storeDetailId) {
+
+        List<StoreImage> storeImages = storeImageRepository.findByStoreDetailId(storeDetailId);
+        if (storeImages.size() > 0) {
+            for (StoreImage storeImage : storeImages) {
+                deleteFile(storeImage.getImageUrl());
+                storeImageRepository.delete(storeImage);
+            }
+        }
+    }
+
+    public String makeRandomId() {
+        return UUID.randomUUID().toString().substring(0, 10);
+    }
+
+    private void deleteFile(String imgUrl) {
 
         String key = parseKey(imgUrl);
 
@@ -72,16 +86,6 @@ public class StoreImageService {
         storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imgUrl));
     }
 
-    public void deleteImagesBeforeSave(long storeDetailId) {
-
-        List<StoreImage> storeImages = storeImageRepository.findByStoreDetailId(storeDetailId);
-        if (storeImages.size() > 0) {
-            for (StoreImage storeImage : storeImages) {
-                deleteFile(storeImage.getImageUrl());
-                storeImageRepository.delete(storeImage);
-            }
-        }
-    }
 
     private String parseKey(String url) {
 

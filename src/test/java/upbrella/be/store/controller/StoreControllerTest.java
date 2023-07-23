@@ -345,7 +345,8 @@ class StoreControllerTest extends RestDocsSupport {
         // given
         MockMultipartFile firstFile = new MockMultipartFile("images", "filename-1.jpeg", "text/plain", "some-image".getBytes());
 
-        given(storeImageService.uploadFile(firstFile, 1L))
+        given(storeImageService.makeRandomId()).willReturn("randomId");
+        given(storeImageService.uploadFile(firstFile, 1L, "randomId"))
                 .willReturn("https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-1.jpeg");
 
         // when

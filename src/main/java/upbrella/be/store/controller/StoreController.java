@@ -152,7 +152,8 @@ public class StoreController {
         List<String> imageUrls = new ArrayList<>();
         storeImageService.deleteImagesBeforeSave(storeId);
         for (MultipartFile image : images) {
-            imageUrls.add(storeImageService.uploadFile(image, storeId));
+            String randomId = storeImageService.makeRandomId();
+            imageUrls.add(storeImageService.uploadFile(image, storeId, randomId));
         }
 
         return ResponseEntity
