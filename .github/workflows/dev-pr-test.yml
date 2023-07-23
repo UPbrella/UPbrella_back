@@ -12,10 +12,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v4
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: checkout
         uses: actions/checkout@v3
 
@@ -33,15 +29,19 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --info test
+          
 
       - name: 🐳 테스트 결과 Report
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: ${{ always() }}
         with:
           files: 'build/test-results/**/*.xml'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: 🐳 테스트 실패 Comment
         uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           report_paths: 'build/test-results/test/TEST-*.xml'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
