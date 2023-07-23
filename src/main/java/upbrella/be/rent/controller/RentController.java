@@ -8,6 +8,8 @@ import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.RentService;
+import upbrella.be.user.entity.User;
+import upbrella.be.user.repository.UserRepository;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
@@ -22,12 +24,18 @@ public class RentController {
     private final ConditionReportService conditionReportService;
     private final RentService rentService;
 
+    // 가짜 유저 사용을 위해 임시로 UserRepository 주입
+    private final UserRepository userRepository;
+
     @PostMapping
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
-        // TODO: 예외 처리
+        // TODO: 세션을 통해 유저 꺼내기
+        // 임시로 가짜 유저 사용
+        User userToRent = userRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
 
-        rentService.addRental(rentUmbrellaByUserRequest);
+        rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
         return ResponseEntity
                 .ok()

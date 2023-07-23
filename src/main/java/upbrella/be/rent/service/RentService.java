@@ -23,13 +23,9 @@ public class RentService {
     private final RentRepository rentRepository;
 
     @Transactional
-    public void addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest) {
+    public void addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
 
         Umbrella willRentUmbrella = umbrellaService.findById(rentUmbrellaByUserRequest.getUmbrellaId());
-
-        // TODO: 추후에 세션으로 검증된 유저로 변경
-        // 임시로 mock user 사용
-        User userToRent = userService.findById(1L);
 
         StoreMeta rentalStore = storeMetaService.findById(rentUmbrellaByUserRequest.getStoreId());
 
