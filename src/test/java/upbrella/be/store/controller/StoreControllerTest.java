@@ -478,7 +478,7 @@ class StoreControllerTest extends RestDocsSupport {
         long classificationId = 1L;
 
         // when
-
+        doNothing().when(classificationService).deleteClassification(classificationId);
 
         // then
         mockMvc.perform(delete("/stores/classifications/{classificationId}", classificationId))
@@ -556,6 +556,8 @@ class StoreControllerTest extends RestDocsSupport {
     void deleteSubClassificationTest() throws Exception {
         // given
         long subClassificationId = 1L;
+
+        doNothing().when(classificationService).deleteClassification(subClassificationId);
 
         // when
 

@@ -223,6 +223,8 @@ public class StoreController {
     @DeleteMapping("/classifications/{classificationId}")
     public ResponseEntity<CustomResponse> deleteClassification(HttpSession session, @PathVariable long classificationId) {
 
+        classificationService.deleteClassification(classificationId);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -268,6 +270,8 @@ public class StoreController {
 
     @DeleteMapping("/subClassifications/{subClassificationId}")
     public ResponseEntity<CustomResponse> deleteSubClassification(HttpSession session, @PathVariable long subClassificationId) {
+
+        classificationService.deleteClassification(subClassificationId);
 
         return ResponseEntity
                 .ok()

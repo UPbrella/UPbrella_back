@@ -20,4 +20,8 @@ public class ClassificationService {
     public void createSubClassification(CreateSubClassificationRequest request) {
         classificationRepository.save(Classification.createSubClassification(request));
     }
+
+    public void deleteClassification(Long id) {
+        classificationRepository.deleteById(id);
+    }
 }

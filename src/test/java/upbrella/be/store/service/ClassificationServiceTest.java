@@ -13,8 +13,7 @@ import upbrella.be.store.repository.ClassificationRepository;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ClassificationServiceTest {
@@ -60,5 +59,19 @@ class ClassificationServiceTest {
 
         // then
         verify(classificationRepository, times(1)).save(any(Classification.class));
+    }
+
+    @Test
+    @DisplayName("사용자는 분류를 삭제할 수 있다.")
+    void deleteClassificationTest() {
+        // given
+        long classificationId = 1L;
+        doNothing().when(classificationRepository).deleteById(classificationId);
+
+        // when
+        classificationService.deleteClassification(classificationId);
+
+        // then
+        verify(classificationRepository, times(1)).deleteById(classificationId);
     }
 }
