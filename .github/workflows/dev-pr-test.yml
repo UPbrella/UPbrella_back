@@ -14,9 +14,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v4
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+#      - uses: actions/labeler@v4
+#        with:
+#          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: checkout
         uses: actions/checkout@v3
