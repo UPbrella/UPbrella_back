@@ -2,6 +2,7 @@ package upbrella.be.store.dto.request;
 
 
 import lombok.*;
+import upbrella.be.store.entity.Classification;
 
 import java.util.List;
 
@@ -13,8 +14,8 @@ public class CreateStoreRequest {
 
     private String name;
     private String category;
-    private String classification;
-    private String subClassification;
+    private Classification classification;
+    private Classification subClassification;
     private boolean activateStatus;
     private String address;
     private String umbrellaLocation;
