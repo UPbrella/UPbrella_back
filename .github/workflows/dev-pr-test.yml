@@ -35,8 +35,7 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --info test
-        with:
-          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
+
       - name: 🐳 테스트 결과 Report
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: ${{ always() }}
