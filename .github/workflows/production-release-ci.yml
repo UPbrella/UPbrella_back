@@ -2,13 +2,13 @@ name: Upbrella DEV CI
 
 on:
   push:
-    branches: [ "release-dev" ]
+    branches: [ "release-production" ]
 
 env:
   WORKING_DIRECTORY: ./
   DOCKERFILE_DIRECTORY: ./.github/workflows
-  CODE_DEPLOY_APPLICATION_NAME: upbrella-dev-deploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
+  CODE_DEPLOY_APPLICATION_NAME: upbrella-production-deploy
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerProduction
   S3_BUCKET_NAME: upbrella-storage
 
 permissions:
@@ -31,7 +31,7 @@ jobs:
     - name: Set application properties
       run: |
         touch src/main/resources/application.properties
-        echo "${{ secrets.APPLICATION_PROPERTIES_DEV }}" | base64 --decode > src/main/resources/application.properties
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" | base64 --decode > src/main/resources/application.properties
      
     - name: Build with Gradle
       run: |
