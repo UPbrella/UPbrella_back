@@ -12,7 +12,7 @@ public class StoreDetail {
     @Id
     @GeneratedValue
     private long id;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_meta_id")
     private StoreMeta storeMeta;
     private Point location;
