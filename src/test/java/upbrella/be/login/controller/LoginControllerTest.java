@@ -8,8 +8,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.*;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.login.dto.request.LoginCodeRequest;
 import upbrella.be.login.dto.response.NaverLoggedInUser;
 import upbrella.be.login.dto.response.LoggedInUserResponse;
+import upbrella.be.login.dto.response.Properties;
 import upbrella.be.login.dto.token.*;
 import upbrella.be.login.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
@@ -47,12 +49,21 @@ public class LoginControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 카카오 소셜 로그인을 할 수 있다.")
     void kakoLoginTest() throws Exception {
         // given
-        String code = "{\"code\":\"1kdfjq0243f\"}";
+        LoginCodeRequest request = LoginCodeRequest.builder()
+                .code("1kdfjq0243f")
+                .build();
+
+        given(oauthLoginService.getOauthToken(request.getCode(), kakaoOauthInfo))
+                .willReturn(new OauthToken("accessToken", "refreshToken", "tokenType", 3600L));
+        given(kakaoOauthInfo.getLoginUri())
+                .willReturn("loginUri");
+        given(oauthLoginService.processKakaoLogin(anyString(), anyString()))
+                .willReturn(new Properties("카카오 사용자", "010-0000-0000"));
 
         // when
         mockMvc.perform(
                         post("/oauth/kakao")
-                                .content(code)
+                                .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -81,7 +92,9 @@ public class LoginControllerTest extends RestDocsSupport {
     void naverLoginTest() throws Exception {
 
         // given
-        String code = "{\"code\":\"1kdfjq0243f\"}";
+        LoginCodeRequest request = LoginCodeRequest.builder()
+                .code("1kdfjq0243f")
+                .build();
 
         given(oauthLoginService.getOauthToken(anyString(), any(CommonOauthInfo.class)))
                 .willReturn(new OauthToken("accessToken", "refreshToken", "tokenType", 3600L));
@@ -100,7 +113,7 @@ public class LoginControllerTest extends RestDocsSupport {
         // then
         mockMvc.perform(
                         post("/oauth/naver")
-                                .content(code)
+                                .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
