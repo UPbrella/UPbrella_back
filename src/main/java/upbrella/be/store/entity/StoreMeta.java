@@ -25,4 +25,7 @@ public class StoreMeta {
     private String thumbnail;
     private boolean activated;
     private boolean deleted;
+    private String classification;
+    private String subClassification;
+    private String category;
 }

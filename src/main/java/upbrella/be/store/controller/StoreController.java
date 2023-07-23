@@ -95,6 +95,7 @@ public class StoreController {
                                                 .name("업브렐라")
                                                 .category("카페")
                                                 .classification("신촌")
+                                                .subClassification("연세대학교")
                                                 .activateStatus(true)
                                                 .address("서울특별시 강남구 테헤란로 427")
                                                 .umbrellaLocation("가게 앞")

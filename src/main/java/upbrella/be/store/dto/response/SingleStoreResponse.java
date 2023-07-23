@@ -13,6 +13,7 @@ public class SingleStoreResponse {
     private String name;
     private String category;
     private String classification;
+    private String subClassification;
     private boolean activateStatus;
     private String address;
     private String umbrellaLocation;

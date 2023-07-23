@@ -187,6 +187,8 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("카테고리"),
                                 fieldWithPath("stores[].classification").type(JsonFieldType.STRING)
                                         .description("분류"),
+                                fieldWithPath("stores[].subClassification").type(JsonFieldType.STRING)
+                                        .description("세부 분류"),
                                 fieldWithPath("stores[].activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
                                 fieldWithPath("stores[].address").type(JsonFieldType.STRING)
