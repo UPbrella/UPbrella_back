@@ -8,12 +8,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,12 +39,144 @@ class UmbrellaServiceTest {
     @InjectMocks
     private UmbrellaService umbrellaService;
 
-    @Test
-    void findAllUmbrellas() {
+    @Nested
+    @DisplayName("페이지 번호와 페이지 크기를 입력받아")
+    class findAllUmbrellasTest {
+        private List<Umbrella> umbrellas = new ArrayList<>();
+        private StoreMeta storeMeta;
+        private UmbrellaResponse umbrellaResponse;
+
+        @BeforeEach
+        void setUp() {
+            storeMeta = StoreMeta.builder()
+                    .id(2L)
+                    .name("name")
+                    .thumbnail("thumb")
+                    .deleted(false)
+                    .build();
+
+            umbrellas.add(Umbrella.builder()
+                    .id(1L)
+                    .uuid(43L)
+                    .deleted(false)
+                    .storeMeta(storeMeta)
+                    .rentable(true)
+                    .build());
+
+            umbrellaResponse = UmbrellaResponse.builder()
+                    .id(1L)
+                    .uuid(43L)
+                    .storeMetaId(2L)
+                    .rentable(true)
+                    .build();
+        }
+
+        @DisplayName("해당하는 페이지의 우산 고유번호, 우산 관리번호, 협력 지점 고유번호, 대여 가능 여부를 포함하는 우산 목록 정보를 반환한다.")
+        @Test
+        void success() {
+
+            //given
+            Pageable pageable = PageRequest.of(0, 5);
+            given(umbrellaRepository.findByDeletedIsFalseOrderById(pageable))
+                    .willReturn(umbrellas);
+
+            //when
+            List<UmbrellaResponse> umbrellaResponseList = umbrellaService.findAllUmbrellas(pageable);
+
+            //then
+            assertAll(
+                    () -> assertThat(umbrellaResponseList.size())
+                            .isEqualTo(1),
+                    () -> assertThat(umbrellaResponseList.get(0))
+                            .usingRecursiveComparison()
+                            .isEqualTo(umbrellaResponse)
+            );
+        }
+
+        @DisplayName("해당하는 우산이 없으면 빈 객체를 반환한다.")
+        @Test
+        void empty() {
+
+            //given
+            Pageable pageable = PageRequest.of(0, 5);
+            given(umbrellaRepository.findByDeletedIsFalseOrderById(pageable))
+                    .willReturn(List.of());
+
+            //when
+            List<UmbrellaResponse> umbrellaResponseList = umbrellaService.findAllUmbrellas(pageable);
+
+            //then
+            assertThat(umbrellaResponseList).isEmpty();
+        }
     }
 
-    @Test
-    void findUmbrellasByStoreId() {
+    @Nested
+    @DisplayName("협력 지점의 고유번호와 페이지 번호, 페이지 크기를 입력받아")
+    class findUmbrellasByStoreIdTest {
+        private List<Umbrella> umbrellas = new ArrayList<>();
+        private StoreMeta storeMeta;
+        private UmbrellaResponse umbrellaResponse;
+        @BeforeEach
+        void setUp() {
+            storeMeta = StoreMeta.builder()
+                    .id(2L)
+                    .name("name")
+                    .thumbnail("thumb")
+                    .deleted(false)
+                    .build();
+
+            umbrellas.add(Umbrella.builder()
+                    .id(1L)
+                    .uuid(43L)
+                    .deleted(false)
+                    .storeMeta(storeMeta)
+                    .rentable(true)
+                    .build());
+
+            umbrellaResponse = UmbrellaResponse.builder()
+                    .id(1L)
+                    .uuid(43L)
+                    .storeMetaId(2L)
+                    .rentable(true)
+                    .build();
+        }
+
+        @DisplayName("해당하는 페이지의 우산 고유번호, 우산 관리번호, 협력 지점 고유번호, 대여 가능 여부를 포함하는 우산 목록 정보를 반환한다.")
+        @Test
+        void success() {
+            //given
+            Pageable pageable = PageRequest.of(0, 5);
+            given(umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(2L, pageable))
+                    .willReturn(umbrellas);
+
+            //when
+            List<UmbrellaResponse> umbrellaResponseList = umbrellaService.findUmbrellasByStoreId(2L, pageable);
+
+            //then
+            assertAll(
+                    () -> assertThat(umbrellaResponseList.size())
+                            .isEqualTo(1),
+                    () -> assertThat(umbrellaResponseList.get(0))
+                            .usingRecursiveComparison()
+                            .isEqualTo(umbrellaResponse)
+            );
+        }
+
+        @DisplayName("해당하는 우산이 없으면 빈 객체를 반환한다.")
+        @Test
+        void empty() {
+
+            //given
+            Pageable pageable = PageRequest.of(0, 5);
+            given(umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(2L, pageable))
+                    .willReturn(List.of());
+
+            //when
+            List<UmbrellaResponse> umbrellaResponseList = umbrellaService.findUmbrellasByStoreId(2L, pageable);
+
+            //then
+            assertThat(umbrellaResponseList).isEmpty();
+        }
     }
 
     @Nested
