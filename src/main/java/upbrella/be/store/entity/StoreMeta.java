@@ -5,10 +5,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -24,8 +21,12 @@ public class StoreMeta {
     private String thumbnail;
     private boolean activated;
     private boolean deleted;
-    private String classification;
-    private String subClassification;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classification_id")
+    private Classification classification;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_classification_id")
+    private Classification subClassification;
     private String category;
     private double latitude;
     private double longitude;

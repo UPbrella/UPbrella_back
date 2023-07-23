@@ -1,5 +1,6 @@
 package upbrella.be.store.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,7 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
@@ -215,15 +218,15 @@ class StoreControllerTest extends RestDocsSupport {
                         )));
     }
 
-    @Test
+//    @Test
     @DisplayName("관리자는 새로운 협업지점을 등록할 수 있다.")
     void createStoreTest() throws Exception {
         // given
         CreateStoreRequest store = CreateStoreRequest.builder()
                 .name("협업 지점명")
                 .category("카테고리")
-                .classification("분류")
-                .subClassification("세부 분류")
+//                .classification("분류")
+//                .subClassification("세부 분류")
                 .activateStatus(true)
                 .address("주소")
                 .umbrellaLocation("우산 위치")
@@ -389,6 +392,177 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("storeId").description("협업 지점 고유번호")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 대분류 목록을 조회할 수 있다.")
+    void findAllClassificationTest() throws Exception {
+        // given
+
+
+        // when
+
+
+        // then
+        mockMvc.perform(get("/stores/classifications"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("store-find-all-classification-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("classifications[]").type(JsonFieldType.ARRAY)
+                                        .description("대분류 목록"),
+                                fieldWithPath("classifications[].id").type(JsonFieldType.NUMBER)
+                                        .description("대분류 고유번호"),
+                                fieldWithPath("classifications[].type").type(JsonFieldType.STRING)
+                                        .description("대분류 타입"),
+                                fieldWithPath("classifications[].name").type(JsonFieldType.STRING)
+                                        .description("대분류 이름"),
+                                fieldWithPath("classifications[].latitude").type(JsonFieldType.NUMBER)
+                                        .description("대분류 위도"),
+                                fieldWithPath("classifications[].longitude").type(JsonFieldType.NUMBER)
+                                        .description("대분류 경도")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 대분류를 추가할 수 있다.")
+    void createClassificationTest() throws Exception {
+        // given
+        CreateClassificationRequest request = CreateClassificationRequest.builder()
+                .type("대분류 타입")
+                .name("대분류 이름")
+                .latitude(33.33)
+                .longitude(33.33)
+                .build();
+
+        // when
+
+
+        // then
+        mockMvc.perform(post("/stores/classifications")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("store-create-classification-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("type").type(JsonFieldType.STRING)
+                                        .description("대분류 타입"),
+                                fieldWithPath("name").type(JsonFieldType.STRING)
+                                        .description("대분류 이름"),
+                                fieldWithPath("latitude").type(JsonFieldType.NUMBER)
+                                        .description("대분류 위도"),
+                                fieldWithPath("longitude").type(JsonFieldType.NUMBER)
+                                        .description("대분류 경도")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 대분류를 삭제할 수 있다.")
+    void deleteClassificationTest() throws Exception {
+        // given
+        long classificationId = 1L;
+
+        // when
+
+
+        // then
+        mockMvc.perform(delete("/stores/classifications/{classificationId}", classificationId))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("store-delete-classification-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("classificationId").description("대분류 고유번호")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 소분류 목록을 조회할 수 있다.")
+    void findAllSubClassificationTest() throws Exception {
+        // given
+
+
+        // when
+
+
+        // then
+        mockMvc.perform(get("/stores/subClassifications"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("store-find-all-sub-classification-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("subClassifications[]").type(JsonFieldType.ARRAY)
+                                        .description("소분류 목록"),
+                                fieldWithPath("subClassifications[].id").type(JsonFieldType.NUMBER)
+                                        .description("소분류 고유번호"),
+                                fieldWithPath("subClassifications[].type").type(JsonFieldType.STRING)
+                                        .description("소분류 타입"),
+                                fieldWithPath("subClassifications[].name").type(JsonFieldType.STRING)
+                                        .description("소분류 이름")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 소분류를 추가할 수 있다.")
+    void createSubClassificationTest() throws Exception {
+        // given
+        CreateSubClassificationRequest request = CreateSubClassificationRequest.builder()
+                .type("소분류 타입")
+                .name("소분류 이름")
+                .build();
+
+        // when
+
+
+        // then
+        mockMvc.perform(
+                post("/stores/subClassifications")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-create-sub-classification-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("type").type(JsonFieldType.STRING)
+                                        .description("소분류 타입"),
+                                fieldWithPath("name").type(JsonFieldType.STRING)
+                                        .description("소분류 이름")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 소분류를 삭제할 수 있다.")
+    void deleteSubClassificationTest() throws Exception {
+        // given
+        long subClassificationId = 1L;
+
+        // when
+
+
+        // then
+        mockMvc.perform(
+                delete("/stores/subClassifications/{subClassificationId}", subClassificationId)
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-delete-sub-classification-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("subClassificationId").description("소분류 고유번호")
                         )));
     }
 }

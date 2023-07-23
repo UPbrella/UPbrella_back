@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import upbrella.be.store.dto.request.CoordinateRequest;
+import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
@@ -179,4 +181,95 @@ public class StoreController {
                         "협업지점 삭제 성공"
                 ));
     }
+
+    @GetMapping("/classifications")
+    public ResponseEntity<CustomResponse<AllClassificationResponse>> findAllClassification(HttpSession session) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "대분류 전체 조회 성공",
+                        AllClassificationResponse.builder()
+                                .classifications(List.of(
+                                        SingleClassificationResponse.builder()
+                                                .id(1)
+                                                .type("classification")
+                                                .name("신촌")
+                                                .latitude(37.503716)
+                                                .longitude(127.053718)
+                                                .build()
+                                ))
+                                .build()));
+    }
+
+    @PostMapping("/classifications")
+    public ResponseEntity<CustomResponse> createClassification(HttpSession session, @RequestBody CreateClassificationRequest newClassification) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "새로운 대분류 등록 성공"
+                ));
+    }
+
+    @DeleteMapping("/classifications/{classificationId}")
+    public ResponseEntity<CustomResponse> deleteClassification(HttpSession session, @PathVariable long classificationId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "대분류 삭제 성공"
+                ));
+    }
+
+    @GetMapping("/subClassifications")
+    public ResponseEntity<CustomResponse<AllSubClassificationResponse>> findAllSubClassification(HttpSession session) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "소분류 전체 조회 성공",
+                        AllSubClassificationResponse.builder()
+                                .subClassifications(List.of(
+                                        SingleSubClassificationResponse.builder()
+                                                .id(1)
+                                                .type("subClassification")
+                                                .name("연세대학교")
+                                                .build()
+                                ))
+                                .build()));
+    }
+
+    @PostMapping("/subClassifications")
+    public ResponseEntity<CustomResponse> createSubClassification(HttpSession session, @RequestBody CreateSubClassificationRequest newSubClassification) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "새로운 소분류 등록 성공"
+                ));
+    }
+
+    @DeleteMapping("/subClassifications/{subClassificationId}")
+    public ResponseEntity<CustomResponse> deleteSubClassification(HttpSession session, @PathVariable long subClassificationId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "소분류 삭제 성공"
+                ));
+    }
+
 }
