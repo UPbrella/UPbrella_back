@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReturnUmbrellaByUserRequest {
 
-    private long umbrellaId;
+    private long uuid;
     private long storeId;
     private String improvement;
 }

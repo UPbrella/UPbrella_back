@@ -1,6 +1,6 @@
 package upbrella.be.rent.entity;
 
-import lombok.Getter;
+import lombok.*;
 import upbrella.be.payment.entity.Payment;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class History {
 
     @Id
@@ -34,4 +37,13 @@ public class History {
     private LocalDateTime rentedAt;
     private LocalDateTime returnedAt;
     private String etc;
+
+    public static History ofCreatedByNewRent(Umbrella umbrella, User user, StoreMeta rentStoreMetaId) {
+        return History.builder()
+                .umbrella(umbrella)
+                .user(user)
+                .rentStoreMetaId(rentStoreMetaId)
+                .rentedAt(LocalDateTime.now())
+                .build();
+    }
 }
