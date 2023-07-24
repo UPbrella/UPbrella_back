@@ -22,13 +22,13 @@ public class UmbrellaService {
 
     public List<UmbrellaResponse> findAllUmbrellas(Pageable pageable) {
         return umbrellaRepository.findByDeletedIsFalseOrderById(pageable)
-                .stream().map(UmbrellaResponse::from)
+                .stream().map(UmbrellaResponse::fromUmbrella)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     public List<UmbrellaResponse> findUmbrellasByStoreId(long storeId, Pageable pageable) {
         return umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(storeId, pageable)
-                .stream().map(UmbrellaResponse::from)
+                .stream().map(UmbrellaResponse::fromUmbrella)
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -81,6 +81,12 @@ public class UmbrellaService {
         Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
         foundUmbrella.delete();
+    }
+
+    public Umbrella findById(long id) {
+
+        return umbrellaRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산입니다."));
     }
 
 }

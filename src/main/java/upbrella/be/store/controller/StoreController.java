@@ -17,7 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/stores")
 public class StoreController {
-
     private final StoreMetaService storeMetaService;
 
     @GetMapping("/{storeId}")
@@ -52,14 +51,7 @@ public class StoreController {
                         200,
                         "현재 위치 기준 가게 조회 성공",
                         AllCurrentLocationStoreResponse.builder()
-                                .stores(List.of(
-                                        SingleCurrentLocationStoreResponse.builder()
-                                                .id(1)
-                                                .name("업브렐라")
-                                                .latitude(37.503716)
-                                                .longitude(127.053718)
-                                                .openStatus(true)
-                                                .build()))
+                                .stores(storeMetaService.findStoresInCurrentMap(coordinateRequest))
                                 .build()));
     }
 

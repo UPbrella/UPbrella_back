@@ -9,13 +9,16 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
+import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.service.StoreMetaService;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -30,7 +33,6 @@ import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 class StoreControllerTest extends RestDocsSupport {
     @Mock
     private StoreMetaService storeMetaService;
-
 
     @Override
     protected Object initController() {
@@ -84,18 +86,31 @@ class StoreControllerTest extends RestDocsSupport {
     @Test
     @DisplayName("사용자는 우산의 위도, 경도, 확대 정도를 기반으로 협업지점을 조회할 수 있다.")
     void test() throws Exception {
+
         // given
+        final double latitudeFrom = 37.5666103;
+        final double latitudeTo = 77.5666103;
+        final double longitudeFrom = 36.9783882;
+        final double longitudeTo = 126.9783882;
 
+        given(storeMetaService.findStoresInCurrentMap(any(CoordinateRequest.class)))
+                .willReturn(
+                        List.of(
+                                SingleCurrentLocationStoreResponse.builder()
+                                        .id(1)
+                                        .name("업브렐라")
+                                        .latitude(37.503716)
+                                        .longitude(127.053718)
+                                        .openStatus(true)
+                                        .build()));
 
-        // when
-
-
-        // then
+        // when & then
         mockMvc.perform(
                         get("/stores/location")
-                                .param("latitude", "37.5666103")
-                                .param("longitude", "126.9783882")
-                                .param("zoomLevel", "1")
+                                .param("latitudeFrom", String.valueOf(latitudeFrom))
+                                .param("latitudeTo", String.valueOf(latitudeTo))
+                                .param("longitudeFrom", String.valueOf(longitudeFrom))
+                                .param("longitudeTo", String.valueOf(longitudeTo))
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -103,12 +118,14 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParameters(
-                                parameterWithName("latitude")
-                                        .description("위도"),
-                                parameterWithName("longitude")
-                                        .description("경도"),
-                                parameterWithName("zoomLevel")
-                                        .description("확대 정도")
+                                parameterWithName("latitudeFrom")
+                                        .description("위도 경계 시작"),
+                                parameterWithName("latitudeTo")
+                                        .description("위도 경계 종료"),
+                                parameterWithName("longitudeFrom")
+                                        .description("경도 경계 시작"),
+                                parameterWithName("longitudeTo")
+                                        .description("경도 경계 종료")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
