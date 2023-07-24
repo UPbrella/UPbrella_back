@@ -56,6 +56,10 @@ dependencies {
 	// querydsl 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+	// validation 추가
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 ext {
