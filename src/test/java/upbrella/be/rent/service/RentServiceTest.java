@@ -9,14 +9,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
-import upbrella.be.umbrella.service.UmbrellaService;
-import upbrella.be.user.service.UserService;
+import upbrella.be.user.entity.User;
+import upbrella.be.user.repository.UserRepository;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -30,6 +34,8 @@ class RentServiceTest {
     private StoreMetaService storeMetaService;
     @Mock
     private RentRepository rentRepository;
+    @Mock
+    private UserRepository userRepository;
     @InjectMocks
     private RentService rentService;
 
@@ -40,13 +46,14 @@ class RentServiceTest {
         private RentUmbrellaByUserRequest rentUmbrellaByUserRequest;
         private StoreMeta foundStoreMeta;
         private Umbrella foundUmbrella;
+        private User userToRent;
 
         @BeforeEach
         void setUp() {
             rentUmbrellaByUserRequest = RentUmbrellaByUserRequest.builder()
                     .region("신촌")
                     .storeId(25L)
-                    .umbrellaId(99L)
+                    .uuid(99L)
                     .conditionReport("상태 양호")
                     .build();
 
@@ -58,10 +65,18 @@ class RentServiceTest {
                     .build();
 
             foundUmbrella = Umbrella.builder()
+                    .id(99L)
                     .uuid(99L)
                     .deleted(false)
                     .storeMeta(foundStoreMeta)
                     .rentable(true)
+                    .build();
+
+            userToRent = User.builder()
+                    .id(11L)
+                    .name("테스터")
+                    .phoneNumber("010-1234-5678")
+                    .adminStatus(false)
                     .build();
         }
 
@@ -69,14 +84,23 @@ class RentServiceTest {
         @DisplayName("대여 이력에 정상적으로 추가하 수 있다.")
         void success() {
 
+            // given
             given(storeMetaService.findById(25L))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(99L))
-                    .willReturn(false);
-            given(umbrellaRepository.save(any(Umbrella.class)))
-                    .willReturn(foundUmbrella);
+            given(umbrellaRepository.findByUuidAndDeletedIsFalse(99L))
+                    .willReturn(Optional.of(foundUmbrella));
+            given(rentRepository.save(any(History.class)))
+                    .willReturn(History.ofCreatedByNewRent(
+                            foundUmbrella,
+                            userToRent,
+                            foundStoreMeta
+                    ));
+
+            // when
+            rentService.addRental(rentUmbrellaByUserRequest, userToRent);
+
+            // then
+
         }
-
     }
-
 }

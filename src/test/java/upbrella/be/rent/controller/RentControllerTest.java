@@ -53,7 +53,7 @@ public class RentControllerTest extends RestDocsSupport {
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
                 .region("신촌")
                 .storeId(1L)
-                .umbrellaId(1L)
+                .uuid(1L)
                 .conditionReport("필요하다면 상태 신고를 해주세요.")
                 .build();
 
