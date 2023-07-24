@@ -1,6 +1,5 @@
 package upbrella.be.store.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,15 +29,6 @@ class StoreMetaServiceTest {
 
     @InjectMocks
     private StoreMetaService storeMetaService;
-
-    @Test
-    void findById() {
-
-    }
-
-    @Test
-    void findCurrentStoreIdByUmbrella() {
-    }
 
     @Nested
     @DisplayName("우산의 고유번호를 입력받아")
