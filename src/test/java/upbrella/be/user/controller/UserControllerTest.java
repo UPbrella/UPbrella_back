@@ -53,9 +53,7 @@ public class UserControllerTest extends RestDocsSupport {
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
-                                        .description("사용자 전화번호"),
-                                fieldWithPath("adminStatus").type(JsonFieldType.BOOLEAN)
-                                        .description("관리자 여부")
+                                        .description("사용자 전화번호")
                         )));
     }
 
