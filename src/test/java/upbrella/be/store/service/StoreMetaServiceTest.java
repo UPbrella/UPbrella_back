@@ -44,12 +44,20 @@ class StoreMetaServiceTest {
         void setUp() {
             StoreMeta storeIn = StoreMeta.builder()
                     .id(1)
+                    .thumbnail("사진1")
+                    .name("모티브 카페 신촌 지점")
+                    .activated(true)
+                    .deleted(false)
                     .latitude(4)
                     .longitude(3)
                     .build();
 
             StoreMeta storeOut = StoreMeta.builder()
                     .id(1)
+                    .thumbnail("사진2")
+                    .name("모티브 카페 미국 지점")
+                    .activated(true)
+                    .deleted(false)
                     .latitude(6)
                     .longitude(3)
                     .build();
@@ -58,6 +66,8 @@ class StoreMetaServiceTest {
                     .id(1)
                     .latitude(4)
                     .longitude(3)
+                    .name("모티브 카페 신촌 지점")
+                    .openStatus(true)
                     .build();
 
             storeMetaList.add(storeIn);
