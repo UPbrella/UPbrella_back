@@ -90,4 +90,20 @@ class StoreMetaServiceTest {
         verify(storeDetailRepository, times(1)).save(any(StoreDetail.class));
         verify(storeImageRepository, times(request.getImageUrls().size())).save(any(StoreImage.class));
     }
+
+    @Test
+    @DisplayName("협업지점을 삭제할 수 있다.")
+    void StoreMetaDeleteTest() {
+        // given
+        long storeId = 1L;
+        StoreMeta storeMeta = mock(StoreMeta.class);
+
+        given(storeMetaRepository.findById(storeId)).willReturn(Optional.of(storeMeta));
+
+        // when
+        storeMetaService.deleteStoreMeta(storeId);
+
+        // then
+        verify(storeMeta, times(1)).delete();
+    }
 }

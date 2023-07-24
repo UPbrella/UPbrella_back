@@ -30,4 +30,8 @@ public class StoreMeta {
     private String category;
     private double latitude;
     private double longitude;
+
+    public void delete() {
+        this.deleted = true;
+    }
 }

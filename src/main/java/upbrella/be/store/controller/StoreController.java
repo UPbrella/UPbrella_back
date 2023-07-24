@@ -177,6 +177,8 @@ public class StoreController {
     @DeleteMapping("/{storeId}")
     public ResponseEntity<CustomResponse> deleteStore(HttpSession session, @PathVariable long storeId) {
 
+        storeMetaService.deleteStoreMeta(storeId);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(

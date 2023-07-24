@@ -398,13 +398,13 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 협업지점을 삭제할 수 있다.")
     void deleteStoreTest() throws Exception {
         // given
+        long storeMetaId = 1L;
 
-
-        // when
+        doNothing().when(storeMetaService).deleteStoreMeta(storeMetaId);
 
 
         // then
-        mockMvc.perform(delete("/stores/{storeId}", 1L))
+        mockMvc.perform(delete("/stores/{storeId}", storeMetaId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-doc",
