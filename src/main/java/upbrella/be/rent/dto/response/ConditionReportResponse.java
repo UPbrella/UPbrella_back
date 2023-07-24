@@ -13,7 +13,7 @@ public class ConditionReportResponse {
     private String content;
     private String etc;
 
-    public static ConditionReportResponse from(ConditionReport conditionReport) {
+    public static ConditionReportResponse fromConditionReport(ConditionReport conditionReport) {
         return ConditionReportResponse.builder()
                 .id(conditionReport.getId())
                 .umbrellaId(conditionReport.getHistory().getId())

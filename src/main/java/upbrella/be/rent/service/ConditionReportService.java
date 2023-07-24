@@ -18,7 +18,7 @@ public class ConditionReportService {
     @Transactional
     public List<ConditionReportResponse> findAllConditionReport() {
         return conditionReportRepository.findAll().stream()
-                .map(ConditionReportResponse::from)
+                .map(ConditionReportResponse::fromConditionReport)
                 .collect(Collectors.toList());
     }
 }
