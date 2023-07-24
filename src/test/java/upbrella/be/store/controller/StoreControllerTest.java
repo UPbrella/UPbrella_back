@@ -9,10 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.store.dto.request.CreateClassificationRequest;
-import upbrella.be.store.dto.request.CreateStoreRequest;
-import upbrella.be.store.dto.request.CreateSubClassificationRequest;
-import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.AllClassificationResponse;
 import upbrella.be.store.dto.response.AllSubClassificationResponse;
 import upbrella.be.store.dto.response.SingleClassificationResponse;
@@ -227,15 +224,23 @@ class StoreControllerTest extends RestDocsSupport {
                         )));
     }
 
-//    @Test
+    @Test
     @DisplayName("관리자는 새로운 협업지점을 등록할 수 있다.")
     void createStoreTest() throws Exception {
         // given
         CreateStoreRequest store = CreateStoreRequest.builder()
                 .name("협업 지점명")
                 .category("카테고리")
-//                .classification("분류")
-//                .subClassification("세부 분류")
+                .classification(ClassificationRequest.builder()
+                        .id(1L)
+                        .type("classification")
+                        .name("신촌")
+                        .latitude(33.33)
+                        .longitude(33.33).build())
+                .subClassification(SubClassificationRequest.builder()
+                        .id(2L)
+                        .type("subClassification")
+                        .name("연세대학교").build())
                 .activateStatus(true)
                 .address("주소")
                 .umbrellaLocation("우산 위치")
@@ -261,15 +266,31 @@ class StoreControllerTest extends RestDocsSupport {
                 .andDo(document("store-create-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        requestFields(
+                        relaxedRequestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("협업 지점명"),
                                 fieldWithPath("category").type(JsonFieldType.STRING)
                                         .description("카테고리"),
-                                fieldWithPath("classification").type(JsonFieldType.STRING)
-                                        .description("분류"),
-                                fieldWithPath("subClassification").type(JsonFieldType.STRING)
-                                        .description("세부 분류"),
+                                fieldWithPath("classification").type(JsonFieldType.OBJECT)
+                                        .description("대분류"),
+                                fieldWithPath("classification.id").type(JsonFieldType.NUMBER)
+                                        .description("대분류 고유번호"),
+                                fieldWithPath("classification.type").type(JsonFieldType.STRING)
+                                        .description("대분류 타입"),
+                                fieldWithPath("classification.name").type(JsonFieldType.STRING)
+                                        .description("대분류 이름"),
+                                fieldWithPath("classification.latitude").type(JsonFieldType.NUMBER)
+                                        .description("대분류 위도"),
+                                fieldWithPath("classification.longitude").type(JsonFieldType.NUMBER)
+                                        .description("대분류 경도"),
+                                fieldWithPath("subClassification").type(JsonFieldType.OBJECT)
+                                        .description("소분류"),
+                                fieldWithPath("subClassification.id").type(JsonFieldType.NUMBER)
+                                        .description("소분류 고유번호"),
+                                fieldWithPath("subClassification.type").type(JsonFieldType.STRING)
+                                        .description("소분류 타입"),
+                                fieldWithPath("subClassification.name").type(JsonFieldType.STRING)
+                                        .description("소분류 이름"),
                                 fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)

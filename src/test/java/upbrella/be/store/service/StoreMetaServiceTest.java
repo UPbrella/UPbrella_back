@@ -6,7 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import upbrella.be.store.dto.request.ClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.dto.request.SubClassificationRequest;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.entity.StoreMeta;
@@ -55,8 +57,18 @@ class StoreMetaServiceTest {
         CreateStoreRequest request = CreateStoreRequest.builder()
                 .name("업브렐라")
                 .category("카페")
-                .classification("카페")
-                .subClassification("커피전문점")
+                .classification(ClassificationRequest.builder()
+                        .id(1L)
+                        .type("classification")
+                        .name("음식점")
+                        .latitude(37.503716)
+                        .longitude(127.053718)
+                        .build())
+                .subClassification(SubClassificationRequest.builder()
+                        .id(2L)
+                        .type("subClassification")
+                        .name("카페")
+                        .build())
                 .activateStatus(true)
                 .address("서울특별시 강남구 테헤란로 427")
                 .umbrellaLocation("1층")
