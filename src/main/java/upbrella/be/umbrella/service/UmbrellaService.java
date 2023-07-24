@@ -22,13 +22,13 @@ public class UmbrellaService {
 
     public List<UmbrellaResponse> findAllUmbrellas(Pageable pageable) {
         return umbrellaRepository.findByDeletedIsFalseOrderById(pageable)
-                .stream().map(UmbrellaResponse::from)
+                .stream().map(UmbrellaResponse::fromUmbrella)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     public List<UmbrellaResponse> findUmbrellasByStoreId(long storeId, Pageable pageable) {
         return umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(storeId, pageable)
-                .stream().map(UmbrellaResponse::from)
+                .stream().map(UmbrellaResponse::fromUmbrella)
                 .collect(Collectors.toUnmodifiableList());
     }
 
