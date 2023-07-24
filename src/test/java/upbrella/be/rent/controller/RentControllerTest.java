@@ -2,18 +2,27 @@ package upbrella.be.rent.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
+import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.RentService;
+import upbrella.be.user.entity.User;
+import upbrella.be.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -22,13 +31,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
+@ExtendWith(MockitoExtension.class)
 public class RentControllerTest extends RestDocsSupport {
 
-    private final RentService rentService = mock(RentService.class);
+    @Mock
+    private ConditionReportService conditionReportService;
+    @Mock
+    private RentService rentService;
+    @Mock
+    private UserRepository userRepository;
 
     @Override
     protected Object initController() {
-        return new RentController();
+        return new RentController(conditionReportService, rentService, userRepository);
     }
 
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
@@ -37,10 +52,20 @@ public class RentControllerTest extends RestDocsSupport {
 
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
                 .region("신촌")
-                .storeId(1)
-                .umbrellaId(1)
-                .statusDeclaration("필요하다면 상태 신고를 해주세요.")
+                .storeId(1L)
+                .uuid(1L)
+                .conditionReport("필요하다면 상태 신고를 해주세요.")
                 .build();
+
+        User newUser = User.builder()
+                        .id(1L)
+                        .name("테스터1")
+                        .phoneNumber("010-1111-1111")
+                        .adminStatus(false)
+                        .build();
+
+
+        given(userRepository.findById(1L)).willReturn(Optional.of(newUser));
 
         mockMvc.perform(
                         post("/rent")
@@ -57,9 +82,9 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("지역"),
                                 fieldWithPath("storeId").type(JsonFieldType.NUMBER)
                                         .description("협업 지점 고유번호"),
-                                fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
-                                fieldWithPath("statusDeclaration").type(JsonFieldType.STRING)
+                                fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("상태 신고"))
                         ));
@@ -69,11 +94,10 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     void returnUmbrellaTest() throws Exception {
         ReturnUmbrellaByUserRequest request = ReturnUmbrellaByUserRequest.builder()
-                .umbrellaId(1)
+                .uuid(1)
                 .storeId(1)
                 .improvement("불편하셨다면 개선 사항을 입력해주세요.")
                 .build();
-
 
         mockMvc.perform(
                         patch("/rent")
@@ -86,7 +110,7 @@ public class RentControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("storeId").type(JsonFieldType.NUMBER)
                                         .description("협업 지점 고유번호"),
@@ -162,35 +186,34 @@ public class RentControllerTest extends RestDocsSupport {
 
     @DisplayName("사용자는 신고 내역을 조회할 수 있다.")
     @Test
-    void showAllStatusDeclarationsTest() throws Exception {
+    void showAllStatusConditionTest() throws Exception {
 
-        StatusDeclarationPageResponse response = StatusDeclarationPageResponse.builder()
-                .statusDeclarationPage(List.of(StatusDeclarationResponse.builder()
+        List<ConditionReportResponse> response = List.of(ConditionReportResponse.builder()
                         .id(1L)
-                        .umbrellaId(1)
+                        .umbrellaId(1L)
                         .content("우산이 망가졌습니다.")
-                        .etc("기타 사항")
-                        .build())
-                ).build();
+                        .build());
+
+        given(conditionReportService.findAllConditionReport()).willReturn(response);
 
         mockMvc.perform(
                         get("/rent/histories/status")
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("show-all-status-declarations-doc",
+                .andDo(document("show-all-condtion-reports-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("statusDeclarationPage").type(JsonFieldType.ARRAY)
-                                        .description("신고 내역"),
-                                fieldWithPath("statusDeclarationPage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("conditionReports").type(JsonFieldType.ARRAY)
+                                        .description("신고 내역 페이지"),
+                                fieldWithPath("conditionReports[].id").type(JsonFieldType.NUMBER)
                                         .description("신고 내역 고유번호"),
-                                fieldWithPath("statusDeclarationPage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("conditionReports[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
-                                fieldWithPath("statusDeclarationPage[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("conditionReports[].content").type(JsonFieldType.STRING)
                                         .description("신고 내용"),
-                                fieldWithPath("statusDeclarationPage[].etc").type(JsonFieldType.STRING)
+                                fieldWithPath("conditionReports[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
                         )));
@@ -201,8 +224,8 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     void showAllImprovementsTest() throws Exception {
 
-        ImprovementPageResponse response = ImprovementPageResponse.builder()
-                .improvementPage(List.of(ImprovementResponse.builder()
+        ImprovementReportPageResponse response = ImprovementReportPageResponse.builder()
+                .improvementReports(List.of(ImprovementReportResponse.builder()
                         .id(1L)
                         .umbrellaId(1)
                         .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
@@ -215,19 +238,18 @@ public class RentControllerTest extends RestDocsSupport {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-improvements-doc",
-                        getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("improvementPage").type(JsonFieldType.ARRAY)
+                                fieldWithPath("improvementReports").type(JsonFieldType.ARRAY)
                                         .description("개선 요청 목록"),
-                                fieldWithPath("improvementPage[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("improvementReports[].id").type(JsonFieldType.NUMBER)
                                         .description("개선 요청 고유번호"),
-                                fieldWithPath("improvementPage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("improvementReports[].umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
-                                fieldWithPath("improvementPage[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("improvementReports[].content").type(JsonFieldType.STRING)
                                         .description("개선 요청 내용"),
-                                fieldWithPath("improvementPage[].etc").type(JsonFieldType.STRING)
+                                fieldWithPath("improvementReports[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
                         )));

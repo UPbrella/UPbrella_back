@@ -33,4 +33,9 @@ public class UserService {
     public long findUmbrellaBorrowedByUser(long userId) {
         return 1;
     }
+
+    public User findById(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
+    }
 }

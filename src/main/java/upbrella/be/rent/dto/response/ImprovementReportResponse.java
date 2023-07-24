@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StatusDeclarationResponse {
+public class ImprovementReportResponse {
 
     private long id;
     private long umbrellaId;

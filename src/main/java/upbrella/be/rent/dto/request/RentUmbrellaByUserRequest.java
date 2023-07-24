@@ -13,6 +13,6 @@ public class RentUmbrellaByUserRequest {
 
     private String region;
     private long storeId;
-    private long umbrellaId;
-    private String statusDeclaration;
+    private long uuid;
+    private String conditionReport;
 }
