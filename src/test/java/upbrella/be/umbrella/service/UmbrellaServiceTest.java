@@ -77,7 +77,7 @@ class UmbrellaServiceTest {
         void success() {
 
             // given
-            given(storeMetaService.findById(2L))
+            given(storeMetaService.findStoreMetaById(2L))
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(43))
                     .willReturn(false);
@@ -106,7 +106,7 @@ class UmbrellaServiceTest {
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(43),
                     () -> then(storeMetaService).should(times(1))
-                            .findById(2L),
+                            .findStoreMetaById(2L),
                     () -> then(umbrellaRepository).should(times(1))
                             .save(any(Umbrella.class))
             );
@@ -117,7 +117,7 @@ class UmbrellaServiceTest {
         void withSameId() {
 
             // given
-            given(storeMetaService.findById(2L))
+            given(storeMetaService.findStoreMetaById(2L))
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(43))
                     .willReturn(true);
@@ -128,7 +128,7 @@ class UmbrellaServiceTest {
             // then
             assertAll(
                     () -> then(storeMetaService).should(times(1))
-                            .findById(2L),
+                            .findStoreMetaById(2L),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(43),
                     () -> then(umbrellaRepository).should(never())
@@ -141,7 +141,7 @@ class UmbrellaServiceTest {
         void atNonExistingStore() {
 
             // given
-            given(storeMetaService.findById(2L))
+            given(storeMetaService.findStoreMetaById(2L))
                     .willThrow(new IllegalArgumentException());
 
             // when & then
@@ -149,7 +149,7 @@ class UmbrellaServiceTest {
                     () -> assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaRequest))
                             .isInstanceOf(IllegalArgumentException.class),
                     () -> then(storeMetaService).should(times(1))
-                            .findById(2L),
+                            .findStoreMetaById(2L),
                     () -> then(umbrellaRepository).shouldHaveNoInteractions()
             );
         }
@@ -192,7 +192,7 @@ class UmbrellaServiceTest {
         void success() {
 
             // given
-            given(storeMetaService.findById(5L))
+            given(storeMetaService.findStoreMetaById(5L))
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(true);
@@ -225,7 +225,7 @@ class UmbrellaServiceTest {
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByIdAndDeletedIsFalse(1L),
                     () -> then(storeMetaService).should(times(1))
-                            .findById(5L),
+                            .findStoreMetaById(5L),
                     () -> then(umbrellaRepository).should(times(1))
                             .save(any(Umbrella.class))
             );
@@ -236,7 +236,7 @@ class UmbrellaServiceTest {
         void withNonExistingId() {
 
             // given
-            given(storeMetaService.findById(5L))
+            given(storeMetaService.findStoreMetaById(5L))
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(false);
@@ -251,7 +251,7 @@ class UmbrellaServiceTest {
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByIdAndDeletedIsFalse(1L),
                     () -> then(storeMetaService).should(times(1))
-                            .findById(5L),
+                            .findStoreMetaById(5L),
                     () -> then(umbrellaRepository).should(never())
                             .save(any(Umbrella.class))
             );
@@ -262,7 +262,7 @@ class UmbrellaServiceTest {
         void withAlreadyExistingUuid() {
 
             // given
-            given(storeMetaService.findById(5L))
+            given(storeMetaService.findStoreMetaById(5L))
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(true);
@@ -279,7 +279,7 @@ class UmbrellaServiceTest {
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByIdAndDeletedIsFalse(1L),
                     () -> then(storeMetaService).should(times(1))
-                            .findById(5L),
+                            .findStoreMetaById(5L),
                     () -> then(umbrellaRepository).should(never())
                             .save(any(Umbrella.class))
             );
@@ -290,7 +290,7 @@ class UmbrellaServiceTest {
         void atNonExistingStore() {
 
             // given
-            given(storeMetaService.findById(5L))
+            given(storeMetaService.findStoreMetaById(5L))
                     .willThrow(new IllegalArgumentException());
 
             // when & then
@@ -299,7 +299,7 @@ class UmbrellaServiceTest {
                             umbrellaService.modifyUmbrella(1L, umbrellaRequest))
                             .isInstanceOf(IllegalArgumentException.class),
                     () -> then(storeMetaService).should(times(1))
-                            .findById(5L),
+                            .findStoreMetaById(5L),
                     () -> then(umbrellaRepository).shouldHaveNoInteractions()
             );
         }

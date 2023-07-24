@@ -29,7 +29,7 @@ public class UmbrellaService {
     @Transactional
     public Umbrella addUmbrella(UmbrellaRequest umbrellaRequest) {
 
-        StoreMeta storeMeta = storeMetaService.findById(umbrellaRequest.getStoreMetaId());
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
 
         if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid())) {
             throw new IllegalArgumentException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
@@ -47,7 +47,7 @@ public class UmbrellaService {
     @Transactional
     public Umbrella modifyUmbrella(long id, UmbrellaRequest umbrellaRequest) {
 
-        StoreMeta storeMeta = storeMetaService.findById(umbrellaRequest.getStoreMetaId());
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
         if (!umbrellaRepository.existsByIdAndDeletedIsFalse(id)) {
             throw new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다.");
         }

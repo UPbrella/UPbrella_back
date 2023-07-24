@@ -26,20 +26,4 @@ public class Classification {
     private String name;
     private double latitude;
     private double longitude;
-
-    public static Classification createClassification(CreateClassificationRequest request) {
-        return Classification.builder()
-                .type(request.getType())
-                .name(request.getName())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
-                .build();
-    }
-
-    public static Classification createSubClassification(CreateSubClassificationRequest request) {
-        return Classification.builder()
-                .type(request.getType())
-                .name(request.getName())
-                .build();
-    }
 }

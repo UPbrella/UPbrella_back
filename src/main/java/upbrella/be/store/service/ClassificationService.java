@@ -20,12 +20,12 @@ public class ClassificationService {
 
     private final ClassificationRepository classificationRepository;
 
-    public void createClassification(CreateClassificationRequest request) {
-        classificationRepository.save(Classification.createClassification(request));
+    public Classification createClassification(CreateClassificationRequest request) {
+        return classificationRepository.save(ofCreateClassification(request));
     }
 
-    public void createSubClassification(CreateSubClassificationRequest request) {
-        classificationRepository.save(Classification.createSubClassification(request));
+    public Classification createSubClassification(CreateSubClassificationRequest request) {
+        return classificationRepository.save(ofCreateSubClassification(request));
     }
 
     public void deleteClassification(Long id) {
@@ -63,6 +63,22 @@ public class ClassificationService {
 
         return AllSubClassificationResponse.builder()
                 .subClassifications(classifications)
+                .build();
+    }
+
+    private Classification ofCreateClassification(CreateClassificationRequest request) {
+        return Classification.builder()
+                .type(request.getType())
+                .name(request.getName())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .build();
+    }
+
+    private Classification ofCreateSubClassification(CreateSubClassificationRequest request) {
+        return Classification.builder()
+                .type(request.getType())
+                .name(request.getName())
                 .build();
     }
 }

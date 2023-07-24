@@ -6,12 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import upbrella.be.store.dto.request.ClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
-import upbrella.be.store.dto.request.SubClassificationRequest;
+import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.repository.ClassificationRepository;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
@@ -34,6 +34,8 @@ class StoreMetaServiceTest {
 
     @Mock
     private StoreImageRepository storeImageRepository;
+    @Mock
+    private ClassificationRepository classificationRepository;
 
     @InjectMocks
     private StoreMetaService storeMetaService;
@@ -44,7 +46,7 @@ class StoreMetaServiceTest {
         StoreMeta storeMeta = StoreMeta.builder().build();
         given(storeMetaRepository.findByIdAndDeletedIsFalse(1L)).willReturn(Optional.of(storeMeta));
 
-        storeMetaService.findById(1L);
+        storeMetaService.findStoreMetaById(1L);
 
         verify(storeMetaRepository, times(1)).findByIdAndDeletedIsFalse(1L);
     }
@@ -57,18 +59,8 @@ class StoreMetaServiceTest {
         CreateStoreRequest request = CreateStoreRequest.builder()
                 .name("업브렐라")
                 .category("카페")
-                .classification(ClassificationRequest.builder()
-                        .id(1L)
-                        .type("classification")
-                        .name("음식점")
-                        .latitude(37.503716)
-                        .longitude(127.053718)
-                        .build())
-                .subClassification(SubClassificationRequest.builder()
-                        .id(2L)
-                        .type("subClassification")
-                        .name("카페")
-                        .build())
+                .classificationId(3L)
+                .subClassificationId(4L)
                 .activateStatus(true)
                 .address("서울특별시 강남구 테헤란로 427")
                 .umbrellaLocation("1층")
@@ -90,6 +82,7 @@ class StoreMetaServiceTest {
         given(storeMetaRepository.save(any(StoreMeta.class))).willReturn(StoreMeta.builder().build());
         given(storeDetailRepository.save(any(StoreDetail.class))).willReturn(StoreDetail.builder().build());
         given(storeImageRepository.save(any(StoreImage.class))).willReturn(StoreImage.builder().build());
+        given(classificationRepository.findById(anyLong())).willReturn(Optional.of(Classification.builder().build()));
 
         storeMetaService.createStore(request);
 

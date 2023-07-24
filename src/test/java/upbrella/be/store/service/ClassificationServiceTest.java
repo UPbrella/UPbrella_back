@@ -38,8 +38,7 @@ class ClassificationServiceTest {
                 .latitude(37.1234)
                 .longitude(127.1234)
                 .build();
-        Classification classification = Classification.createClassification(request);
-        given(classificationRepository.save(any(Classification.class))).willReturn(classification);
+        given(classificationRepository.save(any(Classification.class))).willReturn(Classification.builder().build());
 
         // when
         classificationService.createClassification(request);
@@ -56,8 +55,8 @@ class ClassificationServiceTest {
                 .type("소분류")
                 .name("편의점")
                 .build();
-        Classification classification = Classification.createSubClassification(request);
-        given(classificationRepository.save(any(Classification.class))).willReturn(classification);
+
+        given(classificationRepository.save(any(Classification.class))).willReturn(Classification.builder().build());
 
         // when
         classificationService.createSubClassification(request);
