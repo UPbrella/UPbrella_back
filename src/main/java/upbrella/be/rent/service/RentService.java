@@ -9,6 +9,7 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.repository.UmbrellaRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.service.UserService;
@@ -17,7 +18,7 @@ import upbrella.be.user.service.UserService;
 @RequiredArgsConstructor
 public class RentService {
 
-    private final UmbrellaService umbrellaService;
+    private final UmbrellaRepository umbrellaRepository;
     private final UserService userService;
     private final StoreMetaService storeMetaService;
     private final RentRepository rentRepository;
@@ -25,7 +26,8 @@ public class RentService {
     @Transactional
     public void addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
 
-        Umbrella willRentUmbrella = umbrellaService.findById(rentUmbrellaByUserRequest.getUmbrellaId());
+        Umbrella willRentUmbrella = umbrellaRepository.findById(rentUmbrellaByUserRequest.getUmbrellaId())
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당 우산이 존재하지 않습니다."));
 
         StoreMeta rentalStore = storeMetaService.findById(rentUmbrellaByUserRequest.getStoreId());
 
