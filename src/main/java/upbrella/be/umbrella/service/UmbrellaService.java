@@ -1,6 +1,7 @@
 package upbrella.be.umbrella.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
@@ -11,6 +12,7 @@ import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +20,16 @@ public class UmbrellaService {
     private final UmbrellaRepository umbrellaRepository;
     private final StoreMetaService storeMetaService;
 
-    public List<UmbrellaResponse> findAllUmbrellas() {
-        return null;
+    public List<UmbrellaResponse> findAllUmbrellas(Pageable pageable) {
+        return umbrellaRepository.findByDeletedIsFalseOrderById(pageable)
+                .stream().map(UmbrellaResponse::fromUmbrella)
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    public List<UmbrellaResponse> findUmbrellasByStoreId(long storeId) {
-        return null;
+    public List<UmbrellaResponse> findUmbrellasByStoreId(long storeId, Pageable pageable) {
+        return umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(storeId, pageable)
+                .stream().map(UmbrellaResponse::fromUmbrella)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional
@@ -72,6 +78,12 @@ public class UmbrellaService {
         Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
         foundUmbrella.delete();
+    }
+
+    public Umbrella findById(long id) {
+
+        return umbrellaRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산입니다."));
     }
 
 }
