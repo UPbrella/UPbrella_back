@@ -1,19 +1,23 @@
 package upbrella.be.store.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.response.*;
+import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/stores")
 public class StoreController {
+    private final StoreMetaService storeMetaService;
 
     @GetMapping("/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
@@ -47,14 +51,7 @@ public class StoreController {
                         200,
                         "현재 위치 기준 가게 조회 성공",
                         AllCurrentLocationStoreResponse.builder()
-                                .stores(List.of(
-                                        SingleCurrentLocationStoreResponse.builder()
-                                                .id(1)
-                                                .name("업브렐라")
-                                                .latitude(37.503716)
-                                                .longitude(127.053718)
-                                                .openStatus(true)
-                                                .build()))
+                                .stores(storeMetaService.findStoresInCurrentMap(coordinateRequest))
                                 .build()));
     }
 
