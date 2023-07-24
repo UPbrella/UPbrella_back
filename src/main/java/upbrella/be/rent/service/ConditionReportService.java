@@ -18,11 +18,7 @@ public class ConditionReportService {
     @Transactional
     public List<ConditionReportResponse> findAllConditionReport() {
         return conditionReportRepository.findAll().stream()
-                .map(conditionReport -> ConditionReportResponse.builder()
-                        .id(conditionReport.getId())
-                        .umbrellaId(conditionReport.getHistory().getId())
-                        .content(conditionReport.getContent())
-                        .build())
+                .map(ConditionReportResponse::from)
                 .collect(Collectors.toList());
     }
 }
