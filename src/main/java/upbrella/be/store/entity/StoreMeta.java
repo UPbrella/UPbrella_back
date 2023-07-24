@@ -13,8 +13,6 @@ import javax.persistence.Id;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE storeMeta SET deleted = true WHERE id = ?")
-@Where(clause = "deleted = false")
 public class StoreMeta {
 
     @Id
