@@ -1,11 +1,9 @@
 package upbrella.be.store.entity;
 
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-import upbrella.be.store.dto.request.CreateStoreRequest;
 
 import javax.persistence.*;
+
 
 @Entity
 @Getter

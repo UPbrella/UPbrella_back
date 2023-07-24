@@ -23,7 +23,6 @@ public class StoreMetaService {
     private final StoreDetailRepository storeDetailRepository;
     private final StoreImageRepository storeImageRepository;
     private final ClassificationRepository classificationRepository;
-    private final StoreImageService storeImageService;
 
     @Transactional(readOnly = true)
     public StoreMeta findStoreMetaById(long id) {
