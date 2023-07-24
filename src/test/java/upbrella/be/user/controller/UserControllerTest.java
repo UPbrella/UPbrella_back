@@ -36,7 +36,6 @@ public class UserControllerTest extends RestDocsSupport {
                 .id(1)
                 .name("일반사용자")
                 .phoneNumber("010-0000-0000")
-                .adminStatus(false)
                 .build();
 
         // when
