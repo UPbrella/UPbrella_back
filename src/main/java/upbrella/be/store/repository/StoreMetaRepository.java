@@ -5,6 +5,6 @@ import upbrella.be.store.entity.StoreMeta;
 
 import java.util.Optional;
 
-public interface StoreMetaRepository extends JpaRepository<StoreMeta, Long> {
+public interface StoreMetaRepository extends JpaRepository<StoreMeta, Long>, StoreMetaRepositoryCustom {
     Optional<StoreMeta> findByIdAndDeletedIsFalse(long id);
 }
