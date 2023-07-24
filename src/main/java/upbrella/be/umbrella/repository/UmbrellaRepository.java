@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface UmbrellaRepository extends JpaRepository<Umbrella, Long> {
 
     Optional<Umbrella> findByIdAndDeletedIsFalse(long id);
+    Optional<Umbrella> findByIdAndDeletedIsFalseAndStoreMeta_DeletedIsFalse(long id);
     boolean existsByIdAndDeletedIsFalse(long id);
     boolean existsByUuidAndDeletedIsFalse(long uuid);
     List<Umbrella> findByDeletedIsFalseOrderById(Pageable pageable);
