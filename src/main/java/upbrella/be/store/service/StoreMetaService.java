@@ -2,6 +2,7 @@ package upbrella.be.store.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.StoreRepository.StoreMetaRepository;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.entity.StoreMeta;
@@ -19,6 +20,7 @@ public class StoreMetaService {
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
     }
 
+    @Transactional
     public CurrentUmbrellaStoreResponse findCurrentStoreIdByUmbrella(long umbrellaId) {
         Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(umbrellaId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산입니다."));
