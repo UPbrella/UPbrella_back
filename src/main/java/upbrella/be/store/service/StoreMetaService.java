@@ -24,7 +24,7 @@ public class StoreMetaService {
     public List<SingleCurrentLocationStoreResponse> findStoresInCurrentMap(CoordinateRequest coordinateRequest) {
         List<StoreMeta> storeMetaListInCurrentMap = storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(
                 coordinateRequest.getLatitudeFrom(), coordinateRequest.getLatitudeTo(),
-                coordinateRequest.getLatitudeFrom(), coordinateRequest.getLatitudeTo()
+                coordinateRequest.getLongitudeFrom(), coordinateRequest.getLongitudeTo()
         );
 
         return storeMetaListInCurrentMap.stream()
