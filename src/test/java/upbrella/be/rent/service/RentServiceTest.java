@@ -85,7 +85,7 @@ class RentServiceTest {
         void success() {
 
             // given
-            given(storeMetaService.findById(25L))
+            given(storeMetaService.findStoreMetaById(25L))
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.findByUuidAndDeletedIsFalse(99L))
                     .willReturn(Optional.of(foundUmbrella));

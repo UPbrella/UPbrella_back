@@ -29,7 +29,7 @@ public class RentService {
         Umbrella willRentUmbrella = umbrellaRepository.findByUuidAndDeletedIsFalse(rentUmbrellaByUserRequest.getUuid())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당 우산이 존재하지 않습니다."));
 
-        StoreMeta rentalStore = storeMetaService.findById(rentUmbrellaByUserRequest.getStoreId());
+        StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
 
         rentRepository.save(
                 History.ofCreatedByNewRent(

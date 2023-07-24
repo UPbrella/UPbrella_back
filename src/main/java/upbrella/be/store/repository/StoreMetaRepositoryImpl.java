@@ -76,43 +76,43 @@ public class StoreMetaRepositoryImpl implements StoreMetaRepositoryCustom {
 
     public List<SingleStoreResponse> findAll() {
 
-        QStoreImage qStoreImageSub = new QStoreImage("storeImageSub");
-
-
-        queryFactory.select(new QSingleStoreResponse(
-                        storeMeta.id,
-                        storeMeta.name,
-                        storeMeta.category,
-                        new QSingleClassificationResponse(
-                                storeMeta.classification.id,
-                                storeMeta.classification.type,
-                                storeMeta.classification.name,
-                                storeMeta.classification.latitude,
-                                storeMeta.classification.longitude
-                        ),
-                        new QSingleSubClassificationResponse(
-                                storeMeta.subClassification.id,
-                                storeMeta.subClassification.type,
-                                storeMeta.subClassification.name
-                        ),
-                        storeMeta.activated,
-                        storeDetail.address,
-                        storeDetail.umbrellaLocation,
-                        storeDetail.workingHour,
-                        storeDetail.contactInfo,
-                        storeDetail.instaUrl,
-                        storeMeta.latitude,
-                        storeMeta.longitude,
-                        storeDetail.content,
-                // select 절의 서브쿼리의 결과는 스칼라값만 가능해서 List<String> 조회가 불가능
-                // OneToMany 관계로 변경하면 가능
-                JPAExpressions.select(qStoreImageSub.imageUrl)
-                        .from(qStoreImageSub)
-                        .where(qStoreImageSub.storeDetail.eq(storeDetail))
-                ))
-
-                .from(storeMeta)
-                .fetch();
+//        QStoreImage qStoreImageSub = new QStoreImage("storeImageSub");
+//
+//
+//        queryFactory.select(new QSingleStoreResponse(
+//                        storeMeta.id,
+//                        storeMeta.name,
+//                        storeMeta.category,
+//                        new QSingleClassificationResponse(
+//                                storeMeta.classification.id,
+//                                storeMeta.classification.type,
+//                                storeMeta.classification.name,
+//                                storeMeta.classification.latitude,
+//                                storeMeta.classification.longitude
+//                        ),
+//                        new QSingleSubClassificationResponse(
+//                                storeMeta.subClassification.id,
+//                                storeMeta.subClassification.type,
+//                                storeMeta.subClassification.name
+//                        ),
+//                        storeMeta.activated,
+//                        storeDetail.address,
+//                        storeDetail.umbrellaLocation,
+//                        storeDetail.workingHour,
+//                        storeDetail.contactInfo,
+//                        storeDetail.instaUrl,
+//                        storeMeta.latitude,
+//                        storeMeta.longitude,
+//                        storeDetail.content,
+//                // select 절의 서브쿼리의 결과는 스칼라값만 가능해서 List<String> 조회가 불가능
+//                // OneToMany 관계로 변경하면 가능
+//                JPAExpressions.select(qStoreImageSub.imageUrl)
+//                        .from(qStoreImageSub)
+//                        .where(qStoreImageSub.storeDetail.eq(storeDetail))
+//                ))
+//
+//                .from(storeMeta)
+//                .fetch();
 
         return null;
     }
