@@ -138,7 +138,9 @@ public class StoreController {
     }
 
     @PatchMapping("/{storeId}")
-    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, CreateStoreRequest updateStore) {
+    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, @RequestBody CreateStoreRequest updateStore) {
+
+        storeMetaService.updateStore(storeId, updateStore);
 
         return ResponseEntity
                 .ok()
@@ -267,5 +269,4 @@ public class StoreController {
                         "소분류 삭제 성공"
                 ));
     }
-
 }

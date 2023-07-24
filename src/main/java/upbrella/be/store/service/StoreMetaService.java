@@ -42,22 +42,6 @@ public class StoreMetaService {
     @Transactional
     public void updateStore(long id, CreateStoreRequest store) {
 
-        StoreMeta storeMeta = findStoreMetaById(id);
-        StoreMeta updatedStoreMeta = createStoreMetaForSave(store);
-        storeMeta.updateStoreMeta(updatedStoreMeta);
-        StoreMeta savedStoreMeta = storeMetaRepository.save(updatedStoreMeta);
-
-        StoreDetail storeDetailByStoreMetaId = findStoreDetailByStoreMetaId(id);
-        StoreDetail storeDetailForUpdate = createStoreDetailForUpdate(store, savedStoreMeta);
-        storeDetailByStoreMetaId.updateStoreDetail(storeDetailForUpdate);
-        StoreDetail savedStoreDetail = storeDetailRepository.save(storeDetailByStoreMetaId);
-
-        List<String> imageUrls = store.getImageUrls();
-        storeImageService.deleteImagesBeforeSave(savedStoreDetail.getId());
-        for (String imageUrl : imageUrls) {
-            System.out.println("imageUrl = " + imageUrl);
-        }
-
     }
 
     private StoreMeta saveStoreMeta(CreateStoreRequest store) {
@@ -94,11 +78,6 @@ public class StoreMetaService {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .build();
-    }
-
-    private StoreDetail findStoreDetailByStoreMetaId(long id) {
-        return storeDetailRepository.findByStoreMetaId(id)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
     }
 
     private StoreDetail createStoreDetailForUpdate(CreateStoreRequest store, StoreMeta storeMeta) {
