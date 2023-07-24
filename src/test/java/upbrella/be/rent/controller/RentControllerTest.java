@@ -82,7 +82,7 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("지역"),
                                 fieldWithPath("storeId").type(JsonFieldType.NUMBER)
                                         .description("협업 지점 고유번호"),
-                                fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                                         .optional()
@@ -94,7 +94,7 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     void returnUmbrellaTest() throws Exception {
         ReturnUmbrellaByUserRequest request = ReturnUmbrellaByUserRequest.builder()
-                .umbrellaId(1)
+                .uuid(1)
                 .storeId(1)
                 .improvement("불편하셨다면 개선 사항을 입력해주세요.")
                 .build();
@@ -110,7 +110,7 @@ public class RentControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("storeId").type(JsonFieldType.NUMBER)
                                         .description("협업 지점 고유번호"),
