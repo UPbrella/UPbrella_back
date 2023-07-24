@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.user.dto.response.UserInfoResponse;
+import upbrella.be.user.entity.User;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
@@ -21,6 +22,17 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
+
+        // TODO: 세션 처리으로 로그인한 유저의 id 가져오기
+
+        // session에서 꺼낸 것이라는 의미로 repository로부터 findById를 하지 않고 빌더를 사용해서 만들었음.
+        User loggedInUser = User.builder()
+                .id(1L)
+                .name("사용자")
+                .phoneNumber("010-0000-0000")
+                .adminStatus(false)
+                .build();
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
