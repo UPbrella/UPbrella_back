@@ -100,7 +100,7 @@ class RentServiceTest {
             rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
             // then
-
+            // TODO: save 후 반환을 void로 할 것인지 객체를 반환할 것인지 결정 후 작성 예정
         }
     }
 }
