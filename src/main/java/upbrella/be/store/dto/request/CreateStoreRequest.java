@@ -14,8 +14,8 @@ public class CreateStoreRequest {
 
     private String name;
     private String category;
-    private ClassificationRequest classification;
-    private SubClassificationRequest subClassification;
+    private long classificationId;
+    private long subClassificationId;
     private boolean activateStatus;
     private String address;
     private String umbrellaLocation;
