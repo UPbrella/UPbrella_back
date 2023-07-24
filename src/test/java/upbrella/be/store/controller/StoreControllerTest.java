@@ -198,10 +198,26 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("협업 지점명"),
                                 fieldWithPath("stores[].category").type(JsonFieldType.STRING)
                                         .description("카테고리"),
-                                fieldWithPath("stores[].classification").type(JsonFieldType.STRING)
-                                        .description("분류"),
-                                fieldWithPath("stores[].subClassification").type(JsonFieldType.STRING)
-                                        .description("세부 분류"),
+                                fieldWithPath("stores[].classification").type(JsonFieldType.OBJECT)
+                                        .description("대분류"),
+                                fieldWithPath("stores[].classification.id").type(JsonFieldType.NUMBER)
+                                        .description("대분류 아이디"),
+                                fieldWithPath("stores[].classification.type").type(JsonFieldType.STRING)
+                                        .description("대분류 타입"),
+                                fieldWithPath("stores[].classification.name").type(JsonFieldType.STRING)
+                                        .description("대분류 이름"),
+                                fieldWithPath("stores[].classification.latitude").type(JsonFieldType.NUMBER)
+                                        .description("대분류 위도"),
+                                fieldWithPath("stores[].classification.longitude").type(JsonFieldType.NUMBER)
+                                        .description("대분류 경도"),
+                                fieldWithPath("stores[].subClassification").type(JsonFieldType.OBJECT)
+                                        .description("소분류"),
+                                fieldWithPath("stores[].subClassification.id").type(JsonFieldType.NUMBER)
+                                        .description("소분류 아이디"),
+                                fieldWithPath("stores[].subClassification.type").type(JsonFieldType.STRING)
+                                        .description("소분류 타입"),
+                                fieldWithPath("stores[].subClassification.name").type(JsonFieldType.STRING)
+                                        .description("소분류 이름"),
                                 fieldWithPath("stores[].activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
                                 fieldWithPath("stores[].address").type(JsonFieldType.STRING)

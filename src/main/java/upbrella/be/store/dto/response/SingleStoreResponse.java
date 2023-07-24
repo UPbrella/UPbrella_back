@@ -12,8 +12,8 @@ public class SingleStoreResponse {
     private long id;
     private String name;
     private String category;
-    private String classification;
-    private String subClassification;
+    private SingleClassificationResponse classification;
+    private SingleSubClassificationResponse subClassification;
     private boolean activateStatus;
     private String address;
     private String umbrellaLocation;
