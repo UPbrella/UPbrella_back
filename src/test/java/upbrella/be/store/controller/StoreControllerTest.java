@@ -2,15 +2,21 @@ package upbrella.be.store.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
+import upbrella.be.store.service.StoreMetaService;
 
 import java.util.List;
 
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -20,12 +26,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
+@ExtendWith(MockitoExtension.class)
 class StoreControllerTest extends RestDocsSupport {
+    @Mock
+    private StoreMetaService storeMetaService;
 
 
     @Override
     protected Object initController() {
-        return new StoreController();
+        return new StoreController(storeMetaService);
     }
 
     @Test
@@ -122,14 +131,13 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("우산의 현위치를 조회할 수 있다. ")
     void findCurrentUmbrellaStoreTest() throws Exception {
         // given
+        CurrentUmbrellaStoreResponse currentUmbrellaStoreResponse = new CurrentUmbrellaStoreResponse(1L, "모티브 카페 신촌점");
+        given(storeMetaService.findCurrentStoreIdByUmbrella(2L))
+                .willReturn(currentUmbrellaStoreResponse);
 
-
-        // when
-
-
-        // then
+        // when & then
         mockMvc.perform(
-                        get("/stores/location/{umbrellaId}", 1)
+                        get("/stores/location/{umbrellaId}", 2L)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())

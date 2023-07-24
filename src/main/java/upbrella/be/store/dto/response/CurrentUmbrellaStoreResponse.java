@@ -1,11 +1,12 @@
 package upbrella.be.store.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import upbrella.be.umbrella.entity.Umbrella;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CurrentUmbrellaStoreResponse {
 
     private long id;
