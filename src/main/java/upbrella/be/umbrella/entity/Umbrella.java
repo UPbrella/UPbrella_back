@@ -27,6 +27,7 @@ public class Umbrella {
     }
 
     public static Umbrella ofCreated(StoreMeta storeMeta, long uuid, boolean rentable) {
+
         return Umbrella.builder()
                 .storeMeta(storeMeta)
                 .uuid(uuid)
@@ -36,6 +37,7 @@ public class Umbrella {
     }
 
     public static Umbrella ofUpdated(long id, StoreMeta storeMeta, long uuid, boolean rentable) {
+
         return Umbrella.builder()
                 .id(id)
                 .storeMeta(storeMeta)
