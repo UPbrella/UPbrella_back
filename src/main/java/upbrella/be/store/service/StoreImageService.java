@@ -3,6 +3,7 @@ package upbrella.be.store.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -28,6 +29,7 @@ public class StoreImageService {
     @Value("${AWS_S3_BUCKET}")
     private String bucketName;
 
+    @Transactional
     public String uploadFile(MultipartFile file, long storeDetailId, String randomId) {
 
         String fileName = file.getOriginalFilename() + randomId;
@@ -53,6 +55,7 @@ public class StoreImageService {
         }
     }
 
+    @Transactional
     public void deleteImagesBeforeSave(long storeDetailId) {
 
         List<StoreImage> storeImages = storeImageRepository.findByStoreDetailId(storeDetailId);
