@@ -20,7 +20,7 @@ public class StoreMetaService {
     private final UmbrellaRepository umbrellaRepository;
     private final StoreMetaRepository storeMetaRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public CurrentUmbrellaStoreResponse findCurrentStoreIdByUmbrella(long umbrellaId) {
 
         Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(umbrellaId)
