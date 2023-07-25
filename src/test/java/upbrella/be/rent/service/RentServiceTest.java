@@ -11,17 +11,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
+import upbrella.be.store.StoreRepository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 import upbrella.be.user.entity.User;
-import upbrella.be.user.repository.UserRepository;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -31,11 +28,9 @@ class RentServiceTest {
     @Mock
     private UmbrellaRepository umbrellaRepository;
     @Mock
-    private StoreMetaService storeMetaService;
+    private StoreMetaRepository storeMetaRepository;
     @Mock
     private RentRepository rentRepository;
-    @Mock
-    private UserRepository userRepository;
     @InjectMocks
     private RentService rentService;
 
@@ -85,8 +80,8 @@ class RentServiceTest {
         void success() {
 
             // given
-            given(storeMetaService.findById(25L))
-                    .willReturn(foundStoreMeta);
+            given(storeMetaRepository.findByIdAndDeletedIsFalse(25L))
+                    .willReturn(Optional.of(foundStoreMeta));
             given(umbrellaRepository.findByUuidAndDeletedIsFalse(99L))
                     .willReturn(Optional.of(foundUmbrella));
             given(rentRepository.save(any(History.class)))
