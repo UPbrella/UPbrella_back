@@ -15,7 +15,7 @@ public class UmbrellaResponse {
     private long uuid;
     private boolean rentable;
 
-    public static UmbrellaResponse from(Umbrella umbrella) {
+    public static UmbrellaResponse fromUmbrella(Umbrella umbrella) {
         return UmbrellaResponse.builder()
                 .id(umbrella.getId())
                 .rentable(umbrella.isRentable())
