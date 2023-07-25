@@ -140,6 +140,7 @@ class StoreMetaServiceTest {
 
         @BeforeEach
         void setUp() {
+
             StoreMeta storeIn = StoreMeta.builder()
                     .id(1)
                     .thumbnail("사진1")
