@@ -68,7 +68,7 @@ public class UserController {
         History rentalHistory = rentRepository.findByUserAndReturnedAtIsNull(loggedInUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 사용자가 빌린 우산이 없습니다."));
 
-        long borredUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
+        long borrowedUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
 
         return ResponseEntity
                 .ok()
@@ -77,7 +77,7 @@ public class UserController {
                         200,
                         "사용자가 빌린 우산 조회 성공",
                         UmbrellaBorrowedByUserResponse.builder()
-                                .uuid(borredUmbrellaUuid)
+                                .uuid(borrowedUmbrellaUuid)
                                 .build()));
     }
 }
