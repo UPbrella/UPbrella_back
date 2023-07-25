@@ -85,7 +85,7 @@ class ClassificationServiceTest {
         // given
         String type = "classification";
         List<Classification> mockClassificationList = List.of(new Classification(1L, type, "classification_name", 1.0, 1.0));
-        given(classificationRepository.findAllByClassification(type)).willReturn(mockClassificationList);
+        given(classificationRepository.findByType(type)).willReturn(mockClassificationList);
 
         // when
         AllClassificationResponse result = classificationService.findAllClassification(type);
@@ -104,7 +104,7 @@ class ClassificationServiceTest {
         // given
         String type = "subClassification";
         List<Classification> mockClassificationList = List.of(new Classification(1L, type, "subclassification_name", 1.0, 1.0));
-        given(classificationRepository.findAllByClassification(type)).willReturn(mockClassificationList);
+        given(classificationRepository.findByType(type)).willReturn(mockClassificationList);
 
         // when
         AllSubClassificationResponse result = classificationService.findAllSubClassification(type);

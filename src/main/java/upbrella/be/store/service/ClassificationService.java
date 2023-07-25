@@ -33,12 +33,13 @@ public class ClassificationService {
     }
 
     public AllClassificationResponse findAllClassification(String type) {
-        List<Classification> allByClassification = classificationRepository.findAllByClassification(type);
+        List<Classification> allByClassification = classificationRepository.findByType(type);
         List<SingleClassificationResponse> classifications = new ArrayList<>();
 
         for (Classification classification : allByClassification) {
             classifications.add(SingleClassificationResponse.builder()
                     .id(classification.getId())
+                    .type(classification.getType())
                     .name(classification.getName())
                     .latitude(classification.getLatitude())
                     .longitude(classification.getLongitude())
@@ -51,7 +52,7 @@ public class ClassificationService {
     }
 
     public AllSubClassificationResponse findAllSubClassification(String type) {
-        List<Classification> allByClassification = classificationRepository.findAllByClassification(type);
+        List<Classification> allByClassification = classificationRepository.findByType(type);
         List<SingleSubClassificationResponse> classifications = new ArrayList<>();
 
         for (Classification classification : allByClassification) {
