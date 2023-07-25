@@ -4,8 +4,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.rent.entity.History;
+import upbrella.be.rent.repository.RentRepository;
+import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.user.dto.response.UserInfoResponse;
 import upbrella.be.user.service.UserService;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -21,10 +27,11 @@ import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 public class UserControllerTest extends RestDocsSupport {
 
     private final UserService userService = mock(UserService.class);
+    private final RentRepository rentRepository = mock(RentRepository.class);
 
     @Override
     protected Object initController() {
-        return new UserController(userService);
+        return new UserController(userService, rentRepository);
     }
 
     @DisplayName("사용자는 유저 정보를 조회할 수 있다.")
@@ -61,9 +68,20 @@ public class UserControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 유저가 빌린 우산을 조회할 수 있다.")
     void findUmbrellaBorrowedByUserTest() throws Exception {
         // given
+        Umbrella borrowedUmbrella = Umbrella.builder()
+                .id(1L)
+                .uuid(1L)
+                .build();
+
+        History rentalHistory = History.builder()
+                .id(1L)
+                .umbrella(borrowedUmbrella)
+                .build();
 
         given(userService.findUmbrellaBorrowedByUser(anyLong()))
                 .willReturn(1L);
+        given(rentRepository.findByUserAndReturnedAtIsNull(anyLong()))
+                .willReturn(Optional.ofNullable(rentalHistory));
 
         // when
         mockMvc.perform(
@@ -75,7 +93,7 @@ public class UserControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호")
                         )));
     }
