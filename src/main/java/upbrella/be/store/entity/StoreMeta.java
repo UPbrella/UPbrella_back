@@ -2,9 +2,8 @@ package upbrella.be.store.entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 
 @Entity
 @Getter
@@ -14,12 +13,23 @@ import javax.persistence.Id;
 public class StoreMeta {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
     private String thumbnail;
     private boolean activated;
     private boolean deleted;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classification_id")
+    private Classification classification;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_classification_id")
+    private Classification subClassification;
+    private String category;
     private double latitude;
     private double longitude;
+
+    public void delete() {
+        this.deleted = true;
+    }
 }
