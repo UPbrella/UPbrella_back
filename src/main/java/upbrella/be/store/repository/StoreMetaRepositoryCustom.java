@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface StoreMetaRepositoryCustom {
 
-    List<SingleStoreResponse> findAllStore();
+    List<SingleStoreResponse> findAllStores();
 }

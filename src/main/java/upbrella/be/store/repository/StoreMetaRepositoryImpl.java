@@ -18,68 +18,66 @@ public class StoreMetaRepositoryImpl implements StoreMetaRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+//    @Override
+//    public List<SingleStoreResponse> findAllStore() {
+//        List<StoreDetail> storeDetails = queryFactory
+//                .selectFrom(storeDetail)
+//                .fetch();
+//
+//        return storeDetails.stream()
+//                .map(this::convertToStoreResponse)
+//                .collect(Collectors.toList());
+//    }
+//
+//    private SingleStoreResponse convertToStoreResponse(StoreDetail storeDetail) {
+//        StoreMeta storeMeta = storeDetail.getStoreMeta();
+//
+//        List<StoreImage> storeImages = queryFactory
+//                .selectFrom(storeImage)
+//                .where(storeImage.storeDetail.eq(storeDetail))
+//                .fetch();
+//
+//        List<String> imageUrls = storeImages.stream()
+//                .map(StoreImage::getImageUrl)
+//                .collect(Collectors.toList());
+//
+//        SingleClassificationResponse classificationResponse = SingleClassificationResponse.builder()
+//                .id(storeMeta.getClassification().getId())
+//                .type(storeMeta.getClassification().getType())
+//                .name(storeMeta.getClassification().getName())
+//                .latitude(storeMeta.getClassification().getLatitude())
+//                .longitude(storeMeta.getClassification().getLongitude())
+//                .build();
+//
+//        SingleSubClassificationResponse subClassificationResponse = SingleSubClassificationResponse.builder()
+//                .id(storeMeta.getSubClassification().getId())
+//                .type(storeMeta.getSubClassification().getType())
+//                .name(storeMeta.getSubClassification().getName())
+//                .build();
+//
+//        return SingleStoreResponse.builder()
+//                .id(storeMeta.getId())
+//                .name(storeMeta.getName())
+//                .category(storeMeta.getCategory())
+//                .classification(classificationResponse)
+//                .subClassification(subClassificationResponse)
+//                .activateStatus(storeMeta.isActivated())
+//                .address(storeDetail.getAddress())
+//                .umbrellaLocation(storeDetail.getUmbrellaLocation())
+//                .businessHours(storeDetail.getWorkingHour())
+//                .contactNumber(storeDetail.getContactInfo())
+//                .instagramId(storeDetail.getInstaUrl())
+//                .latitude(storeMeta.getLatitude())
+//                .longitude(storeMeta.getLongitude())
+//                .content(storeDetail.getContent())
+//                .imageUrls(imageUrls)
+//                .build();
+//    }
+
     @Override
-    public List<SingleStoreResponse> findAllStore() {
-        List<StoreDetail> storeDetails = queryFactory
-                .selectFrom(storeDetail)
-                .fetch();
-
-        return storeDetails.stream()
-                .map(this::convertToStoreResponse)
-                .collect(Collectors.toList());
-    }
-
-    private SingleStoreResponse convertToStoreResponse(StoreDetail storeDetail) {
-        StoreMeta storeMeta = storeDetail.getStoreMeta();
-
-        List<StoreImage> storeImages = queryFactory
-                .selectFrom(storeImage)
-                .where(storeImage.storeDetail.eq(storeDetail))
-                .fetch();
-
-        List<String> imageUrls = storeImages.stream()
-                .map(StoreImage::getImageUrl)
-                .collect(Collectors.toList());
-
-        SingleClassificationResponse classificationResponse = SingleClassificationResponse.builder()
-                .id(storeMeta.getClassification().getId())
-                .type(storeMeta.getClassification().getType())
-                .name(storeMeta.getClassification().getName())
-                .latitude(storeMeta.getClassification().getLatitude())
-                .longitude(storeMeta.getClassification().getLongitude())
-                .build();
-
-        SingleSubClassificationResponse subClassificationResponse = SingleSubClassificationResponse.builder()
-                .id(storeMeta.getSubClassification().getId())
-                .type(storeMeta.getSubClassification().getType())
-                .name(storeMeta.getSubClassification().getName())
-                .build();
-
-        return SingleStoreResponse.builder()
-                .id(storeMeta.getId())
-                .name(storeMeta.getName())
-                .category(storeMeta.getCategory())
-                .classification(classificationResponse)
-                .subClassification(subClassificationResponse)
-                .activateStatus(storeMeta.isActivated())
-                .address(storeDetail.getAddress())
-                .umbrellaLocation(storeDetail.getUmbrellaLocation())
-                .businessHours(storeDetail.getWorkingHour())
-                .contactNumber(storeDetail.getContactInfo())
-                .instagramId(storeDetail.getInstaUrl())
-                .latitude(storeMeta.getLatitude())
-                .longitude(storeMeta.getLongitude())
-                .content(storeDetail.getContent())
-                .imageUrls(imageUrls)
-                .build();
-    }
-
-    public List<SingleStoreResponse> findAll() {
-
-//        QStoreImage qStoreImageSub = new QStoreImage("storeImageSub");
-//
-//
-//        queryFactory.select(new QSingleStoreResponse(
+    public List<SingleStoreResponse> findAllStores() {
+        return null;
+//        return queryFactory.select(new QSingleStoreResponse(
 //                        storeMeta.id,
 //                        storeMeta.name,
 //                        storeMeta.category,
@@ -104,16 +102,16 @@ public class StoreMetaRepositoryImpl implements StoreMetaRepositoryCustom {
 //                        storeMeta.latitude,
 //                        storeMeta.longitude,
 //                        storeDetail.content,
-//                // select 절의 서브쿼리의 결과는 스칼라값만 가능해서 List<String> 조회가 불가능
-//                // OneToMany 관계로 변경하면 가능
-//                JPAExpressions.select(qStoreImageSub.imageUrl)
-//                        .from(qStoreImageSub)
-//                        .where(qStoreImageSub.storeDetail.eq(storeDetail))
+//        JPAExpressions
+//                                .select(storeImage)
+//                                .from(storeImage)
+//                                .where(storeImage.storeDetail.id.eq(storeDetail.id))
+//                                .fetch()
 //                ))
-//
-//                .from(storeMeta)
+//                .from(storeDetail)
+//                .join(storeMeta)
+//                .on(storeMeta.id.eq(storeDetail.storeMeta.id))
+//                .fetchJoin()
 //                .fetch();
-
-        return null;
     }
 }

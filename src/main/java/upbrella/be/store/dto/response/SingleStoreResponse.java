@@ -1,13 +1,18 @@
 package upbrella.be.store.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import upbrella.be.store.entity.StoreImage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Builder
+@NoArgsConstructor
+//@Builder
 public class SingleStoreResponse {
 
     private long id;
@@ -27,7 +32,8 @@ public class SingleStoreResponse {
     private List<String> imageUrls;
 
     @QueryProjection
-    public SingleStoreResponse(long id, String name, String category, SingleClassificationResponse classification, SingleSubClassificationResponse subClassification, boolean activateStatus, String address, String umbrellaLocation, String businessHours, String contactNumber, String instagramId, double latitude, double longitude, String content, List<String> imageUrls) {
+    public SingleStoreResponse(long id, String name, String category, SingleClassificationResponse classification, SingleSubClassificationResponse subClassification, boolean activateStatus, String address, String umbrellaLocation, String businessHours, String contactNumber, String instagramId, double latitude, double longitude, String content, List<StoreImage> storeImages) {
+        imageUrls = new ArrayList<>();
         this.id = id;
         this.name = name;
         this.category = category;
@@ -42,6 +48,8 @@ public class SingleStoreResponse {
         this.latitude = latitude;
         this.longitude = longitude;
         this.content = content;
-        this.imageUrls = imageUrls;
+        for (StoreImage imageUrl : storeImages) {
+            imageUrls.add(imageUrl.getImageUrl());
+        }
     }
 }

@@ -9,6 +9,9 @@ import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.*;
+import upbrella.be.store.entity.StoreDetail;
+import upbrella.be.store.repository.StoreDetailRepository;
+import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
@@ -26,6 +29,8 @@ public class StoreController {
     private final StoreImageService storeImageService;
     private final StoreMetaService storeMetaService;
     private final ClassificationService classificationService;
+    private final StoreMetaRepository storeMetaRepository;
+    private final StoreDetailRepository storeDetailRepository;
 
     @GetMapping("/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
@@ -79,7 +84,9 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores(HttpSession session) {
+    public ResponseEntity<CustomResponse<List<StoreDetail>>> findAllStores(HttpSession session) {
+
+        List<StoreDetail> allStores = storeDetailRepository.findAll();
 
         return ResponseEntity
                 .ok()
@@ -87,43 +94,8 @@ public class StoreController {
                         "success",
                         200,
                         "가게 전체 조회 성공",
-                        AllStoreResponse.builder()
-                                .stores(List.of(
-                                        SingleStoreResponse.builder()
-                                                .id(1)
-                                                .name("업브렐라")
-                                                .category("카페")
-                                                .classification(SingleClassificationResponse.builder()
-                                                        .id(1L)
-                                                        .type("classification")
-                                                        .name("신촌")
-                                                        .latitude(37.503716)
-                                                        .longitude(127.053718)
-                                                        .build())
-                                                .subClassification(SingleSubClassificationResponse.builder()
-                                                        .id(2L)
-                                                        .type("subClassification")
-                                                        .name("커피")
-                                                        .build())
-                                                .activateStatus(true)
-                                                .address("서울특별시 강남구 테헤란로 427")
-                                                .umbrellaLocation("가게 앞")
-                                                .businessHours("09:00 ~ 18:00")
-                                                .contactNumber("010-0000-0000")
-                                                .instagramId("upbrella")
-                                                .latitude(37.503716)
-                                                .longitude(127.053718)
-                                                .content("업브렐라입니다.")
-                                                .imageUrls(
-                                                        List.of(
-                                                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/1.jpg",
-                                                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/2.jpg",
-                                                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/3.jpg"
-                                                        )
-                                                )
-                                                .build()
-                                ))
-                                .build()));
+                                allStores
+                                ));
     }
 
     @PostMapping
