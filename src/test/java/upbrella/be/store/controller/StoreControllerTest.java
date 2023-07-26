@@ -12,6 +12,7 @@ import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.service.StoreMetaService;
 
@@ -30,9 +31,8 @@ import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 @ExtendWith(MockitoExtension.class)
 class StoreControllerTest extends RestDocsSupport {
-
     @Mock
-    StoreMetaService storeMetaService;
+    private StoreMetaService storeMetaService;
 
     @Override
     protected Object initController() {
@@ -148,14 +148,13 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("우산의 현위치를 조회할 수 있다. ")
     void findCurrentUmbrellaStoreTest() throws Exception {
         // given
+        CurrentUmbrellaStoreResponse currentUmbrellaStoreResponse = new CurrentUmbrellaStoreResponse(1L, "모티브 카페 신촌점");
+        given(storeMetaService.findCurrentStoreIdByUmbrella(2L))
+                .willReturn(currentUmbrellaStoreResponse);
 
-
-        // when
-
-
-        // then
+        // when & then
         mockMvc.perform(
-                        get("/stores/location/{umbrellaId}", 1)
+                        get("/stores/location/{umbrellaId}", 2L)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
