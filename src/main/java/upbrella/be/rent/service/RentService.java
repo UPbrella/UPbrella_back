@@ -23,6 +23,8 @@ public class RentService {
     @Transactional
     public void addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
 
+        // 사용자가 이미 대여 중인 우산이 있으면 대여하지 못하도록 예외 처리
+
         Umbrella willRentUmbrella = umbrellaRepository.findByUuidAndDeletedIsFalse(rentUmbrellaByUserRequest.getUuid())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당 우산이 존재하지 않습니다."));
 
