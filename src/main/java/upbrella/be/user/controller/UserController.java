@@ -21,7 +21,6 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
     private final RentRepository rentRepository;
 
     @GetMapping

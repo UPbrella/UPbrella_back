@@ -2,7 +2,9 @@ package upbrella.be.user.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.entity.History;
@@ -25,16 +27,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
+@ExtendWith(MockitoExtension.class)
 public class UserControllerTest extends RestDocsSupport {
 
-    @Mock
-    private UserService userService;
     @Mock
     private RentRepository rentRepository;
 
     @Override
     protected Object initController() {
-        return new UserController(userService, rentRepository);
+        return new UserController(rentRepository);
     }
 
     @DisplayName("사용자는 유저 정보를 조회할 수 있다.")
@@ -81,8 +82,6 @@ public class UserControllerTest extends RestDocsSupport {
                 .umbrella(borrowedUmbrella)
                 .build();
 
-        given(userService.findUmbrellaBorrowedByUser(anyLong()))
-                .willReturn(1L);
         given(rentRepository.findByUserAndReturnedAtIsNull(anyLong()))
                 .willReturn(Optional.ofNullable(rentalHistory));
 
