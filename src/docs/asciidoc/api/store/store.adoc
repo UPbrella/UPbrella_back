@@ -79,42 +79,6 @@ include::{snippets}/store-update-doc/request-fields.adoc[]
 === 관리자 페이지에서 협업 지점 삭제
 
 ==== HTTP Request
+
 include::{snippets}/store-delete-doc/http-request.adoc[]
 include::{snippets}/store-delete-doc/path-parameters.adoc[]
-
-=== 대분류 조회
-==== HTTP Request
-include::{snippets}/store-find-all-classification-doc/http-request.adoc[]
-
-==== HTTP Response
-include::{snippets}/store-find-all-classification-doc/http-response.adoc[]
-include::{snippets}/store-find-all-classification-doc/response-fields-data.adoc[]
-
-=== 대분류 추가
-==== HTTP Request
-include::{snippets}/store-create-classification-doc/http-request.adoc[]
-include::{snippets}/store-create-classification-doc/request-fields.adoc[]
-
-=== 대분류 삭제
-==== HTTP Request
-include::{snippets}/store-delete-classification-doc/http-request.adoc[]
-include::{snippets}/store-delete-classification-doc/path-parameters.adoc[]
-
-=== 소분류 조회
-==== HTTP Request
-include::{snippets}/store-find-all-sub-classification-doc/http-request.adoc[]
-
-==== HTTP Response
-include::{snippets}/store-find-all-sub-classification-doc/http-response.adoc[]
-include::{snippets}/store-find-all-sub-classification-doc/response-fields-data.adoc[]
-
-
-=== 소분류 추가
-==== HTTP Request
-include::{snippets}/store-create-sub-classification-doc/http-request.adoc[]
-include::{snippets}/store-create-sub-classification-doc/request-fields.adoc[]
-
-=== 소분류 삭제
-==== Http Response
-include::{snippets}/store-delete-sub-classification-doc/http-request.adoc[]
-include::{snippets}/store-delete-sub-classification-doc/path-parameters.adoc[]

@@ -20,7 +20,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -37,7 +36,7 @@ class StoreControllerTest extends RestDocsSupport {
 
     @Override
     protected Object initController() {
-        return new StoreController(storeImageService, storeMetaService, classificationService);
+        return new StoreController(storeMetaService);
     }
 
     @Test
@@ -87,18 +86,31 @@ class StoreControllerTest extends RestDocsSupport {
     @Test
     @DisplayName("사용자는 우산의 위도, 경도, 확대 정도를 기반으로 협업지점을 조회할 수 있다.")
     void test() throws Exception {
+
         // given
+        final double latitudeFrom = 37.5666103;
+        final double latitudeTo = 77.5666103;
+        final double longitudeFrom = 36.9783882;
+        final double longitudeTo = 126.9783882;
 
+        given(storeMetaService.findStoresInCurrentMap(any(CoordinateRequest.class)))
+                .willReturn(
+                        List.of(
+                                SingleCurrentLocationStoreResponse.builder()
+                                        .id(1)
+                                        .name("업브렐라")
+                                        .latitude(37.503716)
+                                        .longitude(127.053718)
+                                        .openStatus(true)
+                                        .build()));
 
-        // when
-
-
-        // then
+        // when & then
         mockMvc.perform(
                         get("/stores/location")
-                                .param("latitude", "37.5666103")
-                                .param("longitude", "126.9783882")
-                                .param("zoomLevel", "1")
+                                .param("latitudeFrom", String.valueOf(latitudeFrom))
+                                .param("latitudeTo", String.valueOf(latitudeTo))
+                                .param("longitudeFrom", String.valueOf(longitudeFrom))
+                                .param("longitudeTo", String.valueOf(longitudeTo))
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -106,12 +118,14 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParameters(
-                                parameterWithName("latitude")
-                                        .description("위도"),
-                                parameterWithName("longitude")
-                                        .description("경도"),
-                                parameterWithName("zoomLevel")
-                                        .description("확대 정도")
+                                parameterWithName("latitudeFrom")
+                                        .description("위도 경계 시작"),
+                                parameterWithName("latitudeTo")
+                                        .description("위도 경계 종료"),
+                                parameterWithName("longitudeFrom")
+                                        .description("경도 경계 시작"),
+                                parameterWithName("longitudeTo")
+                                        .description("경도 경계 종료")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
@@ -186,28 +200,8 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("협업 지점 고유번호"),
                                 fieldWithPath("stores[].name").type(JsonFieldType.STRING)
                                         .description("협업 지점명"),
-                                fieldWithPath("stores[].category").type(JsonFieldType.STRING)
-                                        .description("카테고리"),
-                                fieldWithPath("stores[].classification").type(JsonFieldType.OBJECT)
-                                        .description("대분류"),
-                                fieldWithPath("stores[].classification.id").type(JsonFieldType.NUMBER)
-                                        .description("대분류 아이디"),
-                                fieldWithPath("stores[].classification.type").type(JsonFieldType.STRING)
-                                        .description("대분류 타입"),
-                                fieldWithPath("stores[].classification.name").type(JsonFieldType.STRING)
-                                        .description("대분류 이름"),
-                                fieldWithPath("stores[].classification.latitude").type(JsonFieldType.NUMBER)
-                                        .description("대분류 위도"),
-                                fieldWithPath("stores[].classification.longitude").type(JsonFieldType.NUMBER)
-                                        .description("대분류 경도"),
-                                fieldWithPath("stores[].subClassification").type(JsonFieldType.OBJECT)
-                                        .description("소분류"),
-                                fieldWithPath("stores[].subClassification.id").type(JsonFieldType.NUMBER)
-                                        .description("소분류 아이디"),
-                                fieldWithPath("stores[].subClassification.type").type(JsonFieldType.STRING)
-                                        .description("소분류 타입"),
-                                fieldWithPath("stores[].subClassification.name").type(JsonFieldType.STRING)
-                                        .description("소분류 이름"),
+                                fieldWithPath("stores[].classification").type(JsonFieldType.STRING)
+                                        .description("분류"),
                                 fieldWithPath("stores[].activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
                                 fieldWithPath("stores[].address").type(JsonFieldType.STRING)
@@ -224,10 +218,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("위도"),
                                 fieldWithPath("stores[].longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
-                                fieldWithPath("stores[].content").type(JsonFieldType.STRING)
-                                        .description("내용"),
-                                fieldWithPath("stores[].imageUrls").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록. 각 요소는 문자열.")
+                                subsectionWithPath("stores[].imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 
@@ -237,9 +228,7 @@ class StoreControllerTest extends RestDocsSupport {
         // given
         CreateStoreRequest store = CreateStoreRequest.builder()
                 .name("협업 지점명")
-                .category("카테고리")
-                .classificationId(1L)
-                .subClassificationId(2L)
+                .classification("분류")
                 .activateStatus(true)
                 .address("주소")
                 .umbrellaLocation("우산 위치")
@@ -249,7 +238,6 @@ class StoreControllerTest extends RestDocsSupport {
                 .latitude(33.33)
                 .longitude(33.33)
                 .imageUrls(List.of("이미지 URL"))
-                .content("내용")
                 .build();
 
         // when
@@ -268,12 +256,8 @@ class StoreControllerTest extends RestDocsSupport {
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("협업 지점명"),
-                                fieldWithPath("category").type(JsonFieldType.STRING)
-                                        .description("카테고리"),
-                                fieldWithPath("classificationId").type(JsonFieldType.NUMBER)
-                                        .description("대분류 아이디"),
-                                fieldWithPath("subClassificationId").type(JsonFieldType.NUMBER)
-                                        .description("소분류"),
+                                fieldWithPath("classification").type(JsonFieldType.STRING)
+                                        .description("분류"),
                                 fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
@@ -290,10 +274,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("위도"),
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
-                                fieldWithPath("content").type(JsonFieldType.STRING)
-                                        .description("내용"),
-                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록. 각 요소는 문자열.")
+                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 
@@ -301,29 +282,24 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("관리자는 협업지점 정보를 수정할 수 있다.")
     void updateStoreTest() throws Exception {
         // given
-        CreateStoreRequest store = CreateStoreRequest.builder()
-                .name("협업 지점명")
-                .category("카테고리")
-                .classificationId(1L)
-                .subClassificationId(2L)
+        UpdateStoreRequest store = UpdateStoreRequest.builder()
+                .name("협업지점명")
+                .classification("분류")
                 .activateStatus(true)
                 .address("주소")
                 .umbrellaLocation("우산 위치")
-                .businessHours("영업 시간")
+                .businessHours("영업시간")
                 .contactNumber("연락처")
                 .instagramId("인스타그램 아이디")
-                .latitude(33.33)
-                .longitude(33.33)
+                .coordinate("네이버 길찾기를 위한 좌표")
                 .imageUrls(List.of("이미지 URL"))
-                .content("내용")
                 .build();
-        long storeId = 1L;
 
-        doNothing().when(storeMetaService).updateStore(any(Long.class), any(CreateStoreRequest.class));
+        // when
 
         // then
 
-        mockMvc.perform(patch("/stores/{storeId}", storeId)
+        mockMvc.perform(patch("/stores/{storeId}", 1L)
                         .content(objectMapper.writeValueAsString(store))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -339,12 +315,8 @@ class StoreControllerTest extends RestDocsSupport {
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("협업 지점명"),
-                                fieldWithPath("category").type(JsonFieldType.STRING)
-                                        .description("카테고리"),
-                                fieldWithPath("classificationId").type(JsonFieldType.NUMBER)
-                                        .description("대분류 아이디"),
-                                fieldWithPath("subClassificationId").type(JsonFieldType.NUMBER)
-                                        .description("소분류 아아디"),
+                                fieldWithPath("classification").type(JsonFieldType.STRING)
+                                        .description("분류"),
                                 fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
@@ -357,14 +329,9 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("연락처"),
                                 fieldWithPath("instagramId").type(JsonFieldType.STRING)
                                         .description("인스타그램 아이디"),
-                                fieldWithPath("latitude").type(JsonFieldType.NUMBER)
-                                        .description("위도"),
-                                fieldWithPath("longitude").type(JsonFieldType.NUMBER)
-                                        .description("경도"),
-                                fieldWithPath("content").type(JsonFieldType.STRING)
-                                        .description("내용"),
-                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록. 각 요소는 문자열.")
+                                fieldWithPath("coordinate").type(JsonFieldType.STRING)
+                                        .description("네이버 길찾기를 위한 좌표"),
+                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 
@@ -372,27 +339,21 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 협업지점의 사진을 등록해서 사진의 url을 받을 수 있다.")
     void uploadStorageImages() throws Exception {
         // given
-        MockMultipartFile firstFile = new MockMultipartFile("images", "filename-1.jpeg", "text/plain", "some-image".getBytes());
-
-        given(storeImageService.makeRandomId()).willReturn("randomId");
-        given(storeImageService.uploadFile(firstFile, 1L, "randomId"))
-                .willReturn("https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-1.jpeg");
+        MockMultipartFile firstFile = new MockMultipartFile("files", "filename-1.jpeg", "text/plain", "some-image".getBytes());
+        MockMultipartFile secondFile = new MockMultipartFile("files", "filename-2.jpeg", "text/plain", "some-image".getBytes());
 
         // when
 
         // then
-        mockMvc.perform(multipart("/stores/{storeId}/images", 1L)
+        mockMvc.perform(multipart("/stores/images")
                         .file(firstFile)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                        .file(secondFile))
                 .andExpect(status().isOk())
                 .andDo(document("upload-file",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("storeId").description("협업 지점 고유번호")
-                        ),
                         requestParts(
-                                partWithName("images").description("협업지점의 사진")
+                                partWithName("files").description("The files to upload")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
@@ -404,13 +365,13 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 협업지점을 삭제할 수 있다.")
     void deleteStoreTest() throws Exception {
         // given
-        long storeMetaId = 1L;
 
-        doNothing().when(storeMetaService).deleteStoreMeta(storeMetaId);
+
+        // when
 
 
         // then
-        mockMvc.perform(delete("/stores/{storeId}", storeMetaId))
+        mockMvc.perform(delete("/stores/{storeId}", 1L))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-doc",
@@ -418,197 +379,6 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("storeId").description("협업 지점 고유번호")
-                        )));
-    }
-
-    @Test
-    @DisplayName("사용자는 대분류 목록을 조회할 수 있다.")
-    void findAllClassificationTest() throws Exception {
-        // given
-        given(classificationService.findAllClassification("classification"))
-                .willReturn(AllClassificationResponse.builder()
-                        .classifications(List.of(
-                                SingleClassificationResponse.builder()
-                                        .id(1L)
-                                        .type("대분류 타입")
-                                        .name("대분류 이름")
-                                        .latitude(33.33)
-                                        .longitude(33.33)
-                                        .build()
-                        ))
-                        .build());
-
-        // when
-
-
-        // then
-        mockMvc.perform(get("/stores/classifications"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(document("store-find-all-classification-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        responseFields(
-                                beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("classifications[]").type(JsonFieldType.ARRAY)
-                                        .description("대분류 목록"),
-                                fieldWithPath("classifications[].id").type(JsonFieldType.NUMBER)
-                                        .description("대분류 고유번호"),
-                                fieldWithPath("classifications[].type").type(JsonFieldType.STRING)
-                                        .description("대분류 타입"),
-                                fieldWithPath("classifications[].name").type(JsonFieldType.STRING)
-                                        .description("대분류 이름"),
-                                fieldWithPath("classifications[].latitude").type(JsonFieldType.NUMBER)
-                                        .description("대분류 위도"),
-                                fieldWithPath("classifications[].longitude").type(JsonFieldType.NUMBER)
-                                        .description("대분류 경도")
-                        )));
-    }
-
-    @Test
-    @DisplayName("사용자는 대분류를 추가할 수 있다.")
-    void createClassificationTest() throws Exception {
-        // given
-        CreateClassificationRequest request = CreateClassificationRequest.builder()
-                .type("대분류 타입")
-                .name("대분류 이름")
-                .latitude(33.33)
-                .longitude(33.33)
-                .build();
-
-        given(classificationService.createClassification(any(CreateClassificationRequest.class))).willReturn(Classification.builder().build());
-
-        // then
-        mockMvc.perform(post("/stores/classifications")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(document("store-create-classification-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("type").type(JsonFieldType.STRING)
-                                        .description("대분류 타입"),
-                                fieldWithPath("name").type(JsonFieldType.STRING)
-                                        .description("대분류 이름"),
-                                fieldWithPath("latitude").type(JsonFieldType.NUMBER)
-                                        .description("대분류 위도"),
-                                fieldWithPath("longitude").type(JsonFieldType.NUMBER)
-                                        .description("대분류 경도")
-                        )));
-    }
-
-    @Test
-    @DisplayName("사용자는 대분류를 삭제할 수 있다.")
-    void deleteClassificationTest() throws Exception {
-        // given
-        long classificationId = 1L;
-
-        // when
-        doNothing().when(classificationService).deleteClassification(classificationId);
-
-        // then
-        mockMvc.perform(delete("/stores/classifications/{classificationId}", classificationId))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(document("store-delete-classification-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("classificationId").description("대분류 고유번호")
-                        )));
-    }
-
-    @Test
-    @DisplayName("사용자는 소분류 목록을 조회할 수 있다.")
-    void findAllSubClassificationTest() throws Exception {
-        // given
-        given(classificationService.findAllSubClassification("subClassification"))
-                .willReturn(AllSubClassificationResponse.builder()
-                        .subClassifications(List.of(
-                                SingleSubClassificationResponse.builder()
-                                        .id(1L)
-                                        .type("소분류 타입")
-                                        .name("소분류 이름")
-                                        .build()
-                        ))
-                        .build());
-
-        // when
-
-
-        // then
-        mockMvc.perform(get("/stores/subClassifications"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(document("store-find-all-sub-classification-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        responseFields(
-                                beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("subClassifications[]").type(JsonFieldType.ARRAY)
-                                        .description("소분류 목록"),
-                                fieldWithPath("subClassifications[].id").type(JsonFieldType.NUMBER)
-                                        .description("소분류 고유번호"),
-                                fieldWithPath("subClassifications[].type").type(JsonFieldType.STRING)
-                                        .description("소분류 타입"),
-                                fieldWithPath("subClassifications[].name").type(JsonFieldType.STRING)
-                                        .description("소분류 이름")
-                        )));
-    }
-
-    @Test
-    @DisplayName("사용자는 소분류를 추가할 수 있다.")
-    void createSubClassificationTest() throws Exception {
-        // given
-        CreateSubClassificationRequest request = CreateSubClassificationRequest.builder()
-                .type("소분류 타입")
-                .name("소분류 이름")
-                .build();
-
-        given(classificationService.createSubClassification(any(CreateSubClassificationRequest.class))).willReturn(Classification.builder().build());
-
-        // then
-        mockMvc.perform(
-                        post("/stores/subClassifications")
-                                .content(objectMapper.writeValueAsString(request))
-                                .contentType(MediaType.APPLICATION_JSON)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("store-create-sub-classification-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("type").type(JsonFieldType.STRING)
-                                        .description("소분류 타입"),
-                                fieldWithPath("name").type(JsonFieldType.STRING)
-                                        .description("소분류 이름")
-                        )));
-    }
-
-    @Test
-    @DisplayName("사용자는 소분류를 삭제할 수 있다.")
-    void deleteSubClassificationTest() throws Exception {
-        // given
-        long subClassificationId = 1L;
-
-        doNothing().when(classificationService).deleteClassification(subClassificationId);
-
-        // when
-
-
-        // then
-        mockMvc.perform(
-                        delete("/stores/subClassifications/{subClassificationId}", subClassificationId)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("store-delete-sub-classification-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("subClassificationId").description("소분류 고유번호")
                         )));
     }
 }
