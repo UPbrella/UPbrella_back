@@ -29,7 +29,6 @@ public class RentService {
         StoreMeta rentalStore = storeMetaRepository.findByIdAndDeletedIsFalse(rentUmbrellaByUserRequest.getStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
 
-
         rentRepository.save(
                 History.ofCreatedByNewRent(
                         willRentUmbrella,
