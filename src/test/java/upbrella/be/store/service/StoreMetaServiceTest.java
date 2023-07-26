@@ -9,29 +9,33 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.store.dto.request.CoordinateRequest;
-import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.store.repository.ClassificationRepository;
-import upbrella.be.store.repository.StoreDetailRepository;
-import upbrella.be.store.repository.StoreImageRepository;
-import upbrella.be.store.repository.StoreMetaRepository;
+import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
+
 
 @ExtendWith(MockitoExtension.class)
 class StoreMetaServiceTest {
+
+    @Mock
+    private UmbrellaRepository umbrellaRepository;
 
     @Mock
     private StoreMetaRepository storeMetaRepository;
@@ -47,71 +51,95 @@ class StoreMetaServiceTest {
     @InjectMocks
     private StoreMetaService storeMetaService;
 
-    @Test
-    @DisplayName("존재하는 협업지점을 조회시 정상 조회된다.")
-    void findByIdTest() {
-        StoreMeta storeMeta = StoreMeta.builder().build();
-        given(storeMetaRepository.findByIdAndDeletedIsFalse(1L)).willReturn(Optional.of(storeMeta));
+    @Nested
+    @DisplayName("우산의 고유번호를 입력받아")
+    class findCurrentStoreIdByUmbrellaTest {
 
-        storeMetaService.findStoreMetaById(1L);
+        @DisplayName("해당하는 우산이 보관된 협업 지점의 고유번호, 가게 이름 정보를 성공적으로 반환한다.")
+        @Test
+        void success() {
 
-        verify(storeMetaRepository, times(1)).findByIdAndDeletedIsFalse(1L);
-    }
+            //given
+            StoreMeta storeMeta = StoreMeta.builder()
+                    .id(3L)
+                    .name("스타벅스")
+                    .thumbnail("star")
+                    .deleted(false)
+                    .build();
 
+            Umbrella umbrella = Umbrella.builder()
+                    .id(2L)
+                    .uuid(45L)
+                    .deleted(false)
+                    .rentable(true)
+                    .storeMeta(storeMeta)
+                    .build();
 
-    @Test
-    @DisplayName("협업지점 생성시 정상적으로 생성된다.")
-    void createStoreTest() {
-        // given
-        CreateStoreRequest request = CreateStoreRequest.builder()
-                .name("업브렐라")
-                .category("카페")
-                .classificationId(3L)
-                .subClassificationId(4L)
-                .activateStatus(true)
-                .address("서울특별시 강남구 테헤란로 427")
-                .umbrellaLocation("1층")
-                .businessHours("09:00 ~ 18:00")
-                .contactNumber("010-0000-0000")
-                .instagramId("upbrella")
-                .latitude(37.503716)
-                .longitude(127.053718)
-                .content("업브렐라입니다.")
-                .imageUrls(
-                        List.of(
-                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/1.jpg",
-                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/2.jpg",
-                                "https://upbrella.s3.ap-northeast-2.amazonaws.com/umbrella-store/1/3.jpg"
-                        )
-                )
-                .build();
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(2L))
+                    .willReturn(Optional.of(umbrella));
 
-        given(storeMetaRepository.save(any(StoreMeta.class))).willReturn(StoreMeta.builder().build());
-        given(storeDetailRepository.save(any(StoreDetail.class))).willReturn(StoreDetail.builder().build());
-        given(storeImageRepository.save(any(StoreImage.class))).willReturn(StoreImage.builder().build());
-        given(classificationRepository.findById(anyLong())).willReturn(Optional.of(Classification.builder().build()));
+            //when
+            CurrentUmbrellaStoreResponse currentStoreIdByUmbrella = storeMetaService.findCurrentStoreIdByUmbrella(2L);
 
-        storeMetaService.createStore(request);
+            //then
+            assertAll(
+                    () -> assertThat(currentStoreIdByUmbrella.getId())
+                            .isEqualTo(3L),
+                    () -> assertThat(currentStoreIdByUmbrella.getName())
+                            .isEqualTo("스타벅스"),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .findByIdAndDeletedIsFalse(2L)
+            );
+        }
 
-        verify(storeMetaRepository, times(1)).save(any(StoreMeta.class));
-        verify(storeDetailRepository, times(1)).save(any(StoreDetail.class));
-        verify(storeImageRepository, times(request.getImageUrls().size())).save(any(StoreImage.class));
-    }
+        @DisplayName("해당하는 우산이 보관된 협업 지점이 삭제된 상태면 예외를 반환시킨다.")
+        @Test
+        void isAtDeletedStore() {
 
-    @Test
-    @DisplayName("협업지점을 삭제할 수 있다.")
-    void StoreMetaDeleteTest() {
-        // given
-        long storeId = 1L;
-        StoreMeta storeMeta = mock(StoreMeta.class);
+            //given
+            StoreMeta storeMeta = StoreMeta.builder()
+                    .id(3L)
+                    .name("스타벅스")
+                    .thumbnail("star")
+                    .deleted(true)
+                    .build();
 
-        given(storeMetaRepository.findById(storeId)).willReturn(Optional.of(storeMeta));
+            Umbrella umbrella = Umbrella.builder()
+                    .id(2L)
+                    .uuid(45L)
+                    .deleted(false)
+                    .rentable(true)
+                    .storeMeta(storeMeta)
+                    .build();
 
-        // when
-        storeMetaService.deleteStoreMeta(storeId);
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(2L))
+                    .willReturn(Optional.of(umbrella));
 
-        // then
-        verify(storeMeta, times(1)).delete();
+            //then
+            assertAll(
+                    () -> assertThatThrownBy(() -> storeMetaService.findCurrentStoreIdByUmbrella(2L))
+                            .isInstanceOf(IllegalArgumentException.class),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .findByIdAndDeletedIsFalse(2L)
+            );
+        }
+
+        @DisplayName("해당하는 우산이 존재하지 않으면 예외를 반환시킨다.")
+        @Test
+        void isNonExistingUmbrella() {
+
+            //given
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(2L))
+                    .willReturn(Optional.ofNullable(null));
+
+            //then
+            assertAll(
+                    () -> assertThatThrownBy(() -> storeMetaService.findCurrentStoreIdByUmbrella(2L))
+                            .isInstanceOf(IllegalArgumentException.class),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .findByIdAndDeletedIsFalse(2L)
+            );
+        }
     }
 
     @Nested
@@ -123,6 +151,7 @@ class StoreMetaServiceTest {
 
         @BeforeEach
         void setUp() {
+
             StoreMeta storeIn = StoreMeta.builder()
                     .id(1)
                     .thumbnail("사진1")
