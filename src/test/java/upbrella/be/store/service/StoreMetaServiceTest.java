@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import upbrella.be.store.StoreRepository.StoreMetaRepository;
+import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;

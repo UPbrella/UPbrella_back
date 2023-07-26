@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
-import upbrella.be.store.StoreRepository.StoreMetaRepository;
+import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;

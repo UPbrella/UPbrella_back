@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import upbrella.be.store.StoreRepository.StoreMetaRepository;
+import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
