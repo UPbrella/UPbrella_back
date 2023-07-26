@@ -7,8 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NaverLoginCodeRequest {
+public class LoginCodeRequest {
 
     private String code;
-    private String state;
 }

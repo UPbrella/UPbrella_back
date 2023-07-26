@@ -8,10 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import upbrella.be.store.StoreRepository.StoreMetaRepository;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
+import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.StoreDetail;
+import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
@@ -23,6 +25,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -36,6 +39,14 @@ class StoreMetaServiceTest {
 
     @Mock
     private StoreMetaRepository storeMetaRepository;
+
+    @Mock
+    private StoreDetailRepository storeDetailRepository;
+
+    @Mock
+    private StoreImageRepository storeImageRepository;
+    @Mock
+    private ClassificationRepository classificationRepository;
 
     @InjectMocks
     private StoreMetaService storeMetaService;
@@ -208,6 +219,7 @@ class StoreMetaServiceTest {
             assertThat(storesInCurrentMap.size())
                     .isEqualTo(0);
         }
-    }
 
+    }
 }
+
