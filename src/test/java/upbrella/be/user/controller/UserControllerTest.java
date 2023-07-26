@@ -2,6 +2,7 @@ package upbrella.be.user.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.entity.History;
@@ -26,8 +27,10 @@ import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 public class UserControllerTest extends RestDocsSupport {
 
-    private final UserService userService = mock(UserService.class);
-    private final RentRepository rentRepository = mock(RentRepository.class);
+    @Mock
+    private UserService userService;
+    @Mock
+    private RentRepository rentRepository;
 
     @Override
     protected Object initController() {
