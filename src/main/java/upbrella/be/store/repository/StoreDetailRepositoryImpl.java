@@ -42,6 +42,7 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
                     .selectFrom(storeDetail)
                     .join(storeDetail.storeMeta, storeMeta).fetchJoin()
                     .where(storeDetail.storeMeta.id.eq(storeMetaId))
+                    .where(storeMeta.deleted.isFalse())
                     .fetchOne());
     }
 }

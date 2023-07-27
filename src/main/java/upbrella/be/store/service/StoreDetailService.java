@@ -21,7 +21,7 @@ public class StoreDetailService {
         StoreDetail storeDetail = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당하는 협업 지점이 존재하지 않습니다."));
 
-        int availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeDetail.getId());
+        int availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeMetaId);
 
         return StoreFindByIdResponse.fromStoreDetail(storeDetail, availableUmbrellaCount);
     }
