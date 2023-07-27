@@ -15,8 +15,9 @@ import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
-import upbrella.be.store.repository.StoreMetaRepository;
+import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.service.ClassificationService;
+import upbrella.be.store.service.StoreDetailService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 
@@ -44,11 +45,13 @@ class StoreControllerTest extends RestDocsSupport {
     @Mock
     private ClassificationService classificationService;
     @Mock
-    private StoreMetaRepository storeMetaRepository;
+    private StoreDetailRepository storeDetailRepository;
+    @Mock
+    private StoreDetailService storeDetailService;
 
     @Override
     protected Object initController() {
-        return new StoreController(storeImageService, storeMetaService, classificationService, storeMetaRepository);
+        return new StoreController(storeImageService, storeMetaService, classificationService, storeDetailRepository, storeDetailService);
     }
 
     @Test
@@ -190,7 +193,7 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("관리자 페이지에서 전체 협업지점 목록을 보여줄 수 있다.")
     void findAllStoreTest() throws Exception {
         // given
-        given(storeMetaRepository.findAllStores())
+        given(storeDetailRepository.findAllStores())
                 .willReturn(List.of(SingleStoreResponse.builder()
                         .name("dsa")
                         .category("sdsa")

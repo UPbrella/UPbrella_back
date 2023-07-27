@@ -84,4 +84,9 @@ public class UmbrellaService {
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
         foundUmbrella.delete();
     }
+
+    public int countAvailableUmbrellaAtStore(long storeId) {
+
+        return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrue(storeId);
+    }
 }
