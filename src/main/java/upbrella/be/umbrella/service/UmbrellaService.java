@@ -87,6 +87,6 @@ public class UmbrellaService {
 
     public int countAvailableUmbrellaAtStore(long storeMetaId) {
 
-        return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrue(storeMetaId);
+        return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(storeMetaId);
     }
 }
