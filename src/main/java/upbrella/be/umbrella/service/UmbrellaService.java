@@ -3,7 +3,6 @@ package upbrella.be.umbrella.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
@@ -25,14 +24,14 @@ public class UmbrellaService {
 
         return umbrellaRepository.findByDeletedIsFalseOrderById(pageable)
                 .stream().map(UmbrellaResponse::fromUmbrella)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     public List<UmbrellaResponse> findUmbrellasByStoreId(long storeId, Pageable pageable) {
 
         return umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(storeId, pageable)
                 .stream().map(UmbrellaResponse::fromUmbrella)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -52,7 +51,7 @@ public class UmbrellaService {
     @Transactional
     public Umbrella modifyUmbrella(long id, UmbrellaRequest umbrellaRequest) {
 
-        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId())
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
 
         if (!umbrellaRepository.existsByIdAndDeletedIsFalse(id)) {
             throw new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다.");
@@ -69,8 +68,12 @@ public class UmbrellaService {
     @Transactional
     public void deleteUmbrella(long id) {
 
-        Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
+        Umbrella foundUmbrella = findUmbrellaById(id);
         foundUmbrella.delete();
+    }
+
+    private Umbrella findUmbrellaById(long id) {
+        return umbrellaRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
     }
 }
