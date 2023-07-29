@@ -38,11 +38,11 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
     @Override
     public Optional<StoreDetail> findByStoreMetaIdUsingFetchJoin(long storeMetaId) {
 
-            return Optional.ofNullable(queryFactory
-                    .selectFrom(storeDetail)
-                    .join(storeDetail.storeMeta, storeMeta).fetchJoin()
-                    .where(storeDetail.storeMeta.id.eq(storeMetaId))
-                    .where(storeMeta.deleted.isFalse())
-                    .fetchOne());
+        return Optional.ofNullable(queryFactory
+                .selectFrom(storeDetail)
+                .join(storeDetail.storeMeta, storeMeta).fetchJoin()
+                .where(storeDetail.storeMeta.id.eq(storeMetaId))
+                .where(storeMeta.deleted.isFalse())
+                .fetchOne());
     }
 }

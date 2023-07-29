@@ -4,7 +4,6 @@ import lombok.*;
 import upbrella.be.store.entity.StoreDetail;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
