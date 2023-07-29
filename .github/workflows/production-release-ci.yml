@@ -31,7 +31,7 @@ jobs:
     - name: Set application properties
       run: |
         touch src/main/resources/application.properties
-        echo "${{ secrets.APPLICATION_PROPERTIES }}" | base64 --decode > src/main/resources/application.properties
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" > src/main/resources/application.properties
      
     - name: Build with Gradle
       run: |
