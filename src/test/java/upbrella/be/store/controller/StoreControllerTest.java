@@ -20,7 +20,6 @@ import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -192,30 +191,34 @@ class StoreControllerTest extends RestDocsSupport {
         // given
         given(storeMetaRepository.findAllStores())
                 .willReturn(List.of(SingleStoreResponse.builder()
-                        .name("dsa")
-                        .category("sdsa")
-                        .content("")
+                        .name("모티브 카페 신촌점")
+                        .category("카페 티저트")
+                        .content("모티브 카페")
                         .classification(SingleClassificationResponse.builder()
                                 .id(1L)
-                                .type("dsadsa")
-                                .name("dsadsa")
+                                .type("classification")
+                                .name("신촌")
                                 .latitude(33.33)
                                 .longitude(33.33)
                                 .build())
                         .subClassification(SingleSubClassificationResponse.builder()
                                 .id(1L)
-                                .type("dsadsa")
-                                .name("dsadsa")
+                                .type("subClassification")
+                                .name("신촌")
                                 .build())
                         .activateStatus(true)
-                        .address("dsadsa")
-                        .umbrellaLocation("dsadsa")
-                        .businessHours("dsadsa")
-                        .contactNumber("dsadsa")
-                        .instagramId("dsadsa")
+                        .address("주소")
+                        .umbrellaLocation("가게 앞")
+                        .businessHours("연중 무휴")
+                        .contactNumber("010-0000-0000")
+                        .instagramId("instagramId")
                         .latitude(33.33)
                         .longitude(33.33)
-                        .imageUrls(new ArrayList<>())
+                        .imageUrls(List.of(
+                                        "https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-1.jpeg",
+                                        "https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-2.jpeg"
+                                )
+                        )
                         .build()));
 
         // when
