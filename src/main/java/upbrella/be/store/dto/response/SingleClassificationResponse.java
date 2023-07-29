@@ -25,4 +25,14 @@ public class SingleClassificationResponse {
         this.latitude = classification.getLatitude();
         this.longitude = classification.getLongitude();
     }
+
+    public static SingleClassificationResponse ofCreateClassification(Classification classification) {
+        return SingleClassificationResponse.builder()
+                .id(classification.getId())
+                .type(classification.getType())
+                .name(classification.getName())
+                .latitude(classification.getLatitude())
+                .longitude(classification.getLongitude())
+                .build();
+    }
 }

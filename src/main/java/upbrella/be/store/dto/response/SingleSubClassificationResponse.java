@@ -21,4 +21,12 @@ public class SingleSubClassificationResponse {
         this.type = classification.getType();
         this.name = classification.getName();
     }
+
+    public static SingleSubClassificationResponse ofCreateSubClassification(Classification classification) {
+        return SingleSubClassificationResponse.builder()
+                .id(classification.getId())
+                .type(classification.getType())
+                .name(classification.getName())
+                .build();
+    }
 }

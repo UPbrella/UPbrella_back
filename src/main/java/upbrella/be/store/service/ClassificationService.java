@@ -21,11 +21,11 @@ public class ClassificationService {
     private final ClassificationRepository classificationRepository;
 
     public Classification createClassification(CreateClassificationRequest request) {
-        return classificationRepository.save(ofCreateClassification(request));
+        return classificationRepository.save(Classification.ofCreateClassification(request));
     }
 
     public Classification createSubClassification(CreateSubClassificationRequest request) {
-        return classificationRepository.save(ofCreateSubClassification(request));
+        return classificationRepository.save(Classification.ofCreateSubClassification(request));
     }
 
     public void deleteClassification(Long id) {
@@ -37,13 +37,7 @@ public class ClassificationService {
         List<SingleClassificationResponse> classifications = new ArrayList<>();
 
         for (Classification classification : allByClassification) {
-            classifications.add(SingleClassificationResponse.builder()
-                    .id(classification.getId())
-                    .type(classification.getType())
-                    .name(classification.getName())
-                    .latitude(classification.getLatitude())
-                    .longitude(classification.getLongitude())
-                    .build());
+            classifications.add(SingleClassificationResponse.ofCreateClassification(classification));
         }
 
         return AllClassificationResponse.builder()
@@ -56,31 +50,11 @@ public class ClassificationService {
         List<SingleSubClassificationResponse> classifications = new ArrayList<>();
 
         for (Classification classification : allByClassification) {
-            classifications.add(SingleSubClassificationResponse.builder()
-                    .id(classification.getId())
-                    .type(classification.getType())
-                    .name(classification.getName())
-                    .build());
+            classifications.add(SingleSubClassificationResponse.ofCreateSubClassification(classification));
         }
 
         return AllSubClassificationResponse.builder()
                 .subClassifications(classifications)
-                .build();
-    }
-
-    private Classification ofCreateClassification(CreateClassificationRequest request) {
-        return Classification.builder()
-                .type(request.getType())
-                .name(request.getName())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
-                .build();
-    }
-
-    private Classification ofCreateSubClassification(CreateSubClassificationRequest request) {
-        return Classification.builder()
-                .type(request.getType())
-                .name(request.getName())
                 .build();
     }
 }
