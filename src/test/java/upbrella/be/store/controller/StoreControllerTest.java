@@ -17,6 +17,7 @@ import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.service.ClassificationService;
+import upbrella.be.store.service.StoreDetailService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 
@@ -44,10 +45,12 @@ class StoreControllerTest extends RestDocsSupport {
     private ClassificationService classificationService;
     @Mock
     private StoreMetaRepository storeMetaRepository;
+    @Mock
+    private StoreDetailService storeDetailService;
 
     @Override
     protected Object initController() {
-        return new StoreController(storeImageService, storeMetaService, classificationService, storeMetaRepository);
+        return new StoreController(storeImageService, storeMetaService, classificationService, storeMetaRepository, storeDetailService);
     }
 
     @Test
@@ -374,7 +377,7 @@ class StoreControllerTest extends RestDocsSupport {
                 .build();
         long storeId = 1L;
 
-        doNothing().when(storeMetaService).updateStore(any(Long.class), any(CreateStoreRequest.class));
+        doNothing().when(storeDetailService).updateStore(any(Long.class), any(CreateStoreRequest.class));
 
         // then
 
