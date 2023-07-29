@@ -200,7 +200,7 @@ public class RentControllerTest extends RestDocsSupport {
                         get("/rent/histories/status")
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("show-all-condtion-reports-doc",
+                .andDo(document("show-all-condition-reports-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
