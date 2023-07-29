@@ -58,6 +58,7 @@ public class ClassificationService {
         for (Classification classification : allByClassification) {
             classifications.add(SingleSubClassificationResponse.builder()
                     .id(classification.getId())
+                    .type(classification.getType())
                     .name(classification.getName())
                     .build());
         }
