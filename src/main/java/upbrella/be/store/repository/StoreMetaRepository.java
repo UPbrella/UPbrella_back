@@ -6,7 +6,9 @@ import upbrella.be.store.entity.StoreMeta;
 import java.util.List;
 import java.util.Optional;
 
-public interface StoreMetaRepository extends JpaRepository<StoreMeta, Long>, StoreMetaRepositoryCustom {
+public interface StoreMetaRepository extends JpaRepository<StoreMeta, Long> {
+
     Optional<StoreMeta> findByIdAndDeletedIsFalse(long id);
+
     List<StoreMeta> findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(double latitudeFrom, double latitudeTo, double longitudeFrom, double longitudeTo);
 }

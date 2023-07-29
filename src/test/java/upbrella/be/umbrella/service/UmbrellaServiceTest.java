@@ -498,4 +498,29 @@ class UmbrellaServiceTest {
             );
         }
     }
+
+    @Nested
+    @DisplayName("협업 지점의 고유 번호를 입력받아")
+    class countAvailableUmbrellaAtStoreTest {
+
+        @Test
+        @DisplayName("해당 협업 지점에서 현재 이용 가능한 우산의 개수를 반환한다.")
+        void success() {
+
+            // given
+            given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(1L))
+                    .willReturn(10);
+
+            // when
+            int count = umbrellaService.countAvailableUmbrellaAtStore(1L);
+
+            // then
+            assertAll(
+                    () -> assertThat(count)
+                            .isEqualTo(10),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(1L)
+            );
+        }
+    }
 }

@@ -31,7 +31,7 @@ public class UmbrellaController {
                         UmbrellaPageResponse.builder()
                                 .umbrellaResponsePage(
                                         umbrellaService.findAllUmbrellas(pageable)
-                ).build()));
+                                ).build()));
     }
 
     @GetMapping("/{storeId}")

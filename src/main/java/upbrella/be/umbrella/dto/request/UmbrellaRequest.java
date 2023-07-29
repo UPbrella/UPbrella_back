@@ -3,7 +3,6 @@ package upbrella.be.umbrella.dto.request;
 import lombok.*;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
