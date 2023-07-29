@@ -73,7 +73,13 @@ public class UmbrellaService {
     }
 
     private Umbrella findUmbrellaById(long id) {
+
         return umbrellaRepository.findByIdAndDeletedIsFalse(id)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
+    }
+
+    public int countAvailableUmbrellaAtStore(long storeMetaId) {
+
+        return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(storeMetaId);
     }
 }

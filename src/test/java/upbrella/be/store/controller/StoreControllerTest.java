@@ -15,8 +15,9 @@ import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
-import upbrella.be.store.repository.StoreMetaRepository;
+import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.service.ClassificationService;
+import upbrella.be.store.service.StoreDetailService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 
@@ -44,25 +45,37 @@ class StoreControllerTest extends RestDocsSupport {
     @Mock
     private ClassificationService classificationService;
     @Mock
-    private StoreMetaRepository storeMetaRepository;
+    private StoreDetailRepository storeDetailRepository;
+    @Mock
+    private StoreDetailService storeDetailService;
 
     @Override
     protected Object initController() {
-        return new StoreController(storeImageService, storeMetaService, classificationService, storeMetaRepository);
+        return new StoreController(storeImageService, storeMetaService, classificationService, storeDetailRepository, storeDetailService);
     }
 
     @Test
     @DisplayName("스토어의 아이디로 스토어를 상세조회할 수 있다.")
     void findStoreByIdTest() throws Exception {
         // given
+        StoreFindByIdResponse storeFindByIdResponse = StoreFindByIdResponse.builder()
+                .id(1)
+                .name("업브렐라")
+                .businessHours("09:00 ~ 18:00")
+                .contactNumber("010-0000-0000")
+                .address("서울특별시 강남구 테헤란로 427")
+                .availableUmbrellaCount(10)
+                .openStatus(true)
+                .latitude(37.503716)
+                .longitude(127.053718)
+                .build();
 
+        given(storeDetailService.findStoreDetailByStoreMetaId(2L))
+                .willReturn(storeFindByIdResponse);
 
-        // when
-
-
-        // then
+        // when & then
         mockMvc.perform(
-                        get("/stores/{storeId}", 1)
+                        get("/stores/{storeId}", 2L)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-find-by-id-doc",
@@ -88,9 +101,9 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("사용가능한 우산 개수"),
                                 fieldWithPath("openStatus").type(JsonFieldType.BOOLEAN)
                                         .description("오픈 여부"),
-                                fieldWithPath("latitude").type(JsonFieldType.STRING)
+                                fieldWithPath("latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
-                                fieldWithPath("longitude").type(JsonFieldType.STRING)
+                                fieldWithPath("longitude").type(JsonFieldType.NUMBER)
                                         .description("경도")
                         )));
     }
@@ -190,7 +203,7 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("관리자 페이지에서 전체 협업지점 목록을 보여줄 수 있다.")
     void findAllStoreTest() throws Exception {
         // given
-        given(storeMetaRepository.findAllStores())
+        given(storeDetailRepository.findAllStores())
                 .willReturn(List.of(SingleStoreResponse.builder()
                         .name("dsa")
                         .category("sdsa")
