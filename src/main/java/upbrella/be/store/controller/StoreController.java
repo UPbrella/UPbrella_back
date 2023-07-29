@@ -122,7 +122,6 @@ public class StoreController {
                 ));
     }
 
-    // TODO : 협업지점의 사진 조회해서 삭제 후 등록한다.
     @PostMapping(value = "/{storeId}/images", consumes = {"multipart/form-data"})
     public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, @RequestPart List<MultipartFile> images, @PathVariable long storeId) {
 
