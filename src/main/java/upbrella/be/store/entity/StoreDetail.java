@@ -29,6 +29,7 @@ public class StoreDetail {
     private List<StoreImage> storeImages;
 
     public static StoreDetail createForSave(CreateStoreRequest request, StoreMeta storeMeta){
+
         return StoreDetail.builder()
                 .storeMeta(storeMeta)
                 .umbrellaLocation(request.getUmbrellaLocation())
@@ -38,5 +39,16 @@ public class StoreDetail {
                 .address(request.getAddress())
                 .content(request.getContent())
                 .build();
+    }
+
+    public void updateStore(StoreMeta storeMeta, CreateStoreRequest request) {
+
+        this.storeMeta = storeMeta;
+        this.umbrellaLocation = request.getUmbrellaLocation();
+        this.workingHour = request.getBusinessHours();
+        this.instaUrl = request.getInstagramId();
+        this.contactInfo = request.getContactNumber();
+        this.address = request.getAddress();
+        this.content = request.getContent();
     }
 }

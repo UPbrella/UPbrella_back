@@ -68,6 +68,7 @@ public class StoreImageService {
     }
 
     public String makeRandomId() {
+
         return UUID.randomUUID().toString().substring(0, 10);
     }
 
@@ -83,7 +84,7 @@ public class StoreImageService {
         s3Client.deleteObject(deleteObjectRequest);
     }
 
-    private void saveStoreImage(String imgUrl, long storeDetailId) {
+    public void saveStoreImage(String imgUrl, long storeDetailId) {
 
         StoreDetail storeDetail = storeDetailRepository.getReferenceById(storeDetailId);
         storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imgUrl));

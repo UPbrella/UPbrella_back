@@ -63,18 +63,22 @@ public class StoreMetaService {
     }
 
     @Transactional
-    public void updateStore(long id, CreateStoreRequest store) {
-
-    }
-
-    @Transactional
     public void deleteStoreMeta(long storeMetaId) {
+
         storeMetaRepository.findById(storeMetaId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."))
                 .delete();
     }
 
+    @Transactional(readOnly = true)
+    public StoreMeta findStoreMetaById(long id) {
+
+        return storeMetaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
+    }
+
     private StoreMeta saveStoreMeta(CreateStoreRequest store) {
+
         Classification classification = classificationService.findClassificationById(store.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(store.getSubClassificationId());
 
@@ -82,6 +86,7 @@ public class StoreMetaService {
     }
 
     private StoreDetail saveStoreDetail(CreateStoreRequest store, StoreMeta storeMeta) {
+
         return storeDetailRepository.save(StoreDetail.createForSave(store, storeMeta));
     }
 

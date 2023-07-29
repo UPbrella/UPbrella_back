@@ -31,6 +31,7 @@ public class StoreMeta {
     private double longitude;
 
     public void delete() {
+
         this.deleted = true;
     }
 
@@ -47,5 +48,18 @@ public class StoreMeta {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .build();
+    }
+
+    public void updateStoreMeta(StoreMeta storeMeta) {
+
+        this.name = storeMeta.getName();
+        this.thumbnail = storeMeta.getThumbnail();
+        this.activated = storeMeta.isActivated();
+        this.deleted = storeMeta.isDeleted();
+        this.classification = storeMeta.getClassification();
+        this.subClassification = storeMeta.getSubClassification();
+        this.category = storeMeta.getCategory();
+        this.latitude = storeMeta.getLatitude();
+        this.longitude = storeMeta.getLongitude();
     }
 }
