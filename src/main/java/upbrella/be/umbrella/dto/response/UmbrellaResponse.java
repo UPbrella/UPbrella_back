@@ -2,11 +2,9 @@ package upbrella.be.umbrella.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import upbrella.be.umbrella.entity.Umbrella;
 
 @Getter
-@Setter
 @Builder
 public class UmbrellaResponse {
 
