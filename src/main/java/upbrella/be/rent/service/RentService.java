@@ -21,13 +21,13 @@ public class RentService {
     private final RentRepository rentRepository;
 
     @Transactional
-    public void addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
+    public History addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
 
         Umbrella willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.getUmbrellaId());
 
         StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
 
-        rentRepository.save(
+        return rentRepository.save(
                 History.ofCreatedByNewRent(
                         willRentUmbrella,
                         userToRent,
