@@ -1,6 +1,7 @@
 package upbrella.be.store.entity;
 
 import lombok.*;
+import upbrella.be.store.dto.request.CreateStoreRequest;
 
 import javax.persistence.*;
 
@@ -31,5 +32,20 @@ public class StoreMeta {
 
     public void delete() {
         this.deleted = true;
+    }
+
+    public static StoreMeta createStoreMetaForSave(CreateStoreRequest request, Classification classification, Classification subClassification) {
+
+        return StoreMeta.builder()
+                .name(request.getName())
+                .thumbnail(request.getImageUrls().get(0))
+                .activated(request.isActivateStatus())
+                .deleted(false)
+                .classification(classification)
+                .subClassification(subClassification)
+                .category(request.getCategory())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .build();
     }
 }

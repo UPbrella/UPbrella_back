@@ -11,7 +11,6 @@ import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.store.repository.ClassificationRepository;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
@@ -24,11 +23,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class StoreMetaService {
+
     private final UmbrellaRepository umbrellaRepository;
     private final StoreMetaRepository storeMetaRepository;
     private final StoreDetailRepository storeDetailRepository;
     private final StoreImageRepository storeImageRepository;
-    private final ClassificationRepository classificationRepository;
+    private final ClassificationService classificationService;
 
     @Transactional(readOnly = true)
     public CurrentUmbrellaStoreResponse findCurrentStoreIdByUmbrella(long umbrellaId) {
@@ -75,7 +75,10 @@ public class StoreMetaService {
     }
 
     private StoreMeta saveStoreMeta(CreateStoreRequest store) {
-        return storeMetaRepository.save(createStoreMetaForSave(store));
+        Classification classification = classificationService.findClassificationById(store.getClassificationId());
+        Classification subClassification = classificationService.findSubClassificationById(store.getSubClassificationId());
+
+        return storeMetaRepository.save(StoreMeta.createStoreMetaForSave(store, classification, subClassification));
     }
 
     private StoreDetail saveStoreDetail(CreateStoreRequest store, StoreMeta storeMeta) {
@@ -87,39 +90,5 @@ public class StoreMetaService {
         for (String imageUrl : urls) {
             storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imageUrl));
         }
-    }
-
-    private StoreMeta createStoreMetaForSave(CreateStoreRequest request) {
-
-        Classification classification = classificationRepository.findById(request.getClassificationId())
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 분류 고유번호입니다."));
-
-        Classification subClassification = classificationRepository.findById(request.getSubClassificationId())
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 분류 고유번호입니다."));
-
-        return StoreMeta.builder()
-                .name(request.getName())
-                .thumbnail(request.getImageUrls().get(0))
-                .activated(request.isActivateStatus())
-                .deleted(false)
-                .classification(classification)
-                .subClassification(subClassification)
-                .category(request.getCategory())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
-                .build();
-    }
-
-    private StoreDetail createStoreDetailForUpdate(CreateStoreRequest store, StoreMeta storeMeta) {
-
-        return StoreDetail.builder()
-                .storeMeta(storeMeta)
-                .address(store.getAddress())
-                .umbrellaLocation(store.getUmbrellaLocation())
-                .workingHour(store.getBusinessHours())
-                .contactInfo(store.getContactNumber())
-                .instaUrl(store.getInstagramId())
-                .content(store.getContent())
-                .build();
     }
 }
