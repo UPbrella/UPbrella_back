@@ -36,4 +36,5 @@ public class CreateStoreRequest {
     @Range(min = 0, max = 10)
     @NotBlank
     private List<String> imageUrls;
+    private String password;
 }

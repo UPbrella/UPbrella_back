@@ -29,6 +29,7 @@ public class StoreMeta {
     private String category;
     private double latitude;
     private double longitude;
+    private String password;
 
     public void delete() {
 
@@ -47,6 +48,7 @@ public class StoreMeta {
                 .category(request.getCategory())
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
+                .password(request.getPassword())
                 .build();
     }
 
@@ -61,5 +63,6 @@ public class StoreMeta {
         this.category = storeMeta.getCategory();
         this.latitude = storeMeta.getLatitude();
         this.longitude = storeMeta.getLongitude();
+        this.password = storeMeta.getPassword();
     }
 }
