@@ -1,14 +1,12 @@
 package upbrella.be.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import upbrella.be.login.dto.request.JoinRequest;
 import upbrella.be.login.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -26,9 +24,12 @@ public class UserService {
 
     public void join(long userId, JoinRequest joinRequest) {
 
-        if (userRepository.existsByIdAndNameIsNotNullAndPhoneNumberIsNotNull(userId)) {
+        User foundUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 로그인을 먼저 진행해주세요."));
+
+        if (foundUser.getName() != null || foundUser.getPhoneNumber() != null) {
             throw new ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
         }
-        userRepository.save(User.createNewUser(userId, joinRequest));
+        userRepository.save(User.createNewUser(foundUser, joinRequest));
     }
 }
