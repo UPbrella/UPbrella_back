@@ -122,4 +122,10 @@ public class StoreMetaService {
                 .content(store.getContent())
                 .build();
     }
+
+    public StoreMeta findStoreMetaById(long id) {
+
+        return storeMetaRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
+    }
 }

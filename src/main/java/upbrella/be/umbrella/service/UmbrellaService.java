@@ -3,8 +3,8 @@ package upbrella.be.umbrella.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -18,46 +18,40 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UmbrellaService {
     private final UmbrellaRepository umbrellaRepository;
-    private final StoreMetaRepository storeMetaRepository;
+    private final StoreMetaService storeMetaService;
 
     public List<UmbrellaResponse> findAllUmbrellas(Pageable pageable) {
 
         return umbrellaRepository.findByDeletedIsFalseOrderById(pageable)
                 .stream().map(UmbrellaResponse::fromUmbrella)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     public List<UmbrellaResponse> findUmbrellasByStoreId(long storeId, Pageable pageable) {
 
         return umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(storeId, pageable)
                 .stream().map(UmbrellaResponse::fromUmbrella)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public Umbrella addUmbrella(UmbrellaRequest umbrellaRequest) {
 
-        StoreMeta storeMeta = storeMetaRepository.findByIdAndDeletedIsFalse(umbrellaRequest.getStoreMetaId())
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
 
         if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid())) {
             throw new IllegalArgumentException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
         return umbrellaRepository.save(
-                Umbrella.ofCreated(
-                        storeMeta,
-                        umbrellaRequest.getUuid(),
-                        umbrellaRequest.isRentable()
-                )
+                Umbrella.ofCreated(umbrellaRequest, storeMeta)
         );
     }
 
     @Transactional
     public Umbrella modifyUmbrella(long id, UmbrellaRequest umbrellaRequest) {
 
-        StoreMeta storeMeta = storeMetaRepository.findByIdAndDeletedIsFalse(umbrellaRequest.getStoreMetaId())
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
 
         if (!umbrellaRepository.existsByIdAndDeletedIsFalse(id)) {
             throw new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다.");
@@ -67,22 +61,21 @@ public class UmbrellaService {
         }
 
         return umbrellaRepository.save(
-                Umbrella.ofUpdated(
-                        id,
-                        storeMeta,
-                        umbrellaRequest.getUuid(),
-                        umbrellaRequest.isRentable()
-                )
+                Umbrella.ofUpdated(id, umbrellaRequest, storeMeta)
         );
     }
 
     @Transactional
     public void deleteUmbrella(long id) {
 
-        // 이미 삭제된 경우도 포함
-        Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
+        Umbrella foundUmbrella = findUmbrellaById(id);
         foundUmbrella.delete();
+    }
+
+    public Umbrella findUmbrellaById(long id) {
+
+        return umbrellaRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
     }
 
     public int countAvailableUmbrellaAtStore(long storeMetaId) {

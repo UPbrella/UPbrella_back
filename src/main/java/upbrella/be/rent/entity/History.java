@@ -9,11 +9,11 @@ import upbrella.be.user.entity.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class History {
 
     @Id
@@ -27,10 +27,10 @@ public class History {
     private User user;
     @ManyToOne
     @JoinColumn(name = "rent_store_meta_id")
-    private StoreMeta rentStoreMetaId;
+    private StoreMeta rentStoreMeta;
     @ManyToOne
     @JoinColumn(name = "return_store_meta_id")
-    private StoreMeta returnStoreMetaId;
+    private StoreMeta returnStoreMeta;
     @ManyToOne
     @JoinColumn(name = "payment_id")
     private Payment payment;
@@ -38,11 +38,11 @@ public class History {
     private LocalDateTime returnedAt;
     private String etc;
 
-    public static History ofCreatedByNewRent(Umbrella umbrella, User user, StoreMeta rentStoreMetaId) {
+    public static History ofCreatedByNewRent(Umbrella umbrella, User user, StoreMeta rentStoreMeta) {
         return History.builder()
                 .umbrella(umbrella)
                 .user(user)
-                .rentStoreMetaId(rentStoreMetaId)
+                .rentStoreMeta(rentStoreMeta)
                 .rentedAt(LocalDateTime.now())
                 .build();
     }
