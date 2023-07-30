@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 public class JoinRequest {
 
+    private long socialId;
     private String name;
     private String phoneNumber;
     private String bank;

@@ -8,6 +8,7 @@ import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.login.dto.token.CommonOauthInfo;
 import upbrella.be.login.dto.token.KakaoOauthInfo;
 import upbrella.be.login.dto.token.OauthToken;
+import upbrella.be.login.exception.NonMemberException;
 import upbrella.be.login.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
@@ -33,9 +34,18 @@ public class LoginController {
 
         OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
-
-        long loginedUserId = userService.login(kakaoLoggedInUser.getId());
-
+        long loginedUserId;
+        try {
+            loginedUserId = userService.login(kakaoLoggedInUser.getId());
+        } catch (NonMemberException e) {
+            return ResponseEntity
+                    .ok()
+                    .body(new CustomResponse<>(
+                            "failed",
+                            400,
+                            "가입되지 않은 회원입니다.",
+                            LoggedInUserResponse.builder().socialId(kakaoLoggedInUser.getId()).build()));
+        }
         session.setAttribute("userId", loginedUserId);
 
         return ResponseEntity
@@ -48,12 +58,9 @@ public class LoginController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoJoinDev(HttpSession session, JoinRequest joinRequest, String code) {
+    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoJoinDev(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
-        OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
-        KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
-
-        long joinnedUserId = userService.join(joinRequest, kakaoLoggedInUser.getId());
+        long joinnedUserId = userService.join(joinRequest);
         session.setAttribute("userId", joinnedUserId);
 
         return ResponseEntity
