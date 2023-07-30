@@ -2,14 +2,13 @@ name: Upbrella DEV CI
 
 on:
   push:
-    branches: [ "feat/#9-CICD-setting" ]
-    
+    branches: [ "release-production" ]
 
 env:
   WORKING_DIRECTORY: ./
   DOCKERFILE_DIRECTORY: ./.github/workflows
-  CODE_DEPLOY_APPLICATION_NAME: upbrella-dev-deploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
+  CODE_DEPLOY_APPLICATION_NAME: upbrella-production-deploy
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerProduction
   S3_BUCKET_NAME: upbrella-storage
 
 permissions:
@@ -32,7 +31,7 @@ jobs:
     - name: Set application properties
       run: |
         touch src/main/resources/application.properties
-        echo "${{ secrets.APPLICATION_PROPERTIES }}" | base64 --decode > src/main/resources/application.properties
+        echo "${{ secrets.APPLICATION_PROPERTIES }}" > src/main/resources/application.properties
      
     - name: Build with Gradle
       run: |
@@ -57,7 +56,7 @@ jobs:
       run:
         aws s3 cp $GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/server-dev-deploy/$GITHUB_SHA.zip --region ${{ secrets.AWS_REGION }}
 
-    - name: Docker Image to Code Deploy
+    - name: Code Deploy
       run: | 
         aws deploy create-deployment \
         --deployment-config-name CodeDeployDefault.AllAtOnce \
