@@ -25,7 +25,7 @@ public class CreateStoreRequest {
     @NotBlank
     private String umbrellaLocation;
     @NotBlank
-    private String businessHours;
+    private String businessHour;
     private String contactNumber;
     private String instagramId;
     @Range(min = -90, max = 90)
@@ -33,8 +33,6 @@ public class CreateStoreRequest {
     @Range(min = -180, max = 180)
     private double longitude;
     private String content;
-    @Range(min = 0, max = 10)
-    @NotBlank
-    private List<String> imageUrls;
     private String password;
+    private AllBusinessHourRequest businessHours;
 }

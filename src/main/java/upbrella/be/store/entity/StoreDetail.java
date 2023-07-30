@@ -33,7 +33,7 @@ public class StoreDetail {
         return StoreDetail.builder()
                 .storeMeta(storeMeta)
                 .umbrellaLocation(request.getUmbrellaLocation())
-                .workingHour(request.getBusinessHours())
+                .workingHour(request.getBusinessHour())
                 .instaUrl(request.getInstagramId())
                 .contactInfo(request.getContactNumber())
                 .address(request.getAddress())
@@ -45,7 +45,7 @@ public class StoreDetail {
 
         this.storeMeta = storeMeta;
         this.umbrellaLocation = request.getUmbrellaLocation();
-        this.workingHour = request.getBusinessHours();
+        this.workingHour = request.getBusinessHour();
         this.instaUrl = request.getInstagramId();
         this.contactInfo = request.getContactNumber();
         this.address = request.getAddress();

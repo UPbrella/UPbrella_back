@@ -59,7 +59,6 @@ public class StoreMetaService {
 
         StoreMeta storeMeta = saveStoreMeta(store);
         StoreDetail storeDetail = saveStoreDetail(store, storeMeta);
-        saveStoreImage(store.getImageUrls(), storeDetail);
     }
 
     @Transactional

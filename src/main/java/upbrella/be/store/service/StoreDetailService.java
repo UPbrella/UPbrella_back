@@ -28,8 +28,6 @@ public class StoreDetailService {
         StoreMeta foundStoreMeta = storeMetaService.findStoreMetaById(storeId);
         foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
 
-        saveStoreImage(storeId, request);
-
         StoreDetail storeDetailById = findStoreDetailById(storeId);
 
         storeDetailById.updateStore(foundStoreMeta, request);
@@ -39,13 +37,5 @@ public class StoreDetailService {
 
         return storeDetailRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 가게입니다."));
-    }
-
-    private void saveStoreImage(long storeId, CreateStoreRequest request) {
-        storeImageService.deleteImagesBeforeSave(storeId);
-
-        request.getImageUrls()
-                .stream()
-                .forEach(imageUrl -> storeImageService.saveStoreImage(imageUrl, storeId));
     }
 }

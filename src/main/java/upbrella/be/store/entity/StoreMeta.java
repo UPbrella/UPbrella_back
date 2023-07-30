@@ -40,7 +40,6 @@ public class StoreMeta {
 
         return StoreMeta.builder()
                 .name(request.getName())
-                .thumbnail(request.getImageUrls().get(0))
                 .activated(request.isActivateStatus())
                 .deleted(false)
                 .classification(classification)

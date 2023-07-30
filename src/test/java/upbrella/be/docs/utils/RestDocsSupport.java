@@ -1,6 +1,7 @@
 package upbrella.be.docs.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -23,6 +24,7 @@ public abstract class RestDocsSupport {
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .apply(documentationConfiguration(provider))
                 .build();
+        objectMapper.registerModule(new JavaTimeModule());
     }
 
     protected abstract Object initController();

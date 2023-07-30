@@ -3,7 +3,7 @@ package upbrella.be.store.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Builder
@@ -20,6 +20,6 @@ public class BusinessHour {
     private StoreMeta storeMeta;
     @Enumerated(EnumType.STRING)
     private DayOfWeek date;
-    private LocalDateTime openAt;
-    private LocalDateTime closeAt;
+    private LocalTime openAt;
+    private LocalTime closeAt;
 }
