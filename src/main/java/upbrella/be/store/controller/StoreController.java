@@ -18,7 +18,6 @@ import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -118,9 +117,9 @@ public class StoreController {
     }
 
     @PostMapping(value = "/{storeId}/images", consumes = {"multipart/form-data"})
-    public ResponseEntity<CustomResponse> uploadStoreImages(HttpSession session, @RequestPart MultipartFile images, @PathVariable long storeId) {
+    public ResponseEntity<CustomResponse> uploadStoreImages(HttpSession session, @RequestPart MultipartFile image, @PathVariable long storeId) {
 
-        // TODO: 한 번에 하나의 이미지만 등록
+        storeImageService.uploadFile(image, storeId, storeImageService.makeRandomId());
 
         return ResponseEntity
                 .ok()
@@ -134,6 +133,7 @@ public class StoreController {
     @DeleteMapping("/images/{imageId}")
     public ResponseEntity<CustomResponse> deleteStoreImages(HttpSession session, @PathVariable long imageId) {
 
+        storeImageService.deleteFile(imageId);
 
         return ResponseEntity
                 .ok()

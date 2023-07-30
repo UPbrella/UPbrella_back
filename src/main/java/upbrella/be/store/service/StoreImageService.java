@@ -56,15 +56,12 @@ public class StoreImageService {
     }
 
     @Transactional
-    public void deleteImagesBeforeSave(long storeDetailId) {
+    public void deleteFile(long imageId) {
 
-        List<StoreImage> storeImages = storeImageRepository.findByStoreDetailId(storeDetailId);
-        if (storeImages.size() > 0) {
-            for (StoreImage storeImage : storeImages) {
-                deleteFile(storeImage.getImageUrl());
-                storeImageRepository.delete(storeImage);
-            }
-        }
+        StoreImage storeImage = storeImageRepository.findById(imageId)
+                .orElseThrow(() -> new IllegalStateException("해당 이미지가 존재하지 않습니다."));
+        storeImageRepository.deleteById(imageId);
+        deleteFileInS3(storeImage.getImageUrl());
     }
 
     public String makeRandomId() {
@@ -72,7 +69,7 @@ public class StoreImageService {
         return UUID.randomUUID().toString().substring(0, 10);
     }
 
-    private void deleteFile(String imgUrl) {
+    private void deleteFileInS3(String imgUrl) {
 
         String key = parseKey(imgUrl);
 
@@ -84,10 +81,10 @@ public class StoreImageService {
         s3Client.deleteObject(deleteObjectRequest);
     }
 
-    public void saveStoreImage(String imgUrl, long storeDetailId) {
+    private void saveStoreImage(String imageUrl, long storeDetailId) {
 
         StoreDetail storeDetail = storeDetailRepository.getReferenceById(storeDetailId);
-        storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imgUrl));
+        storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imageUrl));
     }
 
 

@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.web.multipart.MultipartFile;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
@@ -24,6 +25,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -597,7 +599,9 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 협업지점의 사진을 등록할 수 있다.")
     void uploadStorageImages() throws Exception {
         // given
-        MockMultipartFile firstFile = new MockMultipartFile("images", "filename-1.jpeg", "text/plain", "some-image".getBytes());
+        MockMultipartFile firstFile = new MockMultipartFile("image", "filename-1.jpeg", "text/plain", "some-image".getBytes());
+        given(storeImageService.uploadFile(any(MultipartFile.class), any(Long.class), nullable(String.class)))
+                .willReturn("url");
 
         // when
 
@@ -613,7 +617,7 @@ class StoreControllerTest extends RestDocsSupport {
                                 parameterWithName("storeId").description("협업 지점 고유번호")
                         ),
                         requestParts(
-                                partWithName("images").description("협업지점의 사진")
+                                partWithName("image").description("협업지점의 사진")
                         )));
     }
 
@@ -624,10 +628,10 @@ class StoreControllerTest extends RestDocsSupport {
         long imageId = 1L;
 
         // when
-
+        doNothing().when(storeImageService).deleteFile(imageId);
 
         // then
-        mockMvc.perform(delete("/stores/{imageId}", imageId))
+        mockMvc.perform(delete("/stores/images/{imageId}", imageId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-images-doc",
@@ -636,7 +640,6 @@ class StoreControllerTest extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("imageId").description("협업 지점 사진 고유번호")
                         )));
-
     }
 
     @Test

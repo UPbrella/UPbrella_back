@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,6 +12,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.repository.StoreDetailRepository;
@@ -19,11 +21,12 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @Transactional
 @ExtendWith(MockitoExtension.class)
@@ -68,21 +71,19 @@ class StoreImageServiceTest {
     @DisplayName("새로 사진을 등록할 때 기존에 있던 사진들을 삭제하는 테스트")
     void deleteFileTest() {
         // given
-        StoreImage url1 = StoreImage.builder()
-                .storeDetail(StoreDetail.builder().build())
-                .imageUrl("url1")
-                .build();
-        StoreImage url2 = StoreImage.builder()
-                .storeDetail(StoreDetail.builder().build())
-                .imageUrl("url1")
-                .build();
-        storeImageRepository.save(url1);
-        storeImageRepository.save(url2);
+        long testId = 1L;
+        String testUrl = "http://mybucket.s3.amazonaws.com/myimage.jpg";
+        StoreImage testImage = StoreImage.builder().id(testId).imageUrl(testUrl).build();
 
-        // when
-        storeImageService.deleteImagesBeforeSave(1L);
+        when(storeImageRepository.findById(testId)).thenReturn(Optional.of(testImage));
 
-        // then
-        Assertions.assertThat(storeImageRepository.findAll().size()).isEqualTo(0);
+        // When
+        storeImageService.deleteFile(testId);
+
+        // Then
+        assertAll(
+                () -> assertEquals(testId, testImage.getId()),
+                () -> assertEquals(testUrl, testImage.getImageUrl())
+        );
     }
 }
