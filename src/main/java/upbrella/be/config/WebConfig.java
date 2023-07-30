@@ -11,6 +11,7 @@ import upbrella.be.login.interceptor.OAuthLoginInterceptor;
 @Configuration
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 
@@ -23,12 +24,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new OAuthLoginInterceptor())
-                .addPathPatterns("/**");
+        registry.addInterceptor(oAuthLoginInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/oauth/**");
     }
 
     @Bean
     public OAuthLoginInterceptor oAuthLoginInterceptor() {
         return new OAuthLoginInterceptor();
     }
+
+
 }

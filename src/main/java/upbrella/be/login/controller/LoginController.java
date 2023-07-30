@@ -28,7 +28,7 @@ public class LoginController {
         this.kakaoOauthInfo = kakaoOauthInfo;
     }
 
-    @GetMapping("/kakao")
+    @GetMapping("/login")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLoginDev(HttpSession session, String code) {
 
         OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
@@ -50,7 +50,11 @@ public class LoginController {
     @PostMapping("/join")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoJoinDev(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
-        long userId = (Long)session.getAttribute("userId");
+        Long userId = (Long)session.getAttribute("userId");
+        if (userId == null) {
+            throw new IllegalArgumentException("[ERROR] 로그인을 먼저 해주세요.");
+        }
+
         userService.join(userId, joinRequest);
 
         return ResponseEntity

@@ -24,7 +24,6 @@ public class User {
     private boolean adminStatus;
     private String bank;
     private String accountNumber;
-    private String authToken;
 
     public static User createNewUser(long userId, JoinRequest joinRequest) {
         return User.builder()
