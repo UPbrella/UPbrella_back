@@ -580,14 +580,10 @@ class StoreControllerTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("사용자는 협업지점의 사진을 등록해서 사진의 url을 받을 수 있다.")
+    @DisplayName("사용자는 협업지점의 사진을 등록할 수 있다.")
     void uploadStorageImages() throws Exception {
         // given
         MockMultipartFile firstFile = new MockMultipartFile("images", "filename-1.jpeg", "text/plain", "some-image".getBytes());
-
-        given(storeImageService.makeRandomId()).willReturn("randomId");
-        given(storeImageService.uploadFile(firstFile, 1L, "randomId"))
-                .willReturn("https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-1.jpeg");
 
         // when
 
@@ -604,10 +600,6 @@ class StoreControllerTest extends RestDocsSupport {
                         ),
                         requestParts(
                                 partWithName("images").description("협업지점의 사진")
-                        ),
-                        responseFields(
-                                beneathPath("data").withSubsectionId("data"),
-                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
                         )));
     }
 

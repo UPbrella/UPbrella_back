@@ -54,10 +54,9 @@ include::{snippets}/store-find-all-doc/response-fields-data.adoc[]
 include::{snippets}/upload-file/httpie-request.adoc[]
 include::{snippets}/upload-file/request-parts.adoc[]
 
-==== HTTP Response
+=== 협업지점의 이미지 삭제
 
-include::{snippets}/upload-file/http-response.adoc[]
-include::{snippets}/upload-file/response-fields-data.adoc[]
+==== HTTP Request
 
 
 === 관리자 페이지에서 새로운 협업 지점 등록

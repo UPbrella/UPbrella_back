@@ -126,24 +126,16 @@ public class StoreController {
     }
 
     @PostMapping(value = "/{storeId}/images", consumes = {"multipart/form-data"})
-    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, @RequestPart List<MultipartFile> images, @PathVariable long storeId) {
+    public ResponseEntity<CustomResponse> uploadStoreImages(HttpSession session, @RequestPart MultipartFile images, @PathVariable long storeId) {
 
-        List<String> imageUrls = new ArrayList<>();
-        storeImageService.deleteImagesBeforeSave(storeId);
-        for (MultipartFile image : images) {
-            String randomId = storeImageService.makeRandomId();
-            imageUrls.add(storeImageService.uploadFile(image, storeId, randomId));
-        }
+        // TODO: 한 번에 하나의 이미지만 등록
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "협업지점 이미지 업로드 성공",
-                        ImageUrlsResponse.builder()
-                                .imageUrls(imageUrls)
-                                .build()
+                        "협업지점 이미지 업로드 성공"
                 ));
     }
 
