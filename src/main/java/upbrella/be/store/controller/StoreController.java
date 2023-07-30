@@ -139,6 +139,19 @@ public class StoreController {
                 ));
     }
 
+    @DeleteMapping("/images/{imageId}")
+    public ResponseEntity<CustomResponse> deleteStoreImages(HttpSession session, @PathVariable long imageId) {
+
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 이미지 삭제 성공"
+                ));
+    }
+
     @DeleteMapping("/{storeId}")
     public ResponseEntity<CustomResponse> deleteStore(HttpSession session, @PathVariable long storeId) {
 

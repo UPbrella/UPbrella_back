@@ -58,6 +58,8 @@ include::{snippets}/upload-file/request-parts.adoc[]
 
 ==== HTTP Request
 
+include::{snippets}/store-delete-images-doc/http-request.adoc[]
+include::{snippets}/store-delete-images-doc/path-parameters.adoc[]
 
 === 관리자 페이지에서 새로운 협업 지점 등록
 

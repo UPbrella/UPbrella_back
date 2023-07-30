@@ -604,6 +604,28 @@ class StoreControllerTest extends RestDocsSupport {
     }
 
     @Test
+    @DisplayName("사용자는 협업지점의 사진을 삭제할 수 있다.")
+    void deleteStoreImagesTest() throws Exception {
+        // given
+        long imageId = 1L;
+
+        // when
+
+
+        // then
+        mockMvc.perform(delete("/stores/{imageId}", imageId))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("store-delete-images-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("imageId").description("협업 지점 사진 고유번호")
+                        )));
+
+    }
+
+    @Test
     @DisplayName("사용자는 협업지점을 삭제할 수 있다.")
     void deleteStoreTest() throws Exception {
         // given
