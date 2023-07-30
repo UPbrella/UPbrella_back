@@ -32,12 +32,13 @@ public class LoginController {
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLoginDev(HttpSession session, String code) {
 
         OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
+        session.setAttribute("authToken", kakaoAccessToken);
+
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
-
         long loginedUserId = userService.login(kakaoLoggedInUser.getId());
-        //Interceptor에서 해당 유저로 조회 시, 필수 정보가 누락되었으면 회원 가입 폼으로 이동시킴.
-        session.setAttribute("userId", loginedUserId);
+        session.removeAttribute("authToken");
 
+        session.setAttribute("userId", loginedUserId);
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -50,12 +51,22 @@ public class LoginController {
     @PostMapping("/join")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoJoinDev(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
-        Long userId = (Long)session.getAttribute("userId");
-        if (userId == null) {
+        OauthToken kakaoAccessToken = (OauthToken)session.getAttribute("authToken");
+
+        if (session.getAttribute("userId") != null) {
+            throw new IllegalArgumentException("[ERROR] 이미 로그인된 상태입니다.");
+        }
+
+        if (kakaoAccessToken == null) {
             throw new IllegalArgumentException("[ERROR] 로그인을 먼저 해주세요.");
         }
 
-        userService.join(userId, joinRequest);
+        KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
+
+        long loginedUserId = userService.join(kakaoLoggedInUser.getId(), joinRequest);
+
+        session.removeAttribute("authToken");
+        session.setAttribute("userId", loginedUserId);
 
         return ResponseEntity
                 .ok()

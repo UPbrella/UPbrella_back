@@ -25,13 +25,12 @@ public class User {
     private String bank;
     private String accountNumber;
 
-    public static User createNewUser(User foundUser, JoinRequest joinRequest) {
+    public static User createNewUser(long socialId, JoinRequest joinRequest) {
         return User.builder()
-                .id(foundUser.getId())
-                .socialId(foundUser.getSocialId())
+                .socialId(socialId)
                 .name(joinRequest.getName())
                 .phoneNumber(joinRequest.getPhoneNumber())
-                .adminStatus(foundUser.isAdminStatus())
+                .adminStatus(false)
                 .bank(joinRequest.getBank())
                 .accountNumber(joinRequest.getAccountNumber())
                 .build();

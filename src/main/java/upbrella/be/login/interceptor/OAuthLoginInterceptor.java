@@ -22,17 +22,17 @@ public class OAuthLoginInterceptor implements HandlerInterceptor {
 
         Long userId = (Long) session.getAttribute("userId");
 
-        // 카카오 인증이 안되어 있는 경우
+        // 카카오 인증이 안되어 있는 경우, 세션이 없는 경우
         if (userId == null) {
             return false;
         }
 
         // 인증된 경우
-        if (userRepository.existsByIdAndNameIsNotNullAndPhoneNumberIsNotNull(userId)) {
-            return true;
+        if (!userRepository.existsById(userId)) {
+            return false;
         }
-        // 카카오 인증이 되었지만, 회원 가입을 하지 않았을 경우
-        return false;
+
+        return true;
     }
 }
 
