@@ -59,7 +59,7 @@ public class LoginController {
 
         if (kakaoAccessToken == null) {
             throw new IllegalArgumentException("[ERROR] 로그인을 먼저 해주세요.");
-        }
+        }경
 
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
 

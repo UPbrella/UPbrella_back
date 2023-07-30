@@ -15,7 +15,6 @@ public class UserService {
 
     public long login(Long socialId) {
 
-        //회원 가입되어있는 경우 DB에서 조회하며, 아닌 경우 회원을 임시 등록한다.
         User foundUser = userRepository.findBySocialId(socialId)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."));
 
