@@ -8,7 +8,6 @@ import upbrella.be.login.dto.response.LoggedInUserResponse;
 import upbrella.be.login.dto.token.CommonOauthInfo;
 import upbrella.be.login.dto.token.KakaoOauthInfo;
 import upbrella.be.login.dto.token.OauthToken;
-import upbrella.be.login.exception.NonMemberException;
 import upbrella.be.login.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
@@ -34,18 +33,9 @@ public class LoginController {
 
         OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
-        long loginedUserId;
-        try {
-            loginedUserId = userService.login(kakaoLoggedInUser.getId());
-        } catch (NonMemberException e) {
-            return ResponseEntity
-                    .ok()
-                    .body(new CustomResponse<>(
-                            "failed",
-                            400,
-                            "가입되지 않은 회원입니다.",
-                            LoggedInUserResponse.builder().socialId(kakaoLoggedInUser.getId()).build()));
-        }
+
+        long loginedUserId = userService.login(kakaoLoggedInUser.getId());
+        //Interceptor에서 해당 유저로 조회 시, 필수 정보가 누락되었으면 회원 가입 폼으로 이동시킴.
         session.setAttribute("userId", loginedUserId);
 
         return ResponseEntity
@@ -60,8 +50,8 @@ public class LoginController {
     @PostMapping("/join")
     public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoJoinDev(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
-        long joinnedUserId = userService.join(joinRequest);
-        session.setAttribute("userId", joinnedUserId);
+        long userId = (Long)session.getAttribute("userId");
+        userService.join(userId, joinRequest);
 
         return ResponseEntity
                 .ok()

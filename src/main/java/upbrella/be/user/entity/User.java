@@ -24,15 +24,23 @@ public class User {
     private boolean adminStatus;
     private String bank;
     private String accountNumber;
+    private String authToken;
 
-    public static User createNewUser(JoinRequest joinRequest) {
+    public static User createNewUser(long userId, JoinRequest joinRequest) {
         return User.builder()
+                .id(userId)
                 .name(joinRequest.getName())
                 .phoneNumber(joinRequest.getPhoneNumber())
                 .adminStatus(false)
                 .bank(joinRequest.getBank())
                 .accountNumber(joinRequest.getAccountNumber())
                 .socialId(joinRequest.getSocialId())
+                .build();
+    }
+
+    public static User createNewUser(long socialId) {
+        return User.builder()
+                .socialId(socialId)
                 .build();
     }
 

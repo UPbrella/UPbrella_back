@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import upbrella.be.login.dto.request.JoinRequest;
-import upbrella.be.login.exception.NonMemberException;
+import upbrella.be.login.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
 
@@ -17,19 +17,18 @@ public class UserService {
 
     public long login(Long socialId) {
 
+        //회원 가입되어있는 경우 DB에서 조회하며, 아닌 경우 회원을 임시 등록한다.
         User foundUser = userRepository.findBySocialId(socialId)
-                .orElseThrow(() -> new NonMemberException("[ERROR] 미가입된 회원입니다. 회원 가입 폼으로 이동합니다."));
+                .orElseGet(() -> userRepository.save(User.createNewUser(socialId)));
 
         return foundUser.getId();
     }
 
-    public long join(JoinRequest joinRequest) {
+    public void join(long userId, JoinRequest joinRequest) {
 
-        if (userRepository.existsBySocialId(joinRequest.getSocialId())) {
-            throw new NonMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
+        if (userRepository.existsById(userId)) {
+            throw new ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
         }
-        User joinnedUser = userRepository.save(User.createNewUser(joinRequest));
-
-        return joinnedUser.getId();
+        userRepository.save(User.createNewUser(userId, joinRequest));
     }
 }
