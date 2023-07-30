@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class KakoLoginResponse {
-
-    private Properties properties;
+public class KakaoLoginResponse {
+    private Long id;
 }

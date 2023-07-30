@@ -6,11 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import upbrella.be.login.dto.response.KakoLoginResponse;
-import upbrella.be.login.dto.response.NaverLoggedInUser;
-import upbrella.be.login.dto.response.NaverLoginResponse;
-import upbrella.be.login.dto.response.Properties;
-import upbrella.be.login.dto.token.*;
+import upbrella.be.login.dto.response.KakaoLoginResponse;
+import upbrella.be.login.dto.token.CommonOauthInfo;
+import upbrella.be.login.dto.token.OauthToken;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,13 +57,8 @@ public class OauthLoginService {
                 .getBody();
     }
 
-    public NaverLoggedInUser processNaverLogin(String accessToken, String loginUri) {
-        NaverLoginResponse response = processLogin(accessToken, loginUri, NaverLoginResponse.class);
-        return response.getResponse();
-    }
-
-    public Properties processKakaoLogin(String accessToken, String loginUri) {
-        KakoLoginResponse response = processLogin(accessToken, loginUri, KakoLoginResponse.class);
-        return response.getProperties();
+    public KakaoLoginResponse processKakaoLogin(String accessToken, String loginUri) {
+        KakaoLoginResponse response = processLogin(accessToken, loginUri, KakaoLoginResponse.class);
+        return response;
     }
 }
