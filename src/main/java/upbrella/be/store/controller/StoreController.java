@@ -9,6 +9,7 @@ import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.*;
+import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreDetailService;
@@ -30,6 +31,7 @@ public class StoreController {
     private final ClassificationService classificationService;
     private final StoreMetaRepository storeMetaRepository;
     private final StoreDetailService storeDetailService;
+    private final StoreDetailRepository storeDetailRepository;
 
     @GetMapping("/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
@@ -40,17 +42,7 @@ public class StoreController {
                         "success",
                         200,
                         "가게 조회 성공",
-                        StoreFindByIdResponse.builder()
-                                .id(1)
-                                .name("업브렐라")
-                                .businessHours("09:00 ~ 18:00")
-                                .contactNumber("010-0000-0000")
-                                .address("서울특별시 강남구 테헤란로 427")
-                                .availableUmbrellaCount(10)
-                                .openStatus(true)
-                                .latitude("37.503716")
-                                .longitude("127.053718")
-                                .build()));
+                        storeDetailService.findStoreDetailByStoreMetaId(storeId)));
     }
 
     @GetMapping("/location")
@@ -83,7 +75,7 @@ public class StoreController {
     @GetMapping
     public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores(HttpSession session) {
 
-        List<SingleStoreResponse> allStores = storeMetaRepository.findAllStores();
+        List<SingleStoreResponse> allStores = storeDetailRepository.findAllStores();
 
         return ResponseEntity
                 .ok()

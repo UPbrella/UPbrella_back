@@ -2,6 +2,7 @@ package upbrella.be.umbrella.entity;
 
 import lombok.*;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 
 import javax.persistence.*;
 
@@ -26,23 +27,23 @@ public class Umbrella {
         this.deleted = true;
     }
 
-    public static Umbrella ofCreated(StoreMeta storeMeta, long uuid, boolean rentable) {
+    public static Umbrella ofCreated(UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
 
         return Umbrella.builder()
                 .storeMeta(storeMeta)
-                .uuid(uuid)
-                .rentable(rentable)
+                .uuid(umbrellaRequest.getUuid())
+                .rentable(umbrellaRequest.isRentable())
                 .deleted(false)
                 .build();
     }
 
-    public static Umbrella ofUpdated(long id, StoreMeta storeMeta, long uuid, boolean rentable) {
+    public static Umbrella ofUpdated(long id, UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
 
         return Umbrella.builder()
                 .id(id)
                 .storeMeta(storeMeta)
-                .uuid(uuid)
-                .rentable(rentable)
+                .uuid(umbrellaRequest.getUuid())
+                .rentable(umbrellaRequest.isRentable())
                 .deleted(false)
                 .build();
     }

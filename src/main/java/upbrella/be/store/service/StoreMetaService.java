@@ -9,7 +9,6 @@ import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
-import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
@@ -87,12 +86,5 @@ public class StoreMetaService {
     private StoreDetail saveStoreDetail(CreateStoreRequest store, StoreMeta storeMeta) {
 
         return storeDetailRepository.save(StoreDetail.createForSave(store, storeMeta));
-    }
-
-    private void saveStoreImage(List<String> urls, StoreDetail storeDetail) {
-
-        for (String imageUrl : urls) {
-            storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imageUrl));
-        }
     }
 }

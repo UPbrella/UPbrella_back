@@ -28,7 +28,8 @@ public class StoreDetail {
     @OneToMany(mappedBy = "storeDetail", cascade = CascadeType.ALL)
     private List<StoreImage> storeImages;
 
-    public static StoreDetail createForSave(CreateStoreRequest request, StoreMeta storeMeta){
+
+    public static StoreDetail createForSave(CreateStoreRequest request, StoreMeta storeMeta) {
 
         return StoreDetail.builder()
                 .storeMeta(storeMeta)
