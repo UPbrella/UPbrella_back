@@ -24,16 +24,20 @@ public class SingleStoreResponse {
     private boolean activateStatus;
     private String address;
     private String umbrellaLocation;
-    private String businessHours;
+    private String businessHour;
     private String contactNumber;
     private String instagramId;
     private double latitude;
     private double longitude;
     private String content;
-    private List<String> imageUrls;
+    private List<SingleImageUrlResponse> imageUrls;
+    private String password;
+    private List<SingleBusinessHourResponse> businessHours;
 
     public SingleStoreResponse(StoreDetail storeDetail) {
+
         imageUrls = new ArrayList<>();
+        businessHours = new ArrayList<>();
         this.id = storeDetail.getStoreMeta().getId();
         this.name = storeDetail.getStoreMeta().getName();
         this.category = storeDetail.getStoreMeta().getCategory();
@@ -42,14 +46,18 @@ public class SingleStoreResponse {
         this.activateStatus = storeDetail.getStoreMeta().isActivated();
         this.address = storeDetail.getAddress();
         this.umbrellaLocation = storeDetail.getUmbrellaLocation();
-        this.businessHours = storeDetail.getWorkingHour();
+        this.businessHour = storeDetail.getWorkingHour();
         this.contactNumber = storeDetail.getContactInfo();
         this.instagramId = storeDetail.getInstaUrl();
         this.latitude = storeDetail.getStoreMeta().getLongitude();
         this.longitude = storeDetail.getStoreMeta().getLongitude();
         this.content = storeDetail.getContent();
-        for (StoreImage imageUrl : storeDetail.getStoreImages()) {
-            imageUrls.add(imageUrl.getImageUrl());
-        }
+        this.password = storeDetail.getStoreMeta().getPassword();
+        storeDetail.getStoreImages().forEach(imageUrl -> {
+            this.imageUrls.add(SingleImageUrlResponse.createImageUrlResponse(imageUrl));
+        });
+        storeDetail.getStoreMeta().getBusinessHours().forEach(businessHour -> {
+            this.businessHours.add(SingleBusinessHourResponse.createSingleHourResponse(businessHour));
+        });
     }
 }

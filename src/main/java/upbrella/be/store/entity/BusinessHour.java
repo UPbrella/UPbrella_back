@@ -16,7 +16,7 @@ public class BusinessHour {
     @GeneratedValue
     private long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "store_meta_id")
     private StoreMeta storeMeta;
     @Enumerated(EnumType.STRING)
     private DayOfWeek date;

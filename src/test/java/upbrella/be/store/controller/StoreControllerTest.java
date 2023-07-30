@@ -211,15 +211,53 @@ class StoreControllerTest extends RestDocsSupport {
                         .activateStatus(true)
                         .address("주소")
                         .umbrellaLocation("가게 앞")
-                        .businessHours("연중 무휴")
+                        .businessHour("연중 무휴")
                         .contactNumber("010-0000-0000")
                         .instagramId("instagramId")
                         .latitude(33.33)
                         .longitude(33.33)
-                        .imageUrls(List.of(
-                                        "https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-1.jpeg",
-                                        "https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-2.jpeg"
-                                )
+                        .imageUrls(List.of(SingleImageUrlResponse.builder()
+                                .id(1L)
+                                .imageUrl("url")
+                                .build()))
+                        .password("비밀번호")
+                        .businessHours(
+                                List.of(
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.MONDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.TUESDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.WEDNESDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.THURSDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.FRIDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.SATURDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.SUNDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build())
                         )
                         .build()));
 
@@ -271,7 +309,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("주소"),
                                 fieldWithPath("stores[].umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
-                                fieldWithPath("stores[].businessHours").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].businessHour").type(JsonFieldType.STRING)
                                         .description("영업 시간"),
                                 fieldWithPath("stores[].contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
@@ -284,7 +322,21 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("stores[].content").type(JsonFieldType.STRING)
                                         .description("내용"),
                                 fieldWithPath("stores[].imageUrls").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록. 각 요소는 문자열.")
+                                        .description("이미지 URL 목록"),
+                                fieldWithPath("stores[].imageUrls[].id").type(JsonFieldType.NUMBER)
+                                        .description("이미지 고유번호"),
+                                fieldWithPath("stores[].imageUrls[].imageUrl").type(JsonFieldType.STRING)
+                                        .description("이미지 URL"),
+                                fieldWithPath("stores[].password").type(JsonFieldType.STRING)
+                                        .description("비밀번호"),
+                                fieldWithPath("stores[].businessHours").type(JsonFieldType.ARRAY)
+                                        .description("영업 시간"),
+                                fieldWithPath("stores[].businessHours[].date").type(JsonFieldType.STRING)
+                                        .description("영업 요일"),
+                                fieldWithPath("stores[].businessHours[].openAt").type(JsonFieldType.STRING)
+                                        .description("오픈 시간"),
+                                fieldWithPath("stores[].businessHours[].closeAt").type(JsonFieldType.STRING)
+                                        .description("마감 시간")
                         )));
     }
 
