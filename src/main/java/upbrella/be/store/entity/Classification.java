@@ -24,8 +24,8 @@ public class Classification {
     private long id;
     private String type;
     private String name;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 
     public static Classification ofCreateClassification(CreateClassificationRequest request) {
         return Classification.builder()
