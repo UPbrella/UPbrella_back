@@ -30,13 +30,13 @@ public class SingleStoreResponse {
     private double latitude;
     private double longitude;
     private String content;
-    private Set<SingleImageUrlResponse> imageUrls;
+    private List<SingleImageUrlResponse> imageUrls;
     private String password;
     private List<SingleBusinessHourResponse> businessHours;
 
     public SingleStoreResponse(StoreDetail storeDetail) {
 
-        imageUrls = new LinkedHashSet<>();
+        imageUrls = new ArrayList<>();
         businessHours = new ArrayList<>();
         this.id = storeDetail.getStoreMeta().getId();
         this.name = storeDetail.getStoreMeta().getName();
@@ -57,6 +57,7 @@ public class SingleStoreResponse {
         storeDetail.getStoreImages().forEach(imageUrl -> {
             this.imageUrls.add(SingleImageUrlResponse.createImageUrlResponse(imageUrl));
         });
+        this.imageUrls.sort(Comparator.comparing(SingleImageUrlResponse::getId));
         this.thumbnail = imageUrls.stream().findFirst().map(SingleImageUrlResponse::getImageUrl).orElse(null);
         storeDetail.getStoreMeta().getBusinessHours().forEach(businessHour -> {
             this.businessHours.add(SingleBusinessHourResponse.createSingleHourResponse(businessHour));

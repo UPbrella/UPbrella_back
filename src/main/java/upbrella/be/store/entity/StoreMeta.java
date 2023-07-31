@@ -18,7 +18,6 @@ public class StoreMeta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private String thumbnail;
     private boolean activated;
     private boolean deleted;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,7 +56,6 @@ public class StoreMeta {
     public void updateStoreMeta(StoreMeta storeMeta) {
 
         this.name = storeMeta.getName();
-        this.thumbnail = storeMeta.getThumbnail();
         this.activated = storeMeta.isActivated();
         this.deleted = storeMeta.isDeleted();
         this.classification = storeMeta.getClassification();
