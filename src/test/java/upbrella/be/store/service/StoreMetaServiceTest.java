@@ -52,7 +52,6 @@ class StoreMetaServiceTest {
             StoreMeta storeMeta = StoreMeta.builder()
                     .id(3L)
                     .name("스타벅스")
-                    .thumbnail("star")
                     .deleted(false)
                     .build();
 
@@ -89,7 +88,6 @@ class StoreMetaServiceTest {
             StoreMeta storeMeta = StoreMeta.builder()
                     .id(3L)
                     .name("스타벅스")
-                    .thumbnail("star")
                     .deleted(true)
                     .build();
 
@@ -143,7 +141,6 @@ class StoreMetaServiceTest {
 
             StoreMeta storeIn = StoreMeta.builder()
                     .id(1)
-                    .thumbnail("사진1")
                     .name("모티브 카페 신촌 지점")
                     .activated(true)
                     .deleted(false)
@@ -153,7 +150,6 @@ class StoreMetaServiceTest {
 
             StoreMeta storeOut = StoreMeta.builder()
                     .id(1)
-                    .thumbnail("사진2")
                     .name("모티브 카페 미국 지점")
                     .activated(true)
                     .deleted(false)

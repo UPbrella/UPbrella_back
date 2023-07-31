@@ -42,7 +42,6 @@ public class StoreDetailServiceTest {
         StoreMeta storeMeta = StoreMeta.builder()
                 .id(3L)
                 .name("스타벅스")
-                .thumbnail("star")
                 .deleted(false)
                 .latitude(37.503716)
                 .longitude(127.053718)

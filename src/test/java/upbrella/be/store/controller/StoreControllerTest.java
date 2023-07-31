@@ -23,7 +23,6 @@ import upbrella.be.store.service.StoreMetaService;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -227,19 +226,21 @@ class StoreControllerTest extends RestDocsSupport {
                                 .build())
                         .activateStatus(true)
                         .address("주소")
+                        .addressDetail("상세주소")
+                        .thumbnail("썸네일")
                         .umbrellaLocation("가게 앞")
                         .businessHour("연중 무휴")
                         .contactNumber("010-0000-0000")
                         .instagramId("instagramId")
                         .latitude(33.33)
                         .longitude(33.33)
-                        .imageUrls(Set.of(SingleImageUrlResponse.builder()
+                        .imageUrls(List.of(SingleImageUrlResponse.builder()
                                 .id(1L)
                                 .imageUrl("url")
                                 .build()))
                         .password("비밀번호")
                         .businessHours(
-                                Set.of(
+                                List.of(
                                         SingleBusinessHourResponse.builder()
                                                 .date(DayOfWeek.MONDAY)
                                                 .openAt(LocalTime.of(10, 0))
@@ -324,6 +325,10 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("활성화 여부"),
                                 fieldWithPath("stores[].address").type(JsonFieldType.STRING)
                                         .description("주소"),
+                                fieldWithPath("stores[].addressDetail").type(JsonFieldType.STRING)
+                                        .description("상세 주소"),
+                                fieldWithPath("stores[].thumbnail").type(JsonFieldType.STRING)
+                                        .description("썸네일"),
                                 fieldWithPath("stores[].umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
                                 fieldWithPath("stores[].businessHour").type(JsonFieldType.STRING)
@@ -368,6 +373,7 @@ class StoreControllerTest extends RestDocsSupport {
                 .subClassificationId(2L)
                 .activateStatus(true)
                 .address("주소")
+                .addressDetail("상세주소")
                 .umbrellaLocation("우산 위치")
                 .businessHour("영업 시간")
                 .contactNumber("연락처")
@@ -445,6 +451,8 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
                                         .description("주소"),
+                                fieldWithPath("addressDetail").type(JsonFieldType.STRING)
+                                        .description("상세 주소"),
                                 fieldWithPath("umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
                                 fieldWithPath("businessHour").type(JsonFieldType.STRING)
@@ -485,6 +493,7 @@ class StoreControllerTest extends RestDocsSupport {
                 .subClassificationId(2L)
                 .activateStatus(true)
                 .address("주소")
+                .addressDetail("상세주소")
                 .umbrellaLocation("우산 위치")
                 .businessHour("영업 시간")
                 .contactNumber("연락처")
@@ -567,6 +576,8 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
                                         .description("주소"),
+                                fieldWithPath("addressDetail").type(JsonFieldType.STRING)
+                                        .description("상세 주소"),
                                 fieldWithPath("umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
                                 fieldWithPath("businessHour").type(JsonFieldType.STRING)

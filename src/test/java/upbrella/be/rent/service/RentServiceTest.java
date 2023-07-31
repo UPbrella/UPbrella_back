@@ -61,7 +61,6 @@ class RentServiceTest {
             foundStoreMeta = StoreMeta.builder()
                     .id(25L)
                     .name("motive study cafe")
-                    .thumbnail("thumb")
                     .deleted(false)
                     .build();
 
