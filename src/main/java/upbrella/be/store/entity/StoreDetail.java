@@ -24,6 +24,7 @@ public class StoreDetail {
     private String instaUrl;
     private String contactInfo;
     private String address;
+    private String addressDetail;
     private String content;
     @OneToMany(mappedBy = "storeDetail", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<StoreImage> storeImages;
@@ -38,6 +39,7 @@ public class StoreDetail {
                 .instaUrl(request.getInstagramId())
                 .contactInfo(request.getContactNumber())
                 .address(request.getAddress())
+                .addressDetail(request.getAddressDetail())
                 .content(request.getContent())
                 .build();
     }

@@ -3,10 +3,12 @@ package upbrella.be.store.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import upbrella.be.store.dto.request.AllBusinessHourRequest;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
+import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
@@ -16,6 +18,7 @@ import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,7 @@ public class StoreMetaService {
     private final StoreDetailRepository storeDetailRepository;
     private final StoreImageRepository storeImageRepository;
     private final ClassificationService classificationService;
+    private final BusinessHourService businessHourService;
 
     @Transactional(readOnly = true)
     public CurrentUmbrellaStoreResponse findCurrentStoreIdByUmbrella(long umbrellaId) {
@@ -80,7 +84,17 @@ public class StoreMetaService {
         Classification classification = classificationService.findClassificationById(store.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(store.getSubClassificationId());
 
-        return storeMetaRepository.save(StoreMeta.createStoreMetaForSave(store, classification, subClassification));
+        AllBusinessHourRequest businessHoursRequest = store.getBusinessHours();
+        List<BusinessHour> businessHours = new ArrayList<>();
+
+        StoreMeta storeMeta = storeMetaRepository.save(StoreMeta.createStoreMetaForSave(store, classification, subClassification));
+
+        businessHoursRequest.getBusinessHours().forEach(businessHourRequest -> {
+            businessHours.add(BusinessHour.ofCreateBusinessHour(businessHourRequest, storeMeta));
+        });
+        businessHourService.saveAllBusinessHour(businessHours);
+
+        return storeMeta;
     }
 
     private StoreDetail saveStoreDetail(CreateStoreRequest store, StoreMeta storeMeta) {

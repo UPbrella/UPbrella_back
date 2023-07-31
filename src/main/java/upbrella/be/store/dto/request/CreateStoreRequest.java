@@ -23,6 +23,8 @@ public class CreateStoreRequest {
     @NotBlank
     private String address;
     @NotBlank
+    private String addressDetail;
+    @NotBlank
     private String umbrellaLocation;
     @NotBlank
     private String businessHour;
