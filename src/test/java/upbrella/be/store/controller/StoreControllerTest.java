@@ -23,6 +23,7 @@ import upbrella.be.store.service.StoreMetaService;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -232,13 +233,13 @@ class StoreControllerTest extends RestDocsSupport {
                         .instagramId("instagramId")
                         .latitude(33.33)
                         .longitude(33.33)
-                        .imageUrls(List.of(SingleImageUrlResponse.builder()
+                        .imageUrls(Set.of(SingleImageUrlResponse.builder()
                                 .id(1L)
                                 .imageUrl("url")
                                 .build()))
                         .password("비밀번호")
                         .businessHours(
-                                List.of(
+                                Set.of(
                                         SingleBusinessHourResponse.builder()
                                                 .date(DayOfWeek.MONDAY)
                                                 .openAt(LocalTime.of(10, 0))

@@ -13,8 +13,8 @@ import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -60,7 +60,7 @@ public class StoreDetailServiceTest {
                 .instaUrl("모티브 인서타")
                 .workingHour("매일 7시 ~ 12시")
                 .umbrellaLocation("문 앞")
-                .storeImages(List.of())
+                .storeImages(Set.of())
                 .build();
 
         StoreFindByIdResponse storeFindByIdResponseExpected = StoreFindByIdResponse.builder()
