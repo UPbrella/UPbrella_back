@@ -61,7 +61,7 @@ public class StoreMetaService {
     public void createStore(CreateStoreRequest store) {
 
         StoreMeta storeMeta = saveStoreMeta(store);
-        StoreDetail storeDetail = saveStoreDetail(store, storeMeta);
+        saveStoreDetail(store, storeMeta);
     }
 
     @Transactional
