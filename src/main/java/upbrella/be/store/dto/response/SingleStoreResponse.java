@@ -59,8 +59,8 @@ public class SingleStoreResponse {
         });
         this.imageUrls.sort(Comparator.comparing(SingleImageUrlResponse::getId));
         this.thumbnail = imageUrls.stream().findFirst().map(SingleImageUrlResponse::getImageUrl).orElse(null);
-        storeDetail.getStoreMeta().getBusinessHours().forEach(businessHour -> {
-            this.businessHours.add(SingleBusinessHourResponse.createSingleHourResponse(businessHour));
+        storeDetail.getStoreMeta().getBusinessHours().forEach(businessHourEntity -> {
+            this.businessHours.add(SingleBusinessHourResponse.createSingleHourResponse(businessHourEntity));
         });
         this.businessHours.sort(Comparator.comparing(SingleBusinessHourResponse::getDate));
     }
