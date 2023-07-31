@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import upbrella.be.store.entity.StoreDetail;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -54,14 +55,14 @@ public class SingleStoreResponse {
         this.longitude = storeDetail.getStoreMeta().getLongitude();
         this.content = storeDetail.getContent();
         this.password = storeDetail.getStoreMeta().getPassword();
-        storeDetail.getStoreImages().forEach(imageUrl -> {
-            this.imageUrls.add(SingleImageUrlResponse.createImageUrlResponse(imageUrl));
-        });
-        this.imageUrls.sort(Comparator.comparing(SingleImageUrlResponse::getId));
+        this.imageUrls = storeDetail.getStoreImages().stream()
+                .map(SingleImageUrlResponse::createImageUrlResponse)
+                .sorted(Comparator.comparing(SingleImageUrlResponse::getId))
+                .collect(Collectors.toList());
         this.thumbnail = imageUrls.stream().findFirst().map(SingleImageUrlResponse::getImageUrl).orElse(null);
-        storeDetail.getStoreMeta().getBusinessHours().forEach(businessHourEntity -> {
-            this.businessHours.add(SingleBusinessHourResponse.createSingleHourResponse(businessHourEntity));
-        });
-        this.businessHours.sort(Comparator.comparing(SingleBusinessHourResponse::getDate));
+        this.businessHours = storeDetail.getStoreMeta().getBusinessHours().stream()
+                .map(SingleBusinessHourResponse::createSingleHourResponse)
+                .sorted(Comparator.comparing(SingleBusinessHourResponse::getDate))
+                .collect(Collectors.toList());
     }
 }
