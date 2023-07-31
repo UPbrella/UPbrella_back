@@ -6,8 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import upbrella.be.store.entity.StoreDetail;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @NoArgsConstructor
@@ -22,6 +21,8 @@ public class SingleStoreResponse {
     private SingleSubClassificationResponse subClassification;
     private boolean activateStatus;
     private String address;
+    private String addressDetail;
+    private String thumbnail;
     private String umbrellaLocation;
     private String businessHour;
     private String contactNumber;
@@ -31,12 +32,12 @@ public class SingleStoreResponse {
     private String content;
     private Set<SingleImageUrlResponse> imageUrls;
     private String password;
-    private Set<SingleBusinessHourResponse> businessHours;
+    private List<SingleBusinessHourResponse> businessHours;
 
     public SingleStoreResponse(StoreDetail storeDetail) {
 
-        imageUrls = new HashSet<>();
-        businessHours = new HashSet<>();
+        imageUrls = new LinkedHashSet<>();
+        businessHours = new ArrayList<>();
         this.id = storeDetail.getStoreMeta().getId();
         this.name = storeDetail.getStoreMeta().getName();
         this.category = storeDetail.getStoreMeta().getCategory();
@@ -44,6 +45,7 @@ public class SingleStoreResponse {
         this.subClassification = new SingleSubClassificationResponse(storeDetail.getStoreMeta().getSubClassification());
         this.activateStatus = storeDetail.getStoreMeta().isActivated();
         this.address = storeDetail.getAddress();
+        this.addressDetail = storeDetail.getAddressDetail();
         this.umbrellaLocation = storeDetail.getUmbrellaLocation();
         this.businessHour = storeDetail.getWorkingHour();
         this.contactNumber = storeDetail.getContactInfo();
@@ -55,8 +57,10 @@ public class SingleStoreResponse {
         storeDetail.getStoreImages().forEach(imageUrl -> {
             this.imageUrls.add(SingleImageUrlResponse.createImageUrlResponse(imageUrl));
         });
+        this.thumbnail = imageUrls.stream().findFirst().map(SingleImageUrlResponse::getImageUrl).orElse(null);
         storeDetail.getStoreMeta().getBusinessHours().forEach(businessHour -> {
             this.businessHours.add(SingleBusinessHourResponse.createSingleHourResponse(businessHour));
         });
+        this.businessHours.sort(Comparator.comparing(SingleBusinessHourResponse::getDate));
     }
 }
