@@ -5,10 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import upbrella.be.store.entity.StoreDetail;
-import upbrella.be.store.entity.StoreImage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @NoArgsConstructor
@@ -30,14 +29,14 @@ public class SingleStoreResponse {
     private double latitude;
     private double longitude;
     private String content;
-    private List<SingleImageUrlResponse> imageUrls;
+    private Set<SingleImageUrlResponse> imageUrls;
     private String password;
-    private List<SingleBusinessHourResponse> businessHours;
+    private Set<SingleBusinessHourResponse> businessHours;
 
     public SingleStoreResponse(StoreDetail storeDetail) {
 
-        imageUrls = new ArrayList<>();
-        businessHours = new ArrayList<>();
+        imageUrls = new HashSet<>();
+        businessHours = new HashSet<>();
         this.id = storeDetail.getStoreMeta().getId();
         this.name = storeDetail.getStoreMeta().getName();
         this.category = storeDetail.getStoreMeta().getCategory();

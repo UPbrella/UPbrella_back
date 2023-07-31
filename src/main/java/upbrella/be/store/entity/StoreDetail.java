@@ -4,7 +4,7 @@ import lombok.*;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -25,8 +25,8 @@ public class StoreDetail {
     private String contactInfo;
     private String address;
     private String content;
-    @OneToMany(mappedBy = "storeDetail", cascade = CascadeType.ALL)
-    private List<StoreImage> storeImages;
+    @OneToMany(mappedBy = "storeDetail", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<StoreImage> storeImages;
 
 
     public static StoreDetail createForSave(CreateStoreRequest request, StoreMeta storeMeta) {

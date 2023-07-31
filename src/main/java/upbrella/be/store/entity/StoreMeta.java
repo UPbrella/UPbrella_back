@@ -4,7 +4,7 @@ import lombok.*;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -31,8 +31,8 @@ public class StoreMeta {
     private double latitude;
     private double longitude;
     private String password;
-    @OneToMany(mappedBy = "storeMeta", cascade = CascadeType.ALL)
-    private List<BusinessHour> businessHours;
+    @OneToMany(mappedBy = "storeMeta", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<BusinessHour> businessHours;
 
     public void delete() {
 
