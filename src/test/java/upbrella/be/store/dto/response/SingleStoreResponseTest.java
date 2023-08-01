@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SingleStoreResponseTest {
@@ -127,8 +128,7 @@ class SingleStoreResponseTest {
 
 
             // then
-            singleStoreResponse.getThumbnail().equals("first");
-
+            assertThat(singleStoreResponse.getThumbnail()).isEqualTo("first");
         }
 
         @Test
