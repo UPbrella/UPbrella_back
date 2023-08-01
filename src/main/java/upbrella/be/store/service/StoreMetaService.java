@@ -13,7 +13,6 @@ import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.repository.StoreDetailRepository;
-import upbrella.be.store.repository.StoreImageRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
@@ -28,7 +27,6 @@ public class StoreMetaService {
     private final UmbrellaRepository umbrellaRepository;
     private final StoreMetaRepository storeMetaRepository;
     private final StoreDetailRepository storeDetailRepository;
-    private final StoreImageRepository storeImageRepository;
     private final ClassificationService classificationService;
     private final BusinessHourService businessHourService;
 

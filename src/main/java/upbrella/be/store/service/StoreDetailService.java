@@ -25,11 +25,6 @@ public class StoreDetailService {
     private final StoreDetailRepository storeDetailRepository;
     private final BusinessHourService businessHourService;
 
-    public StoreDetail saveStoreDetail(StoreDetail store) {
-
-        return storeDetailRepository.save(store);
-    }
-
     @Transactional
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 

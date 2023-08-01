@@ -6,20 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import upbrella.be.store.dto.request.CreateStoreRequest;
-import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.response.StoreFindByIdResponse;
 import upbrella.be.store.entity.*;
 import upbrella.be.store.repository.StoreDetailRepository;
-import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,14 +30,6 @@ public class StoreDetailServiceTest {
     private StoreDetailRepository storeDetailRepository;
     @InjectMocks
     private StoreDetailService storeDetailService;
-    @Mock
-    private ClassificationService classificationService;
-    @Mock
-    private StoreMetaRepository storeMetaRepository;
-    @Mock
-    private BusinessHourService businessHourService;
-    @InjectMocks
-    private StoreMetaService storeMetaService;
 
     @Nested
     @DisplayName("협업 지점의 고유번호를 입력받아")
@@ -126,114 +111,6 @@ public class StoreDetailServiceTest {
                     () -> then(storeDetailRepository).should(times(1))
                             .findByStoreMetaIdUsingFetchJoin(3L),
                     () -> then(umbrellaService).shouldHaveNoInteractions()
-            );
-        }
-    }
-
-    @Nested
-    @DisplayName("협업지점 생성 위해 협업지점 정보를 입력받아")
-    class createStoreTest {
-
-        CreateStoreRequest store = CreateStoreRequest.builder()
-                .name("협업 지점명")
-                .category("카테고리")
-                .classificationId(1L)
-                .subClassificationId(2L)
-                .activateStatus(true)
-                .address("주소")
-                .addressDetail("상세주소")
-                .umbrellaLocation("우산 위치")
-                .businessHour("영업 시간")
-                .contactNumber("연락처")
-                .instagramId("인스타그램 아이디")
-                .latitude(33.33)
-                .longitude(33.33)
-                .content("내용")
-                .password("비밀번호")
-                .businessHours(
-                        List.of(
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.MONDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.TUESDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.WEDNESDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.THURSDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.FRIDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.SATURDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.SUNDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build()))
-                .build();
-
-        @Test
-        @DisplayName("새로운 협업지점을 생성할 수 있다.")
-        void createNewStoreTest() {
-            // given
-            long classificationId = 1L;
-            long subClassificationId = 2L;
-            Classification classification = Classification.builder()
-                    .id(classificationId)
-                    .type(ClassificationType.CLASSIFICATION)
-                    .name("카테고리")
-                    .latitude(33.33)
-                    .longitude(33.33)
-                    .build();
-
-            Classification subClassification = Classification.builder()
-                    .id(classificationId)
-                    .type(ClassificationType.SUB_CLASSIFICATION)
-                    .name("카테고리")
-                    .build();
-
-            StoreMeta storeMeta = StoreMeta.builder()
-                    .name(store.getName())
-                    .activated(store.isActivateStatus())
-                    .deleted(false)
-                    .classification(classification)
-                    .subClassification(subClassification)
-                    .category(store.getCategory())
-                    .latitude(store.getLatitude())
-                    .longitude(store.getLongitude())
-                    .password(store.getPassword())
-                    .build();
-
-            Mockito.when(classificationService.findClassificationById(classificationId)).thenReturn(classification);
-            Mockito.when(classificationService.findSubClassificationById(subClassificationId)).thenReturn(subClassification);
-            Mockito.when(storeMetaRepository.save(Mockito.any(StoreMeta.class))).thenReturn(storeMeta);
-            doNothing().when(businessHourService).saveAllBusinessHour(any());
-
-            // when
-            storeMetaService.createStore(store);
-
-            // then
-            assertAll(
-                    () -> verify(classificationService).findClassificationById(classificationId),
-                    () -> verify(classificationService).findSubClassificationById(subClassificationId),
-                    () -> verify(storeMetaRepository).save(Mockito.any(StoreMeta.class))
             );
         }
     }
