@@ -4,12 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import upbrella.be.store.dto.request.CoordinateRequest;
-import upbrella.be.store.dto.request.CreateClassificationRequest;
-import upbrella.be.store.dto.request.CreateStoreRequest;
-import upbrella.be.store.dto.request.CreateSubClassificationRequest;
+import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
-import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.service.ClassificationService;
@@ -104,7 +100,7 @@ public class StoreController {
     }
 
     @PatchMapping("/{storeId}")
-    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, @RequestBody CreateStoreRequest updateStore) {
+    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, @RequestBody UpdateStoreRequest updateStore) {
 
         storeDetailService.updateStore(storeId, updateStore);
 

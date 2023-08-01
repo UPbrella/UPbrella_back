@@ -1,22 +1,42 @@
 package upbrella.be.store.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class UpdateStoreRequest {
 
+    @NotBlank
     private String name;
-    private String classification;
+    @NotBlank
+    private String category;
+    private long classificationId;
+    private long subClassificationId;
     private boolean activateStatus;
+    @NotBlank
     private String address;
+    @NotBlank
+    private String addressDetail;
+    @NotBlank
     private String umbrellaLocation;
-    private String businessHours;
+    @NotBlank
+    private String businessHour;
     private String contactNumber;
     private String instagramId;
-    private String coordinate; //  좌표를 줘서 프론에서 네이버 지도 api를 이용해서 좌표로 지도를 띄워줄 수 있도록
-    private List<String> imageUrls;
+    @Range(min = -90, max = 90)
+    private double latitude;
+    @Range(min = -180, max = 180)
+    private double longitude;
+    private String content;
+    private String password;
+    private List<SingleBusinessHourRequest> businessHours;
 }

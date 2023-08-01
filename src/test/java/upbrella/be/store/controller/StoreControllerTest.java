@@ -481,7 +481,7 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("관리자는 협업지점 정보를 수정할 수 있다.")
     void updateStoreTest() throws Exception {
         // given
-        CreateStoreRequest store = CreateStoreRequest.builder()
+        UpdateStoreRequest store = UpdateStoreRequest.builder()
                 .name("협업 지점명")
                 .category("카테고리")
                 .classificationId(1L)
@@ -537,7 +537,7 @@ class StoreControllerTest extends RestDocsSupport {
                 .build();
         long storeId = 1L;
 
-        doNothing().when(storeDetailService).updateStore(any(Long.class), any(CreateStoreRequest.class));
+        doNothing().when(storeDetailService).updateStore(any(Long.class), any(UpdateStoreRequest.class));
 
         // then
 

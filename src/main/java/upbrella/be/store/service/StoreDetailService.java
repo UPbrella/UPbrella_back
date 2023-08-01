@@ -3,8 +3,8 @@ package upbrella.be.store.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
+import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.dto.response.StoreFindByIdResponse;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
@@ -25,9 +25,13 @@ public class StoreDetailService {
     private final StoreDetailRepository storeDetailRepository;
     private final BusinessHourService businessHourService;
 
+    public StoreDetail saveStoreDetail(StoreDetail store) {
+
+        return storeDetailRepository.save(store);
+    }
 
     @Transactional
-    public void updateStore(Long storeId, CreateStoreRequest request) {
+    public void updateStore(Long storeId, UpdateStoreRequest request) {
 
         // private 메서드로 classification 업데이트
         Classification classification = classificationService.findClassificationById(request.getClassificationId());

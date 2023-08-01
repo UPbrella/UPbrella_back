@@ -2,6 +2,7 @@ package upbrella.be.store.entity;
 
 import lombok.*;
 import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.dto.request.UpdateStoreRequest;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class StoreDetail {
                 .build();
     }
 
-    public void updateStore(StoreMeta storeMeta, CreateStoreRequest request) {
+    public void updateStore(StoreMeta storeMeta, UpdateStoreRequest request) {
 
         this.storeMeta = storeMeta;
         this.umbrellaLocation = request.getUmbrellaLocation();
