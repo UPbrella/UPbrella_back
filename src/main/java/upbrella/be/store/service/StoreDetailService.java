@@ -3,7 +3,6 @@ package upbrella.be.store.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.dto.response.StoreFindByIdResponse;
 import upbrella.be.store.entity.BusinessHour;
