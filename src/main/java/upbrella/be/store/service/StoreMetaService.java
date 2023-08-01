@@ -94,8 +94,8 @@ public class StoreMetaService {
         return storeMeta;
     }
 
-    private StoreDetail saveStoreDetail(CreateStoreRequest store, StoreMeta storeMeta) {
+    private void saveStoreDetail(CreateStoreRequest store, StoreMeta storeMeta) {
 
-        return storeDetailRepository.save(StoreDetail.createForSave(store, storeMeta));
+        storeDetailRepository.save(StoreDetail.createForSave(store, storeMeta));
     }
 }
