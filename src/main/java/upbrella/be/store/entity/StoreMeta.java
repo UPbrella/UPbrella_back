@@ -4,9 +4,9 @@ import lombok.*;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Entity
@@ -67,7 +67,7 @@ public class StoreMeta {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .password(request.getPassword())
-                .businessHours(businessHours.stream().collect(Collectors.toSet()))
+                .businessHours(new HashSet<>(businessHours))
                 .build();
     }
 

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import upbrella.be.store.entity.ClassificationType;
 
 import javax.validation.constraints.NotBlank;
 
