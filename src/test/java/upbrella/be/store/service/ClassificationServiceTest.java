@@ -1,6 +1,5 @@
 package upbrella.be.store.service;
 
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -100,7 +99,7 @@ class ClassificationServiceTest {
 
     @Test
     @DisplayName("사용자는 소분류를 조회할 수 있다.")
-    public void findAllSubClassificationTest() {
+    void findAllSubClassificationTest() {
         // given
         List<Classification> mockClassificationList = List.of(new Classification(1L, ClassificationType.SUB_CLASSIFICATION, "subclassification_name", 1.0, 1.0));
         given(classificationRepository.findByType(ClassificationType.SUB_CLASSIFICATION)).willReturn(mockClassificationList);
