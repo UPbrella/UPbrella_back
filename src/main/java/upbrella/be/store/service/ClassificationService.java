@@ -67,7 +67,7 @@ public class ClassificationService {
 
         Classification classification = classificationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 분류입니다."));
-        if(!classification.getType().equals("classification")) {
+        if(!classification.getType().equals(ClassificationType.CLASSIFICATION)) {
             throw new IllegalArgumentException("[ERROR] Classification이 아닙니다.");
         }
         return classification;
@@ -77,7 +77,7 @@ public class ClassificationService {
 
             Classification classification = classificationRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 분류입니다."));
-            if(!classification.getType().equals("subClassification")) {
+            if(!classification.getType().equals(ClassificationType.SUB_CLASSIFICATION)) {
                 throw new IllegalArgumentException("[ERROR] SubClassification이 아닙니다.");
             }
             return classification;
