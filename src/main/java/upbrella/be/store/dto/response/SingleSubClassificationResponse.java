@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.ClassificationType;
 
 @Getter
 @NoArgsConstructor
@@ -13,7 +14,7 @@ import upbrella.be.store.entity.Classification;
 public class SingleSubClassificationResponse {
 
     private long id;
-    private String type;
+    private ClassificationType type;
     private String name;
 
     public SingleSubClassificationResponse(Classification classification) {

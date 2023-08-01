@@ -13,6 +13,7 @@ import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.entity.DayOfWeek;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.repository.StoreDetailRepository;
@@ -214,14 +215,14 @@ class StoreControllerTest extends RestDocsSupport {
                         .content("모티브 카페")
                         .classification(SingleClassificationResponse.builder()
                                 .id(1L)
-                                .type("classification")
+                                .type(ClassificationType.CLASSIFICATION)
                                 .name("신촌")
                                 .latitude(33.33)
                                 .longitude(33.33)
                                 .build())
                         .subClassification(SingleSubClassificationResponse.builder()
                                 .id(1L)
-                                .type("subClassification")
+                                .type(ClassificationType.SUB_CLASSIFICATION)
                                 .name("신촌")
                                 .build())
                         .activateStatus(true)
@@ -667,12 +668,12 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 대분류 목록을 조회할 수 있다.")
     void findAllClassificationTest() throws Exception {
         // given
-        given(classificationService.findAllClassification("classification"))
+        given(classificationService.findAllClassification())
                 .willReturn(AllClassificationResponse.builder()
                         .classifications(List.of(
                                 SingleClassificationResponse.builder()
                                         .id(1L)
-                                        .type("대분류 타입")
+                                        .type(ClassificationType.CLASSIFICATION)
                                         .name("대분류 이름")
                                         .latitude(33.33)
                                         .longitude(33.33)
@@ -712,7 +713,6 @@ class StoreControllerTest extends RestDocsSupport {
     void createClassificationTest() throws Exception {
         // given
         CreateClassificationRequest request = CreateClassificationRequest.builder()
-                .type("대분류 타입")
                 .name("대분류 이름")
                 .latitude(33.33)
                 .longitude(33.33)
@@ -731,8 +731,6 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("type").type(JsonFieldType.STRING)
-                                        .description("대분류 타입"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("대분류 이름"),
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER)
@@ -767,12 +765,12 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 소분류 목록을 조회할 수 있다.")
     void findAllSubClassificationTest() throws Exception {
         // given
-        given(classificationService.findAllSubClassification("subClassification"))
+        given(classificationService.findAllSubClassification())
                 .willReturn(AllSubClassificationResponse.builder()
                         .subClassifications(List.of(
                                 SingleSubClassificationResponse.builder()
                                         .id(1L)
-                                        .type("소분류 타입")
+                                        .type(ClassificationType.SUB_CLASSIFICATION)
                                         .name("소분류 이름")
                                         .build()
                         ))
@@ -806,7 +804,6 @@ class StoreControllerTest extends RestDocsSupport {
     void createSubClassificationTest() throws Exception {
         // given
         CreateSubClassificationRequest request = CreateSubClassificationRequest.builder()
-                .type("소분류 타입")
                 .name("소분류 이름")
                 .build();
 
@@ -823,8 +820,6 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("type").type(JsonFieldType.STRING)
-                                        .description("소분류 타입"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("소분류 이름")
                         )));

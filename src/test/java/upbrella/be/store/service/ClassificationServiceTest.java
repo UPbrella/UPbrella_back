@@ -12,6 +12,7 @@ import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.AllClassificationResponse;
 import upbrella.be.store.dto.response.AllSubClassificationResponse;
 import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.repository.ClassificationRepository;
 
 import java.util.List;
@@ -35,7 +36,6 @@ class ClassificationServiceTest {
     void createClassificationTest() {
         // given
         CreateClassificationRequest request = CreateClassificationRequest.builder()
-                .type("대분류")
                 .name("편의점")
                 .latitude(37.1234)
                 .longitude(127.1234)
@@ -54,7 +54,6 @@ class ClassificationServiceTest {
     void createSubClassificationTest() {
         // given
         CreateSubClassificationRequest request = CreateSubClassificationRequest.builder()
-                .type("소분류")
                 .name("편의점")
                 .build();
 
@@ -85,12 +84,11 @@ class ClassificationServiceTest {
     @DisplayName("사용자는 대분류를 조회할 수 있다.")
     void findAllClassificationTest() {
         // given
-        String type = "classification";
-        List<Classification> mockClassificationList = List.of(new Classification(1L, type, "classification_name", 1.0, 1.0));
-        given(classificationRepository.findByType(type)).willReturn(mockClassificationList);
+        List<Classification> mockClassificationList = List.of(new Classification(1L, ClassificationType.CLASSIFICATION, "classification_name", 1.0, 1.0));
+        given(classificationRepository.findByType(ClassificationType.CLASSIFICATION)).willReturn(mockClassificationList);
 
         // when
-        AllClassificationResponse result = classificationService.findAllClassification(type);
+        AllClassificationResponse result = classificationService.findAllClassification();
 
         // then
         assertAll(
@@ -104,12 +102,11 @@ class ClassificationServiceTest {
     @DisplayName("사용자는 소분류를 조회할 수 있다.")
     public void findAllSubClassificationTest() {
         // given
-        String type = "subClassification";
-        List<Classification> mockClassificationList = List.of(new Classification(1L, type, "subclassification_name", 1.0, 1.0));
-        given(classificationRepository.findByType(type)).willReturn(mockClassificationList);
+        List<Classification> mockClassificationList = List.of(new Classification(1L, ClassificationType.SUB_CLASSIFICATION, "subclassification_name", 1.0, 1.0));
+        given(classificationRepository.findByType(ClassificationType.SUB_CLASSIFICATION)).willReturn(mockClassificationList);
 
         // when
-        AllSubClassificationResponse result = classificationService.findAllSubClassification(type);
+        AllSubClassificationResponse result = classificationService.findAllSubClassification();
 
         // then
         assertAll(

@@ -9,6 +9,7 @@ import upbrella.be.store.dto.response.AllSubClassificationResponse;
 import upbrella.be.store.dto.response.SingleClassificationResponse;
 import upbrella.be.store.dto.response.SingleSubClassificationResponse;
 import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.repository.ClassificationRepository;
 
 import java.util.ArrayList;
@@ -34,9 +35,9 @@ public class ClassificationService {
         classificationRepository.deleteById(id);
     }
 
-    public AllClassificationResponse findAllClassification(String type) {
+    public AllClassificationResponse findAllClassification() {
 
-        List<Classification> allByClassification = classificationRepository.findByType(type);
+        List<Classification> allByClassification = classificationRepository.findByType(ClassificationType.CLASSIFICATION);
         List<SingleClassificationResponse> classifications = new ArrayList<>();
 
         for (Classification classification : allByClassification) {
@@ -48,9 +49,9 @@ public class ClassificationService {
                 .build();
     }
 
-    public AllSubClassificationResponse findAllSubClassification(String type) {
+    public AllSubClassificationResponse findAllSubClassification() {
 
-        List<Classification> allByClassification = classificationRepository.findByType(type);
+        List<Classification> allByClassification = classificationRepository.findByType(ClassificationType.SUB_CLASSIFICATION);
         List<SingleSubClassificationResponse> classifications = new ArrayList<>();
 
         for (Classification classification : allByClassification) {

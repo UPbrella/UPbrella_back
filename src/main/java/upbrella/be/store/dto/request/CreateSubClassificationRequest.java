@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import upbrella.be.store.entity.ClassificationType;
 
 import javax.validation.constraints.NotBlank;
 
@@ -13,8 +14,6 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class CreateSubClassificationRequest {
 
-    @NotBlank
-    private String type;
     @NotBlank
     private String name;
 }

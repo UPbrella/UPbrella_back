@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -22,14 +19,15 @@ public class Classification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private ClassificationType type;
     private String name;
     private Double latitude;
     private Double longitude;
 
     public static Classification ofCreateClassification(CreateClassificationRequest request) {
+
         return Classification.builder()
-                .type(request.getType())
                 .name(request.getName())
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
@@ -37,8 +35,8 @@ public class Classification {
     }
 
     public static Classification ofCreateSubClassification(CreateSubClassificationRequest request) {
+
         return Classification.builder()
-                .type(request.getType())
                 .name(request.getName())
                 .build();
     }

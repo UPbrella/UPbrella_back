@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
+import upbrella.be.store.entity.ClassificationType;
 
 import javax.validation.constraints.NotBlank;
 
@@ -14,8 +15,6 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class CreateClassificationRequest {
 
-    @NotBlank
-    private String type;
     @NotBlank
     private String name;
     @Range(min = -90, max = 90)

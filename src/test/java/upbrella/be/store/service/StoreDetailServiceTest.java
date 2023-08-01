@@ -197,7 +197,7 @@ public class StoreDetailServiceTest {
             long subClassificationId = 2L;
             Classification classification = Classification.builder()
                     .id(classificationId)
-                    .type("classification")
+                    .type(ClassificationType.CLASSIFICATION)
                     .name("카테고리")
                     .latitude(33.33)
                     .longitude(33.33)
@@ -205,7 +205,7 @@ public class StoreDetailServiceTest {
 
             Classification subClassification = Classification.builder()
                     .id(classificationId)
-                    .type("classification")
+                    .type(ClassificationType.SUB_CLASSIFICATION)
                     .name("카테고리")
                     .build();
 

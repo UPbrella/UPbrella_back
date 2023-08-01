@@ -9,6 +9,7 @@ import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.*;
+import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.service.ClassificationService;
@@ -161,7 +162,7 @@ public class StoreController {
     @GetMapping("/classifications")
     public ResponseEntity<CustomResponse<AllClassificationResponse>> findAllClassification(HttpSession session) {
 
-        AllClassificationResponse classifications = classificationService.findAllClassification("classification");
+        AllClassificationResponse classifications = classificationService.findAllClassification();
 
         return ResponseEntity
                 .ok()
@@ -203,7 +204,7 @@ public class StoreController {
     @GetMapping("/subClassifications")
     public ResponseEntity<CustomResponse<AllSubClassificationResponse>> findAllSubClassification(HttpSession session) {
 
-        AllSubClassificationResponse subClassifications = classificationService.findAllSubClassification("subClassification");
+        AllSubClassificationResponse subClassifications = classificationService.findAllSubClassification();
 
         return ResponseEntity
                 .ok()
