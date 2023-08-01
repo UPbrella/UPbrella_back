@@ -28,16 +28,10 @@ public class StoreDetailService {
     @Transactional
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 
-        // private 메서드로 classification 업데이트
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(request.getSubClassificationId());
 
-        // private 메서드로 businessHours 업데이트
-        List<BusinessHour> businessHours = businessHourService.findBusinessHourByStoreMetaId(storeId);
-        List<SingleBusinessHourRequest> businessHoursRequest = request.getBusinessHours();
-        for (int i = 0; i < businessHoursRequest.size(); i++) {
-            businessHours.get(i).updateBusinessHour(businessHoursRequest.get(i));
-        }
+        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request);
 
         StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification, businessHours);
 
@@ -45,10 +39,10 @@ public class StoreDetailService {
         foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
 
         StoreDetail storeDetailById = findStoreDetailById(storeId);
-
         storeDetailById.updateStore(foundStoreMeta, request);
     }
 
+    @Transactional(readOnly = true)
     public StoreDetail findStoreDetailById(Long storeId) {
 
         return storeDetailRepository.findById(storeId)
