@@ -4,8 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.login.dto.request.JoinRequest;
 import upbrella.be.login.dto.response.KakaoLoginResponse;
-import upbrella.be.login.dto.response.LoggedInUserResponse;
-import upbrella.be.login.dto.token.CommonOauthInfo;
 import upbrella.be.login.dto.token.KakaoOauthInfo;
 import upbrella.be.login.dto.token.OauthToken;
 import upbrella.be.login.service.OauthLoginService;
@@ -20,7 +18,7 @@ public class LoginController {
 
     private final OauthLoginService oauthLoginService;
     private final UserService userService;
-    private final CommonOauthInfo kakaoOauthInfo;
+    private final KakaoOauthInfo kakaoOauthInfo;
 
     public LoginController(OauthLoginService oauthLoginService, UserService userService, KakaoOauthInfo kakaoOauthInfo) {
         this.oauthLoginService = oauthLoginService;
@@ -29,7 +27,7 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoLoginDev(HttpSession session, String code) {
+    public ResponseEntity<CustomResponse> kakaoLogin(HttpSession session, String code) {
 
         OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
         session.setAttribute("authToken", kakaoAccessToken);
@@ -49,7 +47,7 @@ public class LoginController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<CustomResponse<LoggedInUserResponse>> kakaoJoinDev(HttpSession session, @RequestBody JoinRequest joinRequest) {
+    public ResponseEntity<CustomResponse> kakaoJoin(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
         OauthToken kakaoAccessToken = (OauthToken)session.getAttribute("authToken");
 

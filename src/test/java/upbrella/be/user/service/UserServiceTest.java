@@ -64,16 +64,6 @@ class UserServiceTest {
         @DisplayName("미가입된 사용자는 로그인 시 예외가 발생된다.")
         void nonExistingUser() {
             // given
-            User user = User.builder()
-                    .id(1L)
-                    .socialId(23132L)
-                    .accountNumber("110-421-674103")
-                    .bank("신한")
-                    .name("홍길동")
-                    .phoneNumber("010-2084-3478")
-                    .adminStatus(false)
-                    .build();
-
             given(userRepository.findBySocialId(23132L))
                     .willReturn(Optional.ofNullable(null));
 
@@ -131,16 +121,6 @@ class UserServiceTest {
         @DisplayName("이미 회원 가입된 사용자는 예외가 발생된다.")
         void existingUser() {
             // given
-            User user = User.builder()
-                    .id(1L)
-                    .socialId(23132L)
-                    .accountNumber("110-421-674103")
-                    .bank("신한")
-                    .name("홍길동")
-                    .phoneNumber("010-2084-3478")
-                    .adminStatus(false)
-                    .build();
-
             given(userRepository.existsBySocialId(23132L))
                     .willReturn(true);
 

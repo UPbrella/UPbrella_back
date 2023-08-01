@@ -7,7 +7,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import upbrella.be.login.dto.response.KakaoLoginResponse;
-import upbrella.be.login.dto.token.CommonOauthInfo;
+import upbrella.be.login.dto.token.KakaoOauthInfo;
 import upbrella.be.login.dto.token.OauthToken;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class OauthLoginService {
 
     private final RestTemplate restTemplate;
 
-    public OauthToken getOauthToken(String code, CommonOauthInfo oauthInfo) {
+    public OauthToken getOauthToken(String code, KakaoOauthInfo oauthInfo) {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         Map<String, String> header = new HashMap<>();
