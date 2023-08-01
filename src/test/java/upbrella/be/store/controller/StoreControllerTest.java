@@ -383,46 +383,42 @@ class StoreControllerTest extends RestDocsSupport {
                 .content("내용")
                 .password("비밀번호")
                 .businessHours(
-                        AllBusinessHourRequest.builder()
-                                .storeMetaId(1L)
-                                .businessHours(
-                                        List.of(
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.MONDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.TUESDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.WEDNESDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.THURSDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.FRIDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.SATURDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.SUNDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build()))
-                                .build())
+                        List.of(
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.MONDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.TUESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.WEDNESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.THURSDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.FRIDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SATURDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SUNDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build()))
                 .build();
 
         // when
@@ -469,15 +465,13 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("내용"),
                                 fieldWithPath("password").type(JsonFieldType.STRING)
                                         .description("비밀번호"),
-                                fieldWithPath("businessHours").type(JsonFieldType.OBJECT)
+                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
                                         .description("영업 시간"),
-                                fieldWithPath("businessHours.storeMetaId").type(JsonFieldType.NUMBER)
-                                        .description("협업 지점 고유번호"),
-                                fieldWithPath("businessHours.businessHours[].date").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
                                         .description("영업 요일"),
-                                fieldWithPath("businessHours.businessHours[].openAt").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHours[].openAt").type(JsonFieldType.STRING)
                                         .description("오픈 시간"),
-                                fieldWithPath("businessHours.businessHours[].closeAt").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
                                         .description("마감 시간")
                         )));
     }
@@ -503,46 +497,42 @@ class StoreControllerTest extends RestDocsSupport {
                 .content("내용")
                 .password("비밀번호")
                 .businessHours(
-                        AllBusinessHourRequest.builder()
-                                .storeMetaId(1L)
-                                .businessHours(
-                                        List.of(
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.MONDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.TUESDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.WEDNESDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.THURSDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.FRIDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.SATURDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build(),
-                                                SingleBusinessHourRequest.builder()
-                                                        .date(DayOfWeek.SUNDAY)
-                                                        .openAt(LocalTime.of(10, 0))
-                                                        .closeAt(LocalTime.of(20, 0))
-                                                        .build()))
-                                .build())
+                        List.of(
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.MONDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.TUESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.WEDNESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.THURSDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.FRIDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SATURDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SUNDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build()))
                 .build();
         long storeId = 1L;
 
@@ -594,15 +584,13 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("내용"),
                                 fieldWithPath("password").type(JsonFieldType.STRING)
                                         .description("비밀번호"),
-                                fieldWithPath("businessHours").type(JsonFieldType.OBJECT)
+                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
                                         .description("영업 시간"),
-                                fieldWithPath("businessHours.storeMetaId").type(JsonFieldType.NUMBER)
-                                        .description("협업 지점 고유번호"),
-                                fieldWithPath("businessHours.businessHours[].date").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
                                         .description("영업 요일"),
-                                fieldWithPath("businessHours.businessHours[].openAt").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHours[].openAt").type(JsonFieldType.STRING)
                                         .description("오픈 시간"),
-                                fieldWithPath("businessHours.businessHours[].closeAt").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
                                         .description("마감 시간")
                         )));
     }

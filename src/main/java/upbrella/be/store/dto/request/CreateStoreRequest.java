@@ -36,5 +36,5 @@ public class CreateStoreRequest {
     private double longitude;
     private String content;
     private String password;
-    private AllBusinessHourRequest businessHours;
+    private List<SingleBusinessHourRequest> businessHours;
 }

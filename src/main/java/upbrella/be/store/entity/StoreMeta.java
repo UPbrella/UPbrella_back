@@ -4,7 +4,9 @@ import lombok.*;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -50,6 +52,22 @@ public class StoreMeta {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .password(request.getPassword())
+                .build();
+    }
+
+    public static StoreMeta createStoreMetaForUpdate(CreateStoreRequest request, Classification classification, Classification subClassification, List<BusinessHour> businessHours) {
+
+        return StoreMeta.builder()
+                .name(request.getName())
+                .activated(request.isActivateStatus())
+                .deleted(false)
+                .classification(classification)
+                .subClassification(subClassification)
+                .category(request.getCategory())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .password(request.getPassword())
+                .businessHours(businessHours.stream().collect(Collectors.toSet()))
                 .build();
     }
 
