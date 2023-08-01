@@ -82,5 +82,6 @@ public class StoreMeta {
         this.latitude = storeMeta.getLatitude();
         this.longitude = storeMeta.getLongitude();
         this.password = storeMeta.getPassword();
+        this.businessHours = storeMeta.getBusinessHours();
     }
 }

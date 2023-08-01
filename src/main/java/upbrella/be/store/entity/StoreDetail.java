@@ -52,6 +52,7 @@ public class StoreDetail {
         this.instaUrl = request.getInstagramId();
         this.contactInfo = request.getContactNumber();
         this.address = request.getAddress();
+        this.addressDetail = request.getAddressDetail();
         this.content = request.getContent();
     }
 }

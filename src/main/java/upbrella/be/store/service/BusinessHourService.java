@@ -17,4 +17,9 @@ public class BusinessHourService {
 
         businessHourRepository.saveAll(businessHours);
     }
+
+    public List<BusinessHour> findBusinessHourByStoreMetaId(Long storeMetaId) {
+
+        return businessHourRepository.findByStoreMetaId(storeMetaId);
+    }
 }
