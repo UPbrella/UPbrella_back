@@ -21,10 +21,12 @@ public class ClassificationService {
     private final ClassificationRepository classificationRepository;
 
     public Classification createClassification(CreateClassificationRequest request) {
+
         return classificationRepository.save(Classification.ofCreateClassification(request));
     }
 
     public Classification createSubClassification(CreateSubClassificationRequest request) {
+
         return classificationRepository.save(Classification.ofCreateSubClassification(request));
     }
 
@@ -33,6 +35,7 @@ public class ClassificationService {
     }
 
     public AllClassificationResponse findAllClassification(String type) {
+
         List<Classification> allByClassification = classificationRepository.findByType(type);
         List<SingleClassificationResponse> classifications = new ArrayList<>();
 
@@ -46,6 +49,7 @@ public class ClassificationService {
     }
 
     public AllSubClassificationResponse findAllSubClassification(String type) {
+
         List<Classification> allByClassification = classificationRepository.findByType(type);
         List<SingleSubClassificationResponse> classifications = new ArrayList<>();
 

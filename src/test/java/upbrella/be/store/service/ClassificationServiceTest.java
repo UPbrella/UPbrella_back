@@ -16,6 +16,8 @@ import upbrella.be.store.repository.ClassificationRepository;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -91,11 +93,11 @@ class ClassificationServiceTest {
         AllClassificationResponse result = classificationService.findAllClassification(type);
 
         // then
-        SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(result.getClassifications().size()).isEqualTo(1);
-        softly.assertThat(result.getClassifications().get(0).getId()).isEqualTo(1L);
-        softly.assertThat(result.getClassifications().get(0).getName()).isEqualTo("classification_name");
-        softly.assertAll();
+        assertAll(
+                () -> assertEquals(1, result.getClassifications().size()),
+                () -> assertEquals(1L, result.getClassifications().get(0).getId()),
+                () -> assertEquals("classification_name", result.getClassifications().get(0).getName())
+        );
     }
 
     @Test
@@ -110,10 +112,10 @@ class ClassificationServiceTest {
         AllSubClassificationResponse result = classificationService.findAllSubClassification(type);
 
         // then
-        SoftAssertions softly = new SoftAssertions();
-        softly.assertThat(result.getSubClassifications().size()).isEqualTo(1);
-        softly.assertThat(result.getSubClassifications().get(0).getId()).isEqualTo(1L);
-        softly.assertThat(result.getSubClassifications().get(0).getName()).isEqualTo("subclassification_name");
-        softly.assertAll();
+        assertAll(
+                () -> assertEquals(1, result.getSubClassifications().size()),
+                () -> assertEquals(1L, result.getSubClassifications().get(0).getId()),
+                () -> assertEquals("subclassification_name", result.getSubClassifications().get(0).getName())
+        );
     }
 }
