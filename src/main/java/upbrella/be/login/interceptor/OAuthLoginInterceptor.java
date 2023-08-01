@@ -18,7 +18,11 @@ public class OAuthLoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            return false;
+        }
 
         Long userId = (Long) session.getAttribute("userId");
 

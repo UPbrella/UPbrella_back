@@ -26,6 +26,7 @@ public class User {
     private String accountNumber;
 
     public static User createNewUser(long socialId, JoinRequest joinRequest) {
+
         return User.builder()
                 .socialId(socialId)
                 .name(joinRequest.getName())
@@ -34,18 +35,5 @@ public class User {
                 .bank(joinRequest.getBank())
                 .accountNumber(joinRequest.getAccountNumber())
                 .build();
-    }
-
-    public static User createNewUser(long socialId) {
-        return User.builder()
-                .socialId(socialId)
-                .build();
-    }
-
-    @Builder
-    protected User(String name, String phoneNumber, boolean adminStatus) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.adminStatus = adminStatus;
     }
 }

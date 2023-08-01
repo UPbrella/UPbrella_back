@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Getter
 @Component
-public class KakaoOauthInfo implements CommonOauthInfo {
+public class KakaoOauthInfo {
 
     @Value("${KAKAO_CLIENT_ID_DEV}")
     private String clientId;

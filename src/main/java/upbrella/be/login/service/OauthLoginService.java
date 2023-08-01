@@ -58,6 +58,7 @@ public class OauthLoginService {
     }
 
     public KakaoLoginResponse processKakaoLogin(String accessToken, String loginUri) {
+
         KakaoLoginResponse response = processLogin(accessToken, loginUri, KakaoLoginResponse.class);
         return response;
     }

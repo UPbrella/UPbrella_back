@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class KakaoLoginResponse {
+
     private Long id;
 }

@@ -27,6 +27,8 @@ public class UserService {
             throw new ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
         }
 
-        return userRepository.save(User.createNewUser(socialId, joinRequest)).getId();
+        User joinedUser = userRepository.save(User.createNewUser(socialId, joinRequest));
+
+        return joinedUser.getId();
     }
 }

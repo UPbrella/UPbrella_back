@@ -29,6 +29,7 @@ public class LoginControllerTest extends RestDocsSupport {
     private OauthLoginService oauthLoginService = mock(OauthLoginService.class);
     private UserService userService = mock(UserService.class);
     private KakaoOauthInfo kakaoOauthInfo = mock(KakaoOauthInfo.class);
+
     @Override
     protected Object initController() {
         return new LoginController(oauthLoginService, userService, kakaoOauthInfo);
@@ -39,10 +40,10 @@ public class LoginControllerTest extends RestDocsSupport {
     void LoginTest() throws Exception {
         // given
         String code = "{\"code\":\"1kdfjq0243f\"}";
-        OauthToken oauthToken = new OauthToken("a","b","c", 100L);
+        OauthToken oauthToken = new OauthToken("a", "b", "c", 100L);
         given(oauthLoginService.getOauthToken(any(), any()))
                 .willReturn(oauthToken);
-        given(oauthLoginService.processKakaoLogin(any(),any()))
+        given(oauthLoginService.processKakaoLogin(any(), any()))
                 .willReturn(KakaoLoginResponse.builder().id(2L).build());
         given(kakaoOauthInfo.getLoginUri())
                 .willReturn("http://kakao.login.com");
@@ -73,10 +74,10 @@ public class LoginControllerTest extends RestDocsSupport {
     void joinTest() throws Exception {
         // given
         String code = "{\"code\":\"1kdfjq0243f\"}";
-        OauthToken oauthToken = new OauthToken("a","b","c", 100L);
+        OauthToken oauthToken = new OauthToken("a", "b", "c", 100L);
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("authToken", oauthToken);
-        given(oauthLoginService.processKakaoLogin(anyString(),anyString()))
+        given(oauthLoginService.processKakaoLogin(anyString(), anyString()))
                 .willReturn(KakaoLoginResponse.builder().id(2L).build());
         given(kakaoOauthInfo.getLoginUri())
                 .willReturn("http://kakao.login.com");
