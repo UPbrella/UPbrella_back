@@ -34,7 +34,7 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
                 .fetch();
 
         return storeDetails.stream()
-                .map(storeDetail -> new SingleStoreResponse(storeDetail))
+                .map(SingleStoreResponse::new)
                 .collect(Collectors.toList());
     }
 
