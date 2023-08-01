@@ -114,7 +114,7 @@ public class StoreController {
     }
 
     @PostMapping(value = "/{storeId}/images", consumes = {"multipart/form-data"})
-    public ResponseEntity<CustomResponse> uploadStoreImages(HttpSession session, @RequestPart MultipartFile image, @PathVariable long storeId) {
+    public ResponseEntity<CustomResponse> uploadStoreImage(HttpSession session, @RequestPart MultipartFile image, @PathVariable long storeId) {
 
         storeImageService.uploadFile(image, storeId, storeImageService.makeRandomId());
 
@@ -128,7 +128,7 @@ public class StoreController {
     }
 
     @DeleteMapping("/images/{imageId}")
-    public ResponseEntity<CustomResponse> deleteStoreImages(HttpSession session, @PathVariable long imageId) {
+    public ResponseEntity<CustomResponse> deleteStoreImage(HttpSession session, @PathVariable long imageId) {
 
         storeImageService.deleteFile(imageId);
 
