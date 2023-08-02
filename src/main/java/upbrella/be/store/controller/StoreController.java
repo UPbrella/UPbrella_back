@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
-import upbrella.be.store.repository.StoreDetailRepository;
-import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreDetailService;
 import upbrella.be.store.service.StoreImageService;
@@ -25,9 +23,7 @@ public class StoreController {
     private final StoreImageService storeImageService;
     private final StoreMetaService storeMetaService;
     private final ClassificationService classificationService;
-    private final StoreMetaRepository storeMetaRepository;
     private final StoreDetailService storeDetailService;
-    private final StoreDetailRepository storeDetailRepository;
 
     @GetMapping("/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
@@ -71,7 +67,7 @@ public class StoreController {
     @GetMapping
     public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores(HttpSession session) {
 
-        List<SingleStoreResponse> allStores = storeDetailRepository.findAllStores();
+        List<SingleStoreResponse> allStores = storeDetailService.findAllStores();
 
         return ResponseEntity
                 .ok()

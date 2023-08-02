@@ -32,34 +32,28 @@ public class SingleStoreResponse {
     private String password;
     private List<SingleBusinessHourResponse> businessHours;
 
-    public SingleStoreResponse(StoreDetail storeDetail) {
+    public static SingleStoreResponse ofCreateSingleStoreResponse(StoreDetail storeDetail, String thumbnail, List<SingleImageUrlResponse> images, List<SingleBusinessHourResponse> businessHours) {
 
-        imageUrls = new ArrayList<>();
-        businessHours = new ArrayList<>();
-        this.id = storeDetail.getStoreMeta().getId();
-        this.name = storeDetail.getStoreMeta().getName();
-        this.category = storeDetail.getStoreMeta().getCategory();
-        this.classification = SingleClassificationResponse.ofCreateClassification(storeDetail.getStoreMeta().getClassification());
-        this.subClassification = SingleSubClassificationResponse.ofCreateSubClassification(storeDetail.getStoreMeta().getSubClassification());
-        this.activateStatus = storeDetail.getStoreMeta().isActivated();
-        this.address = storeDetail.getAddress();
-        this.addressDetail = storeDetail.getAddressDetail();
-        this.umbrellaLocation = storeDetail.getUmbrellaLocation();
-        this.businessHour = storeDetail.getWorkingHour();
-        this.contactNumber = storeDetail.getContactInfo();
-        this.instagramId = storeDetail.getInstaUrl();
-        this.latitude = storeDetail.getStoreMeta().getLongitude();
-        this.longitude = storeDetail.getStoreMeta().getLongitude();
-        this.content = storeDetail.getContent();
-        this.password = storeDetail.getStoreMeta().getPassword();
-        this.imageUrls = storeDetail.getStoreImages().stream()
-                .map(SingleImageUrlResponse::createImageUrlResponse)
-                .sorted(Comparator.comparing(SingleImageUrlResponse::getId))
-                .collect(Collectors.toList());
-        this.thumbnail = imageUrls.stream().findFirst().map(SingleImageUrlResponse::getImageUrl).orElse(null);
-        this.businessHours = storeDetail.getStoreMeta().getBusinessHours().stream()
-                .map(SingleBusinessHourResponse::createSingleHourResponse)
-                .sorted(Comparator.comparing(SingleBusinessHourResponse::getDate))
-                .collect(Collectors.toList());
+        return SingleStoreResponse.builder()
+                .id(storeDetail.getStoreMeta().getId())
+                .name(storeDetail.getStoreMeta().getName())
+                .category(storeDetail.getStoreMeta().getCategory())
+                .classification(SingleClassificationResponse.ofCreateClassification(storeDetail.getStoreMeta().getClassification()))
+                .subClassification(SingleSubClassificationResponse.ofCreateSubClassification(storeDetail.getStoreMeta().getSubClassification()))
+                .activateStatus(storeDetail.getStoreMeta().isActivated())
+                .address(storeDetail.getAddress())
+                .addressDetail(storeDetail.getAddressDetail())
+                .umbrellaLocation(storeDetail.getUmbrellaLocation())
+                .businessHour(storeDetail.getWorkingHour())
+                .contactNumber(storeDetail.getContactInfo())
+                .instagramId(storeDetail.getInstaUrl())
+                .latitude(storeDetail.getStoreMeta().getLongitude())
+                .longitude(storeDetail.getStoreMeta().getLongitude())
+                .content(storeDetail.getContent())
+                .password(storeDetail.getStoreMeta().getPassword())
+                .imageUrls(images)
+                .thumbnail(thumbnail)
+                .businessHours(businessHours)
+                .build();
     }
 }

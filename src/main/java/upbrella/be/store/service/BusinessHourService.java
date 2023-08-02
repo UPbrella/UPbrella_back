@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.dto.response.SingleBusinessHourResponse;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.repository.BusinessHourRepository;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -37,5 +40,13 @@ public class BusinessHourService {
             businessHours.get(i).updateBusinessHour(businessHoursRequest.get(i));
         }
         return businessHours;
+    }
+
+    public List<SingleBusinessHourResponse> createBusinessHourResponse(List<BusinessHour> businessHours) {
+
+        return businessHours.stream()
+                .map(SingleBusinessHourResponse::createSingleHourResponse)
+                .sorted(Comparator.comparing(SingleBusinessHourResponse::getDate))
+                .collect(Collectors.toList());
     }
 }

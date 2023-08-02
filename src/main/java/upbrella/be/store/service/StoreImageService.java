@@ -9,13 +9,17 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
 
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +65,24 @@ public class StoreImageService {
                 .orElseThrow(() -> new IllegalStateException("해당 이미지가 존재하지 않습니다."));
         storeImageRepository.deleteById(imageId);
         deleteFileInS3(storeImage.getImageUrl());
+    }
+
+    public List<SingleImageUrlResponse> createImageUrlResponse(StoreDetail storeDetail) {
+
+        return storeDetail.getStoreImages().stream()
+                .map(SingleImageUrlResponse::createImageUrlResponse)
+                .sorted(Comparator.comparing(SingleImageUrlResponse::getId))
+                .collect(Collectors.toList());
+    }
+
+    public String createThumbnail(List<SingleImageUrlResponse> imageUrls) {
+
+        return imageUrls.stream()
+                .findFirst()
+                .map(SingleImageUrlResponse::getImageUrl)
+                .orElseThrow(
+                        () -> new IllegalStateException("[ERROR] 이미지가 존재하지 않습니다.")
+                );
     }
 
     public String makeRandomId() {

@@ -2,12 +2,10 @@ package upbrella.be.store.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import upbrella.be.store.dto.response.SingleStoreResponse;
 import upbrella.be.store.entity.StoreDetail;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static upbrella.be.store.entity.QBusinessHour.businessHour;
 import static upbrella.be.store.entity.QClassification.classification;
@@ -21,9 +19,9 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<SingleStoreResponse> findAllStores() {
+    public List<StoreDetail> findAllStores() {
 
-        List<StoreDetail> storeDetails = queryFactory
+        return queryFactory
                 .selectFrom(storeDetail)
                 .join(storeDetail.storeMeta, storeMeta).fetchJoin()
                 .join(storeMeta.classification, classification).fetchJoin()
@@ -32,10 +30,6 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
                 .leftJoin(storeDetail.storeImages, storeImage).fetchJoin()
                 .distinct()
                 .fetch();
-
-        return storeDetails.stream()
-                .map(SingleStoreResponse::new)
-                .collect(Collectors.toList());
     }
 
     @Override

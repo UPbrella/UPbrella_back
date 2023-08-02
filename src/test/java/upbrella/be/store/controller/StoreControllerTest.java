@@ -47,16 +47,12 @@ class StoreControllerTest extends RestDocsSupport {
     @Mock
     private ClassificationService classificationService;
     @Mock
-    private StoreMetaRepository storeMetaRepository;
-    @Mock
     private StoreDetailService storeDetailService;
-    @Mock
-    private StoreDetailRepository storeDetailRepository;
 
     @Override
     protected Object initController() {
 
-        return new StoreController(storeImageService, storeMetaService, classificationService, storeMetaRepository, storeDetailService, storeDetailRepository);
+        return new StoreController(storeImageService, storeMetaService, classificationService, storeDetailService);
     }
 
     @Test
@@ -208,7 +204,7 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("관리자 페이지에서 전체 협업지점 목록을 보여줄 수 있다.")
     void findAllStoreTest() throws Exception {
         // given
-        given(storeDetailRepository.findAllStores())
+        given(storeDetailService.findAllStores())
                 .willReturn(List.of(SingleStoreResponse.builder()
                         .name("모티브 카페 신촌점")
                         .category("카페 티저트")

@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.dto.response.SingleBusinessHourResponse;
+import upbrella.be.store.dto.response.SingleImageUrlResponse;
+import upbrella.be.store.dto.response.SingleStoreResponse;
 import upbrella.be.store.dto.response.StoreFindByIdResponse;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
@@ -12,7 +15,10 @@ import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -23,6 +29,7 @@ public class StoreDetailService {
     private final UmbrellaService umbrellaService;
     private final StoreDetailRepository storeDetailRepository;
     private final BusinessHourService businessHourService;
+    private final StoreImageService storeImageService;
 
     @Transactional
     public void updateStore(Long storeId, UpdateStoreRequest request) {
@@ -57,5 +64,25 @@ public class StoreDetailService {
         int availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeMetaId);
 
         return StoreFindByIdResponse.fromStoreDetail(storeDetail, availableUmbrellaCount);
+    }
+
+    @Transactional
+    public List<SingleStoreResponse> findAllStores() {
+
+        List<StoreDetail> storeDetails = storeDetailRepository.findAllStores();
+        System.out.println("--------------------");
+        return storeDetails.stream()
+                .map(this::createSingleStoreResponse)
+                .collect(Collectors.toList());
+    }
+
+    public SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
+
+        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail);
+        String thumbnail = storeImageService.createThumbnail(imageUrls);
+        Set<BusinessHour> businessHourSet = storeDetail.getStoreMeta().getBusinessHours();
+        List<BusinessHour> businessHourList = new ArrayList<>(businessHourSet);
+        List<SingleBusinessHourResponse> businessHours = businessHourService.createBusinessHourResponse(businessHourList);
+        return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail, thumbnail, imageUrls, businessHours);
     }
 }
