@@ -14,13 +14,8 @@ public class SingleSubClassificationResponse {
     private ClassificationType type;
     private String name;
 
-    public SingleSubClassificationResponse(Classification classification) {
-        this.id = classification.getId();
-        this.type = classification.getType();
-        this.name = classification.getName();
-    }
-
     public static SingleSubClassificationResponse ofCreateSubClassification(Classification classification) {
+
         return SingleSubClassificationResponse.builder()
                 .id(classification.getId())
                 .type(classification.getType())

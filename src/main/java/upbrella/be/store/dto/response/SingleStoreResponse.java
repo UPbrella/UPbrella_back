@@ -39,8 +39,8 @@ public class SingleStoreResponse {
         this.id = storeDetail.getStoreMeta().getId();
         this.name = storeDetail.getStoreMeta().getName();
         this.category = storeDetail.getStoreMeta().getCategory();
-        this.classification = new SingleClassificationResponse(storeDetail.getStoreMeta().getClassification());
-        this.subClassification = new SingleSubClassificationResponse(storeDetail.getStoreMeta().getSubClassification());
+        this.classification = SingleClassificationResponse.ofCreateClassification(storeDetail.getStoreMeta().getClassification());
+        this.subClassification = SingleSubClassificationResponse.ofCreateSubClassification(storeDetail.getStoreMeta().getSubClassification());
         this.activateStatus = storeDetail.getStoreMeta().isActivated();
         this.address = storeDetail.getAddress();
         this.addressDetail = storeDetail.getAddressDetail();
