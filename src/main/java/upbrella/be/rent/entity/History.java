@@ -1,7 +1,6 @@
 package upbrella.be.rent.entity;
 
 import lombok.*;
-import upbrella.be.payment.entity.Payment;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.entity.User;
@@ -31,9 +30,6 @@ public class History {
     @ManyToOne
     @JoinColumn(name = "return_store_meta_id")
     private StoreMeta returnStoreMeta;
-    @ManyToOne
-    @JoinColumn(name = "payment_id")
-    private Payment payment;
     private LocalDateTime rentedAt;
     private LocalDateTime returnedAt;
     private String etc;

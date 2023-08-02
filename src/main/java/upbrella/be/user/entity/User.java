@@ -1,6 +1,7 @@
 package upbrella.be.user.entity;
 
 import lombok.*;
+import upbrella.be.user.dto.request.JoinRequest;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,22 +18,22 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    private long socialId;
     private String name;
     private String phoneNumber;
     private boolean adminStatus;
+    private String bank;
+    private String accountNumber;
 
-    public static User createNewUser(String userName, String phoneNumber) {
+    public static User createNewUser(long socialId, JoinRequest joinRequest) {
+
         return User.builder()
-                .name(userName)
-                .phoneNumber(phoneNumber)
+                .socialId(socialId)
+                .name(joinRequest.getName())
+                .phoneNumber(joinRequest.getPhoneNumber())
                 .adminStatus(false)
+                .bank(joinRequest.getBank())
+                .accountNumber(joinRequest.getAccountNumber())
                 .build();
-    }
-
-    @Builder
-    protected User(String name, String phoneNumber, boolean adminStatus) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.adminStatus = adminStatus;
     }
 }

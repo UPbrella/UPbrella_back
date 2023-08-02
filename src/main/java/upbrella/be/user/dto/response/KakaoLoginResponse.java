@@ -1,4 +1,4 @@
-package upbrella.be.login.dto.response;
+package upbrella.be.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NaverLoggedInUser {
+public class KakaoLoginResponse {
 
-    private String name;
-    private String mobile;
+    private Long id;
 }
