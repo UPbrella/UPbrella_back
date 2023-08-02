@@ -65,7 +65,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        get("/users")
+                        get("/users/loggedIn")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-user-info-doc",
@@ -101,7 +101,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        get("/users/umbrella")
+                        get("/users/loggedIn/umbrella")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-umbrella-borrowed-by-user-doc",

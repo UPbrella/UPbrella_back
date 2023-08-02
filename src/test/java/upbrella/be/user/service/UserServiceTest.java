@@ -8,10 +8,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.user.dto.request.JoinRequest;
-import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -133,5 +134,66 @@ class UserServiceTest {
                     () -> then(userRepository).should(never())
                             .save(any(User.class)));
         }
+    }
+
+    @Nested
+    @DisplayName("사용자는")
+    class findUsersTest {
+
+        // given
+        User poro = User.builder()
+                .name("포로")
+                .phoneNumber("010-0000-0000")
+                .bank("신한")
+                .accountNumber("110-421")
+                .build();
+
+        User luke = User.builder()
+                .name("김성규")
+                .phoneNumber("010-1223-3444")
+                .bank("우리")
+                .accountNumber("1002-473")
+                .build();
+        @Test
+        @DisplayName("회원 목록을 조회할 수 있다.")
+        void success() {
+
+            // given
+            given(userRepository.findAll())
+                    .willReturn(List.of(poro,luke));
+
+            // when
+            List<User> users = userService.findUsers();
+
+            // then
+            assertAll(
+                    () -> assertThat(users.size()).isEqualTo(2),
+                    () -> assertThat(users.get(0))
+                            .usingRecursiveComparison()
+                            .isEqualTo(poro),
+                    () -> assertThat(users.get(1))
+                            .usingRecursiveComparison()
+                            .isEqualTo(luke),
+                    () -> then(userRepository).should(times(1))
+                            .findAll());
+        }
+
+        @Test
+        @DisplayName("존재하는 회원이 없으면 빈 목록이 반환된다.")
+        void nonExistingUser() {
+
+            // given
+            given(userRepository.findAll())
+                    .willReturn(List.of());
+
+            // when
+            List<User> users = userService.findUsers();
+
+            // then
+            assertAll(
+                    () -> assertThat(users.size()).isEqualTo(0),
+                    () -> then(userRepository).should(times(1))
+                            .findAll());
+         }
     }
 }
