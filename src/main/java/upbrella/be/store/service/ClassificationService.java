@@ -9,6 +9,7 @@ import upbrella.be.store.dto.response.AllSubClassificationResponse;
 import upbrella.be.store.dto.response.SingleClassificationResponse;
 import upbrella.be.store.dto.response.SingleSubClassificationResponse;
 import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.repository.ClassificationRepository;
 
 import java.util.ArrayList;
@@ -21,29 +22,26 @@ public class ClassificationService {
     private final ClassificationRepository classificationRepository;
 
     public Classification createClassification(CreateClassificationRequest request) {
-        return classificationRepository.save(ofCreateClassification(request));
+
+        return classificationRepository.save(Classification.ofCreateClassification(request));
     }
 
     public Classification createSubClassification(CreateSubClassificationRequest request) {
-        return classificationRepository.save(ofCreateSubClassification(request));
+
+        return classificationRepository.save(Classification.ofCreateSubClassification(request));
     }
 
     public void deleteClassification(Long id) {
         classificationRepository.deleteById(id);
     }
 
-    public AllClassificationResponse findAllClassification(String type) {
-        List<Classification> allByClassification = classificationRepository.findByType(type);
+    public AllClassificationResponse findAllClassification() {
+
+        List<Classification> allByClassification = classificationRepository.findByType(ClassificationType.CLASSIFICATION);
         List<SingleClassificationResponse> classifications = new ArrayList<>();
 
         for (Classification classification : allByClassification) {
-            classifications.add(SingleClassificationResponse.builder()
-                    .id(classification.getId())
-                    .type(classification.getType())
-                    .name(classification.getName())
-                    .latitude(classification.getLatitude())
-                    .longitude(classification.getLongitude())
-                    .build());
+            classifications.add(SingleClassificationResponse.ofCreateClassification(classification));
         }
 
         return AllClassificationResponse.builder()
@@ -51,15 +49,13 @@ public class ClassificationService {
                 .build();
     }
 
-    public AllSubClassificationResponse findAllSubClassification(String type) {
-        List<Classification> allByClassification = classificationRepository.findByType(type);
+    public AllSubClassificationResponse findAllSubClassification() {
+
+        List<Classification> allByClassification = classificationRepository.findByType(ClassificationType.SUB_CLASSIFICATION);
         List<SingleSubClassificationResponse> classifications = new ArrayList<>();
 
         for (Classification classification : allByClassification) {
-            classifications.add(SingleSubClassificationResponse.builder()
-                    .id(classification.getId())
-                    .name(classification.getName())
-                    .build());
+            classifications.add(SingleSubClassificationResponse.ofCreateSubClassification(classification));
         }
 
         return AllSubClassificationResponse.builder()
@@ -67,19 +63,23 @@ public class ClassificationService {
                 .build();
     }
 
-    private Classification ofCreateClassification(CreateClassificationRequest request) {
-        return Classification.builder()
-                .type(request.getType())
-                .name(request.getName())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
-                .build();
+    public Classification findClassificationById(Long id) {
+
+        Classification classification = classificationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 분류입니다."));
+        if(!classification.getType().equals(ClassificationType.CLASSIFICATION)) {
+            throw new IllegalArgumentException("[ERROR] Classification이 아닙니다.");
+        }
+        return classification;
     }
 
-    private Classification ofCreateSubClassification(CreateSubClassificationRequest request) {
-        return Classification.builder()
-                .type(request.getType())
-                .name(request.getName())
-                .build();
+    public Classification findSubClassificationById(Long id) {
+
+            Classification classification = classificationRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 분류입니다."));
+            if(!classification.getType().equals(ClassificationType.SUB_CLASSIFICATION)) {
+                throw new IllegalArgumentException("[ERROR] SubClassification이 아닙니다.");
+            }
+            return classification;
     }
 }
