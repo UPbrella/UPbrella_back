@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -71,7 +72,7 @@ class BusinessHourServiceTest {
         businessHourService.saveAllBusinessHour(businessHours);
 
         // then
-        then(businessHourRepository).should().saveAll(businessHours);
+        then(businessHourRepository).should(times(1)).saveAll(businessHours);
     }
 
     @Test
