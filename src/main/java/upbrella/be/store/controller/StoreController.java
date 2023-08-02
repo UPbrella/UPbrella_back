@@ -4,12 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import upbrella.be.store.dto.request.CoordinateRequest;
-import upbrella.be.store.dto.request.CreateClassificationRequest;
-import upbrella.be.store.dto.request.CreateStoreRequest;
-import upbrella.be.store.dto.request.CreateSubClassificationRequest;
+import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
-import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreDetailService;
 import upbrella.be.store.service.StoreImageService;
@@ -17,7 +13,6 @@ import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,8 +23,8 @@ public class StoreController {
     private final StoreImageService storeImageService;
     private final StoreMetaService storeMetaService;
     private final ClassificationService classificationService;
-    private final StoreDetailRepository storeDetailRepository;
     private final StoreDetailService storeDetailService;
+
     @GetMapping("/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
 
@@ -72,7 +67,7 @@ public class StoreController {
     @GetMapping
     public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores(HttpSession session) {
 
-        List<SingleStoreResponse> allStores = storeDetailRepository.findAllStores();
+        List<SingleStoreResponse> allStores = storeDetailService.findAllStores();
 
         return ResponseEntity
                 .ok()
@@ -101,9 +96,9 @@ public class StoreController {
     }
 
     @PatchMapping("/{storeId}")
-    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, @RequestBody CreateStoreRequest updateStore) {
+    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, @RequestBody UpdateStoreRequest updateStore) {
 
-        storeMetaService.updateStore(storeId, updateStore);
+        storeDetailService.updateStore(storeId, updateStore);
 
         return ResponseEntity
                 .ok()
@@ -114,26 +109,31 @@ public class StoreController {
                 ));
     }
 
-    // TODO : 협업지점의 사진 조회해서 삭제 후 등록한다.
     @PostMapping(value = "/{storeId}/images", consumes = {"multipart/form-data"})
-    public ResponseEntity<CustomResponse<ImageUrlsResponse>> uploadStoreImages(HttpSession session, @RequestPart List<MultipartFile> images, @PathVariable long storeId) {
+    public ResponseEntity<CustomResponse> uploadStoreImage(HttpSession session, @RequestPart MultipartFile image, @PathVariable long storeId) {
 
-        List<String> imageUrls = new ArrayList<>();
-        storeImageService.deleteImagesBeforeSave(storeId);
-        for (MultipartFile image : images) {
-            String randomId = storeImageService.makeRandomId();
-            imageUrls.add(storeImageService.uploadFile(image, storeId, randomId));
-        }
+        storeImageService.uploadFile(image, storeId, storeImageService.makeRandomId());
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "협업지점 이미지 업로드 성공",
-                        ImageUrlsResponse.builder()
-                                .imageUrls(imageUrls)
-                                .build()
+                        "협업지점 이미지 업로드 성공"
+                ));
+    }
+
+    @DeleteMapping("/images/{imageId}")
+    public ResponseEntity<CustomResponse> deleteStoreImage(HttpSession session, @PathVariable long imageId) {
+
+        storeImageService.deleteFile(imageId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 이미지 삭제 성공"
                 ));
     }
 
@@ -154,7 +154,7 @@ public class StoreController {
     @GetMapping("/classifications")
     public ResponseEntity<CustomResponse<AllClassificationResponse>> findAllClassification(HttpSession session) {
 
-        AllClassificationResponse classifications = classificationService.findAllClassification("classification");
+        AllClassificationResponse classifications = classificationService.findAllClassification();
 
         return ResponseEntity
                 .ok()
@@ -196,7 +196,7 @@ public class StoreController {
     @GetMapping("/subClassifications")
     public ResponseEntity<CustomResponse<AllSubClassificationResponse>> findAllSubClassification(HttpSession session) {
 
-        AllSubClassificationResponse subClassifications = classificationService.findAllSubClassification("subClassification");
+        AllSubClassificationResponse subClassifications = classificationService.findAllSubClassification();
 
         return ResponseEntity
                 .ok()
