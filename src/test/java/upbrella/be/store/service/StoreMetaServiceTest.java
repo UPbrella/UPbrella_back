@@ -7,15 +7,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.dto.request.SingleBusinessHourRequest;
+import upbrella.be.store.entity.*;
+import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
-import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,9 +28,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -33,10 +40,14 @@ class StoreMetaServiceTest {
 
     @Mock
     private UmbrellaRepository umbrellaRepository;
-
     @Mock
     private StoreMetaRepository storeMetaRepository;
-
+    @Mock
+    private StoreDetailRepository storeDetailRepository;
+    @Mock
+    private ClassificationService classificationService;
+    @Mock
+    private BusinessHourService businessHourService;
     @InjectMocks
     private StoreMetaService storeMetaService;
 
@@ -52,7 +63,6 @@ class StoreMetaServiceTest {
             StoreMeta storeMeta = StoreMeta.builder()
                     .id(3L)
                     .name("스타벅스")
-                    .thumbnail("star")
                     .deleted(false)
                     .build();
 
@@ -89,7 +99,6 @@ class StoreMetaServiceTest {
             StoreMeta storeMeta = StoreMeta.builder()
                     .id(3L)
                     .name("스타벅스")
-                    .thumbnail("star")
                     .deleted(true)
                     .build();
 
@@ -143,7 +152,6 @@ class StoreMetaServiceTest {
 
             StoreMeta storeIn = StoreMeta.builder()
                     .id(1)
-                    .thumbnail("사진1")
                     .name("모티브 카페 신촌 지점")
                     .activated(true)
                     .deleted(false)
@@ -153,7 +161,6 @@ class StoreMetaServiceTest {
 
             StoreMeta storeOut = StoreMeta.builder()
                     .id(1)
-                    .thumbnail("사진2")
                     .name("모티브 카페 미국 지점")
                     .activated(true)
                     .deleted(false)
@@ -207,6 +214,117 @@ class StoreMetaServiceTest {
             //then
             assertThat(storesInCurrentMap.size())
                     .isEqualTo(0);
+        }
+    }
+
+    @Nested
+    @DisplayName("협업지점 생성 위해 협업지점 정보를 입력받아")
+    class createStoreTest {
+
+        CreateStoreRequest store = CreateStoreRequest.builder()
+                .name("협업 지점명")
+                .category("카테고리")
+                .classificationId(1L)
+                .subClassificationId(2L)
+                .activateStatus(true)
+                .address("주소")
+                .addressDetail("상세주소")
+                .umbrellaLocation("우산 위치")
+                .businessHour("영업 시간")
+                .contactNumber("연락처")
+                .instagramId("인스타그램 아이디")
+                .latitude(33.33)
+                .longitude(33.33)
+                .content("내용")
+                .password("비밀번호")
+                .businessHours(
+                        List.of(
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.MONDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.TUESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.WEDNESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.THURSDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.FRIDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SATURDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SUNDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build()))
+                .build();
+
+        @Test
+        @DisplayName("새로운 협업지점을 생성할 수 있다.")
+        void createNewStoreTest() {
+            // given
+            long classificationId = 1L;
+            long subClassificationId = 2L;
+            Classification classification = Classification.builder()
+                    .id(classificationId)
+                    .type(ClassificationType.CLASSIFICATION)
+                    .name("카테고리")
+                    .latitude(33.33)
+                    .longitude(33.33)
+                    .build();
+
+            Classification subClassification = Classification.builder()
+                    .id(classificationId)
+                    .type(ClassificationType.SUB_CLASSIFICATION)
+                    .name("카테고리")
+                    .build();
+
+            StoreMeta storeMeta = StoreMeta.builder()
+                    .name(store.getName())
+                    .activated(store.isActivateStatus())
+                    .deleted(false)
+                    .classification(classification)
+                    .subClassification(subClassification)
+                    .category(store.getCategory())
+                    .latitude(store.getLatitude())
+                    .longitude(store.getLongitude())
+                    .password(store.getPassword())
+                    .build();
+
+            StoreDetail storeDetail = StoreDetail.createForSave(store, storeMeta);
+
+            given(classificationService.findClassificationById(classificationId)).willReturn(classification);
+            given(classificationService.findSubClassificationById(subClassificationId)).willReturn(subClassification);
+            given(storeMetaRepository.save(any(StoreMeta.class))).willReturn(storeMeta);
+            given(storeDetailRepository.save(any(StoreDetail.class))).willReturn(storeDetail);
+            doNothing().when(businessHourService).saveAllBusinessHour(any());
+
+            // when
+            storeMetaService.createStore(store);
+
+            // then
+            assertAll(
+                    () -> verify(classificationService).findClassificationById(classificationId),
+                    () -> verify(classificationService).findSubClassificationById(subClassificationId),
+                    () -> verify(storeMetaRepository).save(Mockito.any(StoreMeta.class))
+            );
         }
     }
 

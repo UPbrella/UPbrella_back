@@ -10,8 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -35,7 +35,7 @@ class UmbrellaServiceTest {
     @Mock
     private UmbrellaRepository umbrellaRepository;
     @Mock
-    private StoreMetaRepository storeMetaRepository;
+    private StoreMetaService storeMetaService;
     @InjectMocks
     private UmbrellaService umbrellaService;
 
@@ -51,7 +51,6 @@ class UmbrellaServiceTest {
             storeMeta = StoreMeta.builder()
                     .id(2L)
                     .name("name")
-                    .thumbnail("thumb")
                     .deleted(false)
                     .build();
 
@@ -121,7 +120,6 @@ class UmbrellaServiceTest {
             storeMeta = StoreMeta.builder()
                     .id(2L)
                     .name("name")
-                    .thumbnail("thumb")
                     .deleted(false)
                     .build();
 
@@ -197,7 +195,6 @@ class UmbrellaServiceTest {
             foundStoreMeta = StoreMeta.builder()
                     .id(2L)
                     .name("name")
-                    .thumbnail("thumb")
                     .deleted(false)
                     .build();
 
@@ -214,8 +211,8 @@ class UmbrellaServiceTest {
         void success() {
 
             // given
-            given(storeMetaRepository.findByIdAndDeletedIsFalse(2L))
-                    .willReturn(Optional.ofNullable(foundStoreMeta));
+            given(storeMetaService.findStoreMetaById(2L))
+                    .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(43))
                     .willReturn(false);
             given(umbrellaRepository.save(any(Umbrella.class)))
@@ -232,8 +229,6 @@ class UmbrellaServiceTest {
                             .isEqualTo(2L),
                     () -> assertThat(addedUmbrella.getStoreMeta().getName())
                             .isEqualTo("name"),
-                    () -> assertThat(addedUmbrella.getStoreMeta().getThumbnail())
-                            .isEqualTo("thumb"),
                     () -> assertThat(addedUmbrella.getStoreMeta().isDeleted())
                             .isEqualTo(false),
                     () -> assertThat(addedUmbrella.isRentable())
@@ -242,8 +237,8 @@ class UmbrellaServiceTest {
                             .isEqualTo(false),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(43),
-                    () -> then(storeMetaRepository).should(times(1))
-                            .findByIdAndDeletedIsFalse(2L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findStoreMetaById(2L),
                     () -> then(umbrellaRepository).should(times(1))
                             .save(any(Umbrella.class))
             );
@@ -254,8 +249,8 @@ class UmbrellaServiceTest {
         void withSameId() {
 
             // given
-            given(storeMetaRepository.findByIdAndDeletedIsFalse(2L))
-                    .willReturn(Optional.ofNullable(foundStoreMeta));
+            given(storeMetaService.findStoreMetaById(2L))
+                    .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(43))
                     .willReturn(true);
             // when
@@ -264,8 +259,8 @@ class UmbrellaServiceTest {
 
             // then
             assertAll(
-                    () -> then(storeMetaRepository).should(times(1))
-                            .findByIdAndDeletedIsFalse(2L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findStoreMetaById(2L),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(43),
                     () -> then(umbrellaRepository).should(never())
@@ -278,15 +273,15 @@ class UmbrellaServiceTest {
         void atNonExistingStore() {
 
             // given
-            given(storeMetaRepository.findByIdAndDeletedIsFalse(2L))
-                    .willReturn(Optional.ofNullable(null));
+            given(storeMetaService.findStoreMetaById(2L))
+                    .willThrow(new IllegalArgumentException());
 
             // when & then
             assertAll(
                     () -> assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaRequest))
                             .isInstanceOf(IllegalArgumentException.class),
-                    () -> then(storeMetaRepository).should(times(1))
-                            .findByIdAndDeletedIsFalse(2L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findStoreMetaById(2L),
                     () -> then(umbrellaRepository).shouldHaveNoInteractions()
             );
         }
@@ -311,7 +306,6 @@ class UmbrellaServiceTest {
             foundStoreMeta = StoreMeta.builder()
                     .id(5L)
                     .name("연세대학교 파스쿠치")
-                    .thumbnail("정면사진.jpg")
                     .deleted(false)
                     .build();
 
@@ -329,8 +323,8 @@ class UmbrellaServiceTest {
         void success() {
 
             // given
-            given(storeMetaRepository.findByIdAndDeletedIsFalse(5L))
-                    .willReturn(Optional.ofNullable(foundStoreMeta));
+            given(storeMetaService.findStoreMetaById(5L))
+                    .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(true);
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(50L))
@@ -349,8 +343,6 @@ class UmbrellaServiceTest {
                             .isEqualTo(5L),
                     () -> assertThat(modifiedUmbrella.getStoreMeta().getName())
                             .isEqualTo("연세대학교 파스쿠치"),
-                    () -> assertThat(modifiedUmbrella.getStoreMeta().getThumbnail())
-                            .isEqualTo("정면사진.jpg"),
                     () -> assertThat(modifiedUmbrella.getStoreMeta().isDeleted())
                             .isEqualTo(false),
                     () -> assertThat(modifiedUmbrella.isRentable())
@@ -361,8 +353,8 @@ class UmbrellaServiceTest {
                             .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByIdAndDeletedIsFalse(1L),
-                    () -> then(storeMetaRepository).should(times(1))
-                            .findByIdAndDeletedIsFalse(5L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findStoreMetaById(5L),
                     () -> then(umbrellaRepository).should(times(1))
                             .save(any(Umbrella.class))
             );
@@ -373,8 +365,8 @@ class UmbrellaServiceTest {
         void withNonExistingId() {
 
             // given
-            given(storeMetaRepository.findByIdAndDeletedIsFalse(5L))
-                    .willReturn(Optional.ofNullable(foundStoreMeta));
+            given(storeMetaService.findStoreMetaById(5L))
+                    .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(false);
 
@@ -387,8 +379,8 @@ class UmbrellaServiceTest {
                             .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByIdAndDeletedIsFalse(1L),
-                    () -> then(storeMetaRepository).should(times(1))
-                            .findByIdAndDeletedIsFalse(5L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findStoreMetaById(5L),
                     () -> then(umbrellaRepository).should(never())
                             .save(any(Umbrella.class))
             );
@@ -399,8 +391,8 @@ class UmbrellaServiceTest {
         void withAlreadyExistingUuid() {
 
             // given
-            given(storeMetaRepository.findByIdAndDeletedIsFalse(5L))
-                    .willReturn(Optional.ofNullable(foundStoreMeta));
+            given(storeMetaService.findStoreMetaById(5L))
+                    .willReturn(foundStoreMeta);
             given(umbrellaRepository.existsByIdAndDeletedIsFalse(1L))
                     .willReturn(true);
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(50L))
@@ -415,8 +407,8 @@ class UmbrellaServiceTest {
                             .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByIdAndDeletedIsFalse(1L),
-                    () -> then(storeMetaRepository).should(times(1))
-                            .findByIdAndDeletedIsFalse(5L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findStoreMetaById(5L),
                     () -> then(umbrellaRepository).should(never())
                             .save(any(Umbrella.class))
             );
@@ -427,16 +419,16 @@ class UmbrellaServiceTest {
         void atNonExistingStore() {
 
             // given
-            given(storeMetaRepository.findByIdAndDeletedIsFalse(5L))
-                    .willReturn(Optional.ofNullable(null));
+            given(storeMetaService.findStoreMetaById(5L))
+                    .willThrow(new IllegalArgumentException());
 
             // when & then
             assertAll(
                     () -> assertThatThrownBy(() ->
                             umbrellaService.modifyUmbrella(1L, umbrellaRequest))
                             .isInstanceOf(IllegalArgumentException.class),
-                    () -> then(storeMetaRepository).should(times(1))
-                            .findByIdAndDeletedIsFalse(5L),
+                    () -> then(storeMetaService).should(times(1))
+                            .findStoreMetaById(5L),
                     () -> then(umbrellaRepository).shouldHaveNoInteractions()
             );
         }

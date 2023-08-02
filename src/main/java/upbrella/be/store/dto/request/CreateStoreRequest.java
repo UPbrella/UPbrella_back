@@ -8,9 +8,9 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateStoreRequest {
 
     @NotBlank
@@ -23,9 +23,11 @@ public class CreateStoreRequest {
     @NotBlank
     private String address;
     @NotBlank
+    private String addressDetail;
+    @NotBlank
     private String umbrellaLocation;
     @NotBlank
-    private String businessHours;
+    private String businessHour;
     private String contactNumber;
     private String instagramId;
     @Range(min = -90, max = 90)
@@ -33,7 +35,6 @@ public class CreateStoreRequest {
     @Range(min = -180, max = 180)
     private double longitude;
     private String content;
-    @Range(min = 0, max = 10)
-    @NotBlank
-    private List<String> imageUrls;
+    private String password;
+    private List<SingleBusinessHourRequest> businessHours;
 }

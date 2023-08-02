@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
@@ -53,7 +51,7 @@ public class RentControllerTest extends RestDocsSupport {
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
                 .region("신촌")
                 .storeId(1L)
-                .uuid(1L)
+                .umbrellaId(1L)
                 .conditionReport("필요하다면 상태 신고를 해주세요.")
                 .build();
 
@@ -82,7 +80,7 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("지역"),
                                 fieldWithPath("storeId").type(JsonFieldType.NUMBER)
                                         .description("협업 지점 고유번호"),
-                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
+                                fieldWithPath("umbrellaId").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                                         .optional()
@@ -200,7 +198,7 @@ public class RentControllerTest extends RestDocsSupport {
                         get("/rent/histories/status")
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("show-all-condtion-reports-doc",
+                .andDo(document("show-all-condition-reports-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(

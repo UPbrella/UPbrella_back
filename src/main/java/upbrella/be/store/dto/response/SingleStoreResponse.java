@@ -1,19 +1,15 @@
 package upbrella.be.store.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import upbrella.be.store.entity.StoreDetail;
-import upbrella.be.store.entity.StoreImage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SingleStoreResponse {
 
     private long id;
@@ -23,33 +19,41 @@ public class SingleStoreResponse {
     private SingleSubClassificationResponse subClassification;
     private boolean activateStatus;
     private String address;
+    private String addressDetail;
+    private String thumbnail;
     private String umbrellaLocation;
-    private String businessHours;
+    private String businessHour;
     private String contactNumber;
     private String instagramId;
     private double latitude;
     private double longitude;
     private String content;
-    private List<String> imageUrls;
+    private List<SingleImageUrlResponse> imageUrls;
+    private String password;
+    private List<SingleBusinessHourResponse> businessHours;
 
-    public SingleStoreResponse(StoreDetail storeDetail) {
-        imageUrls = new ArrayList<>();
-        this.id = storeDetail.getStoreMeta().getId();
-        this.name = storeDetail.getStoreMeta().getName();
-        this.category = storeDetail.getStoreMeta().getCategory();
-        this.classification = new SingleClassificationResponse(storeDetail.getStoreMeta().getClassification());
-        this.subClassification = new SingleSubClassificationResponse(storeDetail.getStoreMeta().getSubClassification());
-        this.activateStatus = storeDetail.getStoreMeta().isActivated();
-        this.address = storeDetail.getAddress();
-        this.umbrellaLocation = storeDetail.getUmbrellaLocation();
-        this.businessHours = storeDetail.getWorkingHour();
-        this.contactNumber = storeDetail.getContactInfo();
-        this.instagramId = storeDetail.getInstaUrl();
-        this.latitude = storeDetail.getStoreMeta().getLongitude();
-        this.longitude = storeDetail.getStoreMeta().getLongitude();
-        this.content = storeDetail.getContent();
-        for (StoreImage imageUrl : storeDetail.getStoreImages()) {
-            imageUrls.add(imageUrl.getImageUrl());
-        }
+    public static SingleStoreResponse ofCreateSingleStoreResponse(StoreDetail storeDetail, String thumbnail, List<SingleImageUrlResponse> images, List<SingleBusinessHourResponse> businessHours) {
+
+        return SingleStoreResponse.builder()
+                .id(storeDetail.getStoreMeta().getId())
+                .name(storeDetail.getStoreMeta().getName())
+                .category(storeDetail.getStoreMeta().getCategory())
+                .classification(SingleClassificationResponse.ofCreateClassification(storeDetail.getStoreMeta().getClassification()))
+                .subClassification(SingleSubClassificationResponse.ofCreateSubClassification(storeDetail.getStoreMeta().getSubClassification()))
+                .activateStatus(storeDetail.getStoreMeta().isActivated())
+                .address(storeDetail.getAddress())
+                .addressDetail(storeDetail.getAddressDetail())
+                .umbrellaLocation(storeDetail.getUmbrellaLocation())
+                .businessHour(storeDetail.getWorkingHour())
+                .contactNumber(storeDetail.getContactInfo())
+                .instagramId(storeDetail.getInstaUrl())
+                .latitude(storeDetail.getStoreMeta().getLongitude())
+                .longitude(storeDetail.getStoreMeta().getLongitude())
+                .content(storeDetail.getContent())
+                .password(storeDetail.getStoreMeta().getPassword())
+                .imageUrls(images)
+                .thumbnail(thumbnail)
+                .businessHours(businessHours)
+                .build();
     }
 }
