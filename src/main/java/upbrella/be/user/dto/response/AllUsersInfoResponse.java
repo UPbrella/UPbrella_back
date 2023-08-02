@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 @Builder
 public class AllUsersInfoResponse {
 
-    private List<SingleUserInfoResponse> singleUserInfoResponseList;
+    private List<SingleUserInfoResponse> users;
 
     public static AllUsersInfoResponse fromUsers(List<User> users) {
 
         return AllUsersInfoResponse.builder()
-                .singleUserInfoResponseList(
+                .users(
                         users.stream()
                                 .map(SingleUserInfoResponse::fromUser)
                                 .collect(Collectors.toList())

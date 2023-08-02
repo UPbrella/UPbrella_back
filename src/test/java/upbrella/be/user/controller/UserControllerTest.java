@@ -17,13 +17,14 @@ import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.response.UserInfoResponse;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
+import upbrella.be.user.entity.User;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -51,7 +52,7 @@ public class UserControllerTest extends RestDocsSupport {
         return new UserController(oauthLoginService, userService, kakaoOauthInfo, rentRepository);
     }
 
-    @DisplayName("사용자는 유저 정보를 조회할 수 있다.")
+    @DisplayName("사용자는 로그인된 유저 정보를 조회할 수 있다.")
     @Test
     void findUserInfoTest() throws Exception {
 
@@ -192,5 +193,52 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("계좌 번호")
                                 )
                 ));
+    }
+
+    @DisplayName("사용자는 회원 정보 목록을 조회할 수 있다.")
+    @Test
+    void findUsersInfoTest() throws Exception {
+
+        // given
+        User poro = User.builder()
+                .name("포로")
+                .phoneNumber("010-0000-0000")
+                .bank("신한")
+                .accountNumber("110-421")
+                .build();
+
+        User luke = User.builder()
+                .name("김성규")
+                .phoneNumber("010-1223-3444")
+                .bank("우리")
+                .accountNumber("1002-473")
+                .build();
+
+        given(userService.findUsers())
+                .willReturn(List.of(poro,luke));
+
+        // when
+        mockMvc.perform(
+                        get("/users")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("find-users-info-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("users").type(JsonFieldType.ARRAY)
+                                                .description("회원 정보 목록"),
+                                fieldWithPath("users[].name").type(JsonFieldType.STRING)
+                                        .description("사용자 이름"),
+                                fieldWithPath("users[].phoneNumber").type(JsonFieldType.STRING)
+                                        .description("사용자 전화번호"),
+                                fieldWithPath("users[].bank").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("은행 이름"),
+                                fieldWithPath("users[].accountNumber").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("사용자 계좌 번호")
+                                )));
     }
 }
