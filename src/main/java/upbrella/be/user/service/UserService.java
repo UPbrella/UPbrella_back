@@ -7,8 +7,8 @@ import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;

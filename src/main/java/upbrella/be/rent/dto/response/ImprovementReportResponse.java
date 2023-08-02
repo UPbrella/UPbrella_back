@@ -3,10 +3,9 @@ package upbrella.be.rent.dto.response;
 import lombok.*;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ImprovementReportResponse {
 
     private long id;

@@ -7,8 +7,8 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CreateClassificationRequest {
 
     @NotBlank

@@ -137,7 +137,7 @@ public class UserControllerTest extends RestDocsSupport {
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("kakao-login-doc",
+                .andDo(document("user-login-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
@@ -151,7 +151,13 @@ public class UserControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 카카오 소셜 회원 가입을 할 수 있다.")
     void joinTest() throws Exception {
         // given
-        String code = "{\"code\":\"1kdfjq0243f\"}";
+        JoinRequest joinRequest = JoinRequest.builder()
+                .name("홍길동")
+                .bank("신한")
+                .accountNumber("110-421-674103")
+                .phoneNumber("010-2084-3478")
+                .build();
+
         OauthToken oauthToken = new OauthToken("a", "b", "c", 100L);
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("authToken", oauthToken);
@@ -165,18 +171,26 @@ public class UserControllerTest extends RestDocsSupport {
         // when
         mockMvc.perform(
                         post("/users/join")
-                                .content(code)
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(joinRequest))
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("kakao-login-doc",
+                .andDo(document("user-join-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("code")
-                                        .description("카카오 로그인 인증 코드")
-                        )
+                                fieldWithPath("name")
+                                        .description("이름"),
+                                fieldWithPath("phoneNumber")
+                                        .description("연락처"),
+                                fieldWithPath("bank")
+                                        .optional()
+                                        .description("은행"),
+                                fieldWithPath("accountNumber")
+                                        .optional()
+                                        .description("계좌 번호")
+                                )
                 ));
     }
 }

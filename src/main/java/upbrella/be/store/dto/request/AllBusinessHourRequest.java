@@ -6,8 +6,8 @@ import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class AllBusinessHourRequest {
 
     private long storeMetaId;

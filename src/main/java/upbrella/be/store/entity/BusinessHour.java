@@ -9,8 +9,8 @@ import java.time.LocalTime;
 @Getter
 @Entity
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class BusinessHour {
 
     @Id

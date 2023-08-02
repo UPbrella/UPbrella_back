@@ -3,10 +3,9 @@ package upbrella.be.user.dto.request;
 import lombok.*;
 
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class JoinRequest {
 
     private String name;

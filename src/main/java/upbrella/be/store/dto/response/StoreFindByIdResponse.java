@@ -5,8 +5,8 @@ import upbrella.be.store.entity.StoreDetail;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class StoreFindByIdResponse {
 
     private long id;

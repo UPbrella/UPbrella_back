@@ -4,7 +4,6 @@ import lombok.*;
 import upbrella.be.rent.entity.ConditionReport;
 
 @Getter
-@Setter
 @Builder
 public class ConditionReportResponse {
 

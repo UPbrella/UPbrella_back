@@ -5,8 +5,8 @@ import upbrella.be.umbrella.entity.Umbrella;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CurrentUmbrellaStoreResponse {
 
     private long id;

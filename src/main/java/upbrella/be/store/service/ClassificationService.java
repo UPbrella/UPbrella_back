@@ -15,8 +15,8 @@ import upbrella.be.store.repository.ClassificationRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class ClassificationService {
 
     private final ClassificationRepository classificationRepository;
