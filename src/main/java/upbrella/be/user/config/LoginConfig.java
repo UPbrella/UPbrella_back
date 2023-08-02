@@ -1,4 +1,4 @@
-package upbrella.be.login.config;
+package upbrella.be.user.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
