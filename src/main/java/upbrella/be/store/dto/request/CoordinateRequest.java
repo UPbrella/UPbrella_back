@@ -3,10 +3,9 @@ package upbrella.be.store.dto.request;
 import lombok.*;
 
 @Getter
-@Setter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CoordinateRequest {
 
     private double latitudeFrom;

@@ -16,9 +16,9 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/rent")
+@RequiredArgsConstructor
 public class RentController {
 
     private final ConditionReportService conditionReportService;

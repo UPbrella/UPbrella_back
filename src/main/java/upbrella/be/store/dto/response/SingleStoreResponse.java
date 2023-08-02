@@ -3,13 +3,12 @@ package upbrella.be.store.dto.response;
 import lombok.*;
 import upbrella.be.store.entity.StoreDetail;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class SingleStoreResponse {
 
     private long id;

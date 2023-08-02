@@ -10,8 +10,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class StoreDetail {
 
     @Id
