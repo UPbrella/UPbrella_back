@@ -6,8 +6,8 @@ import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class AllSubClassificationResponse {
 
     List<SingleSubClassificationResponse> subClassifications;

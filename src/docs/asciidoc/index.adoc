@@ -14,7 +14,6 @@ endif::[]
 == 공통 API
 include::common.adoc[]
 
-
 [[User-API]]
 == 유저 API
 include::api/user/user.adoc[]
@@ -22,11 +21,6 @@ include::api/user/user.adoc[]
 [[Umbrella-API]]
 == 우산 API
 include::api/umbrella/umbrella.adoc[]
-
-
-[[OAuth-API]]
-== OAuth API
-include::api/login/oauth.adoc[]
 
 
 [[Rent-API]]

@@ -6,8 +6,8 @@ import upbrella.be.store.entity.ClassificationType;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class SingleClassificationResponse {
 
     private long id;

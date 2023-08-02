@@ -13,8 +13,8 @@ import upbrella.be.user.dto.token.OauthToken;
 import java.util.HashMap;
 import java.util.Map;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class OauthLoginService {
 
     private final RestTemplate restTemplate;

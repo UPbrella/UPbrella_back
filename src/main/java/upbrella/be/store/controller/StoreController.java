@@ -16,8 +16,8 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/stores")
+@RequiredArgsConstructor
 public class StoreController {
 
     private final StoreImageService storeImageService;

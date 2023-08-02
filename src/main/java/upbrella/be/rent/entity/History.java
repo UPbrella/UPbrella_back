@@ -8,9 +8,9 @@ import upbrella.be.user.entity.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Builder
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class History {

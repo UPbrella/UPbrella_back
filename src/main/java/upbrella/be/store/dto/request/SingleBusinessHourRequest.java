@@ -8,8 +8,8 @@ import java.time.LocalTime;
 
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class SingleBusinessHourRequest {
 
     private DayOfWeek date;

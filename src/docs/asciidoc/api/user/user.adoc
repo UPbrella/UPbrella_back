@@ -1,3 +1,26 @@
+=== 카카오 소셜 로그인
+
+==== HTTP Request
+
+include::{snippets}/user-login-doc/http-request.adoc[]
+include::{snippets}/user-login-doc/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-login-doc/http-response.adoc[]
+
+=== 회원 가입
+
+==== HTTP Request
+
+include::{snippets}/user-join-doc/http-request.adoc[]
+include::{snippets}/user-join-doc/request-fields.adoc[]
+
+
+==== HTTP Response
+
+include::{snippets}/user-join-doc/http-response.adoc[]
+
 === 유저 정보 조회
 
 ==== HTTP Request

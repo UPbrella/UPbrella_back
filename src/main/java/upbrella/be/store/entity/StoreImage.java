@@ -7,8 +7,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class StoreImage {
 
     @Id

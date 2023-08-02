@@ -13,8 +13,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class BusinessHourService {
 
     private final BusinessHourRepository businessHourRepository;

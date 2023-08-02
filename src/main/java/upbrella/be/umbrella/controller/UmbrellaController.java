@@ -12,9 +12,9 @@ import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/umbrellas")
+@RequiredArgsConstructor
 public class UmbrellaController {
 
     private final UmbrellaService umbrellaService;

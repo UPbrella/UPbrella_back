@@ -1,17 +1,14 @@
 package upbrella.be.user.dto.token;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
+@Builder
 @Component
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class KakaoOauthInfo {
 
     @Value("${KAKAO_CLIENT_ID_DEV}")
