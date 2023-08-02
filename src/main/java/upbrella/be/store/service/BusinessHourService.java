@@ -2,6 +2,7 @@ package upbrella.be.store.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.entity.BusinessHour;
@@ -15,16 +16,19 @@ public class BusinessHourService {
 
     private final BusinessHourRepository businessHourRepository;
 
+    @Transactional
     public void saveAllBusinessHour(List<BusinessHour> businessHours) {
 
         businessHourRepository.saveAll(businessHours);
     }
 
+    @Transactional(readOnly = true)
     public List<BusinessHour> findBusinessHourByStoreMetaId(Long storeMetaId) {
 
         return businessHourRepository.findByStoreMetaId(storeMetaId);
     }
 
+    @Transactional
     public List<BusinessHour> updateBusinessHour(long storeId, UpdateStoreRequest request) {
 
         List<BusinessHour> businessHours = findBusinessHourByStoreMetaId(storeId);
