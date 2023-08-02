@@ -8,30 +8,26 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.store.dto.response.StoreFindByIdResponse;
-import upbrella.be.store.entity.StoreDetail;
-import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.entity.*;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class StoreDetailServiceTest {
 
     @Mock
     private UmbrellaService umbrellaService;
-
     @Mock
     private StoreDetailRepository storeDetailRepository;
-
     @InjectMocks
     private StoreDetailService storeDetailService;
 
@@ -42,7 +38,6 @@ public class StoreDetailServiceTest {
         StoreMeta storeMeta = StoreMeta.builder()
                 .id(3L)
                 .name("스타벅스")
-                .thumbnail("star")
                 .deleted(false)
                 .latitude(37.503716)
                 .longitude(127.053718)
@@ -60,7 +55,7 @@ public class StoreDetailServiceTest {
                 .instaUrl("모티브 인서타")
                 .workingHour("매일 7시 ~ 12시")
                 .umbrellaLocation("문 앞")
-                .storeImages(List.of())
+                .storeImages(Set.of())
                 .build();
 
         StoreFindByIdResponse storeFindByIdResponseExpected = StoreFindByIdResponse.builder()

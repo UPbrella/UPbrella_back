@@ -1,21 +1,16 @@
 package upbrella.be.store.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateClassificationRequest {
 
-    @NotBlank
-    private String type;
     @NotBlank
     private String name;
     @Range(min = -90, max = 90)

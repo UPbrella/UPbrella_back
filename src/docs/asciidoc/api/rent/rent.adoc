@@ -24,12 +24,12 @@ include::{snippets}/show-all-rental-histories-doc/response-fields-data.adoc[]
 === 신고 내역 조회용
 ==== HTTP Request
 
-include::{snippets}/show-all-status-declarations-doc/http-request.adoc[]
+include::{snippets}/show-all-condition-reports-doc/http-request.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/show-all-status-declarations-doc/http-response.adoc[]
-include::{snippets}/show-all-status-declarations-doc/response-fields-data.adoc[]
+include::{snippets}/show-all-condition-reports-doc/http-response.adoc[]
+include::{snippets}/show-all-condition-reports-doc/response-fields-data.adoc[]
 
 === 개선 요청 내역 조회
 ==== HTTP Request

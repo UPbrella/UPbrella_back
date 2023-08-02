@@ -8,23 +8,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.web.multipart.MultipartFile;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.store.dto.request.CoordinateRequest;
-import upbrella.be.store.dto.request.CreateClassificationRequest;
-import upbrella.be.store.dto.request.CreateStoreRequest;
-import upbrella.be.store.dto.request.CreateSubClassificationRequest;
+import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.ClassificationType;
+import upbrella.be.store.entity.DayOfWeek;
+import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreDetailService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -45,13 +47,12 @@ class StoreControllerTest extends RestDocsSupport {
     @Mock
     private ClassificationService classificationService;
     @Mock
-    private StoreDetailRepository storeDetailRepository;
-    @Mock
     private StoreDetailService storeDetailService;
 
     @Override
     protected Object initController() {
-        return new StoreController(storeImageService, storeMetaService, classificationService, storeDetailRepository, storeDetailService);
+
+        return new StoreController(storeImageService, storeMetaService, classificationService, storeDetailService);
     }
 
     @Test
@@ -203,32 +204,76 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("관리자 페이지에서 전체 협업지점 목록을 보여줄 수 있다.")
     void findAllStoreTest() throws Exception {
         // given
-        given(storeDetailRepository.findAllStores())
+        given(storeDetailService.findAllStores())
                 .willReturn(List.of(SingleStoreResponse.builder()
-                        .name("dsa")
-                        .category("sdsa")
-                        .content("")
+                        .name("모티브 카페 신촌점")
+                        .category("카페 티저트")
+                        .content("모티브 카페")
                         .classification(SingleClassificationResponse.builder()
                                 .id(1L)
-                                .type("dsadsa")
-                                .name("dsadsa")
+                                .type(ClassificationType.CLASSIFICATION)
+                                .name("신촌")
                                 .latitude(33.33)
                                 .longitude(33.33)
                                 .build())
                         .subClassification(SingleSubClassificationResponse.builder()
                                 .id(1L)
-                                .type("dsadsa")
-                                .name("dsadsa")
+                                .type(ClassificationType.SUB_CLASSIFICATION)
+                                .name("신촌")
                                 .build())
                         .activateStatus(true)
-                        .address("dsadsa")
-                        .umbrellaLocation("dsadsa")
-                        .businessHours("dsadsa")
-                        .contactNumber("dsadsa")
-                        .instagramId("dsadsa")
+                        .address("주소")
+                        .addressDetail("상세주소")
+                        .thumbnail("썸네일")
+                        .umbrellaLocation("가게 앞")
+                        .businessHour("연중 무휴")
+                        .contactNumber("010-0000-0000")
+                        .instagramId("instagramId")
                         .latitude(33.33)
                         .longitude(33.33)
-                        .imageUrls(new ArrayList<>())
+                        .imageUrls(List.of(SingleImageUrlResponse.builder()
+                                .id(1L)
+                                .imageUrl("url")
+                                .build()))
+                        .password("비밀번호")
+                        .businessHours(
+                                List.of(
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.MONDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.TUESDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.WEDNESDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.THURSDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.FRIDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.SATURDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build(),
+                                        SingleBusinessHourResponse.builder()
+                                                .date(DayOfWeek.SUNDAY)
+                                                .openAt(LocalTime.of(10, 0))
+                                                .closeAt(LocalTime.of(20, 0))
+                                                .build())
+                        )
                         .build()));
 
         // when
@@ -277,9 +322,13 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("활성화 여부"),
                                 fieldWithPath("stores[].address").type(JsonFieldType.STRING)
                                         .description("주소"),
+                                fieldWithPath("stores[].addressDetail").type(JsonFieldType.STRING)
+                                        .description("상세 주소"),
+                                fieldWithPath("stores[].thumbnail").type(JsonFieldType.STRING)
+                                        .description("썸네일"),
                                 fieldWithPath("stores[].umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
-                                fieldWithPath("stores[].businessHours").type(JsonFieldType.STRING)
+                                fieldWithPath("stores[].businessHour").type(JsonFieldType.STRING)
                                         .description("영업 시간"),
                                 fieldWithPath("stores[].contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
@@ -292,7 +341,21 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("stores[].content").type(JsonFieldType.STRING)
                                         .description("내용"),
                                 fieldWithPath("stores[].imageUrls").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록. 각 요소는 문자열.")
+                                        .description("이미지 URL 목록"),
+                                fieldWithPath("stores[].imageUrls[].id").type(JsonFieldType.NUMBER)
+                                        .description("이미지 고유번호"),
+                                fieldWithPath("stores[].imageUrls[].imageUrl").type(JsonFieldType.STRING)
+                                        .description("이미지 URL"),
+                                fieldWithPath("stores[].password").type(JsonFieldType.STRING)
+                                        .description("비밀번호"),
+                                fieldWithPath("stores[].businessHours").type(JsonFieldType.ARRAY)
+                                        .description("영업 시간"),
+                                fieldWithPath("stores[].businessHours[].date").type(JsonFieldType.STRING)
+                                        .description("영업 요일"),
+                                fieldWithPath("stores[].businessHours[].openAt").type(JsonFieldType.STRING)
+                                        .description("오픈 시간"),
+                                fieldWithPath("stores[].businessHours[].closeAt").type(JsonFieldType.STRING)
+                                        .description("마감 시간")
                         )));
     }
 
@@ -307,14 +370,52 @@ class StoreControllerTest extends RestDocsSupport {
                 .subClassificationId(2L)
                 .activateStatus(true)
                 .address("주소")
+                .addressDetail("상세주소")
                 .umbrellaLocation("우산 위치")
-                .businessHours("영업 시간")
+                .businessHour("영업 시간")
                 .contactNumber("연락처")
                 .instagramId("인스타그램 아이디")
                 .latitude(33.33)
                 .longitude(33.33)
-                .imageUrls(List.of("이미지 URL"))
                 .content("내용")
+                .password("비밀번호")
+                .businessHours(
+                        List.of(
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.MONDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.TUESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.WEDNESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.THURSDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.FRIDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SATURDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SUNDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build()))
                 .build();
 
         // when
@@ -343,9 +444,11 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
                                         .description("주소"),
+                                fieldWithPath("addressDetail").type(JsonFieldType.STRING)
+                                        .description("상세 주소"),
                                 fieldWithPath("umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
-                                fieldWithPath("businessHours").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHour").type(JsonFieldType.STRING)
                                         .description("영업 시간"),
                                 fieldWithPath("contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
@@ -357,8 +460,16 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("경도"),
                                 fieldWithPath("content").type(JsonFieldType.STRING)
                                         .description("내용"),
-                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록. 각 요소는 문자열.")
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .description("비밀번호"),
+                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
+                                        .description("영업 시간"),
+                                fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
+                                        .description("영업 요일"),
+                                fieldWithPath("businessHours[].openAt").type(JsonFieldType.STRING)
+                                        .description("오픈 시간"),
+                                fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
+                                        .description("마감 시간")
                         )));
     }
 
@@ -366,25 +477,63 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("관리자는 협업지점 정보를 수정할 수 있다.")
     void updateStoreTest() throws Exception {
         // given
-        CreateStoreRequest store = CreateStoreRequest.builder()
+        UpdateStoreRequest store = UpdateStoreRequest.builder()
                 .name("협업 지점명")
                 .category("카테고리")
                 .classificationId(1L)
                 .subClassificationId(2L)
                 .activateStatus(true)
                 .address("주소")
+                .addressDetail("상세주소")
                 .umbrellaLocation("우산 위치")
-                .businessHours("영업 시간")
+                .businessHour("영업 시간")
                 .contactNumber("연락처")
                 .instagramId("인스타그램 아이디")
                 .latitude(33.33)
                 .longitude(33.33)
-                .imageUrls(List.of("이미지 URL"))
                 .content("내용")
+                .password("비밀번호")
+                .businessHours(
+                        List.of(
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.MONDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.TUESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.WEDNESDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.THURSDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.FRIDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SATURDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build(),
+                                SingleBusinessHourRequest.builder()
+                                        .date(DayOfWeek.SUNDAY)
+                                        .openAt(LocalTime.of(10, 0))
+                                        .closeAt(LocalTime.of(20, 0))
+                                        .build()))
                 .build();
         long storeId = 1L;
 
-        doNothing().when(storeMetaService).updateStore(any(Long.class), any(CreateStoreRequest.class));
+        doNothing().when(storeDetailService).updateStore(any(Long.class), any(UpdateStoreRequest.class));
 
         // then
 
@@ -409,14 +558,16 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("classificationId").type(JsonFieldType.NUMBER)
                                         .description("대분류 아이디"),
                                 fieldWithPath("subClassificationId").type(JsonFieldType.NUMBER)
-                                        .description("소분류 아아디"),
+                                        .description("소분류"),
                                 fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
                                         .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
                                         .description("주소"),
+                                fieldWithPath("addressDetail").type(JsonFieldType.STRING)
+                                        .description("상세 주소"),
                                 fieldWithPath("umbrellaLocation").type(JsonFieldType.STRING)
                                         .description("우산 위치"),
-                                fieldWithPath("businessHours").type(JsonFieldType.STRING)
+                                fieldWithPath("businessHour").type(JsonFieldType.STRING)
                                         .description("영업 시간"),
                                 fieldWithPath("contactNumber").type(JsonFieldType.STRING)
                                         .description("연락처"),
@@ -428,20 +579,26 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("경도"),
                                 fieldWithPath("content").type(JsonFieldType.STRING)
                                         .description("내용"),
-                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
-                                        .description("이미지 URL 목록. 각 요소는 문자열.")
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .description("비밀번호"),
+                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
+                                        .description("영업 시간"),
+                                fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
+                                        .description("영업 요일"),
+                                fieldWithPath("businessHours[].openAt").type(JsonFieldType.STRING)
+                                        .description("오픈 시간"),
+                                fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
+                                        .description("마감 시간")
                         )));
     }
 
     @Test
-    @DisplayName("사용자는 협업지점의 사진을 등록해서 사진의 url을 받을 수 있다.")
+    @DisplayName("사용자는 협업지점의 사진을 등록할 수 있다.")
     void uploadStorageImages() throws Exception {
         // given
-        MockMultipartFile firstFile = new MockMultipartFile("images", "filename-1.jpeg", "text/plain", "some-image".getBytes());
-
-        given(storeImageService.makeRandomId()).willReturn("randomId");
-        given(storeImageService.uploadFile(firstFile, 1L, "randomId"))
-                .willReturn("https://upbrella-storage/store-image.s3.ap-northeast-2.amazonaws.com/img/filename-1.jpeg");
+        MockMultipartFile firstFile = new MockMultipartFile("image", "filename-1.jpeg", "text/plain", "some-image".getBytes());
+        given(storeImageService.uploadFile(any(MultipartFile.class), any(Long.class), nullable(String.class)))
+                .willReturn("url");
 
         // when
 
@@ -457,11 +614,28 @@ class StoreControllerTest extends RestDocsSupport {
                                 parameterWithName("storeId").description("협업 지점 고유번호")
                         ),
                         requestParts(
-                                partWithName("images").description("협업지점의 사진")
-                        ),
-                        responseFields(
-                                beneathPath("data").withSubsectionId("data"),
-                                subsectionWithPath("imageUrls").description("이미지 URL 목록. 각 요소는 문자열.")
+                                partWithName("image").description("협업지점의 사진")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 협업지점의 사진을 삭제할 수 있다.")
+    void deleteStoreImagesTest() throws Exception {
+        // given
+        long imageId = 1L;
+
+        // when
+        doNothing().when(storeImageService).deleteFile(imageId);
+
+        // then
+        mockMvc.perform(delete("/stores/images/{imageId}", imageId))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("store-delete-images-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("imageId").description("협업 지점 사진 고유번호")
                         )));
     }
 
@@ -490,12 +664,12 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 대분류 목록을 조회할 수 있다.")
     void findAllClassificationTest() throws Exception {
         // given
-        given(classificationService.findAllClassification("classification"))
+        given(classificationService.findAllClassification())
                 .willReturn(AllClassificationResponse.builder()
                         .classifications(List.of(
                                 SingleClassificationResponse.builder()
                                         .id(1L)
-                                        .type("대분류 타입")
+                                        .type(ClassificationType.CLASSIFICATION)
                                         .name("대분류 이름")
                                         .latitude(33.33)
                                         .longitude(33.33)
@@ -535,7 +709,6 @@ class StoreControllerTest extends RestDocsSupport {
     void createClassificationTest() throws Exception {
         // given
         CreateClassificationRequest request = CreateClassificationRequest.builder()
-                .type("대분류 타입")
                 .name("대분류 이름")
                 .latitude(33.33)
                 .longitude(33.33)
@@ -554,8 +727,6 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("type").type(JsonFieldType.STRING)
-                                        .description("대분류 타입"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("대분류 이름"),
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER)
@@ -590,12 +761,12 @@ class StoreControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 소분류 목록을 조회할 수 있다.")
     void findAllSubClassificationTest() throws Exception {
         // given
-        given(classificationService.findAllSubClassification("subClassification"))
+        given(classificationService.findAllSubClassification())
                 .willReturn(AllSubClassificationResponse.builder()
                         .subClassifications(List.of(
                                 SingleSubClassificationResponse.builder()
                                         .id(1L)
-                                        .type("소분류 타입")
+                                        .type(ClassificationType.SUB_CLASSIFICATION)
                                         .name("소분류 이름")
                                         .build()
                         ))
@@ -629,7 +800,6 @@ class StoreControllerTest extends RestDocsSupport {
     void createSubClassificationTest() throws Exception {
         // given
         CreateSubClassificationRequest request = CreateSubClassificationRequest.builder()
-                .type("소분류 타입")
                 .name("소분류 이름")
                 .build();
 
@@ -646,8 +816,6 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("type").type(JsonFieldType.STRING)
-                                        .description("소분류 타입"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("소분류 이름")
                         )));

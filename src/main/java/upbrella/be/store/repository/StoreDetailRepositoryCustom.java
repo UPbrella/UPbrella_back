@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface StoreDetailRepositoryCustom {
 
-    List<SingleStoreResponse> findAllStores();
+    List<StoreDetail> findAllStores();
 
     Optional<StoreDetail> findByStoreMetaIdUsingFetchJoin(long storeMetaId);
 }

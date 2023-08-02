@@ -51,7 +51,6 @@ class UmbrellaServiceTest {
             storeMeta = StoreMeta.builder()
                     .id(2L)
                     .name("name")
-                    .thumbnail("thumb")
                     .deleted(false)
                     .build();
 
@@ -121,7 +120,6 @@ class UmbrellaServiceTest {
             storeMeta = StoreMeta.builder()
                     .id(2L)
                     .name("name")
-                    .thumbnail("thumb")
                     .deleted(false)
                     .build();
 
@@ -197,7 +195,6 @@ class UmbrellaServiceTest {
             foundStoreMeta = StoreMeta.builder()
                     .id(2L)
                     .name("name")
-                    .thumbnail("thumb")
                     .deleted(false)
                     .build();
 
@@ -232,8 +229,6 @@ class UmbrellaServiceTest {
                             .isEqualTo(2L),
                     () -> assertThat(addedUmbrella.getStoreMeta().getName())
                             .isEqualTo("name"),
-                    () -> assertThat(addedUmbrella.getStoreMeta().getThumbnail())
-                            .isEqualTo("thumb"),
                     () -> assertThat(addedUmbrella.getStoreMeta().isDeleted())
                             .isEqualTo(false),
                     () -> assertThat(addedUmbrella.isRentable())
@@ -311,7 +306,6 @@ class UmbrellaServiceTest {
             foundStoreMeta = StoreMeta.builder()
                     .id(5L)
                     .name("연세대학교 파스쿠치")
-                    .thumbnail("정면사진.jpg")
                     .deleted(false)
                     .build();
 
@@ -349,8 +343,6 @@ class UmbrellaServiceTest {
                             .isEqualTo(5L),
                     () -> assertThat(modifiedUmbrella.getStoreMeta().getName())
                             .isEqualTo("연세대학교 파스쿠치"),
-                    () -> assertThat(modifiedUmbrella.getStoreMeta().getThumbnail())
-                            .isEqualTo("정면사진.jpg"),
                     () -> assertThat(modifiedUmbrella.getStoreMeta().isDeleted())
                             .isEqualTo(false),
                     () -> assertThat(modifiedUmbrella.isRentable())

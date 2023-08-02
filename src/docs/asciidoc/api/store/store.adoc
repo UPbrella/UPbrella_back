@@ -54,11 +54,12 @@ include::{snippets}/store-find-all-doc/response-fields-data.adoc[]
 include::{snippets}/upload-file/httpie-request.adoc[]
 include::{snippets}/upload-file/request-parts.adoc[]
 
-==== HTTP Response
+=== 협업지점의 이미지 삭제
 
-include::{snippets}/upload-file/http-response.adoc[]
-include::{snippets}/upload-file/response-fields-data.adoc[]
+==== HTTP Request
 
+include::{snippets}/store-delete-images-doc/http-request.adoc[]
+include::{snippets}/store-delete-images-doc/path-parameters.adoc[]
 
 === 관리자 페이지에서 새로운 협업 지점 등록
 
@@ -82,3 +83,45 @@ include::{snippets}/store-update-doc/request-fields.adoc[]
 
 include::{snippets}/store-delete-doc/http-request.adoc[]
 include::{snippets}/store-delete-doc/path-parameters.adoc[]
+
+=== 대분류 추가
+
+==== HTTP Request
+include::{snippets}/store-create-classification-doc/http-request.adoc[]
+include::{snippets}/store-create-classification-doc/request-fields.adoc[]
+
+=== 대분류 조회
+
+==== HTTP Request
+include::{snippets}/store-find-all-classification-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/store-find-all-classification-doc/http-response.adoc[]
+include::{snippets}/store-find-all-classification-doc/response-fields-data.adoc[]
+
+=== 대분류 삭제
+
+==== HTTP Request
+include::{snippets}/store-delete-classification-doc/http-request.adoc[]
+include::{snippets}/store-delete-classification-doc/path-parameters.adoc[]
+
+=== 소분류 추가
+
+==== HTTP Request
+include::{snippets}/store-create-sub-classification-doc/http-request.adoc[]
+include::{snippets}/store-create-sub-classification-doc/request-fields.adoc[]
+
+=== 소분류 조회
+
+==== HTTP Request
+include::{snippets}/store-find-all-sub-classification-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/store-find-all-sub-classification-doc/http-response.adoc[]
+include::{snippets}/store-find-all-sub-classification-doc/response-fields-data.adoc[]
+
+=== 소분류 삭제
+
+==== HTTP Request
+include::{snippets}/store-delete-sub-classification-doc/http-request.adoc[]
+include::{snippets}/store-delete-sub-classification-doc/path-parameters.adoc[]
