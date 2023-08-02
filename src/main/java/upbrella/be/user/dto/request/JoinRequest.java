@@ -1,4 +1,4 @@
-package upbrella.be.login.dto.request;
+package upbrella.be.user.dto.request;
 
 import lombok.*;
 

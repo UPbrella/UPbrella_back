@@ -1,4 +1,4 @@
-package upbrella.be.login.dto.response;
+package upbrella.be.user.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

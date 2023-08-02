@@ -6,8 +6,8 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import upbrella.be.login.dto.request.JoinRequest;
-import upbrella.be.login.exception.ExistingMemberException;
+import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
 

@@ -7,8 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import upbrella.be.login.dto.request.JoinRequest;
-import upbrella.be.login.exception.ExistingMemberException;
+import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
 

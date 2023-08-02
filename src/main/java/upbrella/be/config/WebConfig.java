@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import upbrella.be.login.interceptor.OAuthLoginInterceptor;
+import upbrella.be.config.interceptor.OAuthLoginInterceptor;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -24,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(oAuthLoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/oauth/**");
+                .excludePathPatterns("/oauth/**", "/index.html");
     }
 
     @Bean

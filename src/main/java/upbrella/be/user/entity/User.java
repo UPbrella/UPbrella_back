@@ -1,7 +1,7 @@
 package upbrella.be.user.entity;
 
 import lombok.*;
-import upbrella.be.login.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.JoinRequest;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

@@ -1,4 +1,4 @@
-package upbrella.be.login.service;
+package upbrella.be.user.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,9 +10,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import upbrella.be.login.dto.response.KakaoLoginResponse;
-import upbrella.be.login.dto.token.KakaoOauthInfo;
-import upbrella.be.login.dto.token.OauthToken;
+import upbrella.be.user.dto.response.KakaoLoginResponse;
+import upbrella.be.user.dto.token.KakaoOauthInfo;
+import upbrella.be.user.dto.token.OauthToken;
 
 import java.util.Optional;
 

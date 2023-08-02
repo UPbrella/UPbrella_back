@@ -1,8 +1,8 @@
-package upbrella.be.login.controller;
+package upbrella.be.user.controller;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import upbrella.be.login.exception.ExistingMemberException;
+import upbrella.be.user.exception.ExistingMemberException;
 
 @RestControllerAdvice
 public class LoginExceptionHandler {

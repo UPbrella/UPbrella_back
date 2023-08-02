@@ -1,4 +1,4 @@
-package upbrella.be.login.service;
+package upbrella.be.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import upbrella.be.login.dto.response.KakaoLoginResponse;
-import upbrella.be.login.dto.token.KakaoOauthInfo;
-import upbrella.be.login.dto.token.OauthToken;
+import upbrella.be.user.dto.response.KakaoLoginResponse;
+import upbrella.be.user.dto.token.KakaoOauthInfo;
+import upbrella.be.user.dto.token.OauthToken;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package upbrella.be.login.exception;
+package upbrella.be.user.exception;
 
 public class ExistingMemberException extends RuntimeException {
 
