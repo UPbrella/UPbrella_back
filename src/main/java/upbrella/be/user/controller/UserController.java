@@ -3,6 +3,7 @@ package upbrella.be.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.user.dto.request.JoinRequest;
@@ -88,7 +89,12 @@ public class UserController {
     @GetMapping("/login")
     public ResponseEntity<CustomResponse> kakaoLogin(HttpSession session, String code) {
 
-        OauthToken kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
+        OauthToken kakaoAccessToken;
+        try {
+            kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
+        } catch (HttpClientErrorException e) {
+            throw new IllegalArgumentException("[ERROR] 로그인 코드가 유효하지 않습니다.");
+        }
         session.setAttribute("authToken", kakaoAccessToken);
 
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());

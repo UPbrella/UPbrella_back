@@ -24,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(oAuthLoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/oauth/**", "/index.html");
+                .excludePathPatterns("/users/login/**", "/users/join/**", "/index.html", "/error/**");
     }
 
     @Bean
