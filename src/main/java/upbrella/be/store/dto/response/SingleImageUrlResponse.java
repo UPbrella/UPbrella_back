@@ -6,8 +6,8 @@ import lombok.Getter;
 import upbrella.be.store.entity.StoreImage;
 
 @Getter
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class SingleImageUrlResponse {
 
     private long id;

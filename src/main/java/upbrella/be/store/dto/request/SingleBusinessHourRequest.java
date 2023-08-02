@@ -1,18 +1,15 @@
 package upbrella.be.store.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import upbrella.be.store.entity.DayOfWeek;
 
 import java.time.LocalTime;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SingleBusinessHourRequest {
 
     private DayOfWeek date;

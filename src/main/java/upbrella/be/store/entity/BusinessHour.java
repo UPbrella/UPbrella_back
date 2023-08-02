@@ -7,10 +7,10 @@ import javax.persistence.*;
 import java.time.LocalTime;
 
 @Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BusinessHour {
 
     @Id

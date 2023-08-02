@@ -8,9 +8,9 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateStoreRequest {
 
     @NotBlank

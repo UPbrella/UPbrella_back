@@ -10,8 +10,8 @@ import upbrella.be.store.entity.DayOfWeek;
 import java.time.LocalTime;
 
 @Getter
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class SingleBusinessHourResponse {
 
     private DayOfWeek date;
