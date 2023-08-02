@@ -3,9 +3,11 @@ package upbrella.be.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import upbrella.be.user.dto.request.JoinRequest;
-import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,5 +32,10 @@ public class UserService {
         User joinedUser = userRepository.save(User.createNewUser(socialId, joinRequest));
 
         return joinedUser.getId();
+    }
+
+    public List<User> findUsers() {
+
+        return userRepository.findAll();
     }
 }

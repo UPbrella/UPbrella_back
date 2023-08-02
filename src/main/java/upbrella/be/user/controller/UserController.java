@@ -7,9 +7,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.user.dto.request.JoinRequest;
-import upbrella.be.user.dto.response.KakaoLoginResponse;
-import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
-import upbrella.be.user.dto.response.UserInfoResponse;
+import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
 import upbrella.be.user.entity.User;
@@ -18,6 +16,7 @@ import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -29,7 +28,7 @@ public class UserController {
     private final KakaoOauthInfo kakaoOauthInfo;
     private final RentRepository rentRepository;
 
-    @GetMapping
+    @GetMapping("/loggedIn")
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
 
         /**
@@ -54,7 +53,7 @@ public class UserController {
                         UserInfoResponse.fromUser(loggedInUser)));
     }
 
-    @GetMapping("/umbrella")
+    @GetMapping("/loggedIn/umbrella")
     public ResponseEntity<CustomResponse<UmbrellaBorrowedByUserResponse>> findUmbrellaBorrowedByUser(HttpSession httpSession) {
 
         /**
@@ -138,5 +137,19 @@ public class UserController {
                         200,
                         "카카오 회원가입 성공",
                         null));
+    }
+
+    @GetMapping
+    public ResponseEntity<CustomResponse<AllUsersInfoResponse>> findUsers(HttpSession httpSession) {
+
+        List<User> users = userService.findUsers();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "회원 목록 정보 조회 성공",
+                        AllUsersInfoResponse.fromUsers(users)));
     }
 }
