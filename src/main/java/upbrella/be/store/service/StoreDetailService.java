@@ -70,7 +70,6 @@ public class StoreDetailService {
     public List<SingleStoreResponse> findAllStores() {
 
         List<StoreDetail> storeDetails = storeDetailRepository.findAllStores();
-        System.out.println("--------------------");
         return storeDetails.stream()
                 .map(this::createSingleStoreResponse)
                 .collect(Collectors.toList());

@@ -29,6 +29,7 @@ public class Classification {
 
         return Classification.builder()
                 .name(request.getName())
+                .type(ClassificationType.CLASSIFICATION)
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .build();
@@ -38,6 +39,7 @@ public class Classification {
 
         return Classification.builder()
                 .name(request.getName())
+                .type(ClassificationType.SUB_CLASSIFICATION)
                 .build();
     }
 }

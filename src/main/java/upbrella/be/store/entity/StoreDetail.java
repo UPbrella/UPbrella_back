@@ -27,7 +27,7 @@ public class StoreDetail {
     private String address;
     private String addressDetail;
     private String content;
-    @OneToMany(mappedBy = "storeDetail", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "storeDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<StoreImage> storeImages;
 
 

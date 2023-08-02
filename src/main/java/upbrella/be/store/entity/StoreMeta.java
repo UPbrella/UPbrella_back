@@ -33,7 +33,7 @@ public class StoreMeta {
     private double latitude;
     private double longitude;
     private String password;
-    @OneToMany(mappedBy = "storeMeta", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "storeMeta", cascade = CascadeType.ALL)
     private Set<BusinessHour> businessHours;
 
     public void delete() {
