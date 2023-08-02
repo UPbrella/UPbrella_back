@@ -1,24 +1,22 @@
 package upbrella.be.error.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import upbrella.be.util.CustomResponse;
 
 @RestController
 public class ErrorController {
 
-    @RequestMapping(value = "/error",
-            method = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PATCH, RequestMethod.DELETE})
+    @GetMapping(value = "/api/error")
+    //@ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResponseEntity<CustomResponse> getError() {
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "fail",
-                        HttpStatus.BAD_REQUEST.value(),
+                        200,
                         "권한이 없는 접근입니다.",
                         null));
     }

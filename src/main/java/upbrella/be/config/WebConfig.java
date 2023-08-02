@@ -29,6 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/users/join/**",
                         "/index.html",
                         "/error/**",
+                        "/api/error/**",
                         "/docs/**");
     }
 
