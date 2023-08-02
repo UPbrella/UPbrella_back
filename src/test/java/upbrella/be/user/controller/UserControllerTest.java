@@ -137,7 +137,7 @@ public class UserControllerTest extends RestDocsSupport {
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("kakao-login-doc",
+                .andDo(document("user-login-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
@@ -170,7 +170,7 @@ public class UserControllerTest extends RestDocsSupport {
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("kakao-login-doc",
+                .andDo(document("user-join-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
