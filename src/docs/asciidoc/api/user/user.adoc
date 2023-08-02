@@ -16,6 +16,7 @@ include::{snippets}/user-login-doc/http-response.adoc[]
 include::{snippets}/user-join-doc/http-request.adoc[]
 include::{snippets}/user-join-doc/request-fields.adoc[]
 
+
 ==== HTTP Response
 
 include::{snippets}/user-join-doc/http-response.adoc[]
