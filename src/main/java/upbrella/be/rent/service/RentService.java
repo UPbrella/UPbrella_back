@@ -12,6 +12,8 @@ import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.entity.User;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RentService {
@@ -33,5 +35,10 @@ public class RentService {
                         userToRent,
                         rentalStore)
         );
+    }
+
+    public List<History> findUserHistory(long userId) {
+
+        return rentRepository.findAllByUserId(userId);
     }
 }

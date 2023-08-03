@@ -11,6 +11,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
@@ -45,10 +46,12 @@ public class UserControllerTest extends RestDocsSupport {
     private KakaoOauthInfo kakaoOauthInfo;
     @Mock
     private RentRepository rentRepository;
+    @Mock
+    private RentService rentService;
 
     @Override
     protected Object initController() {
-        return new UserController(oauthLoginService, userService, kakaoOauthInfo, rentRepository);
+        return new UserController(oauthLoginService, userService, kakaoOauthInfo, rentRepository, rentService);
     }
 
     @DisplayName("사용자는 유저 정보를 조회할 수 있다.")
