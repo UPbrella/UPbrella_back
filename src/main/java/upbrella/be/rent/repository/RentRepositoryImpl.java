@@ -27,6 +27,9 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
                 .join(history.rentStoreMeta, storeMeta).fetchJoin()
                 .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
                 .where(history.user.id.eq(userId))
+                .orderBy(history.refundedAt.desc().nullsFirst(),
+                        history.returnedAt.desc().nullsFirst(),
+                        history.id.desc())
                 .fetch();
     }
 }
