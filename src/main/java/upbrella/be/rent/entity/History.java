@@ -50,10 +50,12 @@ public class History {
 
     public static SingleHistoryResponse ofUserHistory(History history) {
 
-        boolean isReturned = false;
+        boolean isReturned = true;
         boolean isRefunded = false;
-        if (history.getReturnedAt() != null) {
-            isReturned = true;
+        LocalDateTime returnAt = history.getReturnedAt();
+        if (returnAt == null) {
+            isReturned = false;
+            returnAt = history.getRentedAt().plusDays(7);
         }
 
         if (history.getRefundedAt() != null) {
@@ -63,7 +65,7 @@ public class History {
                 .umbrellaUuid(history.getUmbrella().getUuid())
                 .rentedAt(history.getRentedAt())
                 .rentedStore(history.getRentStoreMeta().getName())
-                .returnAt(history.getReturnedAt())
+                .returnAt(returnAt)
                 .isReturned(isReturned)
                 .isRefunded(isRefunded)
                 .build();
