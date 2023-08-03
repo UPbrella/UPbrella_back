@@ -10,9 +10,10 @@ import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.service.UmbrellaService;
+import upbrella.be.user.dto.response.AllHistoryResponse;
 import upbrella.be.user.entity.User;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +38,14 @@ public class RentService {
         );
     }
 
-    public List<History> findUserHistory(long userId) {
+    public AllHistoryResponse findUserHistory(long userId) {
 
-        return rentRepository.findAllByUserId(userId);
+        return AllHistoryResponse.builder()
+                .histories(
+                        rentRepository.findAllByUserId(userId)
+                                .stream()
+                                .map(History::ofUserHistory)
+                                .collect(Collectors.toList()))
+                .build();
     }
 }

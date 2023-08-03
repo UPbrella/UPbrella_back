@@ -14,17 +14,20 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.response.AllHistoryResponse;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
+import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.dto.response.UserInfoResponse;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -193,7 +196,58 @@ public class UserControllerTest extends RestDocsSupport {
                                 fieldWithPath("accountNumber")
                                         .optional()
                                         .description("계좌 번호")
-                                )
+                        )
                 ));
+    }
+
+    @Test
+    @DisplayName("로그인된 사용자는 우산 대여 정보를 조회할 수 있다.")
+    void readUserHistoriesTest() throws Exception {
+
+        // given
+        AllHistoryResponse historyResponse = AllHistoryResponse.builder()
+                .histories(
+                        List.of(
+                                SingleHistoryResponse.builder()
+                                        .umbrellaUuid(32L)
+                                        .rentedAt(LocalDateTime.of(1995, 07, 18, 03, 03))
+                                        .returnAt(LocalDateTime.of(1998, 07, 18, 03, 03))
+                                        .rentedStore("연세대학교 파스꾸치")
+                                        .isRefunded(true)
+                                        .isReturned(true)
+                                        .build())
+                ).build();
+
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("userId", 70L);
+        given(rentService.findUserHistory(70L))
+                .willReturn(historyResponse);
+
+        // when & then
+        mockMvc.perform(
+                        get("/users/histories")
+                                .session(mockHttpSession)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-history-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("histories[]").type(JsonFieldType.ARRAY)
+                                        .description("우산 반납 여부"),
+                                fieldWithPath("histories[].umbrellaUuid").type(JsonFieldType.NUMBER)
+                                        .description("우산 관리 번호"),
+                                fieldWithPath("histories[].rentedAt").type(JsonFieldType.STRING)
+                                        .description("대여 날짜"),
+                                fieldWithPath("histories[].rentedStore").type(JsonFieldType.STRING)
+                                        .description("대여 협업 지점명"),
+                                fieldWithPath("histories[].returnAt").type(JsonFieldType.STRING)
+                                        .description("반납한 날짜 혹은 반납 기한"),
+                                fieldWithPath("histories[].returned").type(JsonFieldType.BOOLEAN)
+                                        .description("우산 반납 여부"),
+                                fieldWithPath("histories[].refunded").type(JsonFieldType.BOOLEAN)
+                                        .description("우산 반납 여부")
+                        )));
     }
 }

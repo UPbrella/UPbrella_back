@@ -8,7 +8,6 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
-import upbrella.be.user.dto.response.AllHistoryResponse;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.user.dto.response.UserInfoResponse;
@@ -20,8 +19,6 @@ import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -150,20 +147,13 @@ public class UserController {
 
         long loginedUserId = (long)session.getAttribute("userId");
 
-        List<History> userHistory = rentService.findUserHistory(loginedUserId);
-
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
                         "사용자 대여 목록 조회 성공",
-                        AllHistoryResponse.builder()
-                                .histories(
-                                        userHistory.stream()
-                                                .map(History::ofUserHistory)
-                                                .collect(Collectors.toList())
-                                )
-                                .build()));
+                        rentService.findUserHistory(loginedUserId)
+                        ));
     }
 }
