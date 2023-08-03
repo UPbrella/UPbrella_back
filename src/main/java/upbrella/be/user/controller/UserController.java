@@ -7,7 +7,10 @@ import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.user.dto.request.JoinRequest;
-import upbrella.be.user.dto.response.*;
+import upbrella.be.user.dto.response.AllUsersInfoResponse;
+import upbrella.be.user.dto.response.KakaoLoginResponse;
+import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
+import upbrella.be.user.dto.response.UserInfoResponse;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
 import upbrella.be.user.entity.User;
@@ -16,7 +19,6 @@ import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -142,7 +144,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<CustomResponse<AllUsersInfoResponse>> findUsers(HttpSession httpSession) {
 
-        List<User> users = userService.findUsers();
+        AllUsersInfoResponse allUsersInfoResponse = userService.findUsers();
 
         return ResponseEntity
                 .ok()
@@ -150,6 +152,6 @@ public class UserController {
                         "success",
                         200,
                         "회원 목록 정보 조회 성공",
-                        AllUsersInfoResponse.fromUsers(users)));
+                        allUsersInfoResponse));
     }
 }

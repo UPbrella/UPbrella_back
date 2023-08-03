@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.response.AllUsersInfoResponse;
+import upbrella.be.user.dto.response.SingleUserInfoResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
@@ -96,6 +98,7 @@ class UserServiceTest {
                 .accountNumber("110-421-674103")
                 .phoneNumber("010-2084-3478")
                 .build();
+
         @Test
         @DisplayName("회원 가입할 수 있다.")
         void success() {
@@ -146,6 +149,8 @@ class UserServiceTest {
                 .phoneNumber("010-0000-0000")
                 .bank("신한")
                 .accountNumber("110-421")
+                .adminStatus(true)
+                .socialId(12345667L)
                 .build();
 
         User luke = User.builder()
@@ -153,27 +158,33 @@ class UserServiceTest {
                 .phoneNumber("010-1223-3444")
                 .bank("우리")
                 .accountNumber("1002-473")
+                .adminStatus(false)
+                .socialId(3892710212132L)
                 .build();
+
         @Test
         @DisplayName("회원 목록을 조회할 수 있다.")
         void success() {
 
             // given
+            AllUsersInfoResponse expected = AllUsersInfoResponse.builder()
+                    .users(List.of(
+                            SingleUserInfoResponse.fromUser(poro),
+                            SingleUserInfoResponse.fromUser(luke)
+                    ))
+                    .build();
+
             given(userRepository.findAll())
-                    .willReturn(List.of(poro,luke));
+                    .willReturn(List.of(poro, luke));
 
             // when
-            List<User> users = userService.findUsers();
+            AllUsersInfoResponse allUsersInfoResponse = userService.findUsers();
 
             // then
             assertAll(
-                    () -> assertThat(users.size()).isEqualTo(2),
-                    () -> assertThat(users.get(0))
+                    () -> assertThat(allUsersInfoResponse)
                             .usingRecursiveComparison()
-                            .isEqualTo(poro),
-                    () -> assertThat(users.get(1))
-                            .usingRecursiveComparison()
-                            .isEqualTo(luke),
+                            .isEqualTo(expected),
                     () -> then(userRepository).should(times(1))
                             .findAll());
         }
@@ -187,13 +198,13 @@ class UserServiceTest {
                     .willReturn(List.of());
 
             // when
-            List<User> users = userService.findUsers();
+            AllUsersInfoResponse allUsersInfoResponse = userService.findUsers();
 
             // then
             assertAll(
-                    () -> assertThat(users.size()).isEqualTo(0),
+                    () -> assertThat(allUsersInfoResponse.getUsers().size()).isEqualTo(0),
                     () -> then(userRepository).should(times(1))
                             .findAll());
-         }
+        }
     }
 }

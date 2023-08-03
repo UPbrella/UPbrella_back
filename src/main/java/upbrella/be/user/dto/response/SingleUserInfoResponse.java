@@ -8,18 +8,22 @@ import upbrella.be.user.entity.User;
 @Builder
 public class SingleUserInfoResponse {
 
+    private long socialId;
     private String name;
     private String phoneNumber;
     private String bank;
     private String accountNumber;
+    private boolean adminStatus;
 
     public static SingleUserInfoResponse fromUser(User user) {
 
         return SingleUserInfoResponse.builder()
+                .socialId(user.getSocialId())
                 .name(user.getName())
                 .phoneNumber(user.getPhoneNumber())
                 .bank(user.getBank())
                 .accountNumber(user.getAccountNumber())
+                .adminStatus(user.isAdminStatus())
                 .build();
     }
 }

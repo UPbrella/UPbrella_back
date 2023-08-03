@@ -13,7 +13,9 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
+import upbrella.be.user.dto.response.SingleUserInfoResponse;
 import upbrella.be.user.dto.response.UserInfoResponse;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
@@ -205,6 +207,8 @@ public class UserControllerTest extends RestDocsSupport {
                 .phoneNumber("010-0000-0000")
                 .bank("신한")
                 .accountNumber("110-421")
+                .adminStatus(true)
+                .socialId(12345667L)
                 .build();
 
         User luke = User.builder()
@@ -212,10 +216,19 @@ public class UserControllerTest extends RestDocsSupport {
                 .phoneNumber("010-1223-3444")
                 .bank("우리")
                 .accountNumber("1002-473")
+                .adminStatus(false)
+                .socialId(1234566722L)
+                .build();
+
+        AllUsersInfoResponse allUsersInfoResponse = AllUsersInfoResponse.builder()
+                .users(List.of(
+                        SingleUserInfoResponse.fromUser(poro),
+                        SingleUserInfoResponse.fromUser(luke)
+                ))
                 .build();
 
         given(userService.findUsers())
-                .willReturn(List.of(poro,luke));
+                .willReturn(allUsersInfoResponse);
 
         // when
         mockMvc.perform(
@@ -229,6 +242,8 @@ public class UserControllerTest extends RestDocsSupport {
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("users").type(JsonFieldType.ARRAY)
                                                 .description("회원 정보 목록"),
+                                fieldWithPath("users[].socialId").type(JsonFieldType.NUMBER)
+                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("users[].name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("users[].phoneNumber").type(JsonFieldType.STRING)
@@ -238,7 +253,10 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("은행 이름"),
                                 fieldWithPath("users[].accountNumber").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("사용자 계좌 번호")
+                                        .description("사용자 계좌 번호"),
+                                fieldWithPath("users[].adminStatus").type(JsonFieldType.BOOLEAN)
+                                        .optional()
+                                        .description("관리자 여부")
                                 )));
     }
 }
