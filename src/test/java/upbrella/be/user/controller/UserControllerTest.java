@@ -255,7 +255,6 @@ public class UserControllerTest extends RestDocsSupport {
                                         .optional()
                                         .description("사용자 계좌 번호"),
                                 fieldWithPath("users[].adminStatus").type(JsonFieldType.BOOLEAN)
-                                        .optional()
                                         .description("관리자 여부")
                                 )));
     }
