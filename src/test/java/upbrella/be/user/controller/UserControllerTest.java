@@ -203,6 +203,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // given
         User poro = User.builder()
+                .id(1L)
                 .name("포로")
                 .phoneNumber("010-0000-0000")
                 .bank("신한")
@@ -212,6 +213,7 @@ public class UserControllerTest extends RestDocsSupport {
                 .build();
 
         User luke = User.builder()
+                .id(2L)
                 .name("김성규")
                 .phoneNumber("010-1223-3444")
                 .bank("우리")
