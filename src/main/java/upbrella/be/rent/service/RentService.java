@@ -11,8 +11,10 @@ import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
+import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,8 +46,24 @@ public class RentService {
                 .histories(
                         rentRepository.findAllByUserId(userId)
                                 .stream()
-                                .map(History::ofUserHistory)
+                                .map(this::ofCreated)
                                 .collect(Collectors.toList()))
                 .build();
+    }
+
+    private SingleHistoryResponse ofCreated(History history) {
+        boolean isReturned = true;
+        boolean isRefunded = false;
+        LocalDateTime returnAt = history.getReturnedAt();
+        if (returnAt == null) {
+            isReturned = false;
+            returnAt = history.getRentedAt().plusDays(7);
+        }
+
+        if (history.getRefundedAt() != null) {
+            isRefunded = true;
+        }
+
+        return SingleHistoryResponse.ofUserHistory(history, returnAt, isReturned, isRefunded);
     }
 }
