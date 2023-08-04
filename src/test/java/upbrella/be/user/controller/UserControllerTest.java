@@ -194,8 +194,7 @@ public class UserControllerTest extends RestDocsSupport {
                                 fieldWithPath("accountNumber")
                                         .optional()
                                         .description("계좌 번호")
-                        )
-                ));
+                        )));
     }
 
     @DisplayName("사용자는 회원 정보 목록을 조회할 수 있다.")

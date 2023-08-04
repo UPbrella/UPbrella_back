@@ -20,7 +20,7 @@ public class ErrorController {
                 .ok()
                 .body(new CustomResponse<>(
                         "fail",
-                        400,
+                        HttpStatus.BAD_REQUEST.value(),
                         "권한이 없는 접근입니다.",
                         null));
     }
