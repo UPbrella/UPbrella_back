@@ -9,12 +9,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
 public class SingleHistoryResponse {
 
     private long umbrellaUuid;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime rentedAt;
     private String rentedStore;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime returnAt;
     private boolean isReturned;
     private boolean isRefunded;

@@ -8,10 +8,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.user.dto.request.JoinRequest;
-import upbrella.be.user.exception.ExistingMemberException;
+import upbrella.be.user.dto.response.AllUsersInfoResponse;
+import upbrella.be.user.dto.response.SingleUserInfoResponse;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,6 +98,7 @@ class UserServiceTest {
                 .accountNumber("110-421-674103")
                 .phoneNumber("010-2084-3478")
                 .build();
+
         @Test
         @DisplayName("회원 가입할 수 있다.")
         void success() {
@@ -132,6 +136,75 @@ class UserServiceTest {
                             .existsBySocialId(23132L),
                     () -> then(userRepository).should(never())
                             .save(any(User.class)));
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자는")
+    class findUsersTest {
+
+        // given
+        User poro = User.builder()
+                .name("포로")
+                .phoneNumber("010-0000-0000")
+                .bank("신한")
+                .accountNumber("110-421")
+                .adminStatus(true)
+                .socialId(12345667L)
+                .build();
+
+        User luke = User.builder()
+                .name("김성규")
+                .phoneNumber("010-1223-3444")
+                .bank("우리")
+                .accountNumber("1002-473")
+                .adminStatus(false)
+                .socialId(3892710212132L)
+                .build();
+
+        @Test
+        @DisplayName("회원 목록을 조회할 수 있다.")
+        void success() {
+
+            // given
+            AllUsersInfoResponse expected = AllUsersInfoResponse.builder()
+                    .users(List.of(
+                            SingleUserInfoResponse.fromUser(poro),
+                            SingleUserInfoResponse.fromUser(luke)
+                    ))
+                    .build();
+
+            given(userRepository.findAll())
+                    .willReturn(List.of(poro, luke));
+
+            // when
+            AllUsersInfoResponse allUsersInfoResponse = userService.findUsers();
+
+            // then
+            assertAll(
+                    () -> assertThat(allUsersInfoResponse)
+                            .usingRecursiveComparison()
+                            .isEqualTo(expected),
+                    () -> then(userRepository).should(times(1))
+                            .findAll());
+        }
+
+        @Test
+        @DisplayName("존재하는 회원이 없으면 빈 목록이 반환된다.")
+        void nonExistingUser() {
+
+            // given
+            given(userRepository.findAll())
+                    .willReturn(List.of());
+
+            // when
+            AllUsersInfoResponse allUsersInfoResponse = userService.findUsers();
+
+            // then
+            assertAll(
+                    () -> assertThat(allUsersInfoResponse.getUsers().size()).isEqualTo(0),
+                    () -> then(userRepository).should(times(1))
+                            .findAll());
         }
     }
 }

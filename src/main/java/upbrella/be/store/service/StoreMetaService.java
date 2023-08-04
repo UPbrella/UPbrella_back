@@ -49,9 +49,10 @@ public class StoreMetaService {
                 coordinateRequest.getLongitudeFrom(), coordinateRequest.getLongitudeTo()
         );
 
+
         return storeMetaListInCurrentMap.stream()
                 .map(SingleCurrentLocationStoreResponse::fromStoreMeta)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     @Transactional
