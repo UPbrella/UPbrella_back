@@ -5,7 +5,7 @@ import upbrella.be.rent.entity.History;
 
 import java.util.Optional;
 
-public interface RentRepository extends JpaRepository<History, Long> {
+public interface RentRepository extends JpaRepository<History, Long>, RentRepositoryCustom {
 
     Optional<History> findByUserAndReturnedAtIsNull(Long userId);
 }

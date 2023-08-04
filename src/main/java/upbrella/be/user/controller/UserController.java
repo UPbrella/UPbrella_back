@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
@@ -28,6 +29,7 @@ public class UserController {
     private final UserService userService;
     private final KakaoOauthInfo kakaoOauthInfo;
     private final RentRepository rentRepository;
+    private final RentService rentService;
 
     @GetMapping
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
@@ -138,5 +140,20 @@ public class UserController {
                         200,
                         "카카오 회원가입 성공",
                         null));
+    }
+
+    @GetMapping("/histories")
+    public ResponseEntity<CustomResponse> readUserHistories(HttpSession session) {
+
+        long loginedUserId = (long)session.getAttribute("userId");
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "사용자 대여 목록 조회 성공",
+                        rentService.findAllHistoriesByUser(loginedUserId)
+                        ));
     }
 }

@@ -10,7 +10,13 @@ import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.service.UmbrellaService;
+import upbrella.be.user.dto.response.AllHistoryResponse;
+import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,5 +39,40 @@ public class RentService {
                         userToRent,
                         rentalStore)
         );
+    }
+
+    public AllHistoryResponse findAllHistoriesByUser(long userId) {
+
+        return AllHistoryResponse.of(findAllByUserId(userId));
+    }
+
+    private List<SingleHistoryResponse> findAllByUserId(long userId) {
+
+        return findAllByUser(userId)
+                .stream()
+                .map(this::toSingleHistoryResponse)
+                .collect(Collectors.toList());
+    }
+
+    private List<History> findAllByUser(long userId) {
+        return rentRepository.findAllByUserId(userId);
+    }
+
+    private SingleHistoryResponse toSingleHistoryResponse(History history) {
+
+        boolean isReturned = true;
+        boolean isRefunded = false;
+        LocalDateTime returnAt = history.getReturnedAt();
+
+        if (returnAt == null) {
+            isReturned = false;
+            returnAt = history.getRentedAt().plusDays(14);
+        }
+
+        if (history.getRefundedAt() != null) {
+            isRefunded = true;
+        }
+
+        return SingleHistoryResponse.ofUserHistory(history, returnAt, isReturned, isRefunded);
     }
 }
