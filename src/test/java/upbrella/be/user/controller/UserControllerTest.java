@@ -220,7 +220,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("userId", 70L);
-        given(rentService.findUserHistory(70L))
+        given(rentService.findAllHistoriesByUser(70L))
                 .willReturn(historyResponse);
 
         // when & then

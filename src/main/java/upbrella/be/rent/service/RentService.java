@@ -15,6 +15,7 @@ import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,24 +41,32 @@ public class RentService {
         );
     }
 
-    public AllHistoryResponse findUserHistory(long userId) {
+    public AllHistoryResponse findAllHistoriesByUser(long userId) {
 
-        return AllHistoryResponse.builder()
-                .histories(
-                        rentRepository.findAllByUserId(userId)
-                                .stream()
-                                .map(this::ofCreated)
-                                .collect(Collectors.toList()))
-                .build();
+        return AllHistoryResponse.of(findAllByUserId(userId));
     }
 
-    private SingleHistoryResponse ofCreated(History history) {
+    private List<SingleHistoryResponse> findAllByUserId(long userId) {
+
+        return findAllByUser(userId)
+                .stream()
+                .map(this::toSingleHistoryResponse)
+                .collect(Collectors.toList());
+    }
+
+    private List<History> findAllByUser(long userId) {
+        return rentRepository.findAllByUserId(userId);
+    }
+
+    private SingleHistoryResponse toSingleHistoryResponse(History history) {
+
         boolean isReturned = true;
         boolean isRefunded = false;
         LocalDateTime returnAt = history.getReturnedAt();
+
         if (returnAt == null) {
             isReturned = false;
-            returnAt = history.getRentedAt().plusDays(7);
+            returnAt = history.getRentedAt().plusDays(14);
         }
 
         if (history.getRefundedAt() != null) {

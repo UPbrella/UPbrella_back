@@ -194,7 +194,7 @@ class RentServiceTest {
                     .willReturn(List.of(history));
 
             // when
-            AllHistoryResponse userHistory = rentService.findUserHistory(loginedUserId);
+            AllHistoryResponse userHistory = rentService.findAllHistoriesByUser(loginedUserId);
 
             //then
             assertAll(() -> assertThat(userHistory)
@@ -218,7 +218,7 @@ class RentServiceTest {
                     .willReturn(List.of());
 
             // when
-            AllHistoryResponse userHistory = rentService.findUserHistory(loginedUserId);
+            AllHistoryResponse userHistory = rentService.findAllHistoriesByUser(loginedUserId);
 
             //then
             assertAll(() -> assertThat(userHistory.getHistories().size())

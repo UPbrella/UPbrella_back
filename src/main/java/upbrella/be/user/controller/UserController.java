@@ -153,7 +153,7 @@ public class UserController {
                         "success",
                         200,
                         "사용자 대여 목록 조회 성공",
-                        rentService.findUserHistory(loginedUserId)
+                        rentService.findAllHistoriesByUser(loginedUserId)
                         ));
     }
 }

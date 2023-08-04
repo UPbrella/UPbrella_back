@@ -10,4 +10,11 @@ import java.util.List;
 public class AllHistoryResponse {
 
     private List<SingleHistoryResponse> histories;
+
+    public static AllHistoryResponse of(List<SingleHistoryResponse> get) {
+
+        return AllHistoryResponse.builder()
+                .histories(get)
+                .build();
+    }
 }
