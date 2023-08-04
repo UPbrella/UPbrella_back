@@ -57,3 +57,15 @@ include::{snippets}/find-umbrella-borrowed-by-user-doc/http-request.adoc[]
 
 include::{snippets}/find-umbrella-borrowed-by-user-doc/http-response.adoc[]
 include::{snippets}/find-umbrella-borrowed-by-user-doc/response-fields-data.adoc[]
+
+=== 사용자 대여 내역 조회
+
+==== HTTP Request
+
+include::{snippets}/user-history-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-history-doc/http-response.adoc[]
+include::{snippets}/user-history-doc/response-fields-data.adoc[]
+
