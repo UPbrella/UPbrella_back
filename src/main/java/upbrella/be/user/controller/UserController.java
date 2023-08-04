@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.user.dto.response.UserInfoResponse;
@@ -28,8 +30,9 @@ public class UserController {
     private final UserService userService;
     private final KakaoOauthInfo kakaoOauthInfo;
     private final RentRepository rentRepository;
+    private final RentService rentService;
 
-    @GetMapping
+    @GetMapping("/loggedIn")
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
 
         /**
@@ -54,7 +57,7 @@ public class UserController {
                         UserInfoResponse.fromUser(loggedInUser)));
     }
 
-    @GetMapping("/umbrella")
+    @GetMapping("/loggedIn/umbrella")
     public ResponseEntity<CustomResponse<UmbrellaBorrowedByUserResponse>> findUmbrellaBorrowedByUser(HttpSession httpSession) {
 
         /**
@@ -138,5 +141,34 @@ public class UserController {
                         200,
                         "카카오 회원가입 성공",
                         null));
+    }
+
+    @GetMapping
+    public ResponseEntity<CustomResponse<AllUsersInfoResponse>> findUsers(HttpSession httpSession) {
+
+        AllUsersInfoResponse allUsersInfoResponse = userService.findUsers();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "회원 목록 정보 조회 성공",
+                        allUsersInfoResponse));
+    }
+
+    @GetMapping("/histories")
+    public ResponseEntity<CustomResponse> readUserHistories(HttpSession session) {
+
+        long loginedUserId = (long) session.getAttribute("userId");
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "사용자 대여 목록 조회 성공",
+                        rentService.findAllHistoriesByUser(loginedUserId)
+                ));
     }
 }

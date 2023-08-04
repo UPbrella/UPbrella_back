@@ -23,7 +23,7 @@ public class OAuthLoginInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession(false);
 
         if (session == null) {
-            request.getRequestDispatcher("/error").forward(request, response);
+            request.getRequestDispatcher("/api/error").forward(request, response);
             return false;
         }
 
@@ -31,12 +31,12 @@ public class OAuthLoginInterceptor implements HandlerInterceptor {
 
         // 카카오 인증이 안되어 있는 경우, 세션이 없는 경우
         if (userId == null) {
-            request.getRequestDispatcher("/error").forward(request, response);
+            request.getRequestDispatcher("/api/error").forward(request, response);
             return false;
         }
 
         if (!userRepository.existsById(userId)) {
-            request.getRequestDispatcher("/error").forward(request, response);
+            request.getRequestDispatcher("/api/error").forward(request, response);
             return false;
         }
 

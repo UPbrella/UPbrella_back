@@ -11,19 +11,21 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
-import upbrella.be.user.dto.response.KakaoLoginResponse;
-import upbrella.be.user.dto.response.UserInfoResponse;
+import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
+import upbrella.be.user.entity.User;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -45,13 +47,15 @@ public class UserControllerTest extends RestDocsSupport {
     private KakaoOauthInfo kakaoOauthInfo;
     @Mock
     private RentRepository rentRepository;
+    @Mock
+    private RentService rentService;
 
     @Override
     protected Object initController() {
-        return new UserController(oauthLoginService, userService, kakaoOauthInfo, rentRepository);
+        return new UserController(oauthLoginService, userService, kakaoOauthInfo, rentRepository, rentService);
     }
 
-    @DisplayName("사용자는 유저 정보를 조회할 수 있다.")
+    @DisplayName("사용자는 로그인된 유저 정보를 조회할 수 있다.")
     @Test
     void findUserInfoTest() throws Exception {
 
@@ -64,7 +68,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        get("/users")
+                        get("/users/loggedIn")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-user-info-doc",
@@ -100,7 +104,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        get("/users/umbrella")
+                        get("/users/loggedIn/umbrella")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-umbrella-borrowed-by-user-doc",
@@ -190,7 +194,124 @@ public class UserControllerTest extends RestDocsSupport {
                                 fieldWithPath("accountNumber")
                                         .optional()
                                         .description("계좌 번호")
-                                )
-                ));
+                        )));
+    }
+
+    @DisplayName("사용자는 회원 정보 목록을 조회할 수 있다.")
+    @Test
+            void findUsersInfoTest() throws Exception {
+
+        // given
+        User poro = User.builder()
+                .id(1L)
+                .name("포로")
+                .phoneNumber("010-0000-0000")
+                .bank("신한")
+                .accountNumber("110-421")
+                .adminStatus(true)
+                .socialId(12345667L)
+                .build();
+
+        User luke = User.builder()
+                .id(2L)
+                .name("김성규")
+                .phoneNumber("010-1223-3444")
+                .bank("우리")
+                .accountNumber("1002-473")
+                .adminStatus(false)
+                .socialId(1234566722L)
+                .build();
+
+        AllUsersInfoResponse allUsersInfoResponse = AllUsersInfoResponse.builder()
+                .users(List.of(
+                        SingleUserInfoResponse.fromUser(poro),
+                        SingleUserInfoResponse.fromUser(luke)
+                ))
+                .build();
+
+        given(userService.findUsers())
+                .willReturn(allUsersInfoResponse);
+
+        // when
+        mockMvc.perform(
+                        get("/users")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("find-users-info-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("users").type(JsonFieldType.ARRAY)
+                                        .description("회원 정보 목록"),
+                                fieldWithPath("users[].id").type(JsonFieldType.NUMBER)
+                                        .description("사용자 고유번호"),
+                                fieldWithPath("users[].socialId").type(JsonFieldType.NUMBER)
+                                        .description("사용자 소셜 고유번호"),
+                                fieldWithPath("users[].name").type(JsonFieldType.STRING)
+                                        .description("사용자 이름"),
+                                fieldWithPath("users[].phoneNumber").type(JsonFieldType.STRING)
+                                        .description("사용자 전화번호"),
+                                fieldWithPath("users[].bank").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("은행 이름"),
+                                fieldWithPath("users[].accountNumber").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("사용자 계좌 번호"),
+                                fieldWithPath("users[].adminStatus").type(JsonFieldType.BOOLEAN)
+                                        .description("관리자 여부")
+                        )));
+    }
+
+    @Test
+    @DisplayName("로그인된 사용자는 우산 대여 정보를 조회할 수 있다.")
+    void readUserHistoriesTest() throws Exception {
+
+        // given
+        AllHistoryResponse historyResponse = AllHistoryResponse.builder()
+                .histories(
+                        List.of(
+                                SingleHistoryResponse.builder()
+                                        .umbrellaUuid(32L)
+                                        .rentedAt(LocalDateTime.of(1995, 07, 18, 03, 03))
+                                        .returnAt(LocalDateTime.of(1998, 07, 18, 03, 03))
+                                        .rentedStore("연세대학교 파스꾸치")
+                                        .isRefunded(true)
+                                        .isReturned(true)
+                                        .build())
+                ).build();
+
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("userId", 70L);
+        given(rentService.findAllHistoriesByUser(70L))
+                .willReturn(historyResponse);
+
+        // when & then
+        mockMvc.perform(
+                        get("/users/histories")
+                                .session(mockHttpSession)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-history-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("histories[]").type(JsonFieldType.ARRAY)
+                                        .description("우산 대여 목록"),
+                                fieldWithPath("histories[].umbrellaUuid").type(JsonFieldType.NUMBER)
+                                        .description("우산 관리 번호"),
+                                fieldWithPath("histories[].rentedAt").type(JsonFieldType.STRING)
+                                        .description("대여 날짜"),
+                                fieldWithPath("histories[].rentedStore").type(JsonFieldType.STRING)
+                                        .description("대여 협업 지점명"),
+                                fieldWithPath("histories[].returnAt").type(JsonFieldType.STRING)
+                                        .description("반납한 날짜 혹은 반납 기한"),
+                                fieldWithPath("histories[].returned").type(JsonFieldType.BOOLEAN)
+                                        .description("우산 반납 여부"),
+                                fieldWithPath("histories[].refunded").type(JsonFieldType.BOOLEAN)
+                                        .description("우산 환급 여부")
+                        )));
+>>>>>>> dev
     }
 }
