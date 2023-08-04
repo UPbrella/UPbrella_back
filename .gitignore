@@ -95,3 +95,5 @@ gradle-app.setting
 out
 
 ./src/main/resources/application.properties
+
+bin
