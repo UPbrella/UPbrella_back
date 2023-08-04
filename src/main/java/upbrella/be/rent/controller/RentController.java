@@ -3,6 +3,7 @@ package upbrella.be.rent.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
@@ -59,7 +60,9 @@ public class RentController {
     }
 
     @GetMapping("/histories")
-    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest historyFilterRequest, HttpSession httpSession) {
+
+
 
         return ResponseEntity
                 .ok()

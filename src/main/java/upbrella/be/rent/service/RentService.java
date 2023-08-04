@@ -3,7 +3,10 @@ package upbrella.be.rent.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
+import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
@@ -41,6 +44,12 @@ public class RentService {
         );
     }
 
+    @Transactional
+    public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
+
+        return RentalHistoriesPageResponse.of(findAllResponse(filter));
+    }
+
     public AllHistoryResponse findAllHistoriesByUser(long userId) {
 
         return AllHistoryResponse.of(findAllByUserId(userId));
@@ -56,6 +65,16 @@ public class RentService {
 
     private List<History> findAllByUser(long userId) {
         return rentRepository.findAllByUserId(userId);
+    }
+
+    private List<RentalHistoryResponse> findAllResponse(HistoryFilterRequest filter) {
+
+        return null;
+    }
+
+    private List<History> findAll(HistoryFilterRequest filter) {
+
+        return rentRepository.findAll(filter);
     }
 
     private SingleHistoryResponse toSingleHistoryResponse(History history) {

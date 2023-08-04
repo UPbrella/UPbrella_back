@@ -2,6 +2,7 @@ package upbrella.be.rent.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.entity.History;
 
 import java.util.List;
@@ -15,6 +16,11 @@ import static upbrella.be.user.entity.QUser.user;
 public class RentRepositoryImpl implements RentRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public List<History> findAll(HistoryFilterRequest filter) {
+        return null;
+    }
 
     @Override
     public List<History> findAllByUserId(long userId) {
