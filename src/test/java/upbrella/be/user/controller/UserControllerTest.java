@@ -312,6 +312,5 @@ public class UserControllerTest extends RestDocsSupport {
                                 fieldWithPath("histories[].refunded").type(JsonFieldType.BOOLEAN)
                                         .description("우산 환급 여부")
                         )));
->>>>>>> dev
     }
 }
