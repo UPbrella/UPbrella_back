@@ -8,6 +8,7 @@ import upbrella.be.user.entity.User;
 @Builder
 public class SingleUserInfoResponse {
 
+    private long id;
     private long socialId;
     private String name;
     private String phoneNumber;
@@ -18,6 +19,7 @@ public class SingleUserInfoResponse {
     public static SingleUserInfoResponse fromUser(User user) {
 
         return SingleUserInfoResponse.builder()
+                .id(user.getId())
                 .socialId(user.getSocialId())
                 .name(user.getName())
                 .phoneNumber(user.getPhoneNumber())

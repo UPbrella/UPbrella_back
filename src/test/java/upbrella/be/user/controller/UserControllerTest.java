@@ -242,6 +242,8 @@ public class UserControllerTest extends RestDocsSupport {
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("users").type(JsonFieldType.ARRAY)
                                                 .description("회원 정보 목록"),
+                                fieldWithPath("users[].id").type(JsonFieldType.NUMBER)
+                                        .description("사용자 고유번호"),
                                 fieldWithPath("users[].socialId").type(JsonFieldType.NUMBER)
                                         .description("사용자 소셜 고유번호"),
                                 fieldWithPath("users[].name").type(JsonFieldType.STRING)
