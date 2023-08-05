@@ -47,7 +47,7 @@ public class RentService {
     @Transactional
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
 
-        return RentalHistoriesPageResponse.of(findAllResponse(filter));
+        return RentalHistoriesPageResponse.of(findAllRentalHistory(filter));
     }
 
     public AllHistoryResponse findAllHistoriesByUser(long userId) {
@@ -67,9 +67,12 @@ public class RentService {
         return rentRepository.findAllByUserId(userId);
     }
 
-    private List<RentalHistoryResponse> findAllResponse(HistoryFilterRequest filter) {
+    private List<RentalHistoryResponse> findAllRentalHistory(HistoryFilterRequest filter) {
 
-        return null;
+        return findAll(filter)
+                .stream()
+                .map(this::toRentalHistoryResponse)
+                .collect(Collectors.toList());
     }
 
     private List<History> findAll(HistoryFilterRequest filter) {
@@ -93,5 +96,23 @@ public class RentService {
         }
 
         return SingleHistoryResponse.ofUserHistory(history, returnAt, isReturned, isRefunded);
+    }
+
+    private RentalHistoryResponse toRentalHistoryResponse(History history) {
+
+        int elapsedDay = LocalDateTime.now().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
+        int totalRentalDay = 0;
+        boolean isReturned = false;
+
+        if (history.getReturnedAt() != null) {
+
+            elapsedDay = history.getReturnedAt().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
+            totalRentalDay = history.getReturnedAt().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
+            isReturned = true;
+
+            return RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay, isReturned);
+        }
+
+        return RentalHistoryResponse.createNonReturnedHistory(history, elapsedDay, totalRentalDay, isReturned);
     }
 }

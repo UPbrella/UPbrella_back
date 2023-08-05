@@ -53,14 +53,14 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
 
     private BooleanExpression filterRefunded(HistoryFilterRequest filter) {
 
+        if (filter.getRefunded() == null) {
+            return null;
+        }
+
         if (filter.getRefunded() == true) {
             return history.refundedAt.isNotNull();
         }
 
-        if (filter.getRefunded() == false) {
-            return history.refundedAt.isNotNull();
-        }
-
-        return null;
+        return history.refundedAt.isNull();
     }
 }

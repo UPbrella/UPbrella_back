@@ -130,7 +130,7 @@ public class RentControllerTest extends RestDocsSupport {
                         .rentStoreName("대여점 이름")
                         .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
                         .elapsedDay(3)
-                        .umbrellaId(30)
+                        .umbrellaUuid(30)
                         .returnStoreName("반납점 이름")
                         .returnAt(LocalDateTime.now())
                         .totalRentalDay(5)

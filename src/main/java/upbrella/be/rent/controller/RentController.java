@@ -62,7 +62,7 @@ public class RentController {
     @GetMapping("/histories")
     public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest historyFilterRequest, HttpSession httpSession) {
 
-
+        RentalHistoriesPageResponse allHistories = rentService.findAllHistories(historyFilterRequest);
 
         return ResponseEntity
                 .ok()
@@ -70,22 +70,8 @@ public class RentController {
                         "success",
                         200,
                         "대여 내역 조회 성공",
-                        RentalHistoriesPageResponse.builder()
-                                .rentalHistoryResponsePage(
-                                        List.of(RentalHistoryResponse.builder()
-                                                .id(1L)
-                                                .name("사용자")
-                                                .phoneNumber("010-1234-5678")
-                                                .rentStoreName("대여점 이름")
-                                                .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
-                                                .elapsedDay(3)
-                                                .umbrellaId(30)
-                                                .returnStoreName("반납점 이름")
-                                                .returnAt(LocalDateTime.now())
-                                                .totalRentalDay(5)
-                                                .refundCompleted(true)
-                                                .build()
-                                        )).build()));
+                        allHistories
+                ));
     }
 
     @GetMapping("/histories/status")
