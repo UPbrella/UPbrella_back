@@ -44,7 +44,6 @@ public class RentService {
         );
     }
 
-    @Transactional
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
 
         return RentalHistoriesPageResponse.of(findAllRentalHistory(filter));
