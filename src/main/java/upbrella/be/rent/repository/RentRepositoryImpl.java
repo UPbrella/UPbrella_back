@@ -1,5 +1,6 @@
 package upbrella.be.rent.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
@@ -19,7 +20,18 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
 
     @Override
     public List<History> findAll(HistoryFilterRequest filter) {
-        return null;
+        return queryFactory
+                .selectFrom(history)
+                .join(history.user, user).fetchJoin()
+                .leftJoin(history.refundedBy, user).fetchJoin()
+                .join(history.umbrella, umbrella).fetchJoin()
+                .join(history.rentStoreMeta, storeMeta).fetchJoin()
+                .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
+                .where(filterRefunded(filter))
+                .orderBy(history.refundedAt.desc().nullsFirst(),
+                        history.returnedAt.desc().nullsFirst(),
+                        history.id.desc())
+                .fetch();
     }
 
     @Override
@@ -37,5 +49,18 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
                         history.returnedAt.desc().nullsFirst(),
                         history.id.desc())
                 .fetch();
+    }
+
+    private BooleanExpression filterRefunded(HistoryFilterRequest filter) {
+
+        if (filter.getRefunded() == true) {
+            return history.refundedAt.isNotNull();
+        }
+
+        if (filter.getRefunded() == false) {
+            return history.refundedAt.isNotNull();
+        }
+
+        return null;
     }
 }
