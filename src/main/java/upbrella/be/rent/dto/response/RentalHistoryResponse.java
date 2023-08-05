@@ -21,7 +21,7 @@ public class RentalHistoryResponse {
     private String returnStoreName;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime returnAt;
-    private int totalRentalDay;
+    private Integer totalRentalDay;
     private boolean refundCompleted;
     private String etc;
 
@@ -43,7 +43,7 @@ public class RentalHistoryResponse {
                 .build();
     }
 
-    public static RentalHistoryResponse createNonReturnedHistory(History history, int elapsedDay, int totalRentalDay, boolean isReturned) {
+    public static RentalHistoryResponse createNonReturnedHistory(History history, int elapsedDay, boolean isReturned) {
 
         return RentalHistoryResponse.builder()
                 .id(history.getId())
@@ -53,7 +53,6 @@ public class RentalHistoryResponse {
                 .rentAt(history.getRentedAt())
                 .elapsedDay(elapsedDay)
                 .umbrellaUuid(history.getUmbrella().getUuid())
-                .totalRentalDay(totalRentalDay)
                 .refundCompleted(isReturned)
                 .etc(history.getEtc())
                 .build();

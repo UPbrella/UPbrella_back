@@ -113,6 +113,6 @@ public class RentService {
             return RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay, isReturned);
         }
 
-        return RentalHistoryResponse.createNonReturnedHistory(history, elapsedDay, totalRentalDay, isReturned);
+        return RentalHistoryResponse.createNonReturnedHistory(history, elapsedDay, isReturned);
     }
 }
