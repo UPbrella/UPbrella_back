@@ -15,7 +15,6 @@ import upbrella.be.user.repository.UserRepository;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @RestController
 @RequestMapping("/rent")
@@ -76,7 +75,7 @@ public class RentController {
     }
 
     @GetMapping("/histories/status")
-    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> showAllConditionReports(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> findConditionReports(HttpSession httpSession) {
 
         // TODO: 세션 정보로 관리자 식별
 
