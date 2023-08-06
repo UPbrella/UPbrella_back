@@ -12,9 +12,7 @@ import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
-import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.entity.History;
-import upbrella.be.rent.entity.ImprovementReport;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
@@ -51,8 +49,6 @@ class RentServiceTest {
     private Umbrella foundUmbrella;
     private User userToRent;
     private History history;
-    private ConditionReport conditionReport;
-    private ImprovementReport improvementReport;
     private HistoryFilterRequest filter;
 
     @BeforeEach
@@ -95,13 +91,6 @@ class RentServiceTest {
                 .umbrella(foundUmbrella)
                 .user(userToRent)
                 .rentStoreMeta(foundStoreMeta)
-                .build();
-
-        conditionReport = ConditionReport.builder()
-                .id(1L)
-                .content("상태 양호")
-                .etc("etc")
-                .history(history)
                 .build();
     }
 

@@ -189,13 +189,18 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     void showAllStatusConditionTest() throws Exception {
 
-        List<ConditionReportResponse> response = List.of(ConditionReportResponse.builder()
-                        .id(1L)
-                        .umbrellaId(1L)
-                        .content("우산이 망가졌습니다.")
-                        .build());
+        ConditionReportPageResponse conditionReportsResponse = ConditionReportPageResponse.builder()
+                .conditionReports(
+                        List.of(
+                                ConditionReportResponse.builder()
+                                        .id(33L)
+                                        .umbrellaUuid(99L)
+                                        .content("content")
+                                        .etc("etc")
+                                        .build())
+                ).build();
 
-        given(conditionReportService.findAllConditionReport()).willReturn(response);
+        given(conditionReportService.findAll()).willReturn(conditionReportsResponse);
 
         mockMvc.perform(
                         get("/rent/histories/status")
@@ -228,7 +233,7 @@ public class RentControllerTest extends RestDocsSupport {
         ImprovementReportPageResponse response = ImprovementReportPageResponse.builder()
                 .improvementReports(List.of(ImprovementReportResponse.builder()
                         .id(1L)
-                        .umbrellaId(1)
+                        .umbrellaUuid(1)
                         .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
                         .etc("기타 사항")
                         .build())
