@@ -88,7 +88,7 @@ public class RentController {
                         ConditionReportPageResponse.builder()
                                 .conditionReports(
                                         conditionReportService.findAllConditionReport()
-                                        ).build()));
+                                ).build()));
     }
 
     @GetMapping("/histories/improvements")
