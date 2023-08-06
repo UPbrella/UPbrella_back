@@ -17,7 +17,7 @@ public class ImprovementReportResponse {
     public static ImprovementReportResponse fromImprovementReport(ImprovementReport improvementReport) {
 
         return ImprovementReportResponse.builder()
-                .id(improvementReport.getId())
+                .id(improvementReport.getHistory().getId())
                 .umbrellaUuid(improvementReport.getHistory().getUmbrella().getUuid())
                 .content(improvementReport.getContent())
                 .etc(improvementReport.getEtc())

@@ -15,7 +15,7 @@ public class ConditionReportResponse {
     public static ConditionReportResponse fromConditionReport(ConditionReport conditionReport) {
 
         return ConditionReportResponse.builder()
-                .id(conditionReport.getId())
+                .id(conditionReport.getHistory().getId())
                 .umbrellaId(conditionReport.getHistory().getId())
                 .content(conditionReport.getContent())
                 .etc(conditionReport.getEtc())
