@@ -10,7 +10,7 @@ import upbrella.be.rent.entity.ImprovementReport;
 public class ImprovementReportResponse {
 
     private long id;
-    private long umbrellaId;
+    private long umbrellaUuid;
     private String content;
     private String etc;
 
@@ -18,7 +18,7 @@ public class ImprovementReportResponse {
 
         return ImprovementReportResponse.builder()
                 .id(improvementReport.getId())
-                .umbrellaId(improvementReport.getHistory().getId())
+                .umbrellaUuid(improvementReport.getHistory().getUmbrella().getUuid())
                 .content(improvementReport.getContent())
                 .etc(improvementReport.getEtc())
                 .build();

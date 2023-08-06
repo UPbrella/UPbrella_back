@@ -12,6 +12,7 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
+import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
@@ -35,13 +36,15 @@ public class RentControllerTest extends RestDocsSupport {
     @Mock
     private ConditionReportService conditionReportService;
     @Mock
+    private ImprovementReportService improvementReportService;
+    @Mock
     private RentService rentService;
     @Mock
     private UserRepository userRepository;
 
     @Override
     protected Object initController() {
-        return new RentController(conditionReportService, rentService, userRepository);
+        return new RentController(conditionReportService, improvementReportService, rentService, userRepository);
     }
 
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
