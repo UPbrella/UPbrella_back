@@ -18,6 +18,7 @@ import upbrella.be.store.repository.StoreImageRepository;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -67,9 +68,9 @@ public class StoreImageService {
         deleteFileInS3(storeImage.getImageUrl());
     }
 
-    public List<SingleImageUrlResponse> createImageUrlResponse(StoreDetail storeDetail) {
+    public List<SingleImageUrlResponse> createImageUrlResponse(Set<StoreImage> images) {
 
-        return storeDetail.getStoreImages().stream()
+        return images.stream()
                 .map(SingleImageUrlResponse::createImageUrlResponse)
                 .sorted(Comparator.comparing(SingleImageUrlResponse::getId))
                 .collect(Collectors.toList());
@@ -80,9 +81,7 @@ public class StoreImageService {
         return imageUrls.stream()
                 .findFirst()
                 .map(SingleImageUrlResponse::getImageUrl)
-                .orElseThrow(
-                        () -> new IllegalStateException("[ERROR] 이미지가 존재하지 않습니다.")
-                );
+                .orElse(null);
     }
 
     public String makeRandomId() {

@@ -77,7 +77,7 @@ public class StoreDetailService {
 
     public SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
 
-        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail);
+        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail.getStoreImages());
         String thumbnail = storeImageService.createThumbnail(imageUrls);
         Set<BusinessHour> businessHourSet = storeDetail.getStoreMeta().getBusinessHours();
         List<BusinessHour> businessHourList = new ArrayList<>(businessHourSet);
