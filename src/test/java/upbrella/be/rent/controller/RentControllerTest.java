@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -59,11 +61,11 @@ public class RentControllerTest extends RestDocsSupport {
                 .build();
 
         User newUser = User.builder()
-                        .id(1L)
-                        .name("테스터1")
-                        .phoneNumber("010-1111-1111")
-                        .adminStatus(false)
-                        .build();
+                .id(1L)
+                .name("테스터1")
+                .phoneNumber("010-1111-1111")
+                .adminStatus(false)
+                .build();
 
 
         given(userRepository.findById(1L)).willReturn(Optional.of(newUser));
@@ -88,7 +90,7 @@ public class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("상태 신고"))
-                        ));
+                ));
     }
 
     @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
@@ -118,7 +120,7 @@ public class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("improvement").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("개선 사항"))
-                        ));
+                ));
     }
 
     @DisplayName("사용자는 우산 대여 내역을 조회 할 수 있다.")
@@ -126,24 +128,32 @@ public class RentControllerTest extends RestDocsSupport {
     void showAllRentalHistoriesTest() throws Exception {
 
         RentalHistoriesPageResponse response = RentalHistoriesPageResponse.builder()
-                .rentalHistoryResponsePage(List.of(RentalHistoryResponse.builder()
-                        .id(1L)
-                        .name("사용자")
-                        .phoneNumber("010-1234-5678")
-                        .rentStoreName("대여점 이름")
-                        .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
-                        .elapsedDay(3)
-                        .umbrellaUuid(30)
-                        .returnStoreName("반납점 이름")
-                        .returnAt(LocalDateTime.now())
-                        .totalRentalDay(5)
-                        .refundCompleted(true)
-                        .etc("기타")
-                        .build())
+                .rentalHistoryResponsePage(
+                        List.of(RentalHistoryResponse.builder()
+                                .id(1L)
+                                .name("사용자")
+                                .phoneNumber("010-1234-5678")
+                                .rentStoreName("대여점 이름")
+                                .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
+                                .elapsedDay(3)
+                                .umbrellaUuid(30)
+                                .returnStoreName("반납점 이름")
+                                .returnAt(LocalDateTime.now())
+                                .totalRentalDay(5)
+                                .refundCompleted(true)
+                                .etc("기타")
+                                .build())
                 ).build();
+
+        HistoryFilterRequest filter = HistoryFilterRequest.builder()
+                .build();
+
+        given(rentService.findAllHistories(any())).willReturn(response);
 
         mockMvc.perform(
                         get("/rent/histories")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(filter))
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -166,7 +176,7 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("대여 시간"),
                                 fieldWithPath("rentalHistoryResponsePage[].elapsedDay").type(JsonFieldType.NUMBER)
                                         .description("대여 기간"),
-                                fieldWithPath("rentalHistoryResponsePage[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("rentalHistoryResponsePage[].umbrellaUuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("rentalHistoryResponsePage[].returnStoreName").type(JsonFieldType.STRING)
                                         .optional()
@@ -215,7 +225,7 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("신고 내역 페이지"),
                                 fieldWithPath("conditionReports[].id").type(JsonFieldType.NUMBER)
                                         .description("신고 내역 고유번호"),
-                                fieldWithPath("conditionReports[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("conditionReports[].umbrellaUuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("conditionReports[].content").type(JsonFieldType.STRING)
                                         .description("신고 내용"),
@@ -230,14 +240,16 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     void showAllImprovementsTest() throws Exception {
 
-        ImprovementReportPageResponse response = ImprovementReportPageResponse.builder()
+        ImprovementReportPageResponse improvementReportsResponse = ImprovementReportPageResponse.builder()
                 .improvementReports(List.of(ImprovementReportResponse.builder()
-                        .id(1L)
-                        .umbrellaUuid(1)
+                        .id(33L)
+                        .umbrellaUuid(99L)
                         .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
                         .etc("기타 사항")
                         .build())
                 ).build();
+
+        given(improvementReportService.findAll()).willReturn(improvementReportsResponse);
 
         mockMvc.perform(
                         get("/rent/histories/improvements")
@@ -251,7 +263,7 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("개선 요청 목록"),
                                 fieldWithPath("improvementReports[].id").type(JsonFieldType.NUMBER)
                                         .description("개선 요청 고유번호"),
-                                fieldWithPath("improvementReports[].umbrellaId").type(JsonFieldType.NUMBER)
+                                fieldWithPath("improvementReports[].umbrellaUuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("improvementReports[].content").type(JsonFieldType.STRING)
                                         .description("개선 요청 내용"),

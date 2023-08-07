@@ -60,9 +60,9 @@ public class RentController {
     }
 
     @GetMapping("/histories")
-    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest historyFilterRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest filter, HttpSession httpSession) {
 
-        RentalHistoriesPageResponse histories = rentService.findAllHistories(historyFilterRequest);
+        RentalHistoriesPageResponse histories = rentService.findAllHistories(filter);
 
         return ResponseEntity
                 .ok()
