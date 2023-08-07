@@ -6,6 +6,7 @@ import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.ExistingMemberException;
+import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
 
 @Service
@@ -17,7 +18,7 @@ public class UserService {
     public long login(Long socialId) {
 
         User foundUser = userRepository.findBySocialId(socialId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."));
+                .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."));
 
         return foundUser.getId();
     }
