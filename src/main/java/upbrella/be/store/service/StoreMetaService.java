@@ -89,9 +89,7 @@ public class StoreMetaService {
     @Transactional
     public void deleteStoreMeta(long storeMetaId) {
 
-        storeMetaRepository.findById(storeMetaId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."))
-                .delete();
+        findStoreMetaById(storeMetaId).delete();
     }
 
     @Transactional(readOnly = true)
