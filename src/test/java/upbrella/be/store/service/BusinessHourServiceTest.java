@@ -7,9 +7,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.store.entity.BusinessHour;
-import upbrella.be.store.entity.DayOfWeek;
 import upbrella.be.store.repository.BusinessHourRepository;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 
