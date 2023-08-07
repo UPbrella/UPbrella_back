@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.store.dto.response.StoreFindByIdResponse;
 import upbrella.be.store.entity.*;
+import upbrella.be.store.exception.NonExistingStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 
@@ -107,7 +108,7 @@ public class StoreDetailServiceTest {
             //when & then
             assertAll(
                     () -> assertThatThrownBy(() -> storeDetailService.findStoreDetailByStoreMetaId(3L))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(NonExistingStoreDetailException.class),
                     () -> then(storeDetailRepository).should(times(1))
                             .findByStoreMetaIdUsingFetchJoin(3L),
                     () -> then(umbrellaService).shouldHaveNoInteractions()
