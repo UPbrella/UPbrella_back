@@ -31,12 +31,15 @@ public class RentController {
     @GetMapping("/form/{umbrellaId}")
     public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId, HttpSession httpSession) {
 
+        RentFormResponse rentForm = rentService.findRentForm(umbrellaId);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "대여 폼 조회 성공"
+                        "대여 폼 조회 성공",
+                        rentForm
                 ));
     }
 
