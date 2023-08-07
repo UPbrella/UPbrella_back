@@ -92,6 +92,8 @@ class RentServiceTest {
                 .user(userToRent)
                 .rentStoreMeta(foundStoreMeta)
                 .build();
+
+
     }
 
     @Nested

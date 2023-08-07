@@ -60,9 +60,15 @@ public class RentController {
     }
 
     @GetMapping("/histories")
+<<<<<<< HEAD
     public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest filter, HttpSession httpSession) {
 
         RentalHistoriesPageResponse histories = rentService.findAllHistories(filter);
+=======
+    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest historyFilterRequest, HttpSession httpSession) {
+
+        RentalHistoriesPageResponse allHistories = rentService.findAllHistories(historyFilterRequest);
+>>>>>>> dev
 
         return ResponseEntity
                 .ok()
@@ -70,7 +76,11 @@ public class RentController {
                         "success",
                         200,
                         "대여 내역 조회 성공",
+<<<<<<< HEAD
                         histories
+=======
+                        allHistories
+>>>>>>> dev
                 ));
     }
 
