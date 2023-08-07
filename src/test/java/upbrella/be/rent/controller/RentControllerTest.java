@@ -49,8 +49,9 @@ public class RentControllerTest extends RestDocsSupport {
         return new RentController(conditionReportService, improvementReportService, rentService, userRepository);
     }
 
-    @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
+
     @Test
+    @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
     void rentUmbrellaTest() throws Exception {
 
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
@@ -93,8 +94,8 @@ public class RentControllerTest extends RestDocsSupport {
                 ));
     }
 
-    @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     @Test
+    @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     void returnUmbrellaTest() throws Exception {
         ReturnUmbrellaByUserRequest request = ReturnUmbrellaByUserRequest.builder()
                 .uuid(1)
@@ -123,8 +124,8 @@ public class RentControllerTest extends RestDocsSupport {
                 ));
     }
 
-    @DisplayName("사용자는 우산 대여 내역을 조회 할 수 있다.")
     @Test
+    @DisplayName("사용자는 우산 대여 내역을 조회 할 수 있다.")
     void showAllRentalHistoriesTest() throws Exception {
 
         RentalHistoriesPageResponse response = RentalHistoriesPageResponse.builder()
@@ -194,8 +195,8 @@ public class RentControllerTest extends RestDocsSupport {
                         )));
     }
 
-    @DisplayName("사용자는 신고 내역을 조회할 수 있다.")
     @Test
+    @DisplayName("사용자는 신고 내역을 조회할 수 있다.")
     void showAllStatusConditionTest() throws Exception {
 
         ConditionReportPageResponse conditionReportsResponse = ConditionReportPageResponse.builder()
@@ -235,8 +236,8 @@ public class RentControllerTest extends RestDocsSupport {
 
     }
 
-    @DisplayName("사용자는 개선 요청 내역을 조회할 수 있다.")
     @Test
+    @DisplayName("사용자는 개선 요청 내역을 조회할 수 있다.")
     void showAllImprovementsTest() throws Exception {
 
         ImprovementReportPageResponse improvementReportsResponse = ImprovementReportPageResponse.builder()
