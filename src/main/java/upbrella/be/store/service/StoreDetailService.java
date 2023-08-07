@@ -37,7 +37,7 @@ public class StoreDetailService {
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(request.getSubClassificationId());
 
-        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request);
+        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request.getBusinessHours());
 
         StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification, businessHours);
 
