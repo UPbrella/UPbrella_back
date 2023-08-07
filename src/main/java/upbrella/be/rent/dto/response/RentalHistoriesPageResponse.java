@@ -10,4 +10,11 @@ import java.util.List;
 public class RentalHistoriesPageResponse {
 
     private List<RentalHistoryResponse> rentalHistoryResponsePage;
+
+    public static RentalHistoriesPageResponse of(List<RentalHistoryResponse> rentalHistories) {
+
+        return RentalHistoriesPageResponse.builder()
+                .rentalHistoryResponsePage(rentalHistories)
+                .build();
+    }
 }
