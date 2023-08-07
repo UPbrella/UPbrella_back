@@ -14,11 +14,11 @@ public class SingleCurrentLocationStoreResponse {
     private double latitude;
     private double longitude;
 
-    public static SingleCurrentLocationStoreResponse fromStoreMeta(StoreMeta storeMeta) {
+    public static SingleCurrentLocationStoreResponse fromStoreMeta(boolean openStatus, StoreMeta storeMeta) {
         return SingleCurrentLocationStoreResponse.builder()
                 .id(storeMeta.getId())
                 .name(storeMeta.getName())
-                .openStatus(storeMeta.isActivated())
+                .openStatus(openStatus)
                 .latitude(storeMeta.getLatitude())
                 .longitude(storeMeta.getLongitude())
                 .build();

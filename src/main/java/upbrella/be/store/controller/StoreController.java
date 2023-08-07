@@ -13,6 +13,7 @@ import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -46,9 +47,7 @@ public class StoreController {
                         "success",
                         200,
                         "현재 위치 기준 가게 조회 성공",
-                        AllCurrentLocationStoreResponse.builder()
-                                .stores(storeMetaService.findStoresInCurrentMap(coordinateRequest))
-                                .build()));
+                        storeMetaService.findStoresInCurrentMap(coordinateRequest, LocalDateTime.now())));
     }
 
     @GetMapping("/location/{umbrellaId}")

@@ -10,4 +10,11 @@ import java.util.List;
 public class AllCurrentLocationStoreResponse {
 
     private List<SingleCurrentLocationStoreResponse> stores;
+
+    public static AllCurrentLocationStoreResponse ofCreate(List<SingleCurrentLocationStoreResponse> singleCurrentLocationStoreResponses) {
+
+        return AllCurrentLocationStoreResponse.builder()
+                .stores(singleCurrentLocationStoreResponses)
+                .build();
+    }
 }

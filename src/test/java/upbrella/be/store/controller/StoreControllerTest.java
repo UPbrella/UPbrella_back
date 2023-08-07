@@ -14,14 +14,13 @@ import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
-import upbrella.be.store.entity.DayOfWeek;
-import upbrella.be.store.repository.StoreMetaRepository;
-import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreDetailService;
 import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -110,7 +109,7 @@ class StoreControllerTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("사용자는 우산의 위도, 경도, 확대 정도를 기반으로 협업지점을 조회할 수 있다.")
+    @DisplayName("사용자는 우산의 위도, 경도 범위로 협업지점을 조회할 수 있다.")
     void test() throws Exception {
 
         // given
@@ -119,16 +118,19 @@ class StoreControllerTest extends RestDocsSupport {
         final double longitudeFrom = 36.9783882;
         final double longitudeTo = 126.9783882;
 
-        given(storeMetaService.findStoresInCurrentMap(any(CoordinateRequest.class)))
+        given(storeMetaService.findStoresInCurrentMap(any(CoordinateRequest.class), any(LocalDateTime.class)))
                 .willReturn(
-                        List.of(
-                                SingleCurrentLocationStoreResponse.builder()
-                                        .id(1)
-                                        .name("업브렐라")
-                                        .latitude(37.503716)
-                                        .longitude(127.053718)
-                                        .openStatus(true)
-                                        .build()));
+                        AllCurrentLocationStoreResponse.builder()
+                                .stores(
+                                        List.of(
+                                                SingleCurrentLocationStoreResponse.builder()
+                                                        .id(1)
+                                                        .name("업브렐라")
+                                                        .latitude(37.503716)
+                                                        .longitude(127.053718)
+                                                        .openStatus(true)
+                                                        .build()))
+                                .build());
 
         // when & then
         mockMvc.perform(

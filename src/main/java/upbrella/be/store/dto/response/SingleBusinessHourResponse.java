@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import upbrella.be.store.entity.BusinessHour;
-import upbrella.be.store.entity.DayOfWeek;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Getter
