@@ -2,8 +2,8 @@ package upbrella.be.store.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import upbrella.be.store.entity.DayOfWeek;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Getter

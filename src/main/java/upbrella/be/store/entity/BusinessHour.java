@@ -4,6 +4,7 @@ import lombok.*;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 
 import javax.persistence.*;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Getter

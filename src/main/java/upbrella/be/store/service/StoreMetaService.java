@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
+import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.entity.BusinessHour;
@@ -17,7 +18,9 @@ import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,17 +45,38 @@ public class StoreMetaService {
         return CurrentUmbrellaStoreResponse.fromUmbrella(foundUmbrella);
     }
 
-    public List<SingleCurrentLocationStoreResponse> findStoresInCurrentMap(CoordinateRequest coordinateRequest) {
+    public AllCurrentLocationStoreResponse findStoresInCurrentMap(CoordinateRequest coordinateRequest, LocalDateTime currentTime) {
+
+        return AllCurrentLocationStoreResponse.ofCreate(findAllStores(coordinateRequest, currentTime));
+    }
+
+    private List<SingleCurrentLocationStoreResponse> findAllStores(CoordinateRequest coordinateRequest, LocalDateTime currentTime) {
 
         List<StoreMeta> storeMetaListInCurrentMap = storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(
                 coordinateRequest.getLatitudeFrom(), coordinateRequest.getLatitudeTo(),
                 coordinateRequest.getLongitudeFrom(), coordinateRequest.getLongitudeTo()
         );
 
-
         return storeMetaListInCurrentMap.stream()
-                .map(SingleCurrentLocationStoreResponse::fromStoreMeta)
+                .map(storeMeta -> mapToSingleCurrentLocationStoreResponse(storeMeta, currentTime))
                 .collect(Collectors.toList());
+    }
+
+    private boolean isOpenStore(StoreMeta storeMeta, LocalDateTime currentTime) {
+
+        Set<BusinessHour> businessHours = storeMeta.getBusinessHours();
+
+        return businessHours.stream()
+                .filter(businessHour -> businessHour.getDate().equals(currentTime.getDayOfWeek()))
+                .filter(e -> storeMeta.isActivated())
+                .anyMatch(businessHour ->
+                        currentTime.toLocalTime().isAfter(businessHour.getOpenAt())
+                                && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));
+    }
+
+    private SingleCurrentLocationStoreResponse mapToSingleCurrentLocationStoreResponse(StoreMeta storeMeta, LocalDateTime currentTime) {
+
+        return SingleCurrentLocationStoreResponse.fromStoreMeta(isOpenStore(storeMeta, currentTime), storeMeta);
     }
 
     @Transactional
