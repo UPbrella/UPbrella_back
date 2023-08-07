@@ -40,6 +40,7 @@ public class History {
     private String etc;
 
     public static History ofCreatedByNewRent(Umbrella umbrella, User user, StoreMeta rentStoreMeta) {
+
         return History.builder()
                 .umbrella(umbrella)
                 .user(user)
@@ -52,7 +53,9 @@ public class History {
 
         boolean isReturned = true;
         boolean isRefunded = false;
+
         LocalDateTime returnAt = history.getReturnedAt();
+
         if (returnAt == null) {
             isReturned = false;
             returnAt = history.getRentedAt().plusDays(7);
@@ -61,6 +64,7 @@ public class History {
         if (history.getRefundedAt() != null) {
             isRefunded = true;
         }
+
         return SingleHistoryResponse.builder()
                 .umbrellaUuid(history.getUmbrella().getUuid())
                 .rentedAt(history.getRentedAt())

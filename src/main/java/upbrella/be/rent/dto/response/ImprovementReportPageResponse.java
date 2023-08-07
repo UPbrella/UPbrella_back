@@ -10,4 +10,11 @@ import java.util.List;
 public class ImprovementReportPageResponse {
 
     private List<ImprovementReportResponse> improvementReports;
+
+    public static ImprovementReportPageResponse of(List<ImprovementReportResponse> improvementReports) {
+
+        return ImprovementReportPageResponse.builder()
+                .improvementReports(improvementReports)
+                .build();
+    }
 }

@@ -8,14 +8,15 @@ import upbrella.be.rent.entity.ConditionReport;
 public class ConditionReportResponse {
 
     private long id;
-    private long umbrellaId;
+    private long umbrellaUuid;
     private String content;
     private String etc;
 
     public static ConditionReportResponse fromConditionReport(ConditionReport conditionReport) {
+
         return ConditionReportResponse.builder()
-                .id(conditionReport.getId())
-                .umbrellaId(conditionReport.getHistory().getId())
+                .id(conditionReport.getHistory().getId())
+                .umbrellaUuid(conditionReport.getHistory().getUmbrella().getUuid())
                 .content(conditionReport.getContent())
                 .etc(conditionReport.getEtc())
                 .build();
