@@ -8,7 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
+import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
@@ -46,6 +49,7 @@ class RentServiceTest {
     private Umbrella foundUmbrella;
     private User userToRent;
     private History history;
+    private HistoryFilterRequest filter;
 
     @BeforeEach
     void setUp() {
@@ -88,6 +92,8 @@ class RentServiceTest {
                 .user(userToRent)
                 .rentStoreMeta(foundStoreMeta)
                 .build();
+
+
     }
 
     @Nested
@@ -161,6 +167,56 @@ class RentServiceTest {
                     () -> then(storeMetaService).shouldHaveNoInteractions(),
                     () -> then(rentRepository).shouldHaveNoInteractions()
             );
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자는 환급 여부 필터링 기능이 가능한 대여/반납 현황을 조회할 수 있다.")
+    class findAllHistories {
+
+        @Test
+        @DisplayName("조건이 없는 경우 전체 대여/반납 현황을 조회할 수 있다.")
+        void success() {
+
+            // given
+            filter = HistoryFilterRequest.builder()
+                    .build();
+
+            RentalHistoriesPageResponse historyResponse = RentalHistoriesPageResponse.builder()
+                    .rentalHistoryResponsePage(
+                            List.of(
+                                    RentalHistoryResponse.builder()
+                                            .id(33L)
+                                            .name("테스터")
+                                            .phoneNumber("010-1234-5678")
+                                            .rentStoreName("motive study cafe")
+                                            .rentAt(LocalDateTime.of(1000, 12, 3, 4, 24))
+                                            .elapsedDay(0)
+                                            .umbrellaUuid(99L)
+                                            .returnStoreName("motive study cafe")
+                                            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
+                                            .totalRentalDay(0)
+                                            .refundCompleted(true)
+                                            .etc(history.getEtc())
+                                            .build())
+                    ).build();
+
+            given(rentRepository.findAll(filter))
+                    .willReturn(List.of(history));
+
+            // when
+            RentalHistoriesPageResponse allHistories = rentService.findAllHistories(filter);
+
+            //then
+            assertAll(() -> assertThat(allHistories)
+                            .usingRecursiveComparison()
+                            .isEqualTo(historyResponse),
+                    () -> assertThat(allHistories.getRentalHistoryResponsePage().size())
+                            .isEqualTo(1),
+                    () -> then(rentRepository).should(times(1))
+                            .findAll(filter)
+            );
+
         }
     }
 
