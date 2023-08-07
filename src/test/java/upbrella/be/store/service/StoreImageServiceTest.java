@@ -93,7 +93,7 @@ class StoreImageServiceTest {
 
     @Test
     @DisplayName("사진이 존재하지 않는데 삭제를 시도하는 경우 예외를 발생시킨다.")
-    void test() {
+    void notExistImageDeleteTest() {
         // given
         long imageId = 1L;
 
