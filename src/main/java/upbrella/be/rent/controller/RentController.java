@@ -28,6 +28,18 @@ public class RentController {
     // 가짜 유저 사용을 위해 임시로 UserRepository 주입
     private final UserRepository userRepository;
 
+    @GetMapping("/form/{umbrellaId}")
+    public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId, HttpSession httpSession) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "대여 폼 조회 성공"
+                ));
+    }
+
     @PostMapping
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
