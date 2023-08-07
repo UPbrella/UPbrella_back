@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
 
 import java.util.Collection;
@@ -68,7 +69,7 @@ class UserServiceDynamicTest {
                 }),
                 DynamicTest.dynamicTest("존재하지 않는 아이디로 로그인하면 예외가 발생한다.", () -> {
                     assertThatThrownBy(() -> userService.login(32322L))
-                            .isInstanceOf(IllegalArgumentException.class);
+                            .isInstanceOf(NonExistingMemberException.class);
                 }),
                 DynamicTest.dynamicTest("회원 가입한 아이디로 로그인할 수 있다.", () -> {
                     long logined = userService.login(user.getSocialId());

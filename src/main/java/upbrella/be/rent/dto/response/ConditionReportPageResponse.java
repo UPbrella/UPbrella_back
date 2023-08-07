@@ -10,4 +10,11 @@ import java.util.List;
 public class ConditionReportPageResponse {
 
     private List<ConditionReportResponse> conditionReports;
+
+    public static ConditionReportPageResponse of(List<ConditionReportResponse> conditionReports) {
+
+        return ConditionReportPageResponse.builder()
+                .conditionReports(conditionReports)
+                .build();
+    }
 }

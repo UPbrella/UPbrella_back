@@ -12,6 +12,7 @@ import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.exception.NonExistingStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 
@@ -59,7 +60,7 @@ public class StoreDetailService {
     public StoreFindByIdResponse findStoreDetailByStoreMetaId(long storeMetaId) {
 
         StoreDetail storeDetail = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당하는 협업 지점이 존재하지 않습니다."));
+                .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 해당하는 협업 지점이 존재하지 않습니다."));
 
         int availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeMetaId);
 

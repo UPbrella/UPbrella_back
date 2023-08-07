@@ -20,11 +20,20 @@ public abstract class RestDocsSupport {
 
     @BeforeEach
     void setup(RestDocumentationContextProvider provider) {
+
         this.mockMvc = MockMvcBuilders.standaloneSetup(initController())
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .apply(documentationConfiguration(provider))
                 .build();
         objectMapper.registerModule(new JavaTimeModule());
+    }
+
+    public static MockMvc setControllerAdvice(Object initController, Object controllerAdvice) {
+
+        return MockMvcBuilders.standaloneSetup(initController)
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                .setControllerAdvice(controllerAdvice)
+                .build();
     }
 
     protected abstract Object initController();
