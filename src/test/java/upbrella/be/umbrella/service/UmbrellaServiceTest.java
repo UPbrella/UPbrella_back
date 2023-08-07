@@ -15,6 +15,8 @@ import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
+import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import java.util.ArrayList;
@@ -255,7 +257,7 @@ class UmbrellaServiceTest {
                     .willReturn(true);
             // when
             assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(ExistingUmbrellaUuidException.class);
 
             // then
             assertAll(
@@ -374,7 +376,7 @@ class UmbrellaServiceTest {
             assertAll(
                     () -> assertThatThrownBy(() ->
                             umbrellaService.modifyUmbrella(1L, umbrellaRequest))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(NonExistingUmbrellaException.class),
                     () -> then(umbrellaRepository).should(never())
                             .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
@@ -402,7 +404,7 @@ class UmbrellaServiceTest {
             assertAll(
                     () -> assertThatThrownBy(() ->
                             umbrellaService.modifyUmbrella(1L, umbrellaRequest))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(ExistingUmbrellaUuidException.class),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(50L),
                     () -> then(umbrellaRepository).should(times(1))
@@ -484,7 +486,7 @@ class UmbrellaServiceTest {
             // when & then
             assertAll(
                     () -> assertThatThrownBy(() -> umbrellaService.deleteUmbrella(1L))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(NonExistingUmbrellaException.class),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(1L)
             );

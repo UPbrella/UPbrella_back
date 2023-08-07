@@ -16,9 +16,11 @@ import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.entity.*;
+import upbrella.be.store.exception.DeletedStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import java.time.DayOfWeek;
@@ -119,7 +121,7 @@ class StoreMetaServiceTest {
             //then
             assertAll(
                     () -> assertThatThrownBy(() -> storeMetaService.findCurrentStoreIdByUmbrella(2L))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(DeletedStoreDetailException.class),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(2L)
             );
@@ -136,7 +138,7 @@ class StoreMetaServiceTest {
             //then
             assertAll(
                     () -> assertThatThrownBy(() -> storeMetaService.findCurrentStoreIdByUmbrella(2L))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(NonExistingUmbrellaException.class),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(2L)
             );

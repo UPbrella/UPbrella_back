@@ -95,5 +95,5 @@ gradle-app.setting
 out
 
 ./src/main/resources/application.properties
-
+daemon
 bin

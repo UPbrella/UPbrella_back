@@ -13,9 +13,11 @@ import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.exception.DeletedStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import java.time.LocalDateTime;
@@ -37,10 +39,10 @@ public class StoreMetaService {
     public CurrentUmbrellaStoreResponse findCurrentStoreIdByUmbrella(long umbrellaId) {
 
         Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(umbrellaId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산입니다."));
+                .orElseThrow(() -> new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산입니다."));
 
         if (foundUmbrella.getStoreMeta().isDeleted()) {
-            throw new IllegalArgumentException("[ERROR] 삭제된 가게입니다.");
+            throw new DeletedStoreDetailException("[ERROR] 삭제된 가게입니다.");
         }
         return CurrentUmbrellaStoreResponse.fromUmbrella(foundUmbrella);
     }

@@ -12,6 +12,7 @@ import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SingleUserInfoResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.ExistingMemberException;
+import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
 
 import java.util.List;
@@ -73,7 +74,7 @@ class UserServiceTest {
             // when & then
             assertAll(
                     () -> assertThatThrownBy(() -> userService.login(23132L))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(NonExistingMemberException.class),
                     () -> then(userRepository).should(times(1))
                             .findBySocialId(23132L));
         }

@@ -8,6 +8,8 @@ import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
+import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import javax.transaction.Transactional;
@@ -40,7 +42,7 @@ public class UmbrellaService {
         StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
 
         if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid())) {
-            throw new IllegalArgumentException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
+            throw new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
         return umbrellaRepository.save(
@@ -54,10 +56,10 @@ public class UmbrellaService {
         StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
 
         if (!umbrellaRepository.existsByIdAndDeletedIsFalse(id)) {
-            throw new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다.");
+            throw new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.");
         }
         if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid())) {
-            throw new IllegalArgumentException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
+            throw new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
         return umbrellaRepository.save(
@@ -75,7 +77,7 @@ public class UmbrellaService {
     public Umbrella findUmbrellaById(long id) {
 
         return umbrellaRepository.findByIdAndDeletedIsFalse(id)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
+                .orElseThrow(() -> new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
     }
 
     public int countAvailableUmbrellaAtStore(long storeMetaId) {
