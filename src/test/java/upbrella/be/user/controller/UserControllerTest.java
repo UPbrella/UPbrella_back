@@ -1,6 +1,8 @@
 package upbrella.be.user.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -18,6 +20,7 @@ import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.*;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
@@ -25,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -117,89 +121,229 @@ public class UserControllerTest extends RestDocsSupport {
                         )));
     }
 
-    @Test
-    @DisplayName("사용자는 카카오 소셜 로그인을 할 수 있다.")
-    void LoginTest() throws Exception {
-        // given
-        String code = "{\"code\":\"1kdfjq0243f\"}";
-        OauthToken oauthToken = new OauthToken("a", "b", "c", 100L);
-        given(oauthLoginService.getOauthToken(any(), any()))
-                .willReturn(oauthToken);
-        given(oauthLoginService.processKakaoLogin(any(), any()))
-                .willReturn(KakaoLoginResponse.builder().id(2L).build());
-        given(kakaoOauthInfo.getLoginUri())
-                .willReturn("http://kakao.login.com");
-        given(userService.login(any()))
-                .willReturn(2L);
-        MockHttpSession mockHttpSession = new MockHttpSession();
+    @Nested
+    @DisplayName("사용자는 인증 코드로 GET 요청을 보내면")
+    class LoginTest {
+        @Test
+        @DisplayName("카카오 소셜 로그인을 할 수 있다.")
+        void loginSuccess() throws Exception {
+            // given
+            String code = "{\"code\":\"1kdfjq0243f\"}";
+            OauthToken oauthToken = new OauthToken("a", "b", "c", 100L);
+            given(oauthLoginService.getOauthToken(any(), any()))
+                    .willReturn(oauthToken);
+            given(oauthLoginService.processKakaoLogin(any(), any()))
+                    .willReturn(KakaoLoginResponse.builder().id(2L).build());
+            given(kakaoOauthInfo.getLoginUri())
+                    .willReturn("http://kakao.login.com");
+            given(userService.login(any()))
+                    .willReturn(2L);
+            MockHttpSession mockHttpSession = new MockHttpSession();
 
-        // when
-        mockMvc.perform(
-                        get("/users/login")
-                                .content(code)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .session(mockHttpSession)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("user-login-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("code")
-                                        .description("카카오 로그인 인증 코드")
-                        )
-                ));
+            // when
+            mockMvc.perform(
+                            get("/users/login")
+                                    .content(code)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .session(mockHttpSession)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("user-login-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("code")
+                                            .description("카카오 로그인 인증 코드")
+                            )
+                    ));
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 사용자는 400 에러가 반환된다.")
+        void loginFail() throws Exception {
+            // given
+            String code = "{\"code\":\"1kdfjq0243f\"}";
+            OauthToken oauthToken = new OauthToken("a", "b", "c", 100L);
+            given(oauthLoginService.getOauthToken(any(), any()))
+                    .willReturn(oauthToken);
+            given(oauthLoginService.processKakaoLogin(any(), any()))
+                    .willReturn(KakaoLoginResponse.builder().id(2L).build());
+            given(kakaoOauthInfo.getLoginUri())
+                    .willReturn("http://kakao.login.com");
+            given(userService.login(any()))
+                    .willThrow(new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."));
+            MockHttpSession mockHttpSession = new MockHttpSession();
+
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
+
+            // when
+            mockMvc.perform(
+                            get("/users/login")
+                                    .content(code)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .session(mockHttpSession))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(NonExistingMemberException.class));
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 로그인 코드면 400 에러를 반환한다.")
+        void invalidLoginCode() throws Exception {
+            // given
+            String code = "{\"code\":\"1kdfjq0243f\"}";
+            given(oauthLoginService.getOauthToken(any(), any()))
+                    .willThrow(new InvalidLoginCodeException());
+            MockHttpSession mockHttpSession = new MockHttpSession();
+
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
+
+            // when
+            mockMvc.perform(
+                            get("/users/login")
+                                    .content(code)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .session(mockHttpSession))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(InvalidLoginCodeException.class));
+        }
     }
 
-    @Test
-    @DisplayName("사용자는 카카오 소셜 회원 가입을 할 수 있다.")
-    void joinTest() throws Exception {
-        // given
-        JoinRequest joinRequest = JoinRequest.builder()
-                .name("홍길동")
-                .bank("신한")
-                .accountNumber("110-421-674103")
-                .phoneNumber("010-2084-3478")
-                .build();
+    @Nested
+    @DisplayName("사용자는 소셜 로그인된 상태에서 회원가입 정보를 담아 POST 요청을 보내면")
+    class JoinTest {
 
-        OauthToken oauthToken = new OauthToken("a", "b", "c", 100L);
-        MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("authToken", oauthToken);
-        given(oauthLoginService.processKakaoLogin(anyString(), anyString()))
-                .willReturn(KakaoLoginResponse.builder().id(2L).build());
-        given(kakaoOauthInfo.getLoginUri())
-                .willReturn("http://kakao.login.com");
-        given(userService.join(eq(2L), any(JoinRequest.class)))
-                .willReturn(2L);
+        private JoinRequest joinRequest;
+        private OauthToken oauthToken;
+        private MockHttpSession mockHttpSession;
 
-        // when
-        mockMvc.perform(
-                        post("/users/join")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(joinRequest))
-                                .session(mockHttpSession)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("user-join-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("name")
-                                        .description("이름"),
-                                fieldWithPath("phoneNumber")
-                                        .description("연락처"),
-                                fieldWithPath("bank")
-                                        .optional()
-                                        .description("은행"),
-                                fieldWithPath("accountNumber")
-                                        .optional()
-                                        .description("계좌 번호")
-                        )));
+        @BeforeEach
+        void setUp() {
+
+            joinRequest = JoinRequest.builder()
+                    .name("홍길동")
+                    .bank("신한")
+                    .accountNumber("110-421-674103")
+                    .phoneNumber("010-2084-3478")
+                    .build();
+
+            oauthToken = new OauthToken("a", "b", "c", 100L);
+            mockHttpSession = new MockHttpSession();
+        }
+
+        @Test
+        @DisplayName("사용자는 카카오 소셜 회원 가입을 할 수 있다.")
+        void joinTest() throws Exception {
+
+            // given
+            mockHttpSession.setAttribute("authToken", oauthToken);
+            given(oauthLoginService.processKakaoLogin(anyString(), anyString()))
+                    .willReturn(KakaoLoginResponse.builder().id(2L).build());
+            given(kakaoOauthInfo.getLoginUri())
+                    .willReturn("http://kakao.login.com");
+            given(userService.join(eq(2L), any(JoinRequest.class)))
+                    .willReturn(2L);
+
+            // when
+            mockMvc.perform(
+                            post("/users/join")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(joinRequest))
+                                    .session(mockHttpSession)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("user-join-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("name")
+                                            .description("이름"),
+                                    fieldWithPath("phoneNumber")
+                                            .description("연락처"),
+                                    fieldWithPath("bank")
+                                            .optional()
+                                            .description("은행"),
+                                    fieldWithPath("accountNumber")
+                                            .optional()
+                                            .description("계좌 번호")
+                            )));
+        }
+
+        @Test
+        @DisplayName("이미 가입된 회원은 400 에러가 반환된다.")
+        void joinedMember() throws Exception {
+
+            // given
+            mockHttpSession.setAttribute("authToken", oauthToken);
+            given(oauthLoginService.processKakaoLogin(anyString(), anyString()))
+                    .willReturn(KakaoLoginResponse.builder().id(2L).build());
+            given(kakaoOauthInfo.getLoginUri())
+                    .willReturn("http://kakao.login.com");
+            given(userService.join(eq(2L), any(JoinRequest.class)))
+                    .willThrow(new ExistingMemberException("[ERROR] 이미 가입된 회원입니다."));
+
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
+
+            // when
+            mockMvc.perform(
+                            post("/users/join")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(joinRequest))
+                                    .session(mockHttpSession))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(ExistingMemberException.class));
+        }
+
+        @Test
+        @DisplayName("이미 로그인한 회원은 400 에러가 반환된다.")
+        void loginedMember() throws Exception {
+
+            // given
+            mockHttpSession.setAttribute("userId", 2L);
+            mockHttpSession.setAttribute("authToken", oauthToken);
+
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
+
+            // when
+            mockMvc.perform(
+                            post("/users/join")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(joinRequest))
+                                    .session(mockHttpSession))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(LoginedMemberException.class));
+        }
+
+        @Test
+        @DisplayName("소셜 로그인이 되어있지 않은 사용자는 400 에러가 반환된다.")
+        void notSocialLogined() throws Exception {
+
+            // given
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
+
+            // when
+            mockMvc.perform(
+                            post("/users/join")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(joinRequest))
+                                    .session(mockHttpSession))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(NotSocialLoginedException.class));
+        }
     }
 
     @DisplayName("사용자는 회원 정보 목록을 조회할 수 있다.")
     @Test
-            void findUsersInfoTest() throws Exception {
+    void findUsersInfoTest() throws Exception {
 
         // given
         User poro = User.builder()
