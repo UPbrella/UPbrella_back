@@ -15,6 +15,9 @@ import upbrella.be.user.dto.response.UserInfoResponse;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.InvalidLoginCodeException;
+import upbrella.be.user.exception.LoginedMemberException;
+import upbrella.be.user.exception.NotSocialLoginedException;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
@@ -96,7 +99,7 @@ public class UserController {
         try {
             kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
         } catch (HttpClientErrorException e) {
-            throw new IllegalArgumentException("[ERROR] 로그인 코드가 유효하지 않습니다.");
+            throw new InvalidLoginCodeException("[ERROR] 로그인 코드가 유효하지 않습니다.");
         }
         session.setAttribute("authToken", kakaoAccessToken);
 
@@ -120,11 +123,11 @@ public class UserController {
         OauthToken kakaoAccessToken = (OauthToken) session.getAttribute("authToken");
 
         if (session.getAttribute("userId") != null) {
-            throw new IllegalArgumentException("[ERROR] 이미 로그인된 상태입니다.");
+            throw new LoginedMemberException("[ERROR] 이미 로그인된 상태입니다.");
         }
 
         if (kakaoAccessToken == null) {
-            throw new IllegalArgumentException("[ERROR] 로그인을 먼저 해주세요.");
+            throw new NotSocialLoginedException("[ERROR] 로그인을 먼저 해주세요.");
         }
 
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
