@@ -116,6 +116,21 @@ jacocoTestReport {
         xml.required.set(false)
         csv.required.set(false)
     }
+
+    def Qdomains = []
+    for(qPattern in "**/QA" .. "**/QZ"){
+        Qdomains.add(qPattern+"*")
+    }
+
+    afterEvaluate {
+
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [] + Qdomains)
+        }))
+    }
+
+
     finalizedBy 'jacocoTestCoverageVerification'
 }
 
@@ -125,13 +140,13 @@ jacocoTestCoverageVerification {
             element = 'CLASS'
 
             limit {
-                counter = 'BRANCH'
+                counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.00
+                minimum = 0.0
                 // 최소 커버리지 비율 설정 -> 임시로 0% 설정
             }
 
-            excludes = []
+            excludes = ["*.Q*"]
 
         }
     }

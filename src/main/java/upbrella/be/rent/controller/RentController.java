@@ -3,6 +3,7 @@ package upbrella.be.rent.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
@@ -59,7 +60,9 @@ public class RentController {
     }
 
     @GetMapping("/histories")
-    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest historyFilterRequest, HttpSession httpSession) {
+
+        RentalHistoriesPageResponse allHistories = rentService.findAllHistories(historyFilterRequest);
 
         return ResponseEntity
                 .ok()
@@ -67,22 +70,8 @@ public class RentController {
                         "success",
                         200,
                         "대여 내역 조회 성공",
-                        RentalHistoriesPageResponse.builder()
-                                .rentalHistoryResponsePage(
-                                        List.of(RentalHistoryResponse.builder()
-                                                .id(1L)
-                                                .name("사용자")
-                                                .phoneNumber("010-1234-5678")
-                                                .rentStoreName("대여점 이름")
-                                                .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
-                                                .elapsedDay(3)
-                                                .umbrellaId(30)
-                                                .returnStoreName("반납점 이름")
-                                                .returnAt(LocalDateTime.now())
-                                                .totalRentalDay(5)
-                                                .refundCompleted(true)
-                                                .build()
-                                        )).build()));
+                        allHistories
+                ));
     }
 
     @GetMapping("/histories/status")

@@ -8,16 +8,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
+import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.service.UmbrellaService;
+import upbrella.be.user.dto.response.AllHistoryResponse;
+import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -38,55 +44,61 @@ class RentServiceTest {
     private RentRepository rentRepository;
     @InjectMocks
     private RentService rentService;
+    private RentUmbrellaByUserRequest rentUmbrellaByUserRequest;
+    private StoreMeta foundStoreMeta;
+    private Umbrella foundUmbrella;
+    private User userToRent;
+    private History history;
+    private HistoryFilterRequest filter;
+
+    @BeforeEach
+    void setUp() {
+        rentUmbrellaByUserRequest = RentUmbrellaByUserRequest.builder()
+                .region("신촌")
+                .storeId(25L)
+                .umbrellaId(99L)
+                .conditionReport("상태 양호")
+                .build();
+
+        foundStoreMeta = StoreMeta.builder()
+                .id(25L)
+                .name("motive study cafe")
+                .deleted(false)
+                .build();
+
+        foundUmbrella = Umbrella.builder()
+                .id(99L)
+                .uuid(99L)
+                .deleted(false)
+                .storeMeta(foundStoreMeta)
+                .rentable(true)
+                .build();
+
+        userToRent = User.builder()
+                .id(11L)
+                .name("테스터")
+                .phoneNumber("010-1234-5678")
+                .adminStatus(false)
+                .build();
+
+        history = History.builder()
+                .id(33L)
+                .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
+                .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
+                .refundedAt(LocalDateTime.of(1000, 12, 3, 4, 26))
+                .refundedBy(userToRent)
+                .returnStoreMeta(foundStoreMeta)
+                .umbrella(foundUmbrella)
+                .user(userToRent)
+                .rentStoreMeta(foundStoreMeta)
+                .build();
+
+
+    }
 
     @Nested
     @DisplayName("지역 분류, 협력 지점 고유번호, 우산 고유번호, 선택적으로 상태 신고 내역을 입력받아")
     class addRentTest {
-
-        private RentUmbrellaByUserRequest rentUmbrellaByUserRequest;
-        private StoreMeta foundStoreMeta;
-        private Umbrella foundUmbrella;
-        private User userToRent;
-        private History history;
-
-        @BeforeEach
-        void setUp() {
-            rentUmbrellaByUserRequest = RentUmbrellaByUserRequest.builder()
-                    .region("신촌")
-                    .storeId(25L)
-                    .umbrellaId(99L)
-                    .conditionReport("상태 양호")
-                    .build();
-
-            foundStoreMeta = StoreMeta.builder()
-                    .id(25L)
-                    .name("motive study cafe")
-                    .deleted(false)
-                    .build();
-
-            foundUmbrella = Umbrella.builder()
-                    .id(99L)
-                    .uuid(99L)
-                    .deleted(false)
-                    .storeMeta(foundStoreMeta)
-                    .rentable(true)
-                    .build();
-
-            userToRent = User.builder()
-                    .id(11L)
-                    .name("테스터")
-                    .phoneNumber("010-1234-5678")
-                    .adminStatus(false)
-                    .build();
-
-            history = History.builder()
-                    .id(33L)
-                    .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-                    .umbrella(foundUmbrella)
-                    .user(userToRent)
-                    .rentStoreMeta(foundStoreMeta)
-                    .build();
-        }
 
         @Test
         @DisplayName("대여 이력에 정상적으로 추가하 수 있다.")
@@ -103,7 +115,7 @@ class RentServiceTest {
             // when
             History addedRental = rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
-            // when & then
+            // then
             assertAll(() -> assertThat(addedRental)
                             .usingRecursiveComparison()
                             .isEqualTo(history),
@@ -154,6 +166,121 @@ class RentServiceTest {
                             .findUmbrellaById(99L),
                     () -> then(storeMetaService).shouldHaveNoInteractions(),
                     () -> then(rentRepository).shouldHaveNoInteractions()
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자는 환급 여부 필터링 기능이 가능한 대여/반납 현황을 조회할 수 있다.")
+    class findAllHistories {
+
+        @Test
+        @DisplayName("조건이 없는 경우 전체 대여/반납 현황을 조회할 수 있다.")
+        void success() {
+
+            // given
+            filter = HistoryFilterRequest.builder()
+                    .build();
+
+            RentalHistoriesPageResponse historyResponse = RentalHistoriesPageResponse.builder()
+                    .rentalHistoryResponsePage(
+                            List.of(
+                                    RentalHistoryResponse.builder()
+                                            .id(33L)
+                                            .name("테스터")
+                                            .phoneNumber("010-1234-5678")
+                                            .rentStoreName("motive study cafe")
+                                            .rentAt(LocalDateTime.of(1000, 12, 3, 4, 24))
+                                            .elapsedDay(0)
+                                            .umbrellaUuid(99L)
+                                            .returnStoreName("motive study cafe")
+                                            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
+                                            .totalRentalDay(0)
+                                            .refundCompleted(true)
+                                            .etc(history.getEtc())
+                                            .build())
+                    ).build();
+
+            given(rentRepository.findAll(filter))
+                    .willReturn(List.of(history));
+
+            // when
+            RentalHistoriesPageResponse allHistories = rentService.findAllHistories(filter);
+
+            //then
+            assertAll(() -> assertThat(allHistories)
+                            .usingRecursiveComparison()
+                            .isEqualTo(historyResponse),
+                    () -> assertThat(allHistories.getRentalHistoryResponsePage().size())
+                            .isEqualTo(1),
+                    () -> then(rentRepository).should(times(1))
+                            .findAll(filter)
+            );
+
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자의 고유 번호를 입력 받아")
+    class findUserHistoryTest {
+
+        @Test
+        @DisplayName("해당 사용자의 대여 목록을 조회할 수 있다.")
+        void success() {
+
+            // given
+            long loginedUserId = 7L;
+
+
+            AllHistoryResponse historyResponse = AllHistoryResponse.builder()
+                    .histories(
+                            List.of(
+                                    SingleHistoryResponse.builder()
+                                            .umbrellaUuid(99L)
+                                            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
+                                            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
+                                            .rentedStore("motive study cafe")
+                                            .isRefunded(true)
+                                            .isReturned(true)
+                                            .build())
+                    ).build();
+
+
+            given(rentRepository.findAllByUserId(loginedUserId))
+                    .willReturn(List.of(history));
+
+            // when
+            AllHistoryResponse userHistory = rentService.findAllHistoriesByUser(loginedUserId);
+
+            //then
+            assertAll(() -> assertThat(userHistory)
+                            .usingRecursiveComparison()
+                            .isEqualTo(historyResponse),
+                    () -> assertThat(userHistory.getHistories().size())
+                            .isEqualTo(1),
+                    () -> then(rentRepository).should(times(1))
+                            .findAllByUserId(7L)
+            );
+        }
+
+        @Test
+        @DisplayName("대여 내역이 없으면 빈 목록을 반환한다.")
+        void nonExistingHistory() {
+
+            // given
+            long loginedUserId = 7L;
+
+            given(rentRepository.findAllByUserId(loginedUserId))
+                    .willReturn(List.of());
+
+            // when
+            AllHistoryResponse userHistory = rentService.findAllHistoriesByUser(loginedUserId);
+
+            //then
+            assertAll(() -> assertThat(userHistory.getHistories().size())
+                            .isEqualTo(0),
+                    () -> then(rentRepository).should(times(1))
+                            .findAllByUserId(7L)
             );
         }
     }

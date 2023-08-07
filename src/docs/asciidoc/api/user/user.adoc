@@ -21,7 +21,7 @@ include::{snippets}/user-join-doc/request-fields.adoc[]
 
 include::{snippets}/user-join-doc/http-response.adoc[]
 
-=== 유저 정보 조회
+=== 로그인 유저 정보 조회
 
 ==== HTTP Request
 
@@ -32,6 +32,19 @@ include::{snippets}/find-user-info-doc/http-request.adoc[]
 include::{snippets}/find-user-info-doc/http-response.adoc[]
 
 include::{snippets}/find-user-info-doc/response-fields-data.adoc[]
+
+=== 유저 목록 조회
+
+==== HTTP Request
+
+include::{snippets}/find-users-info-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/find-users-info-doc/http-response.adoc[]
+
+include::{snippets}/find-users-info-doc/response-fields-data.adoc[]
+
 
 
 === 사용자가 빌린 우산 조회
@@ -44,3 +57,15 @@ include::{snippets}/find-umbrella-borrowed-by-user-doc/http-request.adoc[]
 
 include::{snippets}/find-umbrella-borrowed-by-user-doc/http-response.adoc[]
 include::{snippets}/find-umbrella-borrowed-by-user-doc/response-fields-data.adoc[]
+
+=== 사용자 대여 내역 조회
+
+==== HTTP Request
+
+include::{snippets}/user-history-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-history-doc/http-response.adoc[]
+include::{snippets}/user-history-doc/response-fields-data.adoc[]
+

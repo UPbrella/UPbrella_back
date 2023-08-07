@@ -9,21 +9,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
+import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
+import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
+import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.entity.*;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
-import upbrella.be.store.dto.request.CoordinateRequest;
-import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
-import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -32,7 +36,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -141,14 +144,47 @@ class StoreMetaServiceTest {
     }
 
     @Nested
-    @DisplayName("현재 지도 상에 보이는 위도, 경도 범위를 입력받아")
+    @DisplayName("현재 지도 상에 보이는 위도, 경도와 현재 시각을 입력받아")
     class findStoresInCurrentMapTest {
         private List<StoreMeta> storeMetaList = new ArrayList<>();
 
-        private SingleCurrentLocationStoreResponse response;
+        private SingleCurrentLocationStoreResponse expected;
+        private Set<BusinessHour> businessHours;
 
         @BeforeEach
         void setUp() {
+
+            businessHours = Set.of(
+                    BusinessHour.builder()
+                            .id(1L)
+                            .date(DayOfWeek.MONDAY)
+                            .openAt(LocalTime.NOON)
+                            .closeAt(LocalTime.of(23,0))
+                            .build(),
+                    BusinessHour.builder()
+                            .id(2L)
+                            .date(DayOfWeek.TUESDAY)
+                            .openAt(LocalTime.NOON)
+                            .closeAt(LocalTime.of(23,0))
+                            .build(),
+                    BusinessHour.builder()
+                            .id(3L)
+                            .date(DayOfWeek.WEDNESDAY)
+                            .openAt(LocalTime.NOON)
+                            .closeAt(LocalTime.of(23,0))
+                            .build(),
+                    BusinessHour.builder()
+                            .id(4L)
+                            .date(DayOfWeek.THURSDAY)
+                            .openAt(LocalTime.NOON)
+                            .closeAt(LocalTime.of(23,0))
+                            .build(),
+                    BusinessHour.builder()
+                            .id(5L)
+                            .date(DayOfWeek.FRIDAY)
+                            .openAt(LocalTime.NOON)
+                            .closeAt(LocalTime.of(23,0))
+                            .build());
 
             StoreMeta storeIn = StoreMeta.builder()
                     .id(1)
@@ -157,18 +193,20 @@ class StoreMetaServiceTest {
                     .deleted(false)
                     .latitude(4)
                     .longitude(3)
+                    .businessHours(businessHours)
                     .build();
 
-            StoreMeta storeOut = StoreMeta.builder()
+            StoreMeta storeOff = StoreMeta.builder()
                     .id(1)
-                    .name("모티브 카페 미국 지점")
-                    .activated(true)
+                    .name("모티브 카페 공사 중")
+                    .activated(false)
                     .deleted(false)
-                    .latitude(6)
+                    .latitude(4)
                     .longitude(3)
+                    .businessHours(businessHours)
                     .build();
 
-            response = SingleCurrentLocationStoreResponse.builder()
+            expected = SingleCurrentLocationStoreResponse.builder()
                     .id(1)
                     .latitude(4)
                     .longitude(3)
@@ -177,10 +215,11 @@ class StoreMetaServiceTest {
                     .build();
 
             storeMetaList.add(storeIn);
+            storeMetaList.add(storeOff);
         }
 
         @Test
-        @DisplayName("지도 상의 협업 지점 정보를 성공적으로 반환한다.")
+        @DisplayName("지도 상의 협업 지점과 현재 시각을 토대로 영업 여부를 판단하여 정보를 반환한다.")
         void success() {
 
             //given
@@ -188,17 +227,58 @@ class StoreMetaServiceTest {
                     .willReturn(storeMetaList);
 
             //when
-            List<SingleCurrentLocationStoreResponse> storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023,8,4,13,0));
 
             //then
             assertAll(
-                    () -> assertThat(storesInCurrentMap.size())
-                            .isEqualTo(1),
-                    () -> assertThat(storesInCurrentMap.get(0))
+                    () -> assertThat(storesInCurrentMap.getStores().size())
+                            .isEqualTo(2),
+                    () -> assertThat(storesInCurrentMap.getStores().get(0))
                             .usingRecursiveComparison()
-                            .isEqualTo(response)
+                            .isEqualTo(expected)
             );
         }
+
+        @Test
+        @DisplayName("내부 공사 등을 이유로 비활성화 상태인 협업 지점은 영업 시간이더라도 영업 중으로 표시되지 않는다.")
+        void isNotActiveStore() {
+
+            //given
+            given(storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(3.0, 5.0, 2.0, 4.0))
+                    .willReturn(storeMetaList);
+
+            //when
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023,8,4,13,0));
+
+            //then
+            assertAll(
+                    () -> assertThat(storesInCurrentMap.getStores().size())
+                            .isEqualTo(2),
+                    () -> assertThat(storesInCurrentMap.getStores().get(1).isOpenStatus())
+                            .isEqualTo(false)
+            );
+        }
+
+        @Test
+        @DisplayName("영업 시간이 아닌 협업 지점은 영업 중으로 표시되지 않는다.")
+        void isNotOpen() {
+
+            //given
+            given(storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(3.0, 5.0, 2.0, 4.0))
+                    .willReturn(storeMetaList);
+
+            //when
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023,8,4,3,0));
+
+            //then
+            assertAll(
+                    () -> assertThat(storesInCurrentMap.getStores().size())
+                            .isEqualTo(2),
+                    () -> assertThat(storesInCurrentMap.getStores().get(0).isOpenStatus())
+                            .isEqualTo(false)
+            );
+        }
+
 
         @Test
         @DisplayName("만족하는 협업 지점이 없으면 빈 리스트를 반환한다.")
@@ -209,10 +289,10 @@ class StoreMetaServiceTest {
                     .willReturn(List.of());
 
             //when
-            List<SingleCurrentLocationStoreResponse> storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(1995,7,18,13,0));
 
             //then
-            assertThat(storesInCurrentMap.size())
+            assertThat(storesInCurrentMap.getStores().size())
                     .isEqualTo(0);
         }
     }
