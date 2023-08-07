@@ -6,9 +6,4 @@ public class NotSocialLoginedException extends RuntimeException {
 
         super(message);
     }
-
-    public NotSocialLoginedException() {
-
-        super();
-    }
 }

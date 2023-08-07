@@ -6,9 +6,4 @@ public class LoginedMemberException extends RuntimeException {
 
         super(message);
     }
-
-    public LoginedMemberException() {
-
-        super();
-    }
 }

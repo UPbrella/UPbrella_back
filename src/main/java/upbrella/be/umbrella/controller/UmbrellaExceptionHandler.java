@@ -23,7 +23,7 @@ public class UmbrellaExceptionHandler {
     }
 
     @ExceptionHandler({NonExistingUmbrellaException.class})
-    public ResponseEntity<CustomResponse>  nonExistingUmbrella(ExistingUmbrellaUuidException ex) {
+    public ResponseEntity<CustomResponse>  nonExistingUmbrella(NonExistingUmbrellaException ex) {
 
         return ResponseEntity
                 .badRequest()

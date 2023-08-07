@@ -6,9 +6,4 @@ public class InvalidLoginCodeException extends RuntimeException {
 
         super(message);
     }
-
-    public InvalidLoginCodeException() {
-
-        super();
-    }
 }

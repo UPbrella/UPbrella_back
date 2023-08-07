@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
@@ -194,7 +196,7 @@ public class UserControllerTest extends RestDocsSupport {
             // given
             String code = "{\"code\":\"1kdfjq0243f\"}";
             given(oauthLoginService.getOauthToken(any(), any()))
-                    .willThrow(new InvalidLoginCodeException());
+                    .willThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
             MockHttpSession mockHttpSession = new MockHttpSession();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
