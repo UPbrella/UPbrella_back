@@ -12,6 +12,7 @@ import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.service.UmbrellaService;
@@ -54,12 +55,15 @@ public class RentService {
         );
     }
 
+    @Transactional
     public void returnUmbrellaByUser(User userToReturn, ReturnUmbrellaByUserRequest request) {
 
         History history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.getId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다."));
 
+        StoreMeta returnStore = storeMetaService.findStoreMetaById(request.getReturnStoreId());
 
+        History.updateHistoryForReturn(history, returnStore, request);
     }
 
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {

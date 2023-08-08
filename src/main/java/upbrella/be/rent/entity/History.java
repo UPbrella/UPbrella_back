@@ -1,6 +1,7 @@
 package upbrella.be.rent.entity;
 
 import lombok.*;
+import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
@@ -49,6 +50,22 @@ public class History {
                 .user(user)
                 .rentStoreMeta(rentStoreMeta)
                 .rentedAt(LocalDateTime.now())
+                .build();
+    }
+
+    public static History updateHistoryForReturn(History rentedHistory, StoreMeta returnStoreMeta, ReturnUmbrellaByUserRequest request) {
+
+        return History.builder()
+                .id(rentedHistory.getId())
+                .umbrella(rentedHistory.getUmbrella())
+                .user(rentedHistory.getUser())
+                .paidAt(rentedHistory.getPaidAt())
+                .bank(request.getBank())
+                .accountNumber(request.getAccountNumber())
+                .rentStoreMeta(rentedHistory.getRentStoreMeta())
+                .returnStoreMeta(returnStoreMeta)
+                .rentedAt(rentedHistory.getRentedAt())
+                .returnedAt(LocalDateTime.now())
                 .build();
     }
 

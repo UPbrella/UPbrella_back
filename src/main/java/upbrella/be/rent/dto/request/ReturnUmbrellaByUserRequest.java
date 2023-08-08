@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ReturnUmbrellaByUserRequest {
 
+    private long returnStoreId;
     private String bank;
     private String accountNumber;
     private String improvementReportContent;
