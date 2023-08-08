@@ -65,6 +65,13 @@ public class RentController {
     @PatchMapping
     public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
 
+        // TODO: 세션을 통해 유저 꺼내기
+        // 임시로 가짜 유저 사용
+        User userToReturn = userRepository.findById(87L)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
+
+
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
