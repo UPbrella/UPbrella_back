@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentFormResponse;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
@@ -51,6 +52,14 @@ public class RentService {
                         userToRent,
                         rentalStore)
         );
+    }
+
+    public void returnUmbrellaByUser(User userToReturn, ReturnUmbrellaByUserRequest request) {
+
+        History history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.getId())
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다."));
+
+
     }
 
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
