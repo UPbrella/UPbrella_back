@@ -1,7 +1,5 @@
 package upbrella.be.umbrella.service;
 
-import com.navercorp.fixturemonkey.FixtureMonkey;
-import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import upbrella.be.config.FixtureFactory;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.service.StoreMetaService;
@@ -38,9 +37,6 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 class UmbrellaServiceTest {
 
-    private final FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
-            .objectIntrospector(BuilderArbitraryIntrospector.INSTANCE)
-            .build();
     @Mock
     private UmbrellaRepository umbrellaRepository;
     @Mock
@@ -58,23 +54,13 @@ class UmbrellaServiceTest {
         @BeforeEach
         void setUp() {
 
-            storeMeta = fixtureMonkey.giveMeBuilder(StoreMeta.class)
-                    .set("deleted", false)
-                    .sample();
+            storeMeta = FixtureFactory.buildStoreMeta();
 
-            generatedUmbrellas = fixtureMonkey.giveMeBuilder(Umbrella.class)
-                    .set("storeMeta", storeMeta)
-                    .sampleList(5);
+            generatedUmbrellas = FixtureFactory.buildUmbrellasWithStoreMeta(storeMeta, 5);
 
             expectedUmbrellaResponses = generatedUmbrellas.stream()
-                    .map(umbrella -> fixtureMonkey.giveMeBuilder(UmbrellaResponse.class)
-                            .set("id", umbrella.getId())
-                            .set("storeMetaId", storeMeta.getId())
-                            .set("uuid", umbrella.getUuid())
-                            .set("rentable", umbrella.isRentable())
-                            .sample())
+                    .map(umbrella -> FixtureFactory.buildUmbrellaResponseWithUmbrellaAndStoreMeta(umbrella, storeMeta))
                     .collect(Collectors.toList());
-
         }
 
         @DisplayName("해당하는 페이지의 우산 고유번호, 우산 관리번호, 협력 지점 고유번호, 대여 가능 여부를 포함하는 우산 목록 정보를 반환한다.")
@@ -125,21 +111,13 @@ class UmbrellaServiceTest {
 
         @BeforeEach
         void setUp() {
-            storeMeta = fixtureMonkey.giveMeBuilder(StoreMeta.class)
-                    .set("deleted", false)
-                    .sample();
 
-            generatedUmbrellas = fixtureMonkey.giveMeBuilder(Umbrella.class)
-                    .set("storeMeta", storeMeta)
-                    .sampleList(5);
+            storeMeta = FixtureFactory.buildStoreMeta();
+
+            generatedUmbrellas = FixtureFactory.buildUmbrellasWithStoreMeta(storeMeta, 5);
 
             expectedUmbrellaResponses = generatedUmbrellas.stream()
-                    .map(umbrella -> fixtureMonkey.giveMeBuilder(UmbrellaResponse.class)
-                            .set("id", umbrella.getId())
-                            .set("storeMetaId", storeMeta.getId())
-                            .set("uuid", umbrella.getUuid())
-                            .set("rentable", umbrella.isRentable())
-                            .sample())
+                    .map(umbrella -> FixtureFactory.buildUmbrellaResponseWithUmbrellaAndStoreMeta(umbrella, storeMeta))
                     .collect(Collectors.toList());
         }
 
@@ -190,19 +168,11 @@ class UmbrellaServiceTest {
 
         @BeforeEach
         void setUp() {
-            umbrellaRequest = fixtureMonkey.giveMeOne(UmbrellaRequest.class);
+            umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
 
-            foundStoreMeta = fixtureMonkey.giveMeBuilder(StoreMeta.class)
-                    .set("deleted", false)
-                    .set("id", umbrellaRequest.getStoreMetaId())
-                    .sample();
+            foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaRequest.getStoreMetaId());
 
-            umbrella = fixtureMonkey.giveMeBuilder(Umbrella.class)
-                    .set("deleted", false)
-                    .set("storeMeta", foundStoreMeta)
-                    .set("uuid", umbrellaRequest.getUuid())
-                    .set("rentable", umbrellaRequest.isRentable())
-                    .sample();
+            umbrella = FixtureFactory.buildUmbrellaWithUmbrellaRequestAndStoreMeta(umbrellaRequest, foundStoreMeta);
         }
 
         @Test
@@ -289,22 +259,13 @@ class UmbrellaServiceTest {
         @BeforeEach
         void setUp() {
 
-            id = fixtureMonkey.giveMeOne(Long.class);
+            id = FixtureFactory.buildLong();
 
-            umbrellaRequest = fixtureMonkey.giveMeOne(UmbrellaRequest.class);
+            umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
 
-            foundStoreMeta = fixtureMonkey.giveMeBuilder(StoreMeta.class)
-                    .set("deleted", false)
-                    .set("id", umbrellaRequest.getStoreMetaId())
-                    .sample();
+            foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaRequest.getStoreMetaId());
 
-            umbrella = fixtureMonkey.giveMeBuilder(Umbrella.class)
-                    .set("deleted", false)
-                    .set("storeMeta", foundStoreMeta)
-                    .set("uuid", umbrellaRequest.getUuid())
-                    .set("rentable", umbrellaRequest.isRentable())
-                    .set("id", id)
-                    .sample();
+            umbrella = FixtureFactory.buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(id, umbrellaRequest, foundStoreMeta);
         }
 
         @Test
@@ -424,10 +385,8 @@ class UmbrellaServiceTest {
         @BeforeEach
         void setUp() {
 
-            id = fixtureMonkey.giveMeOne(Long.class);
-            umbrella = fixtureMonkey.giveMeBuilder(Umbrella.class)
-                    .set("deleted", false)
-                    .sample();
+            id = FixtureFactory.buildLong();
+            umbrella = FixtureFactory.buildUmbrella();
         }
 
         @Test
@@ -477,8 +436,8 @@ class UmbrellaServiceTest {
         void success() {
 
             // given
-            long id = fixtureMonkey.giveMeOne(Long.class);
-            int availableCount = fixtureMonkey.giveMeOne(Integer.class);
+            long id = FixtureFactory.buildLong();
+            int availableCount = FixtureFactory.buildInteger();
             given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(id))
                     .willReturn(availableCount);
 
