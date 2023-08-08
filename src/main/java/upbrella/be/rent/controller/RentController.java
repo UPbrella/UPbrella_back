@@ -70,7 +70,7 @@ public class RentController {
         User userToReturn = userRepository.findById(87L)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
 
-
+        rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest);
 
         return ResponseEntity
                 .ok()

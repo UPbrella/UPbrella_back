@@ -1,11 +1,14 @@
 package upbrella.be.rent.entity;
 
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ImprovementReport {
 
     @Id
@@ -16,4 +19,12 @@ public class ImprovementReport {
     private History history;
     private String content;
     private String etc;
+
+    public static ImprovementReport createFromReturn(History history, String content) {
+
+        return ImprovementReport.builder()
+                .history(history)
+                .content(content)
+                .build();
+    }
 }

@@ -12,7 +12,6 @@ import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.service.UmbrellaService;
@@ -30,6 +29,7 @@ public class RentService {
 
     private final UmbrellaService umbrellaService;
     private final StoreMetaService storeMetaService;
+    private final ImprovementReportService improvementReportService;
     private final RentRepository rentRepository;
 
     public RentFormResponse findRentForm(long umbrellaId) {
@@ -63,7 +63,10 @@ public class RentService {
 
         StoreMeta returnStore = storeMetaService.findStoreMetaById(request.getReturnStoreId());
 
-        rentRepository.save(History.updateHistoryForReturn(history, returnStore, request));
+        History updatedHistory = History.updateHistoryForReturn(history, returnStore, request);
+
+        rentRepository.save(updatedHistory);
+        addImprovementReportFromReturnByUser(updatedHistory, request);
     }
 
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
@@ -74,6 +77,15 @@ public class RentService {
     public AllHistoryResponse findAllHistoriesByUser(long userId) {
 
         return AllHistoryResponse.of(findAllByUserId(userId));
+    }
+
+    private void addImprovementReportFromReturnByUser(History history, ReturnUmbrellaByUserRequest request) {
+
+        if (request.getImprovementReportContent() == null) {
+            return;
+        }
+
+        improvementReportService.addImprovementReportFromReturn(history, request.getImprovementReportContent());
     }
 
     private List<SingleHistoryResponse> findAllByUserId(long userId) {
