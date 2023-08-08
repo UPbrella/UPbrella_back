@@ -97,15 +97,17 @@ public class UmbrellaControllerTest extends RestDocsSupport {
     void showUmbrellasByStoreIdTest() throws Exception {
 
         // given
+        int storeId = FixtureBuilderFactory.buildInteger();
         List<UmbrellaResponse> umbrellaResponseList = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 7; i++) {
             umbrellaResponseList.add(FixtureBuilderFactory.builderUmbrellaResponses()
+                    .set("storeMetaId", storeId)
                     .sample());
         }
 
         Pageable pageable = PageRequest.of(0, 5);
 
-        given(umbrellaService.findUmbrellasByStoreId(2, pageable))
+        given(umbrellaService.findUmbrellasByStoreId(storeId, pageable))
                 .willReturn(umbrellaResponseList);
 
         MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
@@ -114,7 +116,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
         // when & then
         mockMvc.perform(
-                        get("/umbrellas/{storeId}", 2)
+                        get("/umbrellas/{storeId}", storeId)
                                 .params(info)
                 ).andDo(print())
                 .andExpect(status().isOk())
