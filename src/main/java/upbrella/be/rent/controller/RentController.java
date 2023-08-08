@@ -8,14 +8,13 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
+import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/rent")
@@ -23,10 +22,26 @@ import java.util.List;
 public class RentController {
 
     private final ConditionReportService conditionReportService;
+    private final ImprovementReportService improvementReportService;
     private final RentService rentService;
 
     // 가짜 유저 사용을 위해 임시로 UserRepository 주입
     private final UserRepository userRepository;
+
+    @GetMapping("/form/{umbrellaId}")
+    public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId, HttpSession httpSession) {
+
+        RentFormResponse rentForm = rentService.findRentForm(umbrellaId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "대여 폼 조회 성공",
+                        rentForm
+                ));
+    }
 
     @PostMapping
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
@@ -60,9 +75,9 @@ public class RentController {
     }
 
     @GetMapping("/histories")
-    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest historyFilterRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest filter, HttpSession httpSession) {
 
-        RentalHistoriesPageResponse allHistories = rentService.findAllHistories(historyFilterRequest);
+        RentalHistoriesPageResponse histories = rentService.findAllHistories(filter);
 
         return ResponseEntity
                 .ok()
@@ -70,14 +85,16 @@ public class RentController {
                         "success",
                         200,
                         "대여 내역 조회 성공",
-                        allHistories
+                        histories
                 ));
     }
 
     @GetMapping("/histories/status")
-    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> showAllConditionReports(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> findConditionReports(HttpSession httpSession) {
 
         // TODO: 세션 정보로 관리자 식별
+
+        ConditionReportPageResponse conditionReports = conditionReportService.findAll();
 
         return ResponseEntity
                 .ok()
@@ -85,14 +102,14 @@ public class RentController {
                         "success",
                         200,
                         "상태 신고 내역 조회 성공",
-                        ConditionReportPageResponse.builder()
-                                .conditionReports(
-                                        conditionReportService.findAllConditionReport()
-                                        ).build()));
+                        conditionReports
+                ));
     }
 
     @GetMapping("/histories/improvements")
     public ResponseEntity<CustomResponse<ImprovementReportPageResponse>> findImprovements(HttpSession httpSession) {
+
+        ImprovementReportPageResponse improvementReports = improvementReportService.findAll();
 
         return ResponseEntity
                 .ok()
@@ -100,14 +117,7 @@ public class RentController {
                         "success",
                         200,
                         "개선 요청 내역 조회 성공",
-                        ImprovementReportPageResponse.builder()
-                                .improvementReports(
-                                        List.of(ImprovementReportResponse.builder()
-                                                .id(1L)
-                                                .umbrellaId(30)
-                                                .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
-                                                .etc("기타 사항")
-                                                .build()
-                                        )).build()));
+                        improvementReports
+                ));
     }
 }

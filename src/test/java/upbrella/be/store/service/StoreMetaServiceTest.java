@@ -16,9 +16,11 @@ import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.entity.*;
+import upbrella.be.store.exception.DeletedStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import java.time.DayOfWeek;
@@ -119,7 +121,7 @@ class StoreMetaServiceTest {
             //then
             assertAll(
                     () -> assertThatThrownBy(() -> storeMetaService.findCurrentStoreIdByUmbrella(2L))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(DeletedStoreDetailException.class),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(2L)
             );
@@ -136,7 +138,7 @@ class StoreMetaServiceTest {
             //then
             assertAll(
                     () -> assertThatThrownBy(() -> storeMetaService.findCurrentStoreIdByUmbrella(2L))
-                            .isInstanceOf(IllegalArgumentException.class),
+                            .isInstanceOf(NonExistingUmbrellaException.class),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(2L)
             );
@@ -159,31 +161,31 @@ class StoreMetaServiceTest {
                             .id(1L)
                             .date(DayOfWeek.MONDAY)
                             .openAt(LocalTime.NOON)
-                            .closeAt(LocalTime.of(23,0))
+                            .closeAt(LocalTime.of(23, 0))
                             .build(),
                     BusinessHour.builder()
                             .id(2L)
                             .date(DayOfWeek.TUESDAY)
                             .openAt(LocalTime.NOON)
-                            .closeAt(LocalTime.of(23,0))
+                            .closeAt(LocalTime.of(23, 0))
                             .build(),
                     BusinessHour.builder()
                             .id(3L)
                             .date(DayOfWeek.WEDNESDAY)
                             .openAt(LocalTime.NOON)
-                            .closeAt(LocalTime.of(23,0))
+                            .closeAt(LocalTime.of(23, 0))
                             .build(),
                     BusinessHour.builder()
                             .id(4L)
                             .date(DayOfWeek.THURSDAY)
                             .openAt(LocalTime.NOON)
-                            .closeAt(LocalTime.of(23,0))
+                            .closeAt(LocalTime.of(23, 0))
                             .build(),
                     BusinessHour.builder()
                             .id(5L)
                             .date(DayOfWeek.FRIDAY)
                             .openAt(LocalTime.NOON)
-                            .closeAt(LocalTime.of(23,0))
+                            .closeAt(LocalTime.of(23, 0))
                             .build());
 
             StoreMeta storeIn = StoreMeta.builder()
@@ -227,7 +229,7 @@ class StoreMetaServiceTest {
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023,8,4,13,0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023, 8, 4, 13, 0));
 
             //then
             assertAll(
@@ -248,7 +250,7 @@ class StoreMetaServiceTest {
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023,8,4,13,0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023, 8, 4, 13, 0));
 
             //then
             assertAll(
@@ -268,7 +270,7 @@ class StoreMetaServiceTest {
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023,8,4,3,0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023, 8, 4, 3, 0));
 
             //then
             assertAll(
@@ -289,7 +291,7 @@ class StoreMetaServiceTest {
                     .willReturn(List.of());
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(1995,7,18,13,0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(1995, 7, 18, 13, 0));
 
             //then
             assertThat(storesInCurrentMap.getStores().size())
@@ -405,6 +407,132 @@ class StoreMetaServiceTest {
                     () -> verify(classificationService).findSubClassificationById(subClassificationId),
                     () -> verify(storeMetaRepository).save(Mockito.any(StoreMeta.class))
             );
+        }
+    }
+
+    @Test
+    @DisplayName("협업지점 삭제 테스트")
+    void deleteStoreMetaTest() {
+
+        // given
+        Classification classification = Classification.builder()
+                .id(1L)
+                .type(ClassificationType.CLASSIFICATION)
+                .name("카테고리")
+                .latitude(33.33)
+                .longitude(33.33)
+                .build();
+
+        Classification subClassification = Classification.builder()
+                .id(2L)
+                .type(ClassificationType.SUB_CLASSIFICATION)
+                .name("카테고리")
+                .build();
+
+        BusinessHour businessHour = BusinessHour.builder()
+                .id(1L)
+                .date(DayOfWeek.MONDAY)
+                .openAt(LocalTime.of(10, 0))
+                .closeAt(LocalTime.of(20, 0))
+                .build();
+
+        StoreMeta storeMeta = StoreMeta.builder()
+                .id(1L)
+                .name("협업 지점명")
+                .activated(true)
+                .deleted(false)
+                .classification(classification)
+                .subClassification(subClassification)
+                .category("카테고리")
+                .latitude(33.33)
+                .longitude(33.33)
+                .password("비밀번호")
+                .businessHours(Set.of(businessHour))
+                .build();
+
+        given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta));
+
+        // when
+        storeMetaService.deleteStoreMeta(1L);
+
+        // then
+        assertAll(
+                () -> verify(storeMetaRepository, times(1)).findById(1L),
+                () -> assertThat(storeMeta.isDeleted()).isTrue()
+        );
+
+    }
+
+    @Nested
+    @DisplayName("사용자는 ")
+    class findStoreMeta {
+
+        @Test
+        @DisplayName("협업지점을 고유 아이디로 조회할 수 있다.")
+        void test() {
+
+            // given
+            Classification classification = Classification.builder()
+                    .id(1L)
+                    .type(ClassificationType.CLASSIFICATION)
+                    .name("카테고리")
+                    .latitude(33.33)
+                    .longitude(33.33)
+                    .build();
+
+            Classification subClassification = Classification.builder()
+                    .id(2L)
+                    .type(ClassificationType.SUB_CLASSIFICATION)
+                    .name("카테고리")
+                    .build();
+
+            BusinessHour businessHour = BusinessHour.builder()
+                    .id(1L)
+                    .date(DayOfWeek.MONDAY)
+                    .openAt(LocalTime.of(10, 0))
+                    .closeAt(LocalTime.of(20, 0))
+                    .build();
+
+            StoreMeta storeMeta = StoreMeta.builder()
+                    .id(1L)
+                    .name("협업 지점명")
+                    .activated(true)
+                    .deleted(false)
+                    .classification(classification)
+                    .subClassification(subClassification)
+                    .category("카테고리")
+                    .latitude(33.33)
+                    .longitude(33.33)
+                    .password("비밀번호")
+                    .businessHours(Set.of(businessHour))
+                    .build();
+
+            given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta));
+
+            // when
+            StoreMeta foundStoreMeta = storeMetaService.findStoreMetaById(1L);
+
+            // then
+            assertAll(
+                    () -> verify(storeMetaRepository, times(1)).findById(1L),
+                    () -> assertThat(foundStoreMeta).isEqualTo(storeMeta)
+            );
+        }
+
+        @Test
+        @DisplayName("협업지점이 존재하지 않다면 예외가 발생한다.")
+        void storeMetaNotFoundTest() {
+
+            // given
+
+            given(storeMetaRepository.findById(1L)).willReturn(Optional.empty());
+
+            // when
+
+            // then
+            assertThatThrownBy(() -> storeMetaService.findStoreMetaById(1L))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.");
         }
     }
 

@@ -12,6 +12,7 @@ import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.exception.NonExistingStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 
@@ -37,7 +38,7 @@ public class StoreDetailService {
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(request.getSubClassificationId());
 
-        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request);
+        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request.getBusinessHours());
 
         StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification, businessHours);
 
@@ -59,7 +60,7 @@ public class StoreDetailService {
     public StoreFindByIdResponse findStoreDetailByStoreMetaId(long storeMetaId) {
 
         StoreDetail storeDetail = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당하는 협업 지점이 존재하지 않습니다."));
+                .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 해당하는 협업 지점이 존재하지 않습니다."));
 
         int availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeMetaId);
 
@@ -77,7 +78,7 @@ public class StoreDetailService {
 
     public SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
 
-        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail);
+        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail.getStoreImages());
         String thumbnail = storeImageService.createThumbnail(imageUrls);
         Set<BusinessHour> businessHourSet = storeDetail.getStoreMeta().getBusinessHours();
         List<BusinessHour> businessHourList = new ArrayList<>(businessHourSet);

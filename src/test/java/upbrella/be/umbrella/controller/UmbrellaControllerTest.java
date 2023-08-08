@@ -1,6 +1,7 @@
 package upbrella.be.umbrella.controller;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -11,15 +12,21 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
+import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
+import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.service.UmbrellaService;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -36,6 +43,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
     @Mock
     private UmbrellaService umbrellaService;
+
     @Override
     protected Object initController() {
         return new UmbrellaController(umbrellaService);
@@ -46,16 +54,15 @@ public class UmbrellaControllerTest extends RestDocsSupport {
     void showAllUmbrellasTest() throws Exception {
 
         // given
-        List<UmbrellaResponse> umbrellaResponseList = List.of(UmbrellaResponse.builder()
-                        .id(1)
-                        .storeMetaId(2)
-                        .uuid(30)
-                        .rentable(true)
-                        .build());
+        List<UmbrellaResponse> umbrellaResponseList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            umbrellaResponseList.add(FixtureBuilderFactory.builderUmbrellaResponses()
+                    .sample());
+        }
 
-        Pageable pageable = PageRequest.of(0,5);
+        Pageable pageable = PageRequest.of(0, 5);
         given(umbrellaService.findAllUmbrellas(pageable))
-                        .willReturn(umbrellaResponseList);
+                .willReturn(umbrellaResponseList);
 
         MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
         info.add("page", "0");
@@ -90,16 +97,17 @@ public class UmbrellaControllerTest extends RestDocsSupport {
     void showUmbrellasByStoreIdTest() throws Exception {
 
         // given
-        List<UmbrellaResponse> umbrellaResponseList = List.of(UmbrellaResponse.builder()
-                .id(1)
-                .storeMetaId(2)
-                .uuid(30)
-                .rentable(true)
-                .build());
+        int storeId = FixtureBuilderFactory.buildInteger();
+        List<UmbrellaResponse> umbrellaResponseList = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            umbrellaResponseList.add(FixtureBuilderFactory.builderUmbrellaResponses()
+                    .set("storeMetaId", storeId)
+                    .sample());
+        }
 
-        Pageable pageable = PageRequest.of(0,5);
+        Pageable pageable = PageRequest.of(0, 5);
 
-        given(umbrellaService.findUmbrellasByStoreId(2, pageable))
+        given(umbrellaService.findUmbrellasByStoreId(storeId, pageable))
                 .willReturn(umbrellaResponseList);
 
         MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
@@ -108,7 +116,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
         // when & then
         mockMvc.perform(
-                        get("/umbrellas/{storeId}", 2)
+                        get("/umbrellas/{storeId}", storeId)
                                 .params(info)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -133,88 +141,201 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         )));
     }
 
-    @DisplayName("사용자는 새로운 우산을 추가할 수 있다.")
-    @Test
-    void addUmbrellasTest() throws Exception {
+    @Nested
+    @DisplayName("사용자는 우산의 정보로 POST 요청을 보내")
+    class AddUmbrella {
 
-        // given
-        UmbrellaRequest umbrellaRequest = UmbrellaRequest.builder()
-                .uuid(43)
-                .storeMetaId(2)
-                .rentable(true)
-                .build();
+        @DisplayName("새로운 우산을 추가할 수 있다.")
+        @Test
+        void success() throws Exception {
 
-        given(umbrellaService.addUmbrella(refEq(umbrellaRequest)))
-                .willReturn(null);
+            // given
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
+            given(umbrellaService.addUmbrella(refEq(umbrellaRequest)))
+                    .willReturn(FixtureBuilderFactory.builderUmbrella().sample());
 
-        // when & then
-        mockMvc.perform(
-                        post("/umbrellas")
-                                .content(objectMapper.writeValueAsString(umbrellaRequest))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("add-umbrellas-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
-                                        .description("우산 관리번호"),
-                                fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
-                                        .description("지점 고유번호"),
-                                fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                        .description("대여 가능 여부"))));
+            // when & then
+            mockMvc.perform(
+                            post("/umbrellas")
+                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("add-umbrellas-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("uuid").type(JsonFieldType.NUMBER)
+                                            .description("우산 관리번호"),
+                                    fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
+                                            .description("지점 고유번호"),
+                                    fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
+                                            .description("대여 가능 여부"))));
+        }
+
+        @DisplayName("우산 관리번호가 이미 존재하면 400 에러가 반환된다.")
+        @Test
+        void existingUmbrellaUuid() throws Exception {
+
+            // given
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
+
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
+
+            given(umbrellaService.addUmbrella(refEq(umbrellaRequest)))
+                    .willThrow(new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다."));
+
+            // when & then
+            mockMvc.perform(
+                            post("/umbrellas")
+                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(ExistingUmbrellaUuidException.class));
+        }
     }
 
-    @DisplayName("사용자는 우산 정보를 수정할 수 있다.")
-    @Test
-    void modifyUmbrellaTest() throws Exception {
 
-        // given
-        UmbrellaRequest umbrellaRequest = UmbrellaRequest.builder()
-                .uuid(45)
-                .storeMetaId(4)
-                .rentable(false)
-                .build();
+    @Nested
+    @DisplayName("사용자는 우산의 정보로 PATCH 요청을 보내")
+    class ModifyUmbrella {
+        @DisplayName("우산 정보를 수정할 수 있다.")
+        @Test
+        void sucess() throws Exception {
 
-        // when & then
-        mockMvc.perform(
-                        patch("/umbrellas/{umbrellaId}", 1L)
-                                .content(objectMapper.writeValueAsString(umbrellaRequest))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("modify-umbrella-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
-                                        .description("우산 관리번호"),
-                                fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
-                                        .description("지점 고유번호"),
-                                fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                        .description("대여 가능 여부")),
-                        pathParameters(
-                                parameterWithName("umbrellaId").description("우산 고유번호")
-                        )));
+            // given
+            long id = FixtureBuilderFactory.buildLong();
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
+
+            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaRequest)))
+                    .willReturn(FixtureBuilderFactory.builderUmbrella().sample());
+
+            // when & then
+            mockMvc.perform(
+                            patch("/umbrellas/{umbrellaId}", id)
+                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("modify-umbrella-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            requestFields(
+                                    fieldWithPath("uuid").type(JsonFieldType.NUMBER)
+                                            .description("우산 관리번호"),
+                                    fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
+                                            .description("지점 고유번호"),
+                                    fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
+                                            .description("대여 가능 여부")),
+                            pathParameters(
+                                    parameterWithName("umbrellaId").description("우산 고유번호")
+                            )));
+        }
+
+        @DisplayName("변경하려는 우산 관리번호가 이미 존재하면 400 에러가 반환된다.")
+        @Test
+        void existingUmbrellaUuid() throws Exception {
+
+            // given
+            long id = FixtureBuilderFactory.buildLong();
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
+
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
+
+            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaRequest)))
+                    .willThrow(new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다."));
+
+            // when & then
+            mockMvc.perform(
+                            patch("/umbrellas/{umbrellaId}", id)
+                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(ExistingUmbrellaUuidException.class));
+        }
+
+        @DisplayName("변경하려는 우산 고유번호가 존재하지 않으면 400 에러가 반환된다.")
+        @Test
+        void notExistingUmbrellaId() throws Exception {
+
+            // given
+            long id = FixtureBuilderFactory.buildLong();
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
+
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
+
+            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaRequest)))
+                    .willThrow(new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 관리번호입니다."));
+
+            // when & then
+            mockMvc.perform(
+                            patch("/umbrellas/{umbrellaId}", id)
+                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(NonExistingUmbrellaException.class));
+        }
     }
 
-    @DisplayName("사용자는 우산 정보를 삭제할 수 있다.")
-    @Test
-    void deleteUmbrellaTest() throws Exception {
+    @Nested
+    @DisplayName("사용자는 우산의 고유번호로 DELETE 요청을 보내")
+    class DeleteUmbrella {
+        @DisplayName("우산 정보를 삭제할 수 있다.")
+        @Test
+        void success() throws Exception {
 
-        // when & then
-        mockMvc.perform(
-                        delete("/umbrellas/{umbrellaId}", 1)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("delete-umbrella-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("umbrellaId").description("우산 고유번호")
-                        )));
+            // given
+            long id = FixtureBuilderFactory.buildLong();
+            willDoNothing().given(umbrellaService)
+                    .deleteUmbrella(eq(id));
+
+            // when & then
+            mockMvc.perform(
+                            delete("/umbrellas/{umbrellaId}", id)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("delete-umbrella-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            pathParameters(
+                                    parameterWithName("umbrellaId").description("우산 고유번호")
+                            )));
+        }
+
+        @DisplayName("존재하지 않는 우산 고유번호면 400 에러를 반환한다.")
+        @Test
+        void notExistingUmbrella() throws Exception {
+
+            // given
+            long id = FixtureBuilderFactory.buildLong();
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
+
+            willThrow(new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다."))
+                    .given(umbrellaService).deleteUmbrella(eq(id));
+
+            // when & then
+            mockMvc.perform(
+                            delete("/umbrellas/{umbrellaId}", id))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(NonExistingUmbrellaException.class));
+        }
     }
 }
