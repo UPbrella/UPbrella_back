@@ -63,7 +63,7 @@ public class RentService {
 
         StoreMeta returnStore = storeMetaService.findStoreMetaById(request.getReturnStoreId());
 
-        History.updateHistoryForReturn(history, returnStore, request);
+        rentRepository.save(History.updateHistoryForReturn(history, returnStore, request));
     }
 
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
