@@ -3,7 +3,6 @@
 ==== HTTP Request
 
 include::{snippets}/user-login-doc/http-request.adoc[]
-include::{snippets}/user-login-doc/request-fields.adoc[]
 
 ==== HTTP Response
 
