@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import upbrella.be.config.FixtureFactory;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
@@ -40,7 +41,7 @@ class OauthLoginServiceTest {
 
         //given
         String code = "{\"code\":\"1kdfjq0243f\"}";
-        OauthToken token = new OauthToken("a","b","c", 100L);
+        OauthToken token = FixtureFactory.buildOauthToken();
         given(restTemplate.postForEntity(anyString(), any(HttpEntity.class), any()))
                 .willReturn(ResponseEntity.of(Optional.of(token)));
         kakaoOauthInfo = new KakaoOauthInfo("123", "abc", "kakao.com", "login.com");
