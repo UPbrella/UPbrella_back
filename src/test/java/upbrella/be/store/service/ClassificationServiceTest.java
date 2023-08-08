@@ -1,6 +1,7 @@
 package upbrella.be.store.service;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +16,10 @@ import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.repository.ClassificationRepository;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -97,6 +101,57 @@ class ClassificationServiceTest {
         );
     }
 
+    @Nested
+    @DisplayName("사용자는 대분류를 ")
+    class ClassificationTest {
+
+        Classification classification = Classification.builder()
+                .id(1L)
+                .type(ClassificationType.CLASSIFICATION)
+                .name("classification_name")
+                .latitude(1.0)
+                .longitude(1.0)
+                .build();
+
+        Classification subClassification = Classification.builder()
+                .id(1L)
+                .type(ClassificationType.SUB_CLASSIFICATION)
+                .name("sub_classification_name")
+                .build();
+
+        @Test
+        @DisplayName("id로 조회할 수 있다.")
+        void findClassificationById() {
+            // given
+            long classificationId = 1L;
+            given(classificationRepository.findById(classificationId)).willReturn(Optional.ofNullable(classification));
+
+            // when
+            Classification foundClassification = classificationService.findClassificationById(classificationId);
+
+            // then
+            assertAll(
+                    () -> assertThat(foundClassification).isNotNull(),
+                    () -> assertEquals(1L, foundClassification.getId()),
+                    () -> assertEquals("classification_name", foundClassification.getName())
+            );
+        }
+
+        @Test
+        @DisplayName("조회했는데 소분류가 조회되면 예외를 발생시킨다.")
+        void test() {
+            // given
+            long classificationId = 1L;
+            given(classificationRepository.findById(classificationId)).willReturn(Optional.ofNullable(subClassification));
+
+
+            // then
+            assertThatThrownBy(() -> classificationService.findClassificationById(classificationId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("[ERROR] Classification이 아닙니다.");
+        }
+    }
+
     @Test
     @DisplayName("사용자는 소분류를 조회할 수 있다.")
     void findAllSubClassificationTest() {
@@ -113,5 +168,55 @@ class ClassificationServiceTest {
                 () -> assertEquals(1L, result.getSubClassifications().get(0).getId()),
                 () -> assertEquals("subclassification_name", result.getSubClassifications().get(0).getName())
         );
+    }
+
+    @Nested
+    @DisplayName("사용자는 소분류를 ")
+    class SubClassificationTest {
+        Classification classification = Classification.builder()
+                .id(1L)
+                .type(ClassificationType.CLASSIFICATION)
+                .name("classification_name")
+                .latitude(1.0)
+                .longitude(1.0)
+                .build();
+
+        Classification subClassification = Classification.builder()
+                .id(1L)
+                .type(ClassificationType.SUB_CLASSIFICATION)
+                .name("sub_classification_name")
+                .build();
+
+        @Test
+        @DisplayName("id로 조회할 수 있다.")
+        void findClassificationById() {
+            // given
+            long subClassificationId = 1L;
+            given(classificationRepository.findById(subClassificationId)).willReturn(Optional.ofNullable(subClassification));
+
+            // when
+            Classification foundSubClassification = classificationService.findSubClassificationById(subClassificationId);
+
+            // then
+            assertAll(
+                    () -> assertThat(foundSubClassification).isNotNull(),
+                    () -> assertEquals(1L, foundSubClassification.getId()),
+                    () -> assertEquals("sub_classification_name", foundSubClassification.getName())
+            );
+        }
+
+        @Test
+        @DisplayName("조회했는데 소분류가 조회되면 예외를 발생시킨다.")
+        void test() {
+            // given
+            long classificationId = 1L;
+            given(classificationRepository.findById(classificationId)).willReturn(Optional.ofNullable(classification));
+
+
+            // then
+            assertThatThrownBy(() -> classificationService.findSubClassificationById(classificationId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("[ERROR] SubClassification이 아닙니다.");
+        }
     }
 }
