@@ -1,4 +1,4 @@
-<div align="center">
+ <div align="center">
   <img src="https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/362c03e1-e21e-46c0-abb0-196238f572a1" alt="Centered Image">
 </div>
 
@@ -19,6 +19,7 @@
 지속가능한️ 공동체와 환경적 임팩트를 창출합니다.
 비가 오는 날, 누구나 쉽게 할 수 있는 작은 행동이 모여
 더 나은 세상을 만들 수 있다고 여깁니다. 업브렐라 프로젝트는 2021년 출범 후 WIX 기반으로 운영되고 있던 플랫폼을 운영 불편함 개선, 사용자 편의 기능 추가를 위해 마이그레이션하는 프로젝트입니다.
+
 <br></br>
 ## 👨‍👩‍👧‍👧 Backend Team 소개
 
@@ -52,43 +53,20 @@
 ### Back-End
 
 <img src="https://img.shields.io/badge/Java-007396?style=flat&logo=java&logoColor=white"/> <img src="https://img.shields.io/badge/Gradle-02303A?style=flat&logo=Gradle&logoColor=white"/> <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring%20Data%20JPA-03EF62?style=flat"/> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/> ![QueryDSL](https://img.shields.io/badge/QueryDSL-blueviolet?style=flat)
-![OAuth 2.0](https://img.shields.io/badge/OAuth-EB5424?style=flat) ![Jacoco](https://img.shields.io/badge/Jacoco-23E396?style=flat&logoColor=white) ![IntelliJ IDEA](https://img.shields.io/badge/-IntelliJ%20IDEA-FF3850?style=flat&logo=IntelliJ%20IDEA&logoColor=white)
+![OAuth 2.0](https://img.shields.io/badge/OAuth-EB5424?style=flat) ![Jacoco](https://img.shields.io/badge/Jacoco-23E396?style=flat&logoColor=white) ![RestDocs](https://img.shields.io/badge/RestDocs-63E296?style=flat&logoColor=white)
+![Fixture Monkey](https://img.shields.io/badge/FixtureMonkey-138888?style=flat&logoColor=white)
+![IntelliJ IDEA](https://img.shields.io/badge/-IntelliJ%20IDEA-FF3850?style=flat&logo=IntelliJ%20IDEA&logoColor=white)
 
+## 🌂 기타
 
+### [Rest API Docs](https://github.com/UPbrella/UPbrella_back/wiki/REST-API-Docs)
 
-## 🤝 그라운드 룰
+Rest Docs를 기반으로한 API 문서입니다.
+### [ERD](https://github.com/UPbrella/UPbrella_back/wiki/ERD)
+데이터 베이스 설계 및 DDL입니다.
 
-- 무엇인가 부탁할 때 용용체를 씁시다. 🥳
-- 칭찬하는 분위기 ☺️
-- 회의를 진행하게 되면, 회의록에 정리합니다. ✏️
+### [회의록](https://github.com/UPbrella/UPbrella_back/wiki/7%EC%9B%94-10%EC%9D%BC-%ED%9A%8C%EC%9D%98%EB%A1%9D)
+백엔드 내부 회의록을 별도로 기록합니다. 전체 회의는 Notion space에서 진행됩니다.
 
-### 의사결정
-
-- 모두 발언했는지 확인하고, 다음 의제로 넘어갑니다.
-
-## 📜 브랜치 룰
-
-### Prefix
-
-`feature/` : 기능 개발 작업과 관련된 브랜치를 의미합니다.
-
-`fix/` : 버그 수정 작업과 관련된 브랜치를 의미합니다.
-
-`refactor/` : 코드 품질 개선 작업과 관련된 브랜치를 의미합니다.
-
-`release/` : 배포 작업과 관련된 브랜치를 의미합니다.
-
-### Suffix
-
-`이슈번호 #000 + 기능 명`
-
-### 브랜치 예제
-
-**`feature/#1-header`**
-
-<br>
-
-## 📑 회의록
-
-
-[회의록 모음](https://heehminh.notion.site/BE-f4a1aeb2c14f4e5f90d9aaed7a054439?pvs=4)
+### [업브렐라 기술 블로그](https://upbrella.github.io/)
+기획, 디자이너, 엔지니어가 공유하는 기술적인 도전과 운영에서 생긴 이슈들을 기록하기 위한 공간입니다.
