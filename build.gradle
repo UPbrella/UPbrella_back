@@ -64,6 +64,9 @@ dependencies {
 
     // LocalTime 위한 의존성 추가
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // Fixture 생성 라이브러리
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:0.5.3")
 }
 
 ext {
