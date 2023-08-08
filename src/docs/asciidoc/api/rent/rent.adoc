@@ -1,3 +1,13 @@
+=== 대여 폼 데이터 조회
+==== HTTP Request
+
+include::{snippets}/find-rental-form-doc/http-request.adoc[]
+include::{snippets}/find-rental-form-doc/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/find-rental-form-doc/http-response.adoc[]
+include::{snippets}/find-rental-form-doc/response-fields-data.adoc[]
+
 === 우산 대여 신청
 ==== HTTP Request
 
