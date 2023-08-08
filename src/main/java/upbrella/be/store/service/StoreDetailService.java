@@ -38,7 +38,7 @@ public class StoreDetailService {
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(request.getSubClassificationId());
 
-        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request);
+        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request.getBusinessHours());
 
         StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification, businessHours);
 
@@ -78,7 +78,7 @@ public class StoreDetailService {
 
     public SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
 
-        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail);
+        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail.getStoreImages());
         String thumbnail = storeImageService.createThumbnail(imageUrls);
         Set<BusinessHour> businessHourSet = storeDetail.getStoreMeta().getBusinessHours();
         List<BusinessHour> businessHourList = new ArrayList<>(businessHourSet);
