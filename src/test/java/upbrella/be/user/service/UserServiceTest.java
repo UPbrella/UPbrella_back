@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
@@ -17,6 +18,7 @@ import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,8 +49,8 @@ class UserServiceTest {
         @BeforeEach
         void setUp() {
 
-            user = FixtureFactory.buildUser();
-            notExistingSocialId = FixtureFactory.buildInteger();
+            user = FixtureBuilderFactory.builderUser().sample();
+            notExistingSocialId = FixtureBuilderFactory.buildInteger();
         }
 
         @Test
@@ -97,9 +99,9 @@ class UserServiceTest {
         @BeforeEach
         void setUp() {
 
-            user = FixtureFactory.buildUser();
-            existingSocialId = FixtureFactory.buildLong();
-            notExistingSocialId = FixtureFactory.buildLong();
+            user = FixtureBuilderFactory.builderUser().sample();
+            existingSocialId = FixtureBuilderFactory.buildLong();
+            notExistingSocialId = FixtureBuilderFactory.buildLong();
             joinRequest = FixtureFactory.buildJoinRequestWithUser(user);
         }
 
@@ -147,12 +149,14 @@ class UserServiceTest {
     @DisplayName("사용자는")
     class findUsersTest {
 
-        List<User> users;
+        List<User> users = new ArrayList<>();
 
         @BeforeEach
         void setUp() {
 
-            users = FixtureFactory.buildUsers(100);
+            for (int i = 0; i < 5; i++) {
+                users.add(FixtureBuilderFactory.builderUser().sample());
+            }
         }
 
         @Test

@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
@@ -21,6 +22,7 @@ import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,14 +51,18 @@ class UmbrellaServiceTest {
     class findAllUmbrellasTest {
         private StoreMeta storeMeta;
         private List<UmbrellaResponse> expectedUmbrellaResponses;
-        private List<Umbrella> generatedUmbrellas;
+        private List<Umbrella> generatedUmbrellas = new ArrayList<>();
 
         @BeforeEach
         void setUp() {
 
-            storeMeta = FixtureFactory.buildStoreMeta();
+            storeMeta = FixtureBuilderFactory.builderStoreMeta().sample();
 
-            generatedUmbrellas = FixtureFactory.buildUmbrellasWithStoreMeta(storeMeta, 5);
+            for (int i = 0; i < 5; i++) {
+                generatedUmbrellas.add(FixtureBuilderFactory.builderUmbrella()
+                        .set("storeMeta", storeMeta)
+                        .sample());
+            }
 
             expectedUmbrellaResponses = generatedUmbrellas.stream()
                     .map(umbrella -> FixtureFactory.buildUmbrellaResponseWithUmbrellaAndStoreMeta(umbrella, storeMeta))
@@ -107,14 +113,18 @@ class UmbrellaServiceTest {
     class findUmbrellasByStoreIdTest {
         private StoreMeta storeMeta;
         private List<UmbrellaResponse> expectedUmbrellaResponses;
-        private List<Umbrella> generatedUmbrellas;
+        private List<Umbrella> generatedUmbrellas = new ArrayList<>();
 
         @BeforeEach
         void setUp() {
 
-            storeMeta = FixtureFactory.buildStoreMeta();
+            storeMeta = FixtureBuilderFactory.builderStoreMeta().sample();
 
-            generatedUmbrellas = FixtureFactory.buildUmbrellasWithStoreMeta(storeMeta, 5);
+            for (int i = 0; i < 5; i++) {
+                generatedUmbrellas.add(FixtureBuilderFactory.builderUmbrella()
+                        .set("storeMeta", storeMeta)
+                        .sample());
+            }
 
             expectedUmbrellaResponses = generatedUmbrellas.stream()
                     .map(umbrella -> FixtureFactory.buildUmbrellaResponseWithUmbrellaAndStoreMeta(umbrella, storeMeta))
@@ -168,7 +178,7 @@ class UmbrellaServiceTest {
 
         @BeforeEach
         void setUp() {
-            umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
+            umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest().sample();
 
             foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaRequest.getStoreMetaId());
 
@@ -259,9 +269,9 @@ class UmbrellaServiceTest {
         @BeforeEach
         void setUp() {
 
-            id = FixtureFactory.buildLong();
+            id = FixtureBuilderFactory.buildLong();
 
-            umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
+            umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest().sample();
 
             foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaRequest.getStoreMetaId());
 
@@ -385,8 +395,8 @@ class UmbrellaServiceTest {
         @BeforeEach
         void setUp() {
 
-            id = FixtureFactory.buildLong();
-            umbrella = FixtureFactory.buildUmbrella();
+            id = FixtureBuilderFactory.buildLong();
+            umbrella = FixtureBuilderFactory.builderUmbrella().sample();
         }
 
         @Test
@@ -436,8 +446,8 @@ class UmbrellaServiceTest {
         void success() {
 
             // given
-            long id = FixtureFactory.buildLong();
-            int availableCount = FixtureFactory.buildInteger();
+            long id = FixtureBuilderFactory.buildLong();
+            int availableCount = FixtureBuilderFactory.buildInteger();
             given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(id))
                     .willReturn(availableCount);
 

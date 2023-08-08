@@ -12,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import upbrella.be.config.FixtureFactory;
+import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
@@ -20,6 +20,7 @@ import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.service.UmbrellaService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +54,11 @@ public class UmbrellaControllerTest extends RestDocsSupport {
     void showAllUmbrellasTest() throws Exception {
 
         // given
-        List<UmbrellaResponse> umbrellaResponseList = FixtureFactory.buildUmbrellaResponses(12);
+        List<UmbrellaResponse> umbrellaResponseList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            umbrellaResponseList.add(FixtureBuilderFactory.builderUmbrellaResponses()
+                    .sample());
+        }
 
         Pageable pageable = PageRequest.of(0, 5);
         given(umbrellaService.findAllUmbrellas(pageable))
@@ -92,7 +97,11 @@ public class UmbrellaControllerTest extends RestDocsSupport {
     void showUmbrellasByStoreIdTest() throws Exception {
 
         // given
-        List<UmbrellaResponse> umbrellaResponseList = FixtureFactory.buildUmbrellaResponses(12);
+        List<UmbrellaResponse> umbrellaResponseList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            umbrellaResponseList.add(FixtureBuilderFactory.builderUmbrellaResponses()
+                    .sample());
+        }
 
         Pageable pageable = PageRequest.of(0, 5);
 
@@ -139,9 +148,10 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void success() throws Exception {
 
             // given
-            UmbrellaRequest umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
             given(umbrellaService.addUmbrella(refEq(umbrellaRequest)))
-                    .willReturn(FixtureFactory.buildUmbrella());
+                    .willReturn(FixtureBuilderFactory.builderUmbrella().sample());
 
             // when & then
             mockMvc.perform(
@@ -168,7 +178,8 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void existingUmbrellaUuid() throws Exception {
 
             // given
-            UmbrellaRequest umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
@@ -197,11 +208,12 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void sucess() throws Exception {
 
             // given
-            long id = FixtureFactory.buildLong();
-            UmbrellaRequest umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
+            long id = FixtureBuilderFactory.buildLong();
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
 
             given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaRequest)))
-                    .willReturn(FixtureFactory.buildUmbrella());
+                    .willReturn(FixtureBuilderFactory.builderUmbrella().sample());
 
             // when & then
             mockMvc.perform(
@@ -231,8 +243,9 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void existingUmbrellaUuid() throws Exception {
 
             // given
-            long id = FixtureFactory.buildLong();
-            UmbrellaRequest umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
+            long id = FixtureBuilderFactory.buildLong();
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
@@ -256,8 +269,9 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void notExistingUmbrellaId() throws Exception {
 
             // given
-            long id = FixtureFactory.buildLong();
-            UmbrellaRequest umbrellaRequest = FixtureFactory.buildUmbrellaRequest();
+            long id = FixtureBuilderFactory.buildLong();
+            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+                    .sample();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
@@ -285,7 +299,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void success() throws Exception {
 
             // given
-            long id = FixtureFactory.buildLong();
+            long id = FixtureBuilderFactory.buildLong();
             willDoNothing().given(umbrellaService)
                     .deleteUmbrella(eq(id));
 
@@ -307,7 +321,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void notExistingUmbrella() throws Exception {
 
             // given
-            long id = FixtureFactory.buildLong();
+            long id = FixtureBuilderFactory.buildLong();
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
             willThrow(new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다."))

@@ -2,57 +2,37 @@ package upbrella.be.config;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
+import upbrella.be.rent.entity.History;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.response.KakaoLoginResponse;
+import upbrella.be.user.dto.token.OauthToken;
 import upbrella.be.user.entity.User;
 
-import java.util.List;
+import static upbrella.be.config.FixtureBuilderFactory.builderStoreMeta;
+import static upbrella.be.config.FixtureBuilderFactory.builderUmbrella;
 
 public class FixtureFactory {
 
     private static final FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
             .objectIntrospector(BuilderArbitraryIntrospector.INSTANCE)
+            .defaultNotNull(true)
             .build();
 
-    public static int buildInteger() {
-
-        return fixtureMonkey.giveMeOne(Integer.class);
-    }
-
-    public static long buildLong() {
-
-        return fixtureMonkey.giveMeOne(Long.class);
-    }
-
-    public static StoreMeta buildStoreMeta() {
-
-        return fixtureMonkey.giveMeBuilder(StoreMeta.class)
-                .set("deleted", false)
-                .sample();
-    }
 
     public static StoreMeta buildStoreMetaWithId(long id) {
 
-        return fixtureMonkey.giveMeBuilder(StoreMeta.class)
-                .set("deleted", false)
+        return builderStoreMeta()
                 .set("id", id)
-                .sample();
-    }
-
-    public static Umbrella buildUmbrella() {
-
-        return fixtureMonkey.giveMeBuilder(Umbrella.class)
-                .set("deleted", false)
                 .sample();
     }
 
     public static Umbrella buildUmbrellaWithUmbrellaRequestAndStoreMeta(UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
 
-        return fixtureMonkey.giveMeBuilder(Umbrella.class)
-                .set("deleted", false)
+        return builderUmbrella()
                 .set("storeMeta", storeMeta)
                 .set("uuid", umbrellaRequest.getUuid())
                 .set("rentable", umbrellaRequest.isRentable())
@@ -61,20 +41,12 @@ public class FixtureFactory {
 
     public static Umbrella buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(long id, UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
 
-        return fixtureMonkey.giveMeBuilder(Umbrella.class)
+        return builderUmbrella()
                 .set("id", id)
-                .set("deleted", false)
                 .set("storeMeta", storeMeta)
                 .set("uuid", umbrellaRequest.getUuid())
                 .set("rentable", umbrellaRequest.isRentable())
                 .sample();
-    }
-
-    public static List<Umbrella> buildUmbrellasWithStoreMeta(StoreMeta storeMeta, int size) {
-
-        return fixtureMonkey.giveMeBuilder(Umbrella.class)
-                .set("storeMeta", storeMeta)
-                .sampleList(size);
     }
 
     public static UmbrellaResponse buildUmbrellaResponseWithUmbrellaAndStoreMeta(Umbrella umbrella, StoreMeta storeMeta) {
@@ -87,31 +59,6 @@ public class FixtureFactory {
                 .sample();
     }
 
-    public static List<UmbrellaResponse> buildUmbrellaResponses(int size) {
-
-        return fixtureMonkey.giveMe(UmbrellaResponse.class, size);
-    }
-
-
-    public static UmbrellaRequest buildUmbrellaRequest() {
-
-        return fixtureMonkey.giveMeOne(UmbrellaRequest.class);
-    }
-
-    public static User buildUser() {
-
-        return fixtureMonkey.giveMeOne(User.class);
-    }
-
-    public static List<User> buildUsers(int size) {
-
-        return fixtureMonkey.giveMe(User.class, size);
-    }
-
-    public static FixtureMonkey getInstance() {
-        return fixtureMonkey;
-    }
-
     public static JoinRequest buildJoinRequestWithUser(User user) {
 
         return fixtureMonkey.giveMeBuilder(JoinRequest.class)
@@ -119,4 +66,27 @@ public class FixtureFactory {
                 .set("phoneNumber", user.getPhoneNumber())
                 .sample();
     }
+
+    public static History buildHistoryWithUmbrella(Umbrella umbrella) {
+
+        return fixtureMonkey.giveMeBuilder(History.class)
+                .set("umbrella", umbrella)
+                .sample();
+    }
+
+    public static OauthToken buildOauthToken() {
+
+        return fixtureMonkey.giveMeBuilder(OauthToken.class)
+                .set("accessToken", "accessToken")
+                .set("refreshToken", "refreshToken")
+                .set("tokenType", "tokenType")
+                .set("expiresIn", 1000L)
+                .sample();
+    }
+
+    public static KakaoLoginResponse buildKakaoLoginResponse() {
+
+        return fixtureMonkey.giveMeOne(KakaoLoginResponse.class);
+    }
+
 }
