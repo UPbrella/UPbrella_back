@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.dto.response.RentFormResponse;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
@@ -28,6 +29,14 @@ public class RentService {
     private final UmbrellaService umbrellaService;
     private final StoreMetaService storeMetaService;
     private final RentRepository rentRepository;
+
+    public RentFormResponse findRentForm(long umbrellaId) {
+
+        Umbrella umbrella = umbrellaService.findUmbrellaById(umbrellaId);
+
+        return RentFormResponse.of(umbrella);
+    }
+
 
     @Transactional
     public History addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {

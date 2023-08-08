@@ -27,6 +27,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
@@ -49,8 +51,49 @@ public class RentControllerTest extends RestDocsSupport {
         return new RentController(conditionReportService, improvementReportService, rentService, userRepository);
     }
 
-    @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
     @Test
+    @DisplayName("사용자는 대여 폼 자동 완성에 필요한 데이터를 조회할 수 있다.")
+    void findRentalFormTest() throws Exception {
+
+        // given
+        RentFormResponse rentFormResponse = RentFormResponse.builder()
+                .classificationName("신촌")
+                .rentStoreName("motive study cafe")
+                .umbrellaUuid(99L)
+                .password("1234")
+                .build();
+
+        given(rentService.findRentForm(2L))
+                .willReturn(rentFormResponse);
+
+        // when & then
+        mockMvc.perform(
+                        get("/rent/form/{umbrellaId}", 2L)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("find-rental-form-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("umbrellaId")
+                                        .description("우산 번호 (uuid 아님)")
+                        ),
+                        responseFields(
+                                beneathPath("data")
+                                        .withSubsectionId("data"),
+                                fieldWithPath("classificationName").type(JsonFieldType.STRING)
+                                        .description("지역"),
+                                fieldWithPath("rentStoreName").type(JsonFieldType.STRING)
+                                        .description("대여 지점 이름"),
+                                fieldWithPath("umbrellaUuid").type(JsonFieldType.NUMBER)
+                                        .description("우산 고유번호"),
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .description("비밀번호")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
     void rentUmbrellaTest() throws Exception {
 
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
@@ -93,8 +136,8 @@ public class RentControllerTest extends RestDocsSupport {
                 ));
     }
 
-    @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     @Test
+    @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     void returnUmbrellaTest() throws Exception {
         ReturnUmbrellaByUserRequest request = ReturnUmbrellaByUserRequest.builder()
                 .uuid(1)
@@ -123,8 +166,8 @@ public class RentControllerTest extends RestDocsSupport {
                 ));
     }
 
-    @DisplayName("사용자는 우산 대여 내역을 조회 할 수 있다.")
     @Test
+    @DisplayName("사용자는 우산 대여 내역을 조회 할 수 있다.")
     void showAllRentalHistoriesTest() throws Exception {
 
         RentalHistoriesPageResponse response = RentalHistoriesPageResponse.builder()
@@ -194,8 +237,8 @@ public class RentControllerTest extends RestDocsSupport {
                         )));
     }
 
-    @DisplayName("사용자는 신고 내역을 조회할 수 있다.")
     @Test
+    @DisplayName("사용자는 신고 내역을 조회할 수 있다.")
     void showAllStatusConditionTest() throws Exception {
 
         ConditionReportPageResponse conditionReportsResponse = ConditionReportPageResponse.builder()
@@ -235,8 +278,8 @@ public class RentControllerTest extends RestDocsSupport {
 
     }
 
-    @DisplayName("사용자는 개선 요청 내역을 조회할 수 있다.")
     @Test
+    @DisplayName("사용자는 개선 요청 내역을 조회할 수 있다.")
     void showAllImprovementsTest() throws Exception {
 
         ImprovementReportPageResponse improvementReportsResponse = ImprovementReportPageResponse.builder()
