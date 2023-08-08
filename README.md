@@ -19,6 +19,10 @@
 지속가능한️ 공동체와 환경적 임팩트를 창출합니다.
 비가 오는 날, 누구나 쉽게 할 수 있는 작은 행동이 모여
 더 나은 세상을 만들 수 있다고 여깁니다. 업브렐라 프로젝트는 2021년 출범 후 WIX 기반으로 운영되고 있던 플랫폼을 운영 불편함 개선, 사용자 편의 기능 추가를 위해 마이그레이션하는 프로젝트입니다.
+<br></br>
+<div align="center">
+  <img width=450 src="https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/ba98b6a1-ad92-4e62-8d53-3b6d14646a2a" alt="Centered Image">
+</div>
 
 <br></br>
 ## 👨‍👩‍👧‍👧 Backend Team 소개
