@@ -38,4 +38,10 @@ public class User {
                 .accountNumber(joinRequest.getAccountNumber())
                 .build();
     }
+
+    public void updateBankAccount(String bank, String accountNumber) {
+
+        this.bank = bank;
+        this.accountNumber = accountNumber;
+    }
 }

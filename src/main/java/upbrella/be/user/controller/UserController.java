@@ -8,6 +8,7 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
@@ -172,6 +173,23 @@ public class UserController {
                         200,
                         "사용자 대여 목록 조회 성공",
                         rentService.findAllHistoriesByUser(loginedUserId)
+                ));
+    }
+
+    @PatchMapping("/bankAccount")
+    public ResponseEntity<CustomResponse> updateUserBankAccount(HttpSession session, UpdateBankAccountRequest updateBankAccountRequest) {
+
+        long loginedUserId = (long) session.getAttribute("userId");
+
+        userService.updateUserBankAccount(loginedUserId, updateBankAccountRequest);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "사용자 계좌 정보 수정 성공",
+                        null
                 ));
     }
 }

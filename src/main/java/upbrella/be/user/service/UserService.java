@@ -3,6 +3,7 @@ package upbrella.be.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.ExistingMemberException;
@@ -37,5 +38,13 @@ public class UserService {
     public AllUsersInfoResponse findUsers() {
 
         return AllUsersInfoResponse.fromUsers(userRepository.findAll());
+    }
+
+    public void updateUserBankAccount(Long id, UpdateBankAccountRequest request) {
+
+        User foundUser = userRepository.findById(id)
+                .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."));
+
+        foundUser.updateBankAccount(request.getBank(), request.getAccountNumber());
     }
 }
