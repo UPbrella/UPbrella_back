@@ -139,10 +139,12 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     void returnUmbrellaTest() throws Exception {
+
         ReturnUmbrellaByUserRequest request = ReturnUmbrellaByUserRequest.builder()
-                .uuid(1)
-                .storeId(1)
-                .improvement("불편하셨다면 개선 사항을 입력해주세요.")
+                .returnStoreId(1L)
+                .bank("우리은행")
+                .accountNumber("1002-111-111111")
+                .improvementReportContent("개선 요청 사항")
                 .build();
 
         mockMvc.perform(
@@ -156,11 +158,13 @@ public class RentControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("uuid").type(JsonFieldType.NUMBER)
-                                        .description("우산 고유번호"),
-                                fieldWithPath("storeId").type(JsonFieldType.NUMBER)
-                                        .description("협업 지점 고유번호"),
-                                fieldWithPath("improvement").type(JsonFieldType.STRING)
+                                fieldWithPath("returnStoreId").type(JsonFieldType.NUMBER)
+                                        .description("반납 지점 고유번호"),
+                                fieldWithPath("bank").type(JsonFieldType.STRING)
+                                        .description("환급 받을 은행"),
+                                fieldWithPath("accountNumber").type(JsonFieldType.STRING)
+                                        .description("환급 받을 계좌번호"),
+                                fieldWithPath("improvementReportContent").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("개선 사항"))
                 ));

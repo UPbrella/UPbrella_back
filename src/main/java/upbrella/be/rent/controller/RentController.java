@@ -66,9 +66,22 @@ public class RentController {
     public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
 
         // TODO: 세션을 통해 유저 꺼내기
+        /**
+         * 세션 처리 이후 로직
+         *
+         * User userToReturn = userRepository.findById(87L)
+         *                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
+         */
         // 임시로 가짜 유저 사용
-        User userToReturn = userRepository.findById(87L)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
+        User userToReturn = User.builder()
+                .id(87L)
+                .socialId(87L)
+                .name("루크")
+                .phoneNumber("010-1234-5678")
+                .adminStatus(false)
+                .bank("우리")
+                .accountNumber("1002-892")
+                .build();
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest);
 
