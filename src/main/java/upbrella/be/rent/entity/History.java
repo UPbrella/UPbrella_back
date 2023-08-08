@@ -25,6 +25,9 @@ public class History {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    private LocalDateTime paidAt;
+    private String bank;
+    private String accountNumber;
     @ManyToOne
     @JoinColumn(name = "rent_store_meta_id")
     private StoreMeta rentStoreMeta;
