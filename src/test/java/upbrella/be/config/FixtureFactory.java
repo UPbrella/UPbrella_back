@@ -6,6 +6,8 @@ import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.entity.User;
 
 import java.util.List;
 
@@ -94,5 +96,27 @@ public class FixtureFactory {
     public static UmbrellaRequest buildUmbrellaRequest() {
 
         return fixtureMonkey.giveMeOne(UmbrellaRequest.class);
+    }
+
+    public static User buildUser() {
+
+        return fixtureMonkey.giveMeOne(User.class);
+    }
+
+    public static List<User> buildUsers(int size) {
+
+        return fixtureMonkey.giveMe(User.class, size);
+    }
+
+    public static FixtureMonkey getInstance() {
+        return fixtureMonkey;
+    }
+
+    public static JoinRequest buildJoinRequestWithUser(User user) {
+
+        return fixtureMonkey.giveMeBuilder(JoinRequest.class)
+                .set("name", user.getName())
+                .set("phoneNumber", user.getPhoneNumber())
+                .sample();
     }
 }

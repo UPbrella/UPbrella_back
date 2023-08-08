@@ -138,7 +138,7 @@ class OAuthLoginInterceptorTest {
     }
 
     @Test
-    @DisplayName("인가를 통과한다.")
+    @DisplayName("인가를 받은 세션이 있는 경우 true를 반환한다.")
     void success() throws ServletException, IOException {
 
         // given
