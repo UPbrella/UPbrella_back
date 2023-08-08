@@ -2,6 +2,7 @@ package upbrella.be.store.service;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +12,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.repository.StoreDetailRepository;
@@ -19,8 +21,12 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -83,5 +89,87 @@ class StoreImageServiceTest {
                 () -> assertEquals(testId, testImage.getId()),
                 () -> assertEquals(testUrl, testImage.getImageUrl())
         );
+    }
+
+    @Test
+    @DisplayName("사진이 존재하지 않는데 삭제를 시도하는 경우 예외를 발생시킨다.")
+    void notExistImageDeleteTest() {
+        // given
+        long imageId = 1L;
+
+        // when
+
+
+        // then
+        assertThatThrownBy(() -> storeImageService.deleteFile(imageId))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("해당 이미지가 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("사용자는 모든 협업지점을 조회할 때 이미지들을 조회할 수 있다.")
+    void createImageUrlResponseTest() {
+        // given
+        StoreImage first = StoreImage.builder()
+                .id(1L)
+                .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
+                .build();
+
+        StoreImage second = StoreImage.builder()
+                .id(2L)
+                .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
+                .build();
+
+        Set<StoreImage> images = Set.of(first, second);
+
+        // when
+        List<SingleImageUrlResponse> imageUrlResponse = storeImageService.createImageUrlResponse(images);
+
+        // then
+        assertAll(
+                () -> assertThat(imageUrlResponse.get(0).getImageUrl()).isEqualTo(first.getImageUrl()),
+                () -> assertThat(imageUrlResponse.get(1).getImageUrl()).isEqualTo(second.getImageUrl())
+        );
+    }
+
+    @Nested
+    @DisplayName("사용자는 ")
+    class ThumbNail{
+
+        @Test
+        @DisplayName("사용자는 썸네일을 생성할 수 있다.")
+        void createThumbnailTest() {
+            // given
+            SingleImageUrlResponse fist = SingleImageUrlResponse.builder()
+                    .id(1L)
+                    .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
+                    .build();
+
+            SingleImageUrlResponse second = SingleImageUrlResponse.builder()
+                    .id(2L)
+                    .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
+                    .build();
+
+            List<SingleImageUrlResponse> imageUrls = List.of(fist, second);
+
+            // when
+            String thumbnail = storeImageService.createThumbnail(imageUrls);
+
+            // then
+            assertThat(thumbnail).isEqualTo(imageUrls.get(0).getImageUrl());
+        }
+
+        @Test
+        @DisplayName("사진이 등록되지 않은 경우는 썸네일을 생성하지 않는다.")
+        void emptyThumbnailTest() {
+            // given
+            List<SingleImageUrlResponse> emptyImageUrls = List.of();
+
+            // when
+            String thumbnail = storeImageService.createThumbnail(emptyImageUrls);
+
+            // then
+            assertThat(thumbnail).isNull();
+        }
     }
 }
