@@ -85,6 +85,11 @@ public class FixtureFactory {
                 .sample();
     }
 
+    public static List<UmbrellaResponse> buildUmbrellaResponses(int size) {
+
+        return fixtureMonkey.giveMe(UmbrellaResponse.class, size);
+    }
+
 
     public static UmbrellaRequest buildUmbrellaRequest() {
 
