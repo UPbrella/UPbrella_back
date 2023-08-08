@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class History {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
     @JoinColumn(name = "umbrella_id")

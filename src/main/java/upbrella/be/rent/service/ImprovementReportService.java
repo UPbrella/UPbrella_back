@@ -24,7 +24,8 @@ public class ImprovementReportService {
 
     public void addImprovementReportFromReturn(History history, String content) {
 
-        ImprovementReport.createFromReturn(history, content);
+        ImprovementReport fromReturn = ImprovementReport.createFromReturn(history, content);
+        improvementReportRepository.save(fromReturn);
     }
 
     private List<ImprovementReportResponse> findAllImprovementReport() {
