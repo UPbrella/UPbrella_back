@@ -97,3 +97,4 @@ out
 ./src/main/resources/application.properties
 daemon
 bin
+.jqwik-database
