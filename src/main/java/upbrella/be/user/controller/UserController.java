@@ -188,8 +188,7 @@ public class UserController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "사용자 계좌 정보 수정 성공",
-                        null
+                        "사용자 계좌 정보 수정 성공"
                 ));
     }
 }
