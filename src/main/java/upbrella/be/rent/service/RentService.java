@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentFormResponse;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
@@ -28,6 +29,7 @@ public class RentService {
 
     private final UmbrellaService umbrellaService;
     private final StoreMetaService storeMetaService;
+    private final ImprovementReportService improvementReportService;
     private final RentRepository rentRepository;
 
     public RentFormResponse findRentForm(long umbrellaId) {
@@ -53,6 +55,20 @@ public class RentService {
         );
     }
 
+    @Transactional
+    public void returnUmbrellaByUser(User userToReturn, ReturnUmbrellaByUserRequest request) {
+
+        History history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.getId())
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다."));
+
+        StoreMeta returnStore = storeMetaService.findStoreMetaById(request.getReturnStoreId());
+
+        History updatedHistory = History.updateHistoryForReturn(history, returnStore, request);
+
+        rentRepository.save(updatedHistory);
+        addImprovementReportFromReturnByUser(updatedHistory, request);
+    }
+
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
 
         return RentalHistoriesPageResponse.of(findAllRentalHistory(filter));
@@ -61,6 +77,15 @@ public class RentService {
     public AllHistoryResponse findAllHistoriesByUser(long userId) {
 
         return AllHistoryResponse.of(findAllByUserId(userId));
+    }
+
+    private void addImprovementReportFromReturnByUser(History history, ReturnUmbrellaByUserRequest request) {
+
+        if (request.getImprovementReportContent() == null) {
+            return;
+        }
+
+        improvementReportService.addImprovementReportFromReturn(history, request.getImprovementReportContent());
     }
 
     private List<SingleHistoryResponse> findAllByUserId(long userId) {

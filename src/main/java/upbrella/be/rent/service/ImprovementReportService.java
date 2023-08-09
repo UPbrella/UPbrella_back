@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import upbrella.be.rent.dto.response.ImprovementReportPageResponse;
 import upbrella.be.rent.dto.response.ImprovementReportResponse;
+import upbrella.be.rent.entity.History;
+import upbrella.be.rent.entity.ImprovementReport;
 import upbrella.be.rent.repository.ImprovementReportRepository;
 
 import java.util.List;
@@ -18,6 +20,12 @@ public class ImprovementReportService {
     public ImprovementReportPageResponse findAll() {
 
         return ImprovementReportPageResponse.of(findAllImprovementReport());
+    }
+
+    public void addImprovementReportFromReturn(History history, String content) {
+
+        ImprovementReport fromReturn = ImprovementReport.createFromReturn(history, content);
+        improvementReportRepository.save(fromReturn);
     }
 
     private List<ImprovementReportResponse> findAllImprovementReport() {

@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class ConditionReport {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @OneToOne
     @JoinColumn(name = "history_id")
