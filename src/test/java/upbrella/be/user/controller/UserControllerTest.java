@@ -20,6 +20,7 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
@@ -37,8 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -426,6 +426,35 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("우산 반납 여부"),
                                 fieldWithPath("histories[].refunded").type(JsonFieldType.BOOLEAN)
                                         .description("우산 환급 여부")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 은행 정보를 수정할 수 있다.")
+    void updateUserBankAccount() throws Exception {
+
+        // given
+        UpdateBankAccountRequest updateBankAccountRequest = FixtureBuilderFactory.builderBankAccount().sample();
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("userId", 70L);
+
+        // when
+
+        // then
+        mockMvc.perform(
+                        patch("/users/bankAccount")
+                                .session(mockHttpSession)
+                                .content(objectMapper.writeValueAsString(updateBankAccountRequest))
+                ).andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("update-user-bank-account-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("bank").type(JsonFieldType.STRING)
+                                        .description("은행 이름"),
+                                fieldWithPath("accountNumber").type(JsonFieldType.STRING)
+                                        .description("계좌 번호")
                         )));
     }
 }
