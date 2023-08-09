@@ -24,6 +24,7 @@ import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
@@ -177,7 +178,7 @@ public class UserController {
     }
 
     @PatchMapping("/bankAccount")
-    public ResponseEntity<CustomResponse> updateUserBankAccount(HttpSession session, @RequestBody UpdateBankAccountRequest updateBankAccountRequest) {
+    public ResponseEntity<CustomResponse> updateUserBankAccount(HttpSession session, @Valid @RequestBody UpdateBankAccountRequest updateBankAccountRequest) {
 
         long loginedUserId = (long) session.getAttribute("userId");
 
