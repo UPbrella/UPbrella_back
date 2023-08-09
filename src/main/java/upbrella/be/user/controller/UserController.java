@@ -177,7 +177,7 @@ public class UserController {
     }
 
     @PatchMapping("/bankAccount")
-    public ResponseEntity<CustomResponse> updateUserBankAccount(HttpSession session, UpdateBankAccountRequest updateBankAccountRequest) {
+    public ResponseEntity<CustomResponse> updateUserBankAccount(HttpSession session, @RequestBody UpdateBankAccountRequest updateBankAccountRequest) {
 
         long loginedUserId = (long) session.getAttribute("userId");
 
