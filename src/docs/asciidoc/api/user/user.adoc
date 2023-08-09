@@ -68,3 +68,7 @@ include::{snippets}/user-history-doc/http-request.adoc[]
 include::{snippets}/user-history-doc/http-response.adoc[]
 include::{snippets}/user-history-doc/response-fields-data.adoc[]
 
+=== 사용자 은행 정보 수정
+
+include::{snippets}/update-user-bank-account-doc/http-request.adoc[]
+include::{snippets}/update-user-bank-account-doc/request-fields.adoc[]

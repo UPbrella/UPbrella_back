@@ -5,11 +5,13 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
+import net.jqwik.engine.providers.ArbitraryArbitraryProvider;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 
@@ -126,5 +128,12 @@ public class FixtureBuilderFactory {
                 .set("phoneNumber", pickPhoneNumberString())
                 .set("bank", pickRandomString(bankList))
                 .set("accountNumber", pickAccountNumberString());
+    }
+
+    public static ArbitraryBuilder<UpdateBankAccountRequest> builderBankAccount() {
+
+            return fixtureMonkey.giveMeBuilder(UpdateBankAccountRequest.class)
+                    .set("bank", pickRandomString(bankList))
+                    .set("accountNumber", pickAccountNumberString());
     }
 }

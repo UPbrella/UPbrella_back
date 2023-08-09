@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SingleUserInfoResponse;
 import upbrella.be.user.entity.User;
@@ -204,5 +205,24 @@ class UserServiceTest {
                     () -> then(userRepository).should(times(1))
                             .findAll());
         }
+    }
+
+    @Test
+    @DisplayName("사용자는 자신의 은행 정보를 수정할 수 있다.")
+    void test() {
+        // given
+        User user = FixtureBuilderFactory.builderUser().sample();
+        UpdateBankAccountRequest updateBankInfoRequest = FixtureBuilderFactory.builderBankAccount().sample();
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+        // when
+        userService.updateUserBankAccount(user.getId(), updateBankInfoRequest);
+
+        // then
+        assertAll(
+                () -> then(userRepository).should(times(1))
+                        .findById(user.getId()),
+                () -> assertThat(user.getBank()).isEqualTo(updateBankInfoRequest.getBank()),
+                () -> assertThat(user.getAccountNumber()).isEqualTo(updateBankInfoRequest.getAccountNumber()));
     }
 }
