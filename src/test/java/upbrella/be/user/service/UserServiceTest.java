@@ -51,7 +51,7 @@ class UserServiceTest {
         void setUp() {
 
             user = FixtureBuilderFactory.builderUser().sample();
-            notExistingSocialId = FixtureBuilderFactory.buildInteger();
+            notExistingSocialId = FixtureBuilderFactory.buildInteger(10000000);
         }
 
         @Test
@@ -101,8 +101,8 @@ class UserServiceTest {
         void setUp() {
 
             user = FixtureBuilderFactory.builderUser().sample();
-            existingSocialId = FixtureBuilderFactory.buildLong();
-            notExistingSocialId = FixtureBuilderFactory.buildLong();
+            existingSocialId = FixtureBuilderFactory.buildLong(100000000);
+            notExistingSocialId = FixtureBuilderFactory.buildLong(100000000);
             joinRequest = FixtureFactory.buildJoinRequestWithUser(user);
         }
 

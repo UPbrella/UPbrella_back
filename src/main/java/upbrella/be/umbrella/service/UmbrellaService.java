@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
-import upbrella.be.umbrella.dto.response.UmbrellaAllStatisticsResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
@@ -86,33 +87,68 @@ public class UmbrellaService {
         return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(storeMetaId);
     }
 
-    public UmbrellaAllStatisticsResponse getUmbrellaAllStatistics() {
+    public UmbrellaStatisticsResponse getUmbrellaAllStatistics() {
 
         int totalUmbrella = countUmbrella();
         int availableUmbrella = countAvailableUmbrella();
         int rentedUmbrella = countRentedUmbrella();
         int missingUmbrella = countMissingUmberlla();
 
-        return UmbrellaAllStatisticsResponse.fromCounts(totalUmbrella, availableUmbrella, rentedUmbrella, missingUmbrella);
+        return UmbrellaStatisticsResponse.fromCounts(totalUmbrella, availableUmbrella, rentedUmbrella, missingUmbrella);
     }
 
-    public int countAvailableUmbrella() {
+    public UmbrellaStatisticsResponse getUmbrellaStatisticsByStoreId(long storeId) {
+
+        if (!storeMetaService.existByStoreId(storeId)) {
+            throw new NonExistingStoreMetaException("[ERROR] 존재하지 않는 매장 고유번호입니다.");
+        }
+
+        int totalUmbrellaByStoreId = countUmbrellaByStoreId(storeId);
+        int availableUmbrellaByStoreId = countAvailableUmbrellaByStoreId(storeId);
+        int rentedUmbrellaByStoreId = countRentedUmbrellaByStoreId(storeId);
+        int missingUmbrellaByStoreId = countMissingUmberllaByStoreId(storeId);
+
+        return UmbrellaStatisticsResponse.fromCounts(totalUmbrellaByStoreId, availableUmbrellaByStoreId,
+                rentedUmbrellaByStoreId, missingUmbrellaByStoreId);
+    }
+
+    private int countAvailableUmbrella() {
 
         return umbrellaRepository.countUmbrellasByRentableIsTrueAndDeletedIsFalse();
     }
 
-    public int countRentedUmbrella() {
+    private int countRentedUmbrella() {
 
         return umbrellaRepository.countUmbrellasByRentableIsFalseAndDeletedIsFalse();
     }
 
-    public int countUmbrella() {
+    private int countUmbrella() {
 
         return umbrellaRepository.countUmbrellaBy();
     }
 
-    public int countMissingUmberlla() {
+    private int countMissingUmberlla() {
 
         return umbrellaRepository.countUmbrellasByAndDeletedIsTrue();
+    }
+
+    private int countAvailableUmbrellaByStoreId(long storeId) {
+
+        return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(storeId);
+    }
+
+    private int countRentedUmbrellaByStoreId(long storeId) {
+
+        return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsFalseAndDeletedIsFalse(storeId);
+    }
+
+    private int countUmbrellaByStoreId(long storeId) {
+
+        return umbrellaRepository.countUmbrellaByStoreMetaId(storeId);
+    }
+
+    private int countMissingUmberllaByStoreId(long storeId) {
+
+        return umbrellaRepository.countUmbrellasByStoreMetaIdAndDeletedIsTrue(storeId);
     }
 }

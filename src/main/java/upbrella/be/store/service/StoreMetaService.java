@@ -123,4 +123,8 @@ public class StoreMetaService {
 
         storeDetailRepository.save(StoreDetail.createForSave(store, storeMeta));
     }
+
+    public boolean existByStoreId(long storeId) {
+        return storeMetaRepository.existsById(storeId);
+    }
 }

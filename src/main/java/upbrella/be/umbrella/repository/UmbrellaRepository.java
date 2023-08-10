@@ -11,8 +11,6 @@ public interface UmbrellaRepository extends JpaRepository<Umbrella, Long> {
 
     Optional<Umbrella> findByIdAndDeletedIsFalse(long id);
 
-    Optional<Umbrella> findByUuidAndDeletedIsFalse(long uuid);
-
     boolean existsByIdAndDeletedIsFalse(long id);
 
     boolean existsByUuidAndDeletedIsFalse(long uuid);
@@ -31,4 +29,9 @@ public interface UmbrellaRepository extends JpaRepository<Umbrella, Long> {
 
     int countUmbrellasByAndDeletedIsTrue();
 
+    int countUmbrellasByStoreMetaIdAndRentableIsFalseAndDeletedIsFalse(long storeMetaId);
+
+    int countUmbrellaByStoreMetaId(long storeId);
+
+    int countUmbrellasByStoreMetaIdAndDeletedIsTrue(long storeId);
 }

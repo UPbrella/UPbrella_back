@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UmbrellaAllStatisticsResponse {
+public class UmbrellaStatisticsResponse {
 
     private int totalUmbrellaCount;
     private int rentableUmbrellaCount;
@@ -13,9 +13,9 @@ public class UmbrellaAllStatisticsResponse {
     private int missingUmbrellaCount;
     private double missingRate;
 
-    public static UmbrellaAllStatisticsResponse fromCounts(int totalUmbrellaCount, int rentableUmbrellaCount, int rentedUmbrellaCount, int missingUmbrellaCount) {
+    public static UmbrellaStatisticsResponse fromCounts(int totalUmbrellaCount, int rentableUmbrellaCount, int rentedUmbrellaCount, int missingUmbrellaCount) {
 
-        return UmbrellaAllStatisticsResponse.builder()
+        return UmbrellaStatisticsResponse.builder()
                 .totalUmbrellaCount(totalUmbrellaCount)
                 .rentableUmbrellaCount(rentableUmbrellaCount)
                 .rentedUmbrellaCount(rentedUmbrellaCount)

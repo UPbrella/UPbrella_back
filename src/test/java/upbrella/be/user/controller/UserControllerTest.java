@@ -127,7 +127,7 @@ public class UserControllerTest extends RestDocsSupport {
             code = "1kdfjq0243f";
             oauthToken = FixtureFactory.buildOauthToken();
             kakaoLoginResponse = FixtureFactory.buildKakaoLoginResponse();
-            userId = FixtureBuilderFactory.buildLong();
+            userId = FixtureBuilderFactory.buildLong(1000);
         }
 
         @Test
@@ -224,7 +224,7 @@ public class UserControllerTest extends RestDocsSupport {
             joinRequest = FixtureBuilderFactory.builderJoinRequest().sample();
             oauthToken = FixtureFactory.buildOauthToken();
             kakaoLoginResponse = FixtureFactory.buildKakaoLoginResponse();
-            userId = FixtureBuilderFactory.buildLong();
+            userId = FixtureBuilderFactory.buildLong(1000);
             mockHttpSession = new MockHttpSession();
         }
 
