@@ -40,6 +40,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
@@ -461,7 +463,7 @@ public class UserControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("사용자가 회원탈퇴를 하면, 삭제된 회원 정보로 변경되고 회원은 탈퇴된다.")
-    void test() throws Exception {
+    void deleteUserTest() throws Exception {
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("userId", 70L);
@@ -478,5 +480,31 @@ public class UserControllerTest extends RestDocsSupport {
                         getDocumentRequest(),
                         getDocumentResponse()
                 ));
+    }
+
+    @Test
+    @DisplayName("관리자가 회원탈퇴 시키면, 블랙리스트에 추가되고 회원탈퇴가 된다.")
+    void withdrawUserTest() throws Exception {
+        // given
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("userId", 70L);
+        long userId = 1L;
+
+        // when
+
+
+        // then
+        mockMvc.perform(
+                        delete("/users/{userId}", userId)
+                                .session(mockHttpSession)
+                ).andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("withdraw-user-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("userId").description("회원 고유번호")
+                        )));
+
     }
 }

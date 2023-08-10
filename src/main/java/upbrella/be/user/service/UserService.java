@@ -6,9 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
+import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
+import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
 
 @Service
@@ -16,6 +18,7 @@ import upbrella.be.user.repository.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BlackListRepository blackListRepository;
 
     public long login(Long socialId) {
 
@@ -53,6 +56,17 @@ public class UserService {
     public void deleteUser(Long id) {
 
         User foundUser = findUserById(id);
+
+        foundUser.deleteUser();
+    }
+
+    @Transactional
+    public void withdrawUser(Long id) {
+
+        User foundUser = findUserById(id);
+        long socialId = foundUser.getSocialId();
+        BlackList newBlackList = BlackList.createNewBlackList(socialId);
+        blackListRepository.save(newBlackList);
 
         foundUser.deleteUser();
     }

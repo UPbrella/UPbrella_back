@@ -77,3 +77,5 @@ include::{snippets}/update-user-bank-account-doc/request-fields.adoc[]
 include::{snippets}/delete-user-doc/http-request.adoc[]
 
 === 관리자가 회원 정지
+include::{snippets}/withdraw-user-doc/http-request.adoc[]
+include::{snippets}/withdraw-user-doc/path-parameters.adoc[]

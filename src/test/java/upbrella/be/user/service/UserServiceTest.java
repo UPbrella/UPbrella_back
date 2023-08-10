@@ -14,9 +14,11 @@ import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SingleUserInfoResponse;
+import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
+import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -37,6 +39,8 @@ import static org.mockito.Mockito.times;
 class UserServiceTest {
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private BlackListRepository blackListRepository;
     @InjectMocks
     private UserService userService;
 
@@ -243,6 +247,31 @@ class UserServiceTest {
                 () -> assertThat(user.isAdminStatus()).isEqualTo(false),
                 () -> assertThat(user.getBank()).isEqualTo(null),
                 () -> assertThat(user.getAccountNumber()).isEqualTo(null)
+        );
+    }
+
+    @Test
+    @DisplayName("관리자가 회원탈퇴 시키면 블랙리스트에 들어가고 회원정보는 초기화된다.")
+    void test() {
+        // given
+        User user = FixtureBuilderFactory.builderUser().sample();
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+        // when
+        userService.withdrawUser(user.getId());
+
+        // then
+        assertAll(
+                () -> then(userRepository).should(times(1))
+                        .findById(user.getId()),
+                () -> assertThat(user.getSocialId()).isEqualTo(0L),
+                () -> assertThat(user.getName()).isEqualTo("탈퇴한 회원"),
+                () -> assertThat(user.getPhoneNumber()).isEqualTo("010-0000-0000"),
+                () -> assertThat(user.isAdminStatus()).isEqualTo(false),
+                () -> assertThat(user.getBank()).isEqualTo(null),
+                () -> assertThat(user.getAccountNumber()).isEqualTo(null),
+                () -> then(blackListRepository).should(times(1))
+                        .save(any(BlackList.class))
         );
     }
 }
