@@ -252,7 +252,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("관리자가 회원탈퇴 시키면 블랙리스트에 들어가고 회원정보는 초기화된다.")
-    void test() {
+    void withdrawTest() {
         // given
         User user = FixtureBuilderFactory.builderUser().sample();
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
@@ -273,5 +273,22 @@ class UserServiceTest {
                 () -> then(blackListRepository).should(times(1))
                         .save(any(BlackList.class))
         );
+    }
+
+    @Test
+    @DisplayName("블랙리스트에 들어간 회원은 회원가입이 불가능하다.")
+    void blackListMemberJoinTest() {
+        // given
+        long blackList = 0L;
+        given(blackListRepository.existBySocialId(blackList)).willReturn(true);
+        given(userRepository.existsBySocialId(blackList)).willReturn(false);
+        JoinRequest joinRequest = FixtureBuilderFactory.builderJoinRequest().sample();
+
+        // when
+
+
+        // then
+        assertThatThrownBy(() -> userService.join(blackList, joinRequest))
+                .isInstanceOf(ExistingMemberException.class);
     }
 }

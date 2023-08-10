@@ -33,6 +33,9 @@ public class UserService {
         if (userRepository.existsBySocialId(socialId)) {
             throw new ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
         }
+        if(blackListRepository.existBySocialId(socialId)){
+            throw new ExistingMemberException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.");
+        }
 
         User joinedUser = userRepository.save(User.createNewUser(socialId, joinRequest));
 
