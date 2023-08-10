@@ -7,4 +7,3 @@ public interface BlackListRepository extends JpaRepository<BlackList, Long> {
 
     boolean existsBySocialId(Long socialId);
 }
-가
