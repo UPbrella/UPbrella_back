@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.response.UmbrellaAllStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
@@ -83,5 +84,35 @@ public class UmbrellaService {
     public int countAvailableUmbrellaAtStore(long storeMetaId) {
 
         return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(storeMetaId);
+    }
+
+    public UmbrellaAllStatisticsResponse getUmbrellaAllStatistics() {
+
+        int totalUmbrella = countUmbrella();
+        int availableUmbrella = countAvailableUmbrella();
+        int rentedUmbrella = countRentedUmbrella();
+        int missingUmbrella = countMissingUmberlla();
+
+        return UmbrellaAllStatisticsResponse.fromCounts(totalUmbrella, availableUmbrella, rentedUmbrella, missingUmbrella);
+    }
+
+    public int countAvailableUmbrella() {
+
+        return umbrellaRepository.countUmbrellasByRentableIsTrueAndDeletedIsFalse();
+    }
+
+    public int countRentedUmbrella() {
+
+        return umbrellaRepository.countUmbrellasByRentableIsFalseAndDeletedIsFalse();
+    }
+
+    public int countUmbrella() {
+
+        return umbrellaRepository.countUmbrellaBy();
+    }
+
+    public int countMissingUmberlla() {
+
+        return umbrellaRepository.countUmbrellasByAndDeletedIsTrue();
     }
 }

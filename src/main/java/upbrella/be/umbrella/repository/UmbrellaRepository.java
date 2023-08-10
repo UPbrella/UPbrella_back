@@ -22,4 +22,13 @@ public interface UmbrellaRepository extends JpaRepository<Umbrella, Long> {
     List<Umbrella> findByStoreMetaIdAndDeletedIsFalseOrderById(long storeMetaId, Pageable pageable);
 
     int countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(long storeMetaId);
+
+    int countUmbrellasByRentableIsTrueAndDeletedIsFalse();
+
+    int countUmbrellasByRentableIsFalseAndDeletedIsFalse();
+
+    int countUmbrellaBy();
+
+    int countUmbrellasByAndDeletedIsTrue();
+
 }

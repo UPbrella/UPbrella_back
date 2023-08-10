@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.response.UmbrellaAllStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaPageResponse;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.util.CustomResponse;
@@ -86,5 +87,17 @@ public class UmbrellaController {
                         200,
                         "우산 삭제 성공",
                         null));
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<CustomResponse<UmbrellaAllStatisticsResponse>> showAllUmbrellasStatistics(HttpSession httpSession) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "전체 우산 통계 조회 성공",
+                        umbrellaService.getUmbrellaAllStatistics()));
     }
 }
