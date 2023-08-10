@@ -236,15 +236,16 @@ class UserServiceTest {
     void deleteUser() {
         // given
         User user = FixtureBuilderFactory.builderUser().sample();
-
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
         // when
-        user.deleteUser();
+
+        userService.deleteUser(user.getId());
 
         // then
         assertAll(
                 () -> assertThat(user.getSocialId()).isEqualTo(0L),
                 () -> assertThat(user.getName()).isEqualTo("탈퇴한 회원"),
-                () -> assertThat(user.getPhoneNumber()).isEqualTo("010-0000-0000"),
+                () -> assertThat(user.getPhoneNumber()).isEqualTo("deleted"),
                 () -> assertThat(user.isAdminStatus()).isEqualTo(false),
                 () -> assertThat(user.getBank()).isEqualTo(null),
                 () -> assertThat(user.getAccountNumber()).isEqualTo(null)
@@ -266,8 +267,8 @@ class UserServiceTest {
                 () -> then(userRepository).should(times(1))
                         .findById(user.getId()),
                 () -> assertThat(user.getSocialId()).isEqualTo(0L),
-                () -> assertThat(user.getName()).isEqualTo("탈퇴한 회원"),
-                () -> assertThat(user.getPhoneNumber()).isEqualTo("010-0000-0000"),
+                () -> assertThat(user.getName()).isEqualTo("정지된 회원"),
+                () -> assertThat(user.getPhoneNumber()).isEqualTo("deleted"),
                 () -> assertThat(user.isAdminStatus()).isEqualTo(false),
                 () -> assertThat(user.getBank()).isEqualTo(null),
                 () -> assertThat(user.getAccountNumber()).isEqualTo(null),

@@ -72,7 +72,7 @@ public class UserService {
         BlackList newBlackList = BlackList.createNewBlackList(socialId);
         blackListRepository.save(newBlackList);
 
-        foundUser.deleteUser();
+        foundUser.withdrawUser();
     }
 
     private User findUserById(Long id) {

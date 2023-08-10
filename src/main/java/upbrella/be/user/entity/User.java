@@ -49,7 +49,7 @@ public class User {
 
         this.socialId = 0;
         this.name = "탈퇴한 회원";
-        this.phoneNumber = "010-0000-0000";
+        this.phoneNumber = "deleted";
         this.adminStatus = false;
         this.bank = null;
         this.accountNumber = null;
@@ -59,7 +59,7 @@ public class User {
 
         this.socialId = 0;
         this.name = "정지된 회원";
-        this.phoneNumber = "010-0000-0000";
+        this.phoneNumber = "deleted";
         this.adminStatus = false;
         this.bank = null;
         this.accountNumber = null;
