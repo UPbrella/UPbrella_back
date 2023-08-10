@@ -44,4 +44,14 @@ public class User {
         this.bank = bank;
         this.accountNumber = accountNumber;
     }
+
+    public void deleteUser() {
+
+        this.socialId = 0;
+        this.name = "탈퇴한 회원";
+        this.phoneNumber = "010-0000-0000";
+        this.adminStatus = false;
+        this.bank = null;
+        this.accountNumber = null;
+    }
 }

@@ -458,4 +458,25 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("계좌 번호")
                         )));
     }
+
+    @Test
+    @DisplayName("사용자가 회원탈퇴를 하면, 삭제된 회원 정보로 변경되고 회원은 탈퇴된다.")
+    void test() throws Exception {
+        // given
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("userId", 70L);
+
+        // when
+
+        // then
+        mockMvc.perform(
+                        delete("/users/loggedIn")
+                                .session(mockHttpSession)
+                ).andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("delete-user-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse()
+                ));
+    }
 }

@@ -209,7 +209,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("사용자는 자신의 은행 정보를 수정할 수 있다.")
-    void test() {
+    void updateBankTest() {
         // given
         User user = FixtureBuilderFactory.builderUser().sample();
         UpdateBankAccountRequest updateBankInfoRequest = FixtureBuilderFactory.builderBankAccount().sample();
@@ -224,5 +224,25 @@ class UserServiceTest {
                         .findById(user.getId()),
                 () -> assertThat(user.getBank()).isEqualTo(updateBankInfoRequest.getBank()),
                 () -> assertThat(user.getAccountNumber()).isEqualTo(updateBankInfoRequest.getAccountNumber()));
+    }
+
+    @Test
+    @DisplayName("사용자는 자신이 회원탈퇴를 하면 정보가 임의의 값으로 변경되고 탈퇴된다.")
+    void deleteUser() {
+        // given
+        User user = FixtureBuilderFactory.builderUser().sample();
+
+        // when
+        user.deleteUser();
+
+        // then
+        assertAll(
+                () -> assertThat(user.getSocialId()).isEqualTo(0L),
+                () -> assertThat(user.getName()).isEqualTo("탈퇴한 회원"),
+                () -> assertThat(user.getPhoneNumber()).isEqualTo("010-0000-0000"),
+                () -> assertThat(user.isAdminStatus()).isEqualTo(false),
+                () -> assertThat(user.getBank()).isEqualTo(null),
+                () -> assertThat(user.getAccountNumber()).isEqualTo(null)
+        );
     }
 }

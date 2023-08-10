@@ -192,4 +192,20 @@ public class UserController {
                         "사용자 계좌 정보 수정 성공"
                 ));
     }
+
+    @DeleteMapping("loggedIn")
+    public ResponseEntity<CustomResponse> deleteUser(HttpSession session) {
+
+        long loginedUserId = (long) session.getAttribute("userId");
+
+        userService.deleteUser(loginedUserId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "사용자 탈퇴 성공"
+                ));
+    }
 }

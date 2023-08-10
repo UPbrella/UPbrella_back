@@ -44,9 +44,22 @@ public class UserService {
     @Transactional
     public void updateUserBankAccount(Long id, UpdateBankAccountRequest request) {
 
-        User foundUser = userRepository.findById(id)
-                .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."));
+        User foundUser = findUserById(id);
 
         foundUser.updateBankAccount(request.getBank(), request.getAccountNumber());
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+
+        User foundUser = findUserById(id);
+
+        foundUser.deleteUser();
+    }
+
+    private User findUserById(Long id) {
+
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."));
     }
 }
