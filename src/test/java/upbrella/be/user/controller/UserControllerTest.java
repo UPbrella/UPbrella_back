@@ -445,6 +445,7 @@ public class UserControllerTest extends RestDocsSupport {
                         patch("/users/bankAccount")
                                 .session(mockHttpSession)
                                 .content(objectMapper.writeValueAsString(updateBankAccountRequest))
+                                .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("update-user-bank-account-doc",
