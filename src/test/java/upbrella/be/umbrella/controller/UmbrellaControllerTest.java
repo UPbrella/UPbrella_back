@@ -172,7 +172,10 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                     fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
                                             .description("지점 고유번호"),
                                     fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                            .description("대여 가능 여부"))));
+                                            .description("대여 가능 여부"),
+                                    fieldWithPath("etc").type(JsonFieldType.STRING)
+                                            .optional()
+                                            .description("기타 특이 사항"))));
         }
 
         @DisplayName("우산 관리번호가 이미 존재하면 400 에러가 반환된다.")
@@ -234,7 +237,10 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                     fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
                                             .description("지점 고유번호"),
                                     fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                            .description("대여 가능 여부")),
+                                            .description("대여 가능 여부"),
+                                    fieldWithPath("etc").type(JsonFieldType.STRING)
+                                            .optional()
+                                            .description("기타 특이 사항")),
                             pathParameters(
                                     parameterWithName("umbrellaId").description("우산 고유번호")
                             )));

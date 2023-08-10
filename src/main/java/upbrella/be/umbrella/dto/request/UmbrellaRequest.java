@@ -11,5 +11,6 @@ public class UmbrellaRequest {
     private long storeMetaId;
     private long uuid;
     private boolean rentable;
+    private String etc;
 
 }

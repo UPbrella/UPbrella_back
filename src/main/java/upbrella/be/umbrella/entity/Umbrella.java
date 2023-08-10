@@ -5,6 +5,7 @@ import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,6 +23,8 @@ public class Umbrella {
     private long uuid;
     private boolean rentable;
     private boolean deleted;
+    private LocalDateTime createdAt;
+    private String etc;
 
     public void delete() {
         this.deleted = true;
@@ -34,10 +37,12 @@ public class Umbrella {
                 .uuid(umbrellaRequest.getUuid())
                 .rentable(umbrellaRequest.isRentable())
                 .deleted(false)
+                .createdAt(LocalDateTime.now())
+                .etc(umbrellaRequest.getEtc())
                 .build();
     }
 
-    public static Umbrella ofUpdated(long id, UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
+    public static Umbrella ofUpdated(long id, Umbrella umbrella, UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
 
         return Umbrella.builder()
                 .id(id)
@@ -45,6 +50,8 @@ public class Umbrella {
                 .uuid(umbrellaRequest.getUuid())
                 .rentable(umbrellaRequest.isRentable())
                 .deleted(false)
+                .createdAt(umbrella.getCreatedAt())
+                .etc(umbrellaRequest.getEtc())
                 .build();
     }
 }

@@ -5,7 +5,6 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
-import net.jqwik.engine.providers.ArbitraryArbitraryProvider;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
@@ -84,7 +83,8 @@ public class FixtureBuilderFactory {
                 .set("id", buildLong())
                 .set("uuid", buildLong())
                 .set("storeMeta", builderStoreMeta().sample())
-                .set("deleted", false);
+                .set("deleted", false)
+                .set("etc", pickRandomString(nameList));
     }
     public static ArbitraryBuilder<UmbrellaResponse> builderUmbrellaResponses() {
 
@@ -99,7 +99,8 @@ public class FixtureBuilderFactory {
 
         return fixtureMonkey.giveMeBuilder(UmbrellaRequest.class)
                 .set("storeMetaId", buildLong())
-                .set("uuid", buildLong());
+                .set("uuid", buildLong())
+                .set("etc", pickRandomString(nameList));
     }
 
     public static ArbitraryBuilder<User> builderUser() {
