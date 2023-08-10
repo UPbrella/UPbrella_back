@@ -8,6 +8,7 @@ import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.BlackListUserException;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.BlackListRepository;
@@ -33,8 +34,8 @@ public class UserService {
         if (userRepository.existsBySocialId(socialId)) {
             throw new ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
         }
-        if(blackListRepository.existBySocialId(socialId)){
-            throw new ExistingMemberException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.");
+        if(blackListRepository.existsBySocialId(socialId)){
+            throw new BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.");
         }
 
         User joinedUser = userRepository.save(User.createNewUser(socialId, joinRequest));

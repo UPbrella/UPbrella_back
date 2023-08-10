@@ -5,5 +5,6 @@ import upbrella.be.user.entity.BlackList;
 
 public interface BlackListRepository extends JpaRepository<BlackList, Long> {
 
-    boolean existBySocialId(Long socialId);
+    boolean existsBySocialId(Long socialId);
 }
+가

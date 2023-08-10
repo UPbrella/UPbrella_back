@@ -16,6 +16,7 @@ import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SingleUserInfoResponse;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.BlackListUserException;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.BlackListRepository;
@@ -280,7 +281,7 @@ class UserServiceTest {
     void blackListMemberJoinTest() {
         // given
         long blackList = 0L;
-        given(blackListRepository.existBySocialId(blackList)).willReturn(true);
+        given(blackListRepository.existsBySocialId(blackList)).willReturn(true);
         given(userRepository.existsBySocialId(blackList)).willReturn(false);
         JoinRequest joinRequest = FixtureBuilderFactory.builderJoinRequest().sample();
 
@@ -289,6 +290,6 @@ class UserServiceTest {
 
         // then
         assertThatThrownBy(() -> userService.join(blackList, joinRequest))
-                .isInstanceOf(ExistingMemberException.class);
+                .isInstanceOf(BlackListUserException.class);
     }
 }
