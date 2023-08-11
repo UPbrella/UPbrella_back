@@ -13,6 +13,7 @@ import upbrella.be.store.dto.response.AllClassificationResponse;
 import upbrella.be.store.dto.response.AllSubClassificationResponse;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
+import upbrella.be.store.exception.IncorrectClassificationException;
 import upbrella.be.store.repository.ClassificationRepository;
 
 import java.util.List;
@@ -147,7 +148,7 @@ class ClassificationServiceTest {
 
             // then
             assertThatThrownBy(() -> classificationService.findClassificationById(classificationId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(IncorrectClassificationException.class)
                     .hasMessage("[ERROR] Classification이 아닙니다.");
         }
     }
@@ -215,7 +216,7 @@ class ClassificationServiceTest {
 
             // then
             assertThatThrownBy(() -> classificationService.findSubClassificationById(classificationId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(IncorrectClassificationException.class)
                     .hasMessage("[ERROR] SubClassification이 아닙니다.");
         }
     }

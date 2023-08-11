@@ -53,7 +53,7 @@ public class StoreDetailService {
     public StoreDetail findStoreDetailById(Long storeId) {
 
         return storeDetailRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 가게입니다."));
+                .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다."));
     }
 
     @Transactional

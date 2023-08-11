@@ -446,7 +446,7 @@ public class StoreDetailServiceTest {
 
             // then
             assertThatThrownBy(() -> storeDetailService.findStoreDetailById(storeDetailId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(NonExistingStoreDetailException.class)
                     .hasMessageContaining("[ERROR] 존재하지 않는 가게입니다.");
         }
     }
