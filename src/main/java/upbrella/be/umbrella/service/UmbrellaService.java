@@ -65,15 +65,15 @@ public class UmbrellaService {
 
         StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaModifyRequest.getStoreMetaId());
 
-        if (!umbrellaRepository.existsByIdAndDeletedIsFalse(id)) {
-            throw new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.");
-        }
+        Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
+
         if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid())) {
             throw new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
         return umbrellaRepository.save(
-                Umbrella.ofUpdated(id, umbrellaModifyRequest, storeMeta)
+                Umbrella.ofUpdated(id, foundUmbrella, umbrellaModifyRequest, storeMeta)
         );
     }
 
