@@ -19,19 +19,27 @@ public interface UmbrellaRepository extends JpaRepository<Umbrella, Long> {
 
     List<Umbrella> findByStoreMetaIdAndDeletedIsFalseOrderById(long storeMetaId, Pageable pageable);
 
-    int countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(long storeMetaId);
+    // 대여가능 우산 조회
+    int countUmbrellasByRentableIsTrueAndMissedIsFalseAndDeletedIsFalse();
 
-    int countUmbrellasByRentableIsTrueAndDeletedIsFalse();
+    // 대여중인 우산 조회
+    int countUmbrellasByRentableIsFalseAndMissedIsFalseAndDeletedIsFalse();
 
-    int countUmbrellasByRentableIsFalseAndDeletedIsFalse();
+    // 전체 우산 조회
+    int countUmbrellaByDeletedIsFalse();
 
-    int countUmbrellaBy();
+    // 분실 우산 조회
+    int countUmbrellasByMissedIsTrueAndDeletedIsFalse();
 
-    int countUmbrellasByAndDeletedIsTrue();
+    // 지점 대여 가능 우산 조회
+    int countUmbrellasByStoreMetaIdAndRentableIsTrueAndMissedIsFalseAndDeletedIsFalse(long storeMetaId);
 
-    int countUmbrellasByStoreMetaIdAndRentableIsFalseAndDeletedIsFalse(long storeMetaId);
+    // 지점 대여중인 우산 조회
+    int countUmbrellasByStoreMetaIdAndRentableIsFalseAndMissedIsFalseAndDeletedIsFalse(long storeMetaId);
 
-    int countUmbrellaByStoreMetaId(long storeId);
+    // 지점 전체 우산 조회
+    int countUmbrellaByStoreMetaIdAndDeletedIsFalse(long storeId);
 
-    int countUmbrellasByStoreMetaIdAndDeletedIsTrue(long storeId);
+    // 지점 분실 우산 조회
+    int countUmbrellasByStoreMetaIdAndMissedIsTrueAndDeletedIsFalse(long storeId);
 }

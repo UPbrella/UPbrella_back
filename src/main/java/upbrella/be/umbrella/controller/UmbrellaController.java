@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaPageResponse;
 import upbrella.be.umbrella.service.UmbrellaService;
@@ -51,9 +52,9 @@ public class UmbrellaController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomResponse> addUmbrella(HttpSession httpSession, @RequestBody UmbrellaRequest umbrellaRequest) {
+    public ResponseEntity<CustomResponse> addUmbrella(HttpSession httpSession, @RequestBody UmbrellaCreateRequest umbrellaCreateRequest) {
 
-        umbrellaService.addUmbrella(umbrellaRequest);
+        umbrellaService.addUmbrella(umbrellaCreateRequest);
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -64,9 +65,9 @@ public class UmbrellaController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CustomResponse> modifyUmbrella(HttpSession httpSession, @RequestBody UmbrellaRequest umbrellaRequest, @PathVariable long id) {
+    public ResponseEntity<CustomResponse> modifyUmbrella(HttpSession httpSession, @RequestBody UmbrellaModifyRequest umbrellaModifyRequest, @PathVariable long id) {
 
-        umbrellaService.modifyUmbrella(id, umbrellaRequest);
+        umbrellaService.modifyUmbrella(id, umbrellaModifyRequest);
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(

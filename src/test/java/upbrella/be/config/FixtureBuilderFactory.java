@@ -6,7 +6,8 @@ import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -101,10 +102,16 @@ public class FixtureBuilderFactory {
                 .set("uuid", buildLong(100));
     }
 
+    public static ArbitraryBuilder<UmbrellaCreateRequest> builderUmbrellaCreateRequest() {
 
-    public static ArbitraryBuilder<UmbrellaRequest> builderUmbrellaRequest() {
+        return fixtureMonkey.giveMeBuilder(UmbrellaCreateRequest.class)
+                .set("storeMetaId", buildLong(100))
+                .set("uuid", buildLong(100));
+    }
 
-        return fixtureMonkey.giveMeBuilder(UmbrellaRequest.class)
+    public static ArbitraryBuilder<UmbrellaModifyRequest> builderUmbrellaModifyRequest() {
+
+        return fixtureMonkey.giveMeBuilder(UmbrellaModifyRequest.class)
                 .set("storeMetaId", buildLong(100))
                 .set("uuid", buildLong(100));
     }
