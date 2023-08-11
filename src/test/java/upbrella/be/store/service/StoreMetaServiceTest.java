@@ -17,6 +17,7 @@ import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.entity.*;
 import upbrella.be.store.exception.DeletedStoreDetailException;
+import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -531,9 +532,8 @@ class StoreMetaServiceTest {
 
             // then
             assertThatThrownBy(() -> storeMetaService.findStoreMetaById(1L))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(NonExistingStoreMetaException.class)
                     .hasMessage("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.");
         }
     }
-
 }
