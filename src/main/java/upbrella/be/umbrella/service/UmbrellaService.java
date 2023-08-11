@@ -1,15 +1,16 @@
 package upbrella.be.umbrella.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
-import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
@@ -20,10 +21,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UmbrellaService {
     private final UmbrellaRepository umbrellaRepository;
     private final StoreMetaService storeMetaService;
+    private final RentService rentService;
+
+    public UmbrellaService(UmbrellaRepository umbrellaRepository, StoreMetaService storeMetaService, @Lazy RentService rentService) {
+        this.umbrellaRepository = umbrellaRepository;
+        this.storeMetaService = storeMetaService;
+        this.rentService = rentService;
+    }
 
     public List<UmbrellaResponse> findAllUmbrellas(Pageable pageable) {
 
@@ -94,8 +101,10 @@ public class UmbrellaService {
         int availableUmbrella = countAvailableUmbrella();
         int rentedUmbrella = countRentedUmbrella();
         int missingUmbrella = countMissingUmberlla();
+        long totalRent = rentService.countTotalRent();
 
-        return UmbrellaStatisticsResponse.fromCounts(totalUmbrella, availableUmbrella, rentedUmbrella, missingUmbrella);
+        return UmbrellaStatisticsResponse.fromCounts(totalUmbrella, availableUmbrella,
+                rentedUmbrella, missingUmbrella, totalRent);
     }
 
     public UmbrellaStatisticsResponse getUmbrellaStatisticsByStoreId(long storeId) {
@@ -108,9 +117,10 @@ public class UmbrellaService {
         int availableUmbrellaByStoreId = countAvailableUmbrellaByStoreId(storeId);
         int rentedUmbrellaByStoreId = countRentedUmbrellaByStoreId(storeId);
         int missingUmbrellaByStoreId = countMissingUmberllaByStoreId(storeId);
+        long totalRentByStoreId = rentService.countTotalRentByStoreId(storeId);
 
         return UmbrellaStatisticsResponse.fromCounts(totalUmbrellaByStoreId, availableUmbrellaByStoreId,
-                rentedUmbrellaByStoreId, missingUmbrellaByStoreId);
+                rentedUmbrellaByStoreId, missingUmbrellaByStoreId, totalRentByStoreId);
     }
 
     private int countAvailableUmbrella() {

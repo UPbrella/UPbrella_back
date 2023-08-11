@@ -368,6 +368,8 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("totalRentCount").type(JsonFieldType.NUMBER)
+                                        .description("전체 대여 건수"),
                                 fieldWithPath("totalUmbrellaCount").type(JsonFieldType.NUMBER)
                                         .description("전체 우산 개수"),
                                 fieldWithPath("rentableUmbrellaCount").type(JsonFieldType.NUMBER)
@@ -404,6 +406,8 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("totalRentCount").type(JsonFieldType.NUMBER)
+                                        .description("지점 전체 대여 건수"),
                                 fieldWithPath("totalUmbrellaCount").type(JsonFieldType.NUMBER)
                                         .description("지점 전체 우산 개수"),
                                 fieldWithPath("rentableUmbrellaCount").type(JsonFieldType.NUMBER)

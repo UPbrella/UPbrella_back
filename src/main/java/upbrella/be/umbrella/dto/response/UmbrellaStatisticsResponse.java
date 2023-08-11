@@ -12,15 +12,19 @@ public class UmbrellaStatisticsResponse {
     private int rentedUmbrellaCount;
     private int missingUmbrellaCount;
     private double missingRate;
+    private long totalRentCount;
 
-    public static UmbrellaStatisticsResponse fromCounts(int totalUmbrellaCount, int rentableUmbrellaCount, int rentedUmbrellaCount, int missingUmbrellaCount) {
+    public static UmbrellaStatisticsResponse fromCounts(int totalUmbrellaCount, int rentableUmbrellaCount,
+                                                        int rentedUmbrellaCount, int missingUmbrellaCount,
+                                                        long totalRentCount) {
 
         return UmbrellaStatisticsResponse.builder()
                 .totalUmbrellaCount(totalUmbrellaCount)
                 .rentableUmbrellaCount(rentableUmbrellaCount)
                 .rentedUmbrellaCount(rentedUmbrellaCount)
                 .missingUmbrellaCount(missingUmbrellaCount)
-                .missingRate((double) 100*missingUmbrellaCount / totalUmbrellaCount)
+                .missingRate((double) 100 * missingUmbrellaCount / totalUmbrellaCount)
+                .totalRentCount(totalRentCount)
                 .build();
     }
 }

@@ -156,13 +156,14 @@ public class FixtureBuilderFactory {
         int missingUmbrellaCount = buildInteger(100);
         int rentableUmbrellaCount = buildInteger(100);
         int rentedUmbrellaCount = buildInteger(100);
-        int totalUmbrellaCount = missingUmbrellaCount + rentedUmbrellaCount + rentedUmbrellaCount;
+        int totalUmbrellaCount = missingUmbrellaCount + rentableUmbrellaCount + rentedUmbrellaCount;
         double missingRate = (double)100*missingUmbrellaCount / totalUmbrellaCount;
         return fixtureMonkey.giveMeBuilder(UmbrellaStatisticsResponse.class)
                 .set("totalUmbrellaCount", totalUmbrellaCount)
                 .set("rentableUmbrellaCount", buildInteger(100))
                 .set("rentedUmbrellaCount", buildInteger(100))
                 .set("missingUmbrellaCount", missingUmbrellaCount)
+                .set("totalRentCount", buildLong(1000))
                 .set("missingRate", missingRate);
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.service.StoreMetaService;
@@ -45,6 +46,8 @@ class UmbrellaServiceTest {
     private UmbrellaRepository umbrellaRepository;
     @Mock
     private StoreMetaService storeMetaService;
+    @Mock
+    private RentService rentService;
     @InjectMocks
     private UmbrellaService umbrellaService;
 
@@ -474,19 +477,16 @@ class UmbrellaServiceTest {
         UmbrellaStatisticsResponse expected = FixtureBuilderFactory.builderUmbrellaStatisticsResponse()
                 .sample();
 
-        int totalCount = expected.getTotalUmbrellaCount();
-        int rentableCount = expected.getRentableUmbrellaCount();
-        int rentedCount = expected.getRentedUmbrellaCount();
-        int missingCount = expected.getMissingUmbrellaCount();
-
         given(umbrellaRepository.countUmbrellaByDeletedIsFalse())
-                .willReturn(totalCount);
+                .willReturn(expected.getTotalUmbrellaCount());
         given(umbrellaRepository.countUmbrellasByRentableIsTrueAndMissedIsFalseAndDeletedIsFalse())
-                .willReturn(rentableCount);
+                .willReturn(expected.getRentableUmbrellaCount());
         given(umbrellaRepository.countUmbrellasByRentableIsFalseAndMissedIsFalseAndDeletedIsFalse())
-                .willReturn(rentedCount);
+                .willReturn(expected.getRentedUmbrellaCount());
         given(umbrellaRepository.countUmbrellasByMissedIsTrueAndDeletedIsFalse())
-                .willReturn(missingCount);
+                .willReturn(expected.getMissingUmbrellaCount());
+        given(rentService.countTotalRent())
+                .willReturn(expected.getTotalRentCount());
 
         // when
         UmbrellaStatisticsResponse umbrellaAllStatistics = umbrellaService.getUmbrellaAllStatistics();
@@ -503,7 +503,9 @@ class UmbrellaServiceTest {
                 () -> then(umbrellaRepository).should(times(1))
                         .countUmbrellasByRentableIsFalseAndMissedIsFalseAndDeletedIsFalse(),
                 () -> then(umbrellaRepository).should(times(1))
-                        .countUmbrellasByMissedIsTrueAndDeletedIsFalse());
+                        .countUmbrellasByMissedIsTrueAndDeletedIsFalse(),
+                () -> then(rentService).should(times(1))
+                        .countTotalRent());
     }
 
     @Nested
@@ -518,22 +520,21 @@ class UmbrellaServiceTest {
             UmbrellaStatisticsResponse expected = FixtureBuilderFactory.builderUmbrellaStatisticsResponse()
                     .sample();
 
-            int totalCount = expected.getTotalUmbrellaCount();
-            int rentableCount = expected.getRentableUmbrellaCount();
-            int rentedCount = expected.getRentedUmbrellaCount();
-            int missingCount = expected.getMissingUmbrellaCount();
             long storeId = FixtureBuilderFactory.buildLong(1000);
+
 
             given(storeMetaService.existByStoreId(storeId))
                     .willReturn(true);
             given(umbrellaRepository.countUmbrellaByStoreMetaIdAndDeletedIsFalse(storeId))
-                    .willReturn(totalCount);
+                    .willReturn(expected.getTotalUmbrellaCount());
             given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndMissedIsFalseAndDeletedIsFalse(storeId))
-                    .willReturn(rentableCount);
+                    .willReturn(expected.getRentableUmbrellaCount());
             given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsFalseAndMissedIsFalseAndDeletedIsFalse(storeId))
-                    .willReturn(rentedCount);
+                    .willReturn(expected.getRentedUmbrellaCount());
             given(umbrellaRepository.countUmbrellasByStoreMetaIdAndMissedIsTrueAndDeletedIsFalse(storeId))
-                    .willReturn(missingCount);
+                    .willReturn(expected.getMissingUmbrellaCount());
+            given(rentService.countTotalRentByStoreId(storeId))
+                    .willReturn(expected.getTotalRentCount());
 
             // when
             UmbrellaStatisticsResponse umbrellaStatistics = umbrellaService.getUmbrellaStatisticsByStoreId(storeId);
@@ -552,7 +553,9 @@ class UmbrellaServiceTest {
                     () -> then(umbrellaRepository).should(times(1))
                             .countUmbrellasByStoreMetaIdAndMissedIsTrueAndDeletedIsFalse(storeId),
                     () -> then(storeMetaService).should(times(1))
-                            .existByStoreId(storeId));
+                            .existByStoreId(storeId),
+                    () -> then(rentService).should(times(1))
+                            .countTotalRentByStoreId(storeId));
         }
 
         @Test
