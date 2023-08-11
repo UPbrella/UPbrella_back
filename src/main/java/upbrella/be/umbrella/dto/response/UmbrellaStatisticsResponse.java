@@ -7,15 +7,15 @@ import lombok.Getter;
 @Builder
 public class UmbrellaStatisticsResponse {
 
-    private int totalUmbrellaCount;
-    private int rentableUmbrellaCount;
-    private int rentedUmbrellaCount;
-    private int missingUmbrellaCount;
+    private long totalUmbrellaCount;
+    private long rentableUmbrellaCount;
+    private long rentedUmbrellaCount;
+    private long missingUmbrellaCount;
     private double missingRate;
     private long totalRentCount;
 
-    public static UmbrellaStatisticsResponse fromCounts(int totalUmbrellaCount, int rentableUmbrellaCount,
-                                                        int rentedUmbrellaCount, int missingUmbrellaCount,
+    public static UmbrellaStatisticsResponse fromCounts(long totalUmbrellaCount, long rentableUmbrellaCount,
+                                                        long rentedUmbrellaCount, long missingUmbrellaCount,
                                                         long totalRentCount) {
 
         return UmbrellaStatisticsResponse.builder()

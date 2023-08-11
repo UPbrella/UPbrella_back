@@ -452,19 +452,19 @@ class UmbrellaServiceTest {
 
             // given
             long id = FixtureBuilderFactory.buildLong(1000);
-            int availableCount = FixtureBuilderFactory.buildInteger(100);
-            given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndMissedIsFalseAndDeletedIsFalse(id))
+            long availableCount = FixtureBuilderFactory.buildInteger(100);
+            given(umbrellaRepository.countRentableUmbrellasByStore(id))
                     .willReturn(availableCount);
 
             // when
-            int count = umbrellaService.countAvailableUmbrellaAtStore(id);
+            long count = umbrellaService.countAvailableUmbrellaAtStore(id);
 
             // then
             assertAll(
                     () -> assertThat(count)
                             .isEqualTo(availableCount),
                     () -> then(umbrellaRepository).should(times(1))
-                            .countUmbrellasByStoreMetaIdAndRentableIsTrueAndMissedIsFalseAndDeletedIsFalse(id)
+                            .countRentableUmbrellasByStore(id)
             );
         }
     }
@@ -477,13 +477,13 @@ class UmbrellaServiceTest {
         UmbrellaStatisticsResponse expected = FixtureBuilderFactory.builderUmbrellaStatisticsResponse()
                 .sample();
 
-        given(umbrellaRepository.countUmbrellaByDeletedIsFalse())
+        given(umbrellaRepository.countAllUmbrellas())
                 .willReturn(expected.getTotalUmbrellaCount());
-        given(umbrellaRepository.countUmbrellasByRentableIsTrueAndMissedIsFalseAndDeletedIsFalse())
+        given(umbrellaRepository.countRentableUmbrellas())
                 .willReturn(expected.getRentableUmbrellaCount());
-        given(umbrellaRepository.countUmbrellasByRentableIsFalseAndMissedIsFalseAndDeletedIsFalse())
+        given(umbrellaRepository.countRentedUmbrellas())
                 .willReturn(expected.getRentedUmbrellaCount());
-        given(umbrellaRepository.countUmbrellasByMissedIsTrueAndDeletedIsFalse())
+        given(umbrellaRepository.countMissingUmbrellas())
                 .willReturn(expected.getMissingUmbrellaCount());
         given(rentService.countTotalRent())
                 .willReturn(expected.getTotalRentCount());
@@ -497,13 +497,13 @@ class UmbrellaServiceTest {
                         .usingRecursiveComparison()
                         .isEqualTo(expected),
                 () -> then(umbrellaRepository).should(times(1))
-                        .countUmbrellaByDeletedIsFalse(),
+                        .countAllUmbrellas(),
                 () -> then(umbrellaRepository).should(times(1))
-                        .countUmbrellasByRentableIsTrueAndMissedIsFalseAndDeletedIsFalse(),
+                        .countRentableUmbrellas(),
                 () -> then(umbrellaRepository).should(times(1))
-                        .countUmbrellasByRentableIsFalseAndMissedIsFalseAndDeletedIsFalse(),
+                        .countRentedUmbrellas(),
                 () -> then(umbrellaRepository).should(times(1))
-                        .countUmbrellasByMissedIsTrueAndDeletedIsFalse(),
+                        .countMissingUmbrellas(),
                 () -> then(rentService).should(times(1))
                         .countTotalRent());
     }
@@ -525,13 +525,13 @@ class UmbrellaServiceTest {
 
             given(storeMetaService.existByStoreId(storeId))
                     .willReturn(true);
-            given(umbrellaRepository.countUmbrellaByStoreMetaIdAndDeletedIsFalse(storeId))
+            given(umbrellaRepository.countAllUmbrellasByStore(storeId))
                     .willReturn(expected.getTotalUmbrellaCount());
-            given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndMissedIsFalseAndDeletedIsFalse(storeId))
+            given(umbrellaRepository.countRentableUmbrellasByStore(storeId))
                     .willReturn(expected.getRentableUmbrellaCount());
-            given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsFalseAndMissedIsFalseAndDeletedIsFalse(storeId))
+            given(umbrellaRepository.countRentedUmbrellasByStore(storeId))
                     .willReturn(expected.getRentedUmbrellaCount());
-            given(umbrellaRepository.countUmbrellasByStoreMetaIdAndMissedIsTrueAndDeletedIsFalse(storeId))
+            given(umbrellaRepository.countMissingUmbrellasByStore(storeId))
                     .willReturn(expected.getMissingUmbrellaCount());
             given(rentService.countTotalRentByStoreId(storeId))
                     .willReturn(expected.getTotalRentCount());
@@ -545,13 +545,13 @@ class UmbrellaServiceTest {
                             .usingRecursiveComparison()
                             .isEqualTo(expected),
                     () -> then(umbrellaRepository).should(times(1))
-                            .countUmbrellaByStoreMetaIdAndDeletedIsFalse(storeId),
+                            .countAllUmbrellasByStore(storeId),
                     () -> then(umbrellaRepository).should(times(1))
-                            .countUmbrellasByStoreMetaIdAndRentableIsTrueAndMissedIsFalseAndDeletedIsFalse(storeId),
+                            .countRentableUmbrellasByStore(storeId),
                     () -> then(umbrellaRepository).should(times(1))
-                            .countUmbrellasByStoreMetaIdAndRentableIsFalseAndMissedIsFalseAndDeletedIsFalse(storeId),
+                            .countRentedUmbrellasByStore(storeId),
                     () -> then(umbrellaRepository).should(times(1))
-                            .countUmbrellasByStoreMetaIdAndMissedIsTrueAndDeletedIsFalse(storeId),
+                            .countMissingUmbrellasByStore(storeId),
                     () -> then(storeMetaService).should(times(1))
                             .existByStoreId(storeId),
                     () -> then(rentService).should(times(1))
