@@ -91,7 +91,8 @@ public class FixtureBuilderFactory {
                 .set("id", buildLong(10000))
                 .set("uuid", buildLong(1000))
                 .set("storeMeta", builderStoreMeta().sample())
-                .set("deleted", false);
+                .set("deleted", false)
+                .set("etc", pickRandomString(nameList));
     }
 
     public static ArbitraryBuilder<UmbrellaResponse> builderUmbrellaResponses() {
@@ -106,14 +107,17 @@ public class FixtureBuilderFactory {
 
         return fixtureMonkey.giveMeBuilder(UmbrellaCreateRequest.class)
                 .set("storeMetaId", buildLong(100))
-                .set("uuid", buildLong(100));
+                .set("uuid", buildLong(100))
+                .set("etc", pickRandomString(nameList));
     }
+
 
     public static ArbitraryBuilder<UmbrellaModifyRequest> builderUmbrellaModifyRequest() {
 
         return fixtureMonkey.giveMeBuilder(UmbrellaModifyRequest.class)
                 .set("storeMetaId", buildLong(100))
-                .set("uuid", buildLong(100));
+                .set("uuid", buildLong(100))
+                .set("etc", pickRandomString(nameList));
     }
 
     public static ArbitraryBuilder<User> builderUser() {
@@ -157,7 +161,7 @@ public class FixtureBuilderFactory {
         int rentableUmbrellaCount = buildInteger(100);
         int rentedUmbrellaCount = buildInteger(100);
         int totalUmbrellaCount = missingUmbrellaCount + rentableUmbrellaCount + rentedUmbrellaCount;
-        double missingRate = (double)100*missingUmbrellaCount / totalUmbrellaCount;
+        double missingRate = (double) 100 * missingUmbrellaCount / totalUmbrellaCount;
         return fixtureMonkey.giveMeBuilder(UmbrellaStatisticsResponse.class)
                 .set("totalUmbrellaCount", totalUmbrellaCount)
                 .set("rentableUmbrellaCount", buildInteger(100))

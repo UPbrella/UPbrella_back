@@ -290,8 +290,8 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.getId()))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsByIdAndDeletedIsFalse(id))
-                    .willReturn(true);
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
+                    .willReturn(Optional.ofNullable(umbrella));
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()))
                     .willReturn(false);
             given(umbrellaRepository.save(any(Umbrella.class)))
@@ -308,7 +308,7 @@ class UmbrellaServiceTest {
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByIdAndDeletedIsFalse(id),
+                            .findByIdAndDeletedIsFalse(id),
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(foundStoreMeta.getId()),
                     () -> then(umbrellaRepository).should(times(1))
@@ -323,8 +323,8 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.getId()))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsByIdAndDeletedIsFalse(id))
-                    .willReturn(false);
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
+                    .willReturn(Optional.ofNullable(null));
 
             // when & then
             assertAll(
@@ -334,7 +334,7 @@ class UmbrellaServiceTest {
                     () -> then(umbrellaRepository).should(never())
                             .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByIdAndDeletedIsFalse(id),
+                            .findByIdAndDeletedIsFalse(id),
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(foundStoreMeta.getId()),
                     () -> then(umbrellaRepository).should(never())
@@ -349,8 +349,8 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.getId()))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsByIdAndDeletedIsFalse(id))
-                    .willReturn(true);
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
+                    .willReturn(Optional.ofNullable(umbrella));
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()))
                     .willReturn(true);
 
@@ -362,7 +362,7 @@ class UmbrellaServiceTest {
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByIdAndDeletedIsFalse(id),
+                            .findByIdAndDeletedIsFalse(id),
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(foundStoreMeta.getId()),
                     () -> then(umbrellaRepository).should(never())

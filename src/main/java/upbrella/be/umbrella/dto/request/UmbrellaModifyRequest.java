@@ -13,4 +13,5 @@ public class UmbrellaModifyRequest {
     private long uuid;
     private boolean rentable;
     private boolean missed;
+    private String etc;
 }
