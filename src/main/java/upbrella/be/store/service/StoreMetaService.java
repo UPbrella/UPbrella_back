@@ -125,6 +125,7 @@ public class StoreMetaService {
     }
 
     public boolean existByStoreId(long storeId) {
+
         return storeMetaRepository.existsById(storeId);
     }
 }
