@@ -95,7 +95,7 @@ public class StoreDetailServiceTest {
                     .willReturn(Optional.of(storeDetail));
 
             given(umbrellaService.countAvailableUmbrellaAtStore(3L))
-                    .willReturn(10);
+                    .willReturn(10L);
 
             //when
             StoreFindByIdResponse storeFindByIdResponse = storeDetailService.findStoreDetailByStoreMetaId(3L);

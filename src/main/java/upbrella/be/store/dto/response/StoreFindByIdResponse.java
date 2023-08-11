@@ -14,12 +14,12 @@ public class StoreFindByIdResponse {
     private String businessHours;
     private String contactNumber;
     private String address;
-    private int availableUmbrellaCount;
+    private long availableUmbrellaCount;
     private boolean openStatus;
     private double latitude;
     private double longitude;
 
-    public static StoreFindByIdResponse fromStoreDetail(StoreDetail storeDetail, int availableUmbrellaCount) {
+    public static StoreFindByIdResponse fromStoreDetail(StoreDetail storeDetail, long availableUmbrellaCount) {
 
         return StoreFindByIdResponse.builder()
                 .id(storeDetail.getId())

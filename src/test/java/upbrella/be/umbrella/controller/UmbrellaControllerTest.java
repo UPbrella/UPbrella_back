@@ -14,7 +14,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.store.controller.StoreExceptionHandler;
+import upbrella.be.store.exception.NonExistingStoreMetaException;
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
@@ -35,6 +39,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static upbrella.be.config.FixtureBuilderFactory.buildInteger;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
@@ -97,7 +102,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
     void showUmbrellasByStoreIdTest() throws Exception {
 
         // given
-        int storeId = FixtureBuilderFactory.buildInteger();
+        int storeId = buildInteger(100);
         List<UmbrellaResponse> umbrellaResponseList = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             umbrellaResponseList.add(FixtureBuilderFactory.builderUmbrellaResponses()
@@ -150,15 +155,15 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void success() throws Exception {
 
             // given
-            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+            UmbrellaCreateRequest umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest()
                     .sample();
-            given(umbrellaService.addUmbrella(refEq(umbrellaRequest)))
+            given(umbrellaService.addUmbrella(refEq(umbrellaCreateRequest)))
                     .willReturn(FixtureBuilderFactory.builderUmbrella().sample());
 
             // when & then
             mockMvc.perform(
                             post("/umbrellas")
-                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .content(objectMapper.writeValueAsString(umbrellaCreateRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON)
                     ).andDo(print())
@@ -172,7 +177,10 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                     fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
                                             .description("지점 고유번호"),
                                     fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                            .description("대여 가능 여부"))));
+                                            .description("대여 가능 여부"),
+                                    fieldWithPath("etc").type(JsonFieldType.STRING)
+                                            .optional()
+                                            .description("기타 특이 사항"))));
         }
 
         @DisplayName("우산 관리번호가 이미 존재하면 400 에러가 반환된다.")
@@ -180,18 +188,18 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void existingUmbrellaUuid() throws Exception {
 
             // given
-            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+            UmbrellaCreateRequest umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest()
                     .sample();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
-            given(umbrellaService.addUmbrella(refEq(umbrellaRequest)))
+            given(umbrellaService.addUmbrella(refEq(umbrellaCreateRequest)))
                     .willThrow(new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다."));
 
             // when & then
             mockMvc.perform(
                             post("/umbrellas")
-                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .content(objectMapper.writeValueAsString(umbrellaCreateRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -210,17 +218,17 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void sucess() throws Exception {
 
             // given
-            long id = FixtureBuilderFactory.buildLong();
-            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+            long id = FixtureBuilderFactory.buildLong(1000);
+            UmbrellaModifyRequest umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                     .sample();
 
-            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaRequest)))
+            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaModifyRequest)))
                     .willReturn(FixtureBuilderFactory.builderUmbrella().sample());
 
             // when & then
             mockMvc.perform(
                             patch("/umbrellas/{umbrellaId}", id)
-                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON)
                     ).andDo(print())
@@ -234,7 +242,12 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                     fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
                                             .description("지점 고유번호"),
                                     fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                            .description("대여 가능 여부")),
+                                            .description("대여 가능 여부"),
+                                    fieldWithPath("missed").type(JsonFieldType.BOOLEAN)
+                                            .description("분실 여부"),
+                                    fieldWithPath("etc").type(JsonFieldType.STRING)
+                                            .optional()
+                                            .description("기타 특이 사항")),
                             pathParameters(
                                     parameterWithName("umbrellaId").description("우산 고유번호")
                             )));
@@ -245,19 +258,19 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void existingUmbrellaUuid() throws Exception {
 
             // given
-            long id = FixtureBuilderFactory.buildLong();
-            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+            long id = FixtureBuilderFactory.buildLong(1000);
+            UmbrellaModifyRequest umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                     .sample();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
-            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaRequest)))
+            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaModifyRequest)))
                     .willThrow(new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다."));
 
             // when & then
             mockMvc.perform(
                             patch("/umbrellas/{umbrellaId}", id)
-                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -271,19 +284,19 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void notExistingUmbrellaId() throws Exception {
 
             // given
-            long id = FixtureBuilderFactory.buildLong();
-            UmbrellaRequest umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest()
+            long id = FixtureBuilderFactory.buildLong(1000);
+            UmbrellaModifyRequest umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                     .sample();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
-            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaRequest)))
+            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaModifyRequest)))
                     .willThrow(new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 관리번호입니다."));
 
             // when & then
             mockMvc.perform(
                             patch("/umbrellas/{umbrellaId}", id)
-                                    .content(objectMapper.writeValueAsString(umbrellaRequest))
+                                    .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -301,7 +314,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void success() throws Exception {
 
             // given
-            long id = FixtureBuilderFactory.buildLong();
+            long id = FixtureBuilderFactory.buildLong(1000);
             willDoNothing().given(umbrellaService)
                     .deleteUmbrella(eq(id));
 
@@ -323,7 +336,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void notExistingUmbrella() throws Exception {
 
             // given
-            long id = FixtureBuilderFactory.buildLong();
+            long id = FixtureBuilderFactory.buildLong(1000);
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
             willThrow(new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다."))
@@ -336,6 +349,107 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
                                     .isInstanceOf(NonExistingUmbrellaException.class));
+        }
+    }
+
+    @DisplayName("사용자는 전체 우산 통계를 조회할 수 있다.")
+    @Test
+    void showAllUmbrellasStatisticsTest() throws Exception {
+
+        // given
+
+        UmbrellaStatisticsResponse umbrellaStatisticsResponse = FixtureBuilderFactory
+                .builderUmbrellaStatisticsResponse()
+                .sample();
+        given(umbrellaService.getUmbrellaAllStatistics())
+                .willReturn(umbrellaStatisticsResponse);
+
+
+        // when & then
+        mockMvc.perform(
+                        get("/umbrellas/statistics")
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("show-all-umbrellas-statistics-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("totalRentCount").type(JsonFieldType.NUMBER)
+                                        .description("전체 대여 건수"),
+                                fieldWithPath("totalUmbrellaCount").type(JsonFieldType.NUMBER)
+                                        .description("전체 우산 개수"),
+                                fieldWithPath("rentableUmbrellaCount").type(JsonFieldType.NUMBER)
+                                        .description("대여 가능 우산 개수"),
+                                fieldWithPath("rentedUmbrellaCount").type(JsonFieldType.NUMBER)
+                                        .description("대여 중 우산 개수"),
+                                fieldWithPath("missingUmbrellaCount").type(JsonFieldType.NUMBER)
+                                        .description("분실 우산 개수"),
+                                fieldWithPath("missingRate").type(JsonFieldType.NUMBER)
+                                        .description("분실률(%)")
+                        )));
+    }
+
+    @Nested
+    @DisplayName("사용자는 협업 지점 고유 번호로 GET 요청을 보내")
+    class showUmbrellasStatisticsByStoreIdTest {
+
+        @DisplayName("사용자는 지점 우산 통계를 조회할 수 있다.")
+        @Test
+        void success() throws Exception {
+
+            // given
+
+            UmbrellaStatisticsResponse umbrellaStatisticsResponse = FixtureBuilderFactory
+                    .builderUmbrellaStatisticsResponse()
+                    .sample();
+            int storeId = FixtureBuilderFactory.buildInteger(100);
+            given(umbrellaService.getUmbrellaStatisticsByStoreId(storeId))
+                    .willReturn(umbrellaStatisticsResponse);
+
+            // when & then
+            mockMvc.perform(
+                            get("/umbrellas/statistics/{storeId}", storeId)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("show-umbrellas-statistics-by-store-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("totalRentCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 전체 대여 건수"),
+                                    fieldWithPath("totalUmbrellaCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 전체 우산 개수"),
+                                    fieldWithPath("rentableUmbrellaCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 대여 가능 우산 개수"),
+                                    fieldWithPath("rentedUmbrellaCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 대여 중 우산 개수"),
+                                    fieldWithPath("missingUmbrellaCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 분실 우산 개수"),
+                                    fieldWithPath("missingRate").type(JsonFieldType.NUMBER)
+                                            .description("지점 분실률(%)")
+                            )));
+        }
+
+        @DisplayName("존재하지 않는 협업지점 고유번호면 400 에러를 반환한다.")
+        @Test
+        void notExistingStoreMeta() throws Exception {
+
+            // given
+            long storeId = FixtureBuilderFactory.buildLong(1000);
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new StoreExceptionHandler());
+
+            willThrow(new NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업지점 고유번호입니다."))
+                    .given(umbrellaService).getUmbrellaStatisticsByStoreId(eq(storeId));
+
+            // when & then
+            mockMvc.perform(
+                            get("/umbrellas/statistics/{storeId}", storeId))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(NonExistingStoreMetaException.class));
         }
     }
 }

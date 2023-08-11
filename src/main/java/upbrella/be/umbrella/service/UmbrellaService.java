@@ -1,12 +1,16 @@
 package upbrella.be.umbrella.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.service.StoreMetaService;
-import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
@@ -17,10 +21,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UmbrellaService {
     private final UmbrellaRepository umbrellaRepository;
     private final StoreMetaService storeMetaService;
+    private final RentService rentService;
+
+    public UmbrellaService(UmbrellaRepository umbrellaRepository, StoreMetaService storeMetaService, @Lazy RentService rentService) {
+        this.umbrellaRepository = umbrellaRepository;
+        this.storeMetaService = storeMetaService;
+        this.rentService = rentService;
+    }
 
     public List<UmbrellaResponse> findAllUmbrellas(Pageable pageable) {
 
@@ -37,33 +47,33 @@ public class UmbrellaService {
     }
 
     @Transactional
-    public Umbrella addUmbrella(UmbrellaRequest umbrellaRequest) {
+    public Umbrella addUmbrella(UmbrellaCreateRequest umbrellaCreateRequest) {
 
-        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaCreateRequest.getStoreMetaId());
 
-        if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid())) {
+        if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.getUuid())) {
             throw new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
         return umbrellaRepository.save(
-                Umbrella.ofCreated(umbrellaRequest, storeMeta)
+                Umbrella.ofCreated(umbrellaCreateRequest, storeMeta)
         );
     }
 
     @Transactional
-    public Umbrella modifyUmbrella(long id, UmbrellaRequest umbrellaRequest) {
+    public Umbrella modifyUmbrella(long id, UmbrellaModifyRequest umbrellaModifyRequest) {
 
-        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaRequest.getStoreMetaId());
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(umbrellaModifyRequest.getStoreMetaId());
 
-        if (!umbrellaRepository.existsByIdAndDeletedIsFalse(id)) {
-            throw new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.");
-        }
-        if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid())) {
+        Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(() -> new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
+
+        if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid())) {
             throw new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리 번호입니다.");
         }
 
         return umbrellaRepository.save(
-                Umbrella.ofUpdated(id, umbrellaRequest, storeMeta)
+                Umbrella.ofUpdated(id, foundUmbrella, umbrellaModifyRequest, storeMeta)
         );
     }
 
@@ -80,8 +90,36 @@ public class UmbrellaService {
                 .orElseThrow(() -> new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다."));
     }
 
-    public int countAvailableUmbrellaAtStore(long storeMetaId) {
+    public long countAvailableUmbrellaAtStore(long storeMetaId) {
 
-        return umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(storeMetaId);
+        return umbrellaRepository.countRentableUmbrellasByStore(storeMetaId);
+    }
+
+    public UmbrellaStatisticsResponse getUmbrellaAllStatistics() {
+
+        long totalUmbrella = umbrellaRepository.countAllUmbrellas();
+        long availableUmbrella = umbrellaRepository.countRentableUmbrellas();
+        long rentedUmbrella = umbrellaRepository.countRentedUmbrellas();
+        long missingUmbrella = umbrellaRepository.countMissingUmbrellas();
+        long totalRent = rentService.countTotalRent();
+
+        return UmbrellaStatisticsResponse.fromCounts(totalUmbrella, availableUmbrella,
+                rentedUmbrella, missingUmbrella, totalRent);
+    }
+
+    public UmbrellaStatisticsResponse getUmbrellaStatisticsByStoreId(long storeId) {
+
+        if (!storeMetaService.existByStoreId(storeId)) {
+            throw new NonExistingStoreMetaException("[ERROR] 존재하지 않는 매장 고유번호입니다.");
+        }
+
+        long totalUmbrellaByStoreId = umbrellaRepository.countAllUmbrellasByStore(storeId);
+        long availableUmbrellaByStoreId = umbrellaRepository.countRentableUmbrellasByStore(storeId);
+        long rentedUmbrellaByStoreId = umbrellaRepository.countRentedUmbrellasByStore(storeId);
+        long missingUmbrellaByStoreId = umbrellaRepository.countMissingUmbrellasByStore(storeId);
+        long totalRentByStoreId = rentService.countTotalRentByStoreId(storeId);
+
+        return UmbrellaStatisticsResponse.fromCounts(totalUmbrellaByStoreId, availableUmbrellaByStoreId,
+                rentedUmbrellaByStoreId, missingUmbrellaByStoreId, totalRentByStoreId);
     }
 }
