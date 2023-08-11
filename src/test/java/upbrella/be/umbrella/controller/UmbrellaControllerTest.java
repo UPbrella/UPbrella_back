@@ -14,6 +14,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.store.controller.StoreExceptionHandler;
+import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
@@ -383,41 +385,66 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                         )));
     }
 
-    @DisplayName("사용자는 지점 우산 통계를 조회할 수 있다.")
-    @Test
-    void showUmbrellasStatisticsByStoreIdTest() throws Exception {
+    @Nested
+    @DisplayName("사용자는 협업 지점 고유 번호로 GET 요청을 보내")
+    class showUmbrellasStatisticsByStoreIdTest {
 
-        // given
+        @DisplayName("사용자는 지점 우산 통계를 조회할 수 있다.")
+        @Test
+        void success() throws Exception {
 
-        UmbrellaStatisticsResponse umbrellaStatisticsResponse = FixtureBuilderFactory
-                .builderUmbrellaStatisticsResponse()
-                .sample();
-        int storeId = FixtureBuilderFactory.buildInteger(100);
-        given(umbrellaService.getUmbrellaStatisticsByStoreId(storeId))
-                .willReturn(umbrellaStatisticsResponse);
+            // given
 
-        // when & then
-        mockMvc.perform(
-                        get("/umbrellas/statistics/{storeId}", storeId)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("show-umbrellas-statistics-by-store-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        responseFields(
-                                beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("totalRentCount").type(JsonFieldType.NUMBER)
-                                        .description("지점 전체 대여 건수"),
-                                fieldWithPath("totalUmbrellaCount").type(JsonFieldType.NUMBER)
-                                        .description("지점 전체 우산 개수"),
-                                fieldWithPath("rentableUmbrellaCount").type(JsonFieldType.NUMBER)
-                                        .description("지점 대여 가능 우산 개수"),
-                                fieldWithPath("rentedUmbrellaCount").type(JsonFieldType.NUMBER)
-                                        .description("지점 대여 중 우산 개수"),
-                                fieldWithPath("missingUmbrellaCount").type(JsonFieldType.NUMBER)
-                                        .description("지점 분실 우산 개수"),
-                                fieldWithPath("missingRate").type(JsonFieldType.NUMBER)
-                                        .description("지점 분실률(%)")
-                        )));
+            UmbrellaStatisticsResponse umbrellaStatisticsResponse = FixtureBuilderFactory
+                    .builderUmbrellaStatisticsResponse()
+                    .sample();
+            int storeId = FixtureBuilderFactory.buildInteger(100);
+            given(umbrellaService.getUmbrellaStatisticsByStoreId(storeId))
+                    .willReturn(umbrellaStatisticsResponse);
+
+            // when & then
+            mockMvc.perform(
+                            get("/umbrellas/statistics/{storeId}", storeId)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("show-umbrellas-statistics-by-store-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse(),
+                            responseFields(
+                                    beneathPath("data").withSubsectionId("data"),
+                                    fieldWithPath("totalRentCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 전체 대여 건수"),
+                                    fieldWithPath("totalUmbrellaCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 전체 우산 개수"),
+                                    fieldWithPath("rentableUmbrellaCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 대여 가능 우산 개수"),
+                                    fieldWithPath("rentedUmbrellaCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 대여 중 우산 개수"),
+                                    fieldWithPath("missingUmbrellaCount").type(JsonFieldType.NUMBER)
+                                            .description("지점 분실 우산 개수"),
+                                    fieldWithPath("missingRate").type(JsonFieldType.NUMBER)
+                                            .description("지점 분실률(%)")
+                            )));
+        }
+
+        @DisplayName("존재하지 않는 협업지점 고유번호면 400 에러를 반환한다.")
+        @Test
+        void notExistingStoreMeta() throws Exception {
+
+            // given
+            long storeId = FixtureBuilderFactory.buildLong(1000);
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(), new StoreExceptionHandler());
+
+            willThrow(new NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업지점 고유번호입니다."))
+                    .given(umbrellaService).getUmbrellaStatisticsByStoreId(eq(storeId));
+
+            // when & then
+            mockMvc.perform(
+                            get("/umbrellas/statistics/{storeId}", storeId))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(NonExistingStoreMetaException.class));
+        }
     }
 }
