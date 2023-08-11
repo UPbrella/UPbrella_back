@@ -6,10 +6,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class UmbrellaRequest {
+public class UmbrellaCreateRequest {
 
     private long storeMetaId;
     private long uuid;
     private boolean rentable;
+    private String etc;
 
 }

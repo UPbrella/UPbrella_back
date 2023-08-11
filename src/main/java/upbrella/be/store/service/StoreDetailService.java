@@ -53,7 +53,7 @@ public class StoreDetailService {
     public StoreDetail findStoreDetailById(Long storeId) {
 
         return storeDetailRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 가게입니다."));
+                .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다."));
     }
 
     @Transactional
@@ -62,7 +62,7 @@ public class StoreDetailService {
         StoreDetail storeDetail = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId)
                 .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 해당하는 협업 지점이 존재하지 않습니다."));
 
-        int availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeMetaId);
+        long availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeMetaId);
 
         return StoreFindByIdResponse.fromStoreDetail(storeDetail, availableUmbrellaCount);
     }

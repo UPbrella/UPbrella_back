@@ -95,7 +95,7 @@ public class StoreDetailServiceTest {
                     .willReturn(Optional.of(storeDetail));
 
             given(umbrellaService.countAvailableUmbrellaAtStore(3L))
-                    .willReturn(10);
+                    .willReturn(10L);
 
             //when
             StoreFindByIdResponse storeFindByIdResponse = storeDetailService.findStoreDetailByStoreMetaId(3L);
@@ -446,7 +446,7 @@ public class StoreDetailServiceTest {
 
             // then
             assertThatThrownBy(() -> storeDetailService.findStoreDetailById(storeDetailId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(NonExistingStoreDetailException.class)
                     .hasMessageContaining("[ERROR] 존재하지 않는 가게입니다.");
         }
     }
