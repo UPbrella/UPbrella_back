@@ -14,6 +14,7 @@ import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.DeletedStoreDetailException;
+import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -98,7 +99,7 @@ public class StoreMetaService {
     public StoreMeta findStoreMetaById(long id) {
 
         return storeMetaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
+                .orElseThrow(() -> new NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."));
     }
 
     private StoreMeta saveStoreMeta(CreateStoreRequest store) {

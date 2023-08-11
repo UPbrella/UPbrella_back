@@ -10,6 +10,8 @@ import upbrella.be.store.dto.response.SingleClassificationResponse;
 import upbrella.be.store.dto.response.SingleSubClassificationResponse;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
+import upbrella.be.store.exception.IncorrectClassificationException;
+import upbrella.be.store.exception.NonExistingClassificationException;
 import upbrella.be.store.repository.ClassificationRepository;
 
 import java.util.ArrayList;
@@ -67,7 +69,7 @@ public class ClassificationService {
 
         Classification classification = findClassificationEntityById(id);
         if (!classification.getType().equals(ClassificationType.CLASSIFICATION)) {
-            throw new IllegalArgumentException("[ERROR] Classification이 아닙니다.");
+            throw new IncorrectClassificationException("[ERROR] Classification이 아닙니다.");
         }
         return classification;
     }
@@ -76,7 +78,7 @@ public class ClassificationService {
 
         Classification classification = findClassificationEntityById(id);
         if (!classification.getType().equals(ClassificationType.SUB_CLASSIFICATION)) {
-            throw new IllegalArgumentException("[ERROR] SubClassification이 아닙니다.");
+            throw new IncorrectClassificationException("[ERROR] SubClassification이 아닙니다.");
         }
         return classification;
     }
@@ -84,6 +86,6 @@ public class ClassificationService {
     private Classification findClassificationEntityById(long id) {
 
         return classificationRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 분류입니다."));
+                .orElseThrow(() -> new NonExistingClassificationException("[ERROR] 존재하지 않는 분류입니다."));
     }
 }

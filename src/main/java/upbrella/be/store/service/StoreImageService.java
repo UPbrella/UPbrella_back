@@ -12,6 +12,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
+import upbrella.be.store.exception.NonExistingStoreImageException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
 
@@ -63,7 +64,7 @@ public class StoreImageService {
     public void deleteFile(long imageId) {
 
         StoreImage storeImage = storeImageRepository.findById(imageId)
-                .orElseThrow(() -> new IllegalStateException("해당 이미지가 존재하지 않습니다."));
+                .orElseThrow(() -> new NonExistingStoreImageException("[ERROR] 해당 이미지가 존재하지 않습니다."));
         storeImageRepository.deleteById(imageId);
         deleteFileInS3(storeImage.getImageUrl());
     }
