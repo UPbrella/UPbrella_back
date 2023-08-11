@@ -2,7 +2,8 @@ package upbrella.be.umbrella.entity;
 
 import lombok.*;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,33 +26,35 @@ public class Umbrella {
     private boolean deleted;
     private LocalDateTime createdAt;
     private String etc;
+    private boolean missed;
 
     public void delete() {
         this.deleted = true;
     }
 
-    public static Umbrella ofCreated(UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
+    public static Umbrella ofCreated(UmbrellaCreateRequest umbrellaCreateRequest, StoreMeta storeMeta) {
 
         return Umbrella.builder()
                 .storeMeta(storeMeta)
-                .uuid(umbrellaRequest.getUuid())
-                .rentable(umbrellaRequest.isRentable())
+                .uuid(umbrellaCreateRequest.getUuid())
+                .rentable(umbrellaCreateRequest.isRentable())
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
-                .etc(umbrellaRequest.getEtc())
+                .etc(umbrellaCreateRequest.getEtc())
                 .build();
     }
 
-    public static Umbrella ofUpdated(long id, Umbrella umbrella, UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
+    public static Umbrella ofUpdated(long id, Umbrella umbrella, UmbrellaModifyRequest umbrellaModifyRequest, StoreMeta storeMeta) {
 
         return Umbrella.builder()
                 .id(id)
                 .storeMeta(storeMeta)
-                .uuid(umbrellaRequest.getUuid())
-                .rentable(umbrellaRequest.isRentable())
+                .uuid(umbrellaModifyRequest.getUuid())
+                .rentable(umbrellaModifyRequest.isRentable())
                 .deleted(false)
                 .createdAt(umbrella.getCreatedAt())
-                .etc(umbrellaRequest.getEtc())
+                .etc(umbrellaModifyRequest.getEtc())
+                .missed(umbrellaModifyRequest.isMissed())
                 .build();
     }
 }

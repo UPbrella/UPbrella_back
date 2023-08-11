@@ -6,7 +6,9 @@ import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
@@ -25,9 +27,10 @@ public class FixtureBuilderFactory {
     private static String[] cafeList = {"투썸", "스타벅스", "이디야", "커피빈", "엔젤리너스", "할리스", "탐앤탐스", "커피마마", "커피에반하다", "커피나무"};
     private static String[] bankList = {"농협", "신한", "우리", "카카오뱅크", "하나", "기업", "케이뱅크", "SC제일", "경남", "광주", "대구", "부산", "전북", "제주", "수협", "새마을", "신협", "우체국", "전북", "제주", "수협", "새마을", "신협", "우체국"};
     private static String[] addressList = {"신촌", "홍대", "강남", "강북", "강서", "강동", "서초", "서대문", "마포", "종로", "용산", "성동", "성북", "중랑", "중구", "동대문", "동작", "관악"};
+
     private static String pickRandomString(String[] names) {
 
-        return names[buildInteger() % names.length];
+        return names[buildInteger(10000) % names.length];
     }
 
     private static String pickPhoneNumberString() {
@@ -35,9 +38,9 @@ public class FixtureBuilderFactory {
         StringBuilder sb = new StringBuilder();
         sb.append("010")
                 .append("-")
-                .append(Arbitraries.integers().between(1000,9999).sample())
+                .append(Arbitraries.integers().between(1000, 9999).sample())
                 .append("-")
-                .append(Arbitraries.integers().between(1000,9999).sample());
+                .append(Arbitraries.integers().between(1000, 9999).sample());
 
         return sb.toString();
     }
@@ -45,69 +48,83 @@ public class FixtureBuilderFactory {
     private static String pickAccountNumberString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append(Arbitraries.integers().between(100,999).sample())
+        sb.append(Arbitraries.integers().between(100, 999).sample())
                 .append("-")
-                .append(Arbitraries.integers().between(100,999).sample())
+                .append(Arbitraries.integers().between(100, 999).sample())
                 .append("-")
-                .append(Arbitraries.integers().between(100000,999999).sample());
+                .append(Arbitraries.integers().between(100000, 999999).sample());
 
         return sb.toString();
     }
 
-    public static int buildInteger() {
+    public static int buildInteger(int bound) {
 
-        return Randoms.nextInt(10000);
+        return Randoms.nextInt(bound);
     }
 
-    public static long buildLong() {
+    public static long buildLong(int bound) {
 
-        return Randoms.nextInt(10000);
+        return Randoms.nextInt(bound);
+    }
+
+    public static double buildDouble() {
+
+        return Arbitraries.doubles().between(1, 100).sample();
     }
 
     public static ArbitraryBuilder<StoreMeta> builderStoreMeta() {
 
         return fixtureMonkey.giveMeBuilder(StoreMeta.class)
                 .set("deleted", false)
-                .set("id", buildLong())
+                .set("id", buildLong(100))
                 .set("name", pickRandomString(cafeList))
                 .set("address", pickRandomString(addressList))
                 .set("category", pickRandomString(addressList))
-                .set("password", String.valueOf(buildInteger()))
-                .set("latitude", Arbitraries.doubles().between(1, 100).sample())
-                .set("longitude", Arbitraries.doubles().between(1, 100).sample());
+                .set("password", String.valueOf(buildInteger(10000)))
+                .set("latitude", buildDouble())
+                .set("longitude", buildDouble());
     }
 
     public static ArbitraryBuilder<Umbrella> builderUmbrella() {
 
         return fixtureMonkey.giveMeBuilder(Umbrella.class)
-                .set("id", buildLong())
-                .set("uuid", buildLong())
+                .set("id", buildLong(10000))
+                .set("uuid", buildLong(1000))
                 .set("storeMeta", builderStoreMeta().sample())
                 .set("deleted", false)
                 .set("etc", pickRandomString(nameList));
     }
+
     public static ArbitraryBuilder<UmbrellaResponse> builderUmbrellaResponses() {
 
         return fixtureMonkey.giveMeBuilder(UmbrellaResponse.class)
-                .set("id", buildLong())
-                .set("storeMetaId", buildLong())
-                .set("uuid", buildLong());
+                .set("id", buildLong(10000))
+                .set("storeMetaId", buildLong(100))
+                .set("uuid", buildLong(100));
+    }
+
+    public static ArbitraryBuilder<UmbrellaCreateRequest> builderUmbrellaCreateRequest() {
+
+        return fixtureMonkey.giveMeBuilder(UmbrellaCreateRequest.class)
+                .set("storeMetaId", buildLong(100))
+                .set("uuid", buildLong(100))
+                .set("etc", pickRandomString(nameList));
     }
 
 
-    public static ArbitraryBuilder<UmbrellaRequest> builderUmbrellaRequest() {
+    public static ArbitraryBuilder<UmbrellaModifyRequest> builderUmbrellaModifyRequest() {
 
-        return fixtureMonkey.giveMeBuilder(UmbrellaRequest.class)
-                .set("storeMetaId", buildLong())
-                .set("uuid", buildLong())
+        return fixtureMonkey.giveMeBuilder(UmbrellaModifyRequest.class)
+                .set("storeMetaId", buildLong(100))
+                .set("uuid", buildLong(100))
                 .set("etc", pickRandomString(nameList));
     }
 
     public static ArbitraryBuilder<User> builderUser() {
 
         return fixtureMonkey.giveMeBuilder(User.class)
-                .set("id", buildLong())
-                .set("socialId", buildLong())
+                .set("id", buildLong(100))
+                .set("socialId", buildLong(100000000))
                 .set("name", pickRandomString(nameList))
                 .set("phoneNumber", pickPhoneNumberString())
                 .set("bank", pickRandomString(bankList))
@@ -118,7 +135,7 @@ public class FixtureBuilderFactory {
     public static ArbitraryBuilder<SingleHistoryResponse> builderSingleHistoryResponse() {
 
         return fixtureMonkey.giveMeBuilder(SingleHistoryResponse.class)
-                .set("umbrellaUuid", buildLong())
+                .set("umbrellaUuid", buildLong(1000))
                 .set("rentedStore", pickRandomString(cafeList));
     }
 
@@ -133,8 +150,24 @@ public class FixtureBuilderFactory {
 
     public static ArbitraryBuilder<UpdateBankAccountRequest> builderBankAccount() {
 
-            return fixtureMonkey.giveMeBuilder(UpdateBankAccountRequest.class)
-                    .set("bank", pickRandomString(bankList))
-                    .set("accountNumber", pickAccountNumberString());
+        return fixtureMonkey.giveMeBuilder(UpdateBankAccountRequest.class)
+                .set("bank", pickRandomString(bankList))
+                .set("accountNumber", pickAccountNumberString());
+    }
+
+    public static ArbitraryBuilder<UmbrellaStatisticsResponse> builderUmbrellaStatisticsResponse() {
+
+        int missingUmbrellaCount = buildInteger(100);
+        int rentableUmbrellaCount = buildInteger(100);
+        int rentedUmbrellaCount = buildInteger(100);
+        int totalUmbrellaCount = missingUmbrellaCount + rentableUmbrellaCount + rentedUmbrellaCount;
+        double missingRate = (double) 100 * missingUmbrellaCount / totalUmbrellaCount;
+        return fixtureMonkey.giveMeBuilder(UmbrellaStatisticsResponse.class)
+                .set("totalUmbrellaCount", totalUmbrellaCount)
+                .set("rentableUmbrellaCount", buildInteger(100))
+                .set("rentedUmbrellaCount", buildInteger(100))
+                .set("missingUmbrellaCount", missingUmbrellaCount)
+                .set("totalRentCount", buildLong(1000))
+                .set("missingRate", missingRate);
     }
 }

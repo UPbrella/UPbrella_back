@@ -12,11 +12,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.service.StoreMetaService;
-import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
@@ -43,6 +46,8 @@ class UmbrellaServiceTest {
     private UmbrellaRepository umbrellaRepository;
     @Mock
     private StoreMetaService storeMetaService;
+    @Mock
+    private RentService rentService;
     @InjectMocks
     private UmbrellaService umbrellaService;
 
@@ -172,17 +177,17 @@ class UmbrellaServiceTest {
     @Nested
     @DisplayName("우산의 고유번호, 협력 지점 고유번호, 대여 여부를 입력받아")
     class addUmbrellaTest {
-        private UmbrellaRequest umbrellaRequest;
+        private UmbrellaCreateRequest umbrellaCreateRequest;
         private StoreMeta foundStoreMeta;
         private Umbrella umbrella;
 
         @BeforeEach
         void setUp() {
-            umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest().sample();
+            umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest().sample();
 
-            foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaRequest.getStoreMetaId());
+            foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaCreateRequest.getStoreMetaId());
 
-            umbrella = FixtureFactory.buildUmbrellaWithUmbrellaRequestAndStoreMeta(umbrellaRequest, foundStoreMeta);
+            umbrella = FixtureFactory.buildUmbrellaWithUmbrellaRequestAndStoreMeta(umbrellaCreateRequest, foundStoreMeta);
         }
 
         @Test
@@ -192,13 +197,13 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.getId()))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid()))
+            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.getUuid()))
                     .willReturn(false);
             given(umbrellaRepository.save(any(Umbrella.class)))
                     .willReturn(umbrella);
 
             // when
-            Umbrella addedUmbrella = umbrellaService.addUmbrella(umbrellaRequest);
+            Umbrella addedUmbrella = umbrellaService.addUmbrella(umbrellaCreateRequest);
 
             // then
             assertAll(
@@ -206,7 +211,7 @@ class UmbrellaServiceTest {
                             .usingRecursiveComparison()
                             .isEqualTo(umbrella),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid()),
+                            .existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.getUuid()),
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(foundStoreMeta.getId()),
                     () -> then(umbrellaRepository).should(times(1))
@@ -225,7 +230,7 @@ class UmbrellaServiceTest {
                     .willReturn(true);
 
             // when
-            assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaRequest))
+            assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaCreateRequest))
                     .isInstanceOf(ExistingUmbrellaUuidException.class);
 
             // then
@@ -233,7 +238,7 @@ class UmbrellaServiceTest {
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(foundStoreMeta.getId()),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid()),
+                            .existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.getUuid()),
                     () -> then(umbrellaRepository).should(never())
                             .save(any(Umbrella.class))
             );
@@ -249,7 +254,7 @@ class UmbrellaServiceTest {
 
             // when & then
             assertAll(
-                    () -> assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaRequest))
+                    () -> assertThatThrownBy(() -> umbrellaService.addUmbrella(umbrellaCreateRequest))
                             .isInstanceOf(NonExistingStoreMetaException.class),
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(foundStoreMeta.getId()),
@@ -261,7 +266,7 @@ class UmbrellaServiceTest {
     @Nested
     @DisplayName("우산의 고유번호, 협력 지점 고유번호, 대여 여부를 입력받아")
     class modifyUmbrellaTest {
-        private UmbrellaRequest umbrellaRequest;
+        private UmbrellaModifyRequest umbrellaModifyRequest;
         private StoreMeta foundStoreMeta;
         private Umbrella umbrella;
         private long id;
@@ -269,13 +274,13 @@ class UmbrellaServiceTest {
         @BeforeEach
         void setUp() {
 
-            id = FixtureBuilderFactory.buildLong();
+            id = FixtureBuilderFactory.buildLong(1000);
 
-            umbrellaRequest = FixtureBuilderFactory.builderUmbrellaRequest().sample();
+            umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest().sample();
 
-            foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaRequest.getStoreMetaId());
+            foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaModifyRequest.getStoreMetaId());
 
-            umbrella = FixtureFactory.buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(id, umbrellaRequest, foundStoreMeta);
+            umbrella = FixtureFactory.buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(id, umbrellaModifyRequest, foundStoreMeta);
         }
 
         @Test
@@ -287,13 +292,13 @@ class UmbrellaServiceTest {
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
                     .willReturn(Optional.ofNullable(umbrella));
-            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid()))
+            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()))
                     .willReturn(false);
             given(umbrellaRepository.save(any(Umbrella.class)))
                     .willReturn(umbrella);
 
             // when
-            Umbrella modifiedUmbrella = umbrellaService.modifyUmbrella(umbrella.getId(), umbrellaRequest);
+            Umbrella modifiedUmbrella = umbrellaService.modifyUmbrella(umbrella.getId(), umbrellaModifyRequest);
 
             // then
             assertAll(
@@ -301,7 +306,7 @@ class UmbrellaServiceTest {
                             .usingRecursiveComparison()
                             .isEqualTo(umbrella),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid()),
+                            .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(id),
                     () -> then(storeMetaService).should(times(1))
@@ -324,10 +329,10 @@ class UmbrellaServiceTest {
             // when & then
             assertAll(
                     () -> assertThatThrownBy(() ->
-                            umbrellaService.modifyUmbrella(id, umbrellaRequest))
+                            umbrellaService.modifyUmbrella(id, umbrellaModifyRequest))
                             .isInstanceOf(NonExistingUmbrellaException.class),
                     () -> then(umbrellaRepository).should(never())
-                            .existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid()),
+                            .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(id),
                     () -> then(storeMetaService).should(times(1))
@@ -346,16 +351,16 @@ class UmbrellaServiceTest {
                     .willReturn(foundStoreMeta);
             given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
                     .willReturn(Optional.ofNullable(umbrella));
-            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid()))
+            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()))
                     .willReturn(true);
 
             // when & then
             assertAll(
                     () -> assertThatThrownBy(() ->
-                            umbrellaService.modifyUmbrella(id, umbrellaRequest))
+                            umbrellaService.modifyUmbrella(id, umbrellaModifyRequest))
                             .isInstanceOf(ExistingUmbrellaUuidException.class),
                     () -> then(umbrellaRepository).should(times(1))
-                            .existsByUuidAndDeletedIsFalse(umbrellaRequest.getUuid()),
+                            .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(id),
                     () -> then(storeMetaService).should(times(1))
@@ -376,7 +381,7 @@ class UmbrellaServiceTest {
             // when & then
             assertAll(
                     () -> assertThatThrownBy(() ->
-                            umbrellaService.modifyUmbrella(id, umbrellaRequest))
+                            umbrellaService.modifyUmbrella(id, umbrellaModifyRequest))
                             .isInstanceOf(NonExistingStoreMetaException.class),
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(foundStoreMeta.getId()),
@@ -395,7 +400,7 @@ class UmbrellaServiceTest {
         @BeforeEach
         void setUp() {
 
-            id = FixtureBuilderFactory.buildLong();
+            id = FixtureBuilderFactory.buildLong(1000);
             umbrella = FixtureBuilderFactory.builderUmbrella().sample();
         }
 
@@ -446,21 +451,131 @@ class UmbrellaServiceTest {
         void success() {
 
             // given
-            long id = FixtureBuilderFactory.buildLong();
-            int availableCount = FixtureBuilderFactory.buildInteger();
-            given(umbrellaRepository.countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(id))
+            long id = FixtureBuilderFactory.buildLong(1000);
+            long availableCount = FixtureBuilderFactory.buildInteger(100);
+            given(umbrellaRepository.countRentableUmbrellasByStore(id))
                     .willReturn(availableCount);
 
             // when
-            int count = umbrellaService.countAvailableUmbrellaAtStore(id);
+            long count = umbrellaService.countAvailableUmbrellaAtStore(id);
 
             // then
             assertAll(
                     () -> assertThat(count)
                             .isEqualTo(availableCount),
                     () -> then(umbrellaRepository).should(times(1))
-                            .countUmbrellasByStoreMetaIdAndRentableIsTrueAndDeletedIsFalse(id)
+                            .countRentableUmbrellasByStore(id)
             );
         }
     }
+
+    @Test
+    @DisplayName("전체 우산의 통계를 조회할 수 있다.")
+    void getUmbrellaAllStatisticsTest() {
+
+        // given
+        UmbrellaStatisticsResponse expected = FixtureBuilderFactory.builderUmbrellaStatisticsResponse()
+                .sample();
+
+        given(umbrellaRepository.countAllUmbrellas())
+                .willReturn(expected.getTotalUmbrellaCount());
+        given(umbrellaRepository.countRentableUmbrellas())
+                .willReturn(expected.getRentableUmbrellaCount());
+        given(umbrellaRepository.countRentedUmbrellas())
+                .willReturn(expected.getRentedUmbrellaCount());
+        given(umbrellaRepository.countMissingUmbrellas())
+                .willReturn(expected.getMissingUmbrellaCount());
+        given(rentService.countTotalRent())
+                .willReturn(expected.getTotalRentCount());
+
+        // when
+        UmbrellaStatisticsResponse umbrellaAllStatistics = umbrellaService.getUmbrellaAllStatistics();
+
+        // then
+        assertAll(
+                () -> assertThat(umbrellaAllStatistics)
+                        .usingRecursiveComparison()
+                        .isEqualTo(expected),
+                () -> then(umbrellaRepository).should(times(1))
+                        .countAllUmbrellas(),
+                () -> then(umbrellaRepository).should(times(1))
+                        .countRentableUmbrellas(),
+                () -> then(umbrellaRepository).should(times(1))
+                        .countRentedUmbrellas(),
+                () -> then(umbrellaRepository).should(times(1))
+                        .countMissingUmbrellas(),
+                () -> then(rentService).should(times(1))
+                        .countTotalRent());
+    }
+
+    @Nested
+    @DisplayName("협업 지점의 고유 번호를 입력받아")
+    class getUmbrellaStatisticsByStoreTest {
+
+        @Test
+        @DisplayName("지점 우산의 통계를 조회할 수 있다.")
+        void success() {
+
+            // given
+            UmbrellaStatisticsResponse expected = FixtureBuilderFactory.builderUmbrellaStatisticsResponse()
+                    .sample();
+
+            long storeId = FixtureBuilderFactory.buildLong(1000);
+
+
+            given(storeMetaService.existByStoreId(storeId))
+                    .willReturn(true);
+            given(umbrellaRepository.countAllUmbrellasByStore(storeId))
+                    .willReturn(expected.getTotalUmbrellaCount());
+            given(umbrellaRepository.countRentableUmbrellasByStore(storeId))
+                    .willReturn(expected.getRentableUmbrellaCount());
+            given(umbrellaRepository.countRentedUmbrellasByStore(storeId))
+                    .willReturn(expected.getRentedUmbrellaCount());
+            given(umbrellaRepository.countMissingUmbrellasByStore(storeId))
+                    .willReturn(expected.getMissingUmbrellaCount());
+            given(rentService.countTotalRentByStoreId(storeId))
+                    .willReturn(expected.getTotalRentCount());
+
+            // when
+            UmbrellaStatisticsResponse umbrellaStatistics = umbrellaService.getUmbrellaStatisticsByStoreId(storeId);
+
+            // then
+            assertAll(
+                    () -> assertThat(umbrellaStatistics)
+                            .usingRecursiveComparison()
+                            .isEqualTo(expected),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .countAllUmbrellasByStore(storeId),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .countRentableUmbrellasByStore(storeId),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .countRentedUmbrellasByStore(storeId),
+                    () -> then(umbrellaRepository).should(times(1))
+                            .countMissingUmbrellasByStore(storeId),
+                    () -> then(storeMetaService).should(times(1))
+                            .existByStoreId(storeId),
+                    () -> then(rentService).should(times(1))
+                            .countTotalRentByStoreId(storeId));
+        }
+
+        @Test
+        @DisplayName("협업 지점이 존재하지 않는 경우 예외를 발생시킨다.")
+        void nonExistingStore() {
+
+            // given
+            long storeId = FixtureBuilderFactory.buildLong(1000);
+            given(storeMetaService.existByStoreId(storeId))
+                    .willReturn(false);
+
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() -> umbrellaService.getUmbrellaStatisticsByStoreId(storeId))
+                            .isInstanceOf(NonExistingStoreMetaException.class),
+                    () -> then(storeMetaService).should(times(1))
+                            .existByStoreId(storeId)
+            );
+        }
+    }
+
+
 }

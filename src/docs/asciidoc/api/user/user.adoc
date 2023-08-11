@@ -72,3 +72,10 @@ include::{snippets}/user-history-doc/response-fields-data.adoc[]
 
 include::{snippets}/update-user-bank-account-doc/http-request.adoc[]
 include::{snippets}/update-user-bank-account-doc/request-fields.adoc[]
+
+=== 사용자 회원 탈퇴
+include::{snippets}/delete-user-doc/http-request.adoc[]
+
+=== 관리자가 회원 정지
+include::{snippets}/withdraw-user-doc/http-request.adoc[]
+include::{snippets}/withdraw-user-doc/path-parameters.adoc[]
