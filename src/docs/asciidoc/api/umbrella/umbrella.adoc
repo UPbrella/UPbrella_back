@@ -42,3 +42,19 @@ include::{snippets}/delete-umbrella-doc/http-request.adoc[]
 
 include::{snippets}/delete-umbrella-doc/path-parameters.adoc[]
 
+=== 우산 전체 통계 조회
+==== HTTP Request
+
+include::{snippets}/show-all-umbrellas-statistics-doc/http-request.adoc[]
+==== HTTP Response
+include::{snippets}/show-all-umbrellas-statistics-doc/http-response.adoc[]
+include::{snippets}/show-all-umbrellas-statistics-doc/response-fields-data.adoc[]
+
+
+=== 우산 지점 통계 조회
+==== HTTP Request
+
+include::{snippets}/show-umbrellas-statistics-by-store-doc/http-request.adoc[]
+==== HTTP Response
+include::{snippets}/show-umbrellas-statistics-by-store-doc/http-response.adoc[]
+include::{snippets}/show-umbrellas-statistics-by-store-doc/response-fields-data.adoc[]

@@ -4,7 +4,8 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import upbrella.be.rent.entity.History;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.umbrella.dto.request.UmbrellaRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
+import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
@@ -30,22 +31,22 @@ public class FixtureFactory {
                 .sample();
     }
 
-    public static Umbrella buildUmbrellaWithUmbrellaRequestAndStoreMeta(UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
+    public static Umbrella buildUmbrellaWithUmbrellaRequestAndStoreMeta(UmbrellaCreateRequest umbrellaCreateRequest, StoreMeta storeMeta) {
 
         return builderUmbrella()
                 .set("storeMeta", storeMeta)
-                .set("uuid", umbrellaRequest.getUuid())
-                .set("rentable", umbrellaRequest.isRentable())
+                .set("uuid", umbrellaCreateRequest.getUuid())
+                .set("rentable", umbrellaCreateRequest.isRentable())
                 .sample();
     }
 
-    public static Umbrella buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(long id, UmbrellaRequest umbrellaRequest, StoreMeta storeMeta) {
+    public static Umbrella buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(long id, UmbrellaModifyRequest umbrellaModifyRequest, StoreMeta storeMeta) {
 
         return builderUmbrella()
                 .set("id", id)
                 .set("storeMeta", storeMeta)
-                .set("uuid", umbrellaRequest.getUuid())
-                .set("rentable", umbrellaRequest.isRentable())
+                .set("uuid", umbrellaModifyRequest.getUuid())
+                .set("rentable", umbrellaModifyRequest.isRentable())
                 .sample();
     }
 

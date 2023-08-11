@@ -148,4 +148,12 @@ public class RentService {
 
         return RentalHistoryResponse.createNonReturnedHistory(history, elapsedDay, isReturned);
     }
+
+    public long countTotalRent() {
+        return rentRepository.count();
+    }
+
+    public long countTotalRentByStoreId(long storeId) {
+        return rentRepository.countByRentStoreMetaId(storeId);
+    }
 }
