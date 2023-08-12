@@ -59,8 +59,30 @@ public class StoreExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
-                        "not found",
+                        "bad request",
                         400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(AssignedClassificationException.class)
+    public ResponseEntity<CustomErrorResponse> assignedClassification(AssignedClassificationException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "bad request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NonExistingClassificationException.class)
+    public ResponseEntity<CustomErrorResponse> nonExistingClassification(NonExistingClassificationException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "not found",
+                        404,
                         ex.getMessage()));
     }
 }
