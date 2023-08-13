@@ -11,17 +11,15 @@ import upbrella.be.config.QueryDslTestConfig;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.entity.StoreMeta;
-import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
 import upbrella.be.umbrella.entity.Umbrella;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(QueryDslTestConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UmbrellaRepositoryImplTest {
 
     @Autowired
@@ -58,12 +56,13 @@ class UmbrellaRepositoryImplTest {
 
         // 대여 가능 우산 3개 생성
         for (int i = 0; i < 3; i++) {
-            Umbrella umbrella = Umbrella.ofCreated(
-                    UmbrellaCreateRequest.builder()
-                            .rentable(true)
-                            .storeMetaId(storeMeta.getId())
-                            .build(),
-                    storeMeta);
+            Umbrella umbrella = FixtureBuilderFactory.builderUmbrella()
+                    .set("id", null)
+                    .set("storeMeta", storeMeta)
+                    .set("rentable", true)
+                    .set("deleted", false)
+                    .set("missed", false)
+                    .sample();
 
             em.persist(umbrella);
             em.flush();
@@ -71,12 +70,13 @@ class UmbrellaRepositoryImplTest {
 
         // 대여 중 우산 2개 생성
         for (int i = 0; i < 2; i++) {
-            Umbrella umbrella = Umbrella.ofCreated(
-                    UmbrellaCreateRequest.builder()
-                            .rentable(false)
-                            .storeMetaId(storeMeta.getId())
-                            .build(),
-                    storeMeta);
+            Umbrella umbrella = FixtureBuilderFactory.builderUmbrella()
+                    .set("id", null)
+                    .set("storeMeta", storeMeta)
+                    .set("rentable", false)
+                    .set("deleted", false)
+                    .set("missed", false)
+                    .sample();
 
             em.persist(umbrella);
             em.flush();
@@ -84,15 +84,16 @@ class UmbrellaRepositoryImplTest {
 
         // 분실 우산 1개 생성
         for (int i = 0; i < 1; i++) {
-            Umbrella umbrella = Umbrella.builder()
-                    .deleted(false)
-                    .missed(true)
-                    .uuid(30L)
-                    .createdAt(LocalDateTime.now())
-                    .rentable(false)
-                    .storeMeta(storeMeta)
-                    .build();
-            umbrellaRepository.save(umbrella);
+            Umbrella umbrella = FixtureBuilderFactory.builderUmbrella()
+                    .set("id", null)
+                    .set("storeMeta", storeMeta)
+                    .set("rentable", false)
+                    .set("deleted", false)
+                    .set("missed", true)
+                    .sample();
+
+            em.persist(umbrella);
+            em.flush();
         }
         storeMetaId = storeMeta.getId();
 
