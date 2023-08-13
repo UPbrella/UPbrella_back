@@ -233,4 +233,16 @@ public class StoreController {
                         "소분류 삭제 성공"
                 ));
     }
+
+    @GetMapping("/introductions")
+    public ResponseEntity<CustomResponse<AllStoreIntroductionResponse>> findAllStoreMeta(HttpSession session) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 메타 전체 조회 성공",
+                        storeDetailService.findAllStoreIntroductions()));
+    }
 }
