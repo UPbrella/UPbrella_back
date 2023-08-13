@@ -207,7 +207,7 @@ public class StoreController {
     }
 
     @PostMapping("/subClassifications")
-    public ResponseEntity<CustomResponse> createSubClassification(HttpSession session, @RequestBody CreateSubClassificationRequest newSubClassification) {
+    public ResponseEntity<CustomResponse> createSubClassification(@RequestBody CreateSubClassificationRequest newSubClassification, HttpSession session) {
 
         classificationService.createSubClassification(newSubClassification);
 
@@ -221,9 +221,9 @@ public class StoreController {
     }
 
     @DeleteMapping("/subClassifications/{subClassificationId}")
-    public ResponseEntity<CustomResponse> deleteSubClassification(HttpSession session, @PathVariable long subClassificationId) {
+    public ResponseEntity<CustomResponse> deleteSubClassification(@PathVariable long subClassificationId, HttpSession session) {
 
-        classificationService.deleteClassification(subClassificationId);
+        classificationService.deleteSubClassification(subClassificationId);
 
         return ResponseEntity
                 .ok()
