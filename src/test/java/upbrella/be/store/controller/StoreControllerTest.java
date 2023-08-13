@@ -829,7 +829,7 @@ class StoreControllerTest extends RestDocsSupport {
         // given
         long subClassificationId = 1L;
 
-        doNothing().when(classificationService).deleteClassification(subClassificationId);
+        doNothing().when(classificationService).deleteSubClassification(subClassificationId);
 
         // when
 

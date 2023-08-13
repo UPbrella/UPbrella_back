@@ -1,7 +1,8 @@
 package upbrella.be.store.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.CreateClassificationRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.response.AllClassificationResponse;
@@ -10,6 +11,7 @@ import upbrella.be.store.dto.response.SingleClassificationResponse;
 import upbrella.be.store.dto.response.SingleSubClassificationResponse;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
+import upbrella.be.store.exception.AssignedClassificationException;
 import upbrella.be.store.exception.IncorrectClassificationException;
 import upbrella.be.store.exception.NonExistingClassificationException;
 import upbrella.be.store.repository.ClassificationRepository;
@@ -18,10 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class ClassificationService {
 
     private final ClassificationRepository classificationRepository;
+    private final StoreMetaService storeMetaService;
+
+    public ClassificationService(ClassificationRepository classificationRepository, @Lazy StoreMetaService storeMetaService) {
+        this.classificationRepository = classificationRepository;
+        this.storeMetaService = storeMetaService;
+    }
 
     public Classification createClassification(CreateClassificationRequest request) {
 
@@ -33,7 +40,30 @@ public class ClassificationService {
         return classificationRepository.save(Classification.ofCreateSubClassification(request));
     }
 
+    @Transactional
     public void deleteClassification(Long id) {
+
+        if (!classificationRepository.existsById(id)) {
+            throw new NonExistingClassificationException("[ERROR] 존재하지 않는 대분류입니다.");
+        }
+
+        if (storeMetaService.existByClassificationId(id)) {
+            throw new AssignedClassificationException("[ERROR] 해당 대분류에 속한 협업지점이 존재합니다.");
+        }
+
+        classificationRepository.deleteById(id);
+    }
+
+    public void deleteSubClassification(Long id) {
+
+        if (!classificationRepository.existsById(id)) {
+            throw new NonExistingClassificationException("[ERROR] 존재하지 않는 소분류입니다.");
+        }
+
+        if (storeMetaService.existByClassificationId(id)) {
+            throw new AssignedClassificationException("[ERROR] 해당 소분류에 속한 협업지점이 존재합니다.");
+        }
+
         classificationRepository.deleteById(id);
     }
 

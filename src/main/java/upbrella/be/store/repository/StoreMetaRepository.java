@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface StoreMetaRepository extends JpaRepository<StoreMeta, Long>, StoreMetaRepositoryCustom {
 
     Optional<StoreMeta> findByIdAndDeletedIsFalse(long id);
+
+    boolean existsByClassificationId(long id);
 }
