@@ -51,3 +51,14 @@ include::{snippets}/show-all-improvements-doc/http-request.adoc[]
 include::{snippets}/show-all-improvements-doc/http-response.adoc[]
 include::{snippets}/show-all-improvements-doc/response-fields-data.adoc[]
 
+=== 대여 환급 확인
+==== HTTP Request
+
+include::{snippets}/refund-rent-doc/http-request.adoc[]
+include::{snippets}/refund-rent-doc/path-parameters.adoc[]
+
+=== 대여 지불 확인
+==== HTTP Request
+
+include::{snippets}/check-payment-doc/http-request.adoc[]
+include::{snippets}/check-payment-doc/path-parameters.adoc[]
