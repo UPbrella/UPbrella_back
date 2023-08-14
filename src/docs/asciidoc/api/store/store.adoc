@@ -125,3 +125,11 @@ include::{snippets}/store-find-all-sub-classification-doc/response-fields-data.a
 ==== HTTP Request
 include::{snippets}/store-delete-sub-classification-doc/http-request.adoc[]
 include::{snippets}/store-delete-sub-classification-doc/path-parameters.adoc[]
+
+=== 협업지점 소개 페이지
+==== HTTP Request
+include::{snippets}/store-find-store-introduction-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/store-find-store-introduction-doc/http-response.adoc[]
+include::{snippets}/store-find-store-introduction-doc/response-fields-data.adoc[]

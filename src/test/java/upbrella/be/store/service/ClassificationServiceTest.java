@@ -13,6 +13,7 @@ import upbrella.be.store.dto.response.AllClassificationResponse;
 import upbrella.be.store.dto.response.AllSubClassificationResponse;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
+import upbrella.be.store.exception.AssignedClassificationException;
 import upbrella.be.store.exception.IncorrectClassificationException;
 import upbrella.be.store.repository.ClassificationRepository;
 
@@ -32,6 +33,8 @@ class ClassificationServiceTest {
 
     @Mock
     private ClassificationRepository classificationRepository;
+    @Mock
+    private StoreMetaService storeMetaService;
     @InjectMocks
     private ClassificationService classificationService;
 
@@ -71,10 +74,12 @@ class ClassificationServiceTest {
     }
 
     @Test
-    @DisplayName("사용자는 분류를 삭제할 수 있다.")
+    @DisplayName("사용자는 대분류를 삭제할 수 있다.")
     void deleteClassificationTest() {
         // given
         long classificationId = 1L;
+        given(storeMetaService.existByClassificationId(classificationId)).willReturn(false);
+        given(classificationRepository.existsById(classificationId)).willReturn(true);
         doNothing().when(classificationRepository).deleteById(classificationId);
 
         // when
@@ -82,6 +87,40 @@ class ClassificationServiceTest {
 
         // then
         verify(classificationRepository, times(1)).deleteById(classificationId);
+    }
+
+    @Test
+    @DisplayName("사용자가 할당된 대분류를 삭제하려고 하면 예외를 발생시킨다.")
+    void unableToDeleteClassification() {
+        // given
+        long classificationId = 1L;
+        given(storeMetaService.existByClassificationId(classificationId)).willReturn(true);
+        given(classificationRepository.existsById(classificationId)).willReturn(true);
+
+        // when
+
+
+        // then
+        assertThatThrownBy(() -> classificationService.deleteClassification(classificationId))
+                .isInstanceOf(AssignedClassificationException.class)
+                .hasMessageContaining("[ERROR] 해당 대분류에 속한 협업지점이 존재합니다.");
+    }
+
+    @Test
+    @DisplayName("사용자가 할당된 소분류를 삭제하려고 하면 예외를 발생시킨다.")
+    void unableToDeleteSubClassification() {
+        // given
+        long classificationId = 1L;
+        given(storeMetaService.existByClassificationId(classificationId)).willReturn(true);
+        given(classificationRepository.existsById(classificationId)).willReturn(true);
+
+        // when
+
+
+        // then
+        assertThatThrownBy(() -> classificationService.deleteSubClassification(classificationId))
+                .isInstanceOf(AssignedClassificationException.class)
+                .hasMessageContaining("[ERROR] 해당 소분류에 속한 협업지점이 존재합니다.");
     }
 
     @Test
