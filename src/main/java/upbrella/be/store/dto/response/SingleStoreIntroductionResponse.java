@@ -23,12 +23,4 @@ public class SingleStoreIntroductionResponse {
                 .category(category)
                 .build();
     }
-
-    @QueryProjection
-    public SingleStoreIntroductionResponse(long id, String thumbnail, String name, String category) {
-        this.id = id;
-        this.thumbnail = thumbnail;
-        this.name = name;
-        this.category = category;
-    }
 }
