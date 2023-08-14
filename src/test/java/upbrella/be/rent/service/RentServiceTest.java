@@ -13,6 +13,7 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
+import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
@@ -21,9 +22,12 @@ import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.NonExistingMemberException;
+import upbrella.be.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -42,6 +46,8 @@ class RentServiceTest {
     private StoreMetaService storeMetaService;
     @Mock
     private RentRepository rentRepository;
+    @Mock
+    private UserService userService;
     @InjectMocks
     private RentService rentService;
     private RentUmbrellaByUserRequest rentUmbrellaByUserRequest;
@@ -282,6 +288,155 @@ class RentServiceTest {
                     () -> then(rentRepository).should(times(1))
                             .findAllByUserId(7L)
             );
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자의 고유 번호와 대여 내역의 고유번호를 입력 받아")
+    class checkRefundTest {
+
+        @Test
+        @DisplayName("해당 대여 내역을 환급 완료 처리할 수 있다.")
+        void success() {
+
+            // given
+            long loginedUserId = 7L;
+            given(userService.findUserById(loginedUserId))
+                    .willReturn(userToRent);
+            given(rentRepository.findById(33L))
+                    .willReturn(Optional.of(history));
+            given(rentRepository.save(history))
+                    .willReturn(history);
+
+            // when
+            rentService.checkRefund(33L, loginedUserId);
+
+            //then
+            assertAll(() -> assertThat(history.getRefundedBy())
+                            .isEqualTo(userToRent),
+                    () -> assertThat(history.getRefundedAt())
+                            .isBeforeOrEqualTo(LocalDateTime.now()),
+                    () -> then(userService).should(times(1))
+                            .findUserById(loginedUserId),
+                    () -> then(rentRepository).should(times(1))
+                            .findById(33L),
+                    () -> then(rentRepository).should(times(1))
+                            .save(history)
+            );
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 사용자면 예외를 발생시킨다.")
+        void nonExistingUser() {
+
+            // given
+            long loginedUserId = 7L;
+            given(userService.findUserById(loginedUserId))
+                    .willThrow(NonExistingMemberException.class);
+
+            // when
+
+
+            //then
+            assertAll(() -> assertThatThrownBy(() -> rentService.checkRefund(33L, loginedUserId))
+                            .isInstanceOf(NonExistingMemberException.class),
+                    () -> then(userService).should(times(1))
+                            .findUserById(loginedUserId),
+                    () -> then(rentRepository).shouldHaveNoInteractions());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 대여 내역 고유번호이면 예외를 발생시킨다.")
+        void nonExistingHistory() {
+
+            // given
+            long loginedUserId = 7L;
+            given(userService.findUserById(loginedUserId))
+                    .willReturn(userToRent);
+            given(rentRepository.findById(33L))
+                    .willThrow(NonExistingHistoryException.class);
+
+            // when & then
+            assertAll(() -> assertThatThrownBy(() -> rentService.checkRefund(33L, loginedUserId))
+                            .isInstanceOf(NonExistingHistoryException.class),
+                    () -> then(userService).should(times(1))
+                            .findUserById(loginedUserId),
+                    () -> then(rentRepository).should(times(1))
+                            .findById(33L),
+                    () -> then(rentRepository).shouldHaveNoMoreInteractions());
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자의 고유 번호와 대여 내역의 고유번호를 입력 받아")
+    class checkPaymentTest {
+
+        @Test
+        @DisplayName("해당 대여 내역을 지불 완료 처리할 수 있다.")
+        void success() {
+
+            // given
+            long loginedUserId = 7L;
+            given(userService.findUserById(loginedUserId))
+                    .willReturn(userToRent);
+            given(rentRepository.findById(33L))
+                    .willReturn(Optional.of(history));
+            given(rentRepository.save(history))
+                    .willReturn(history);
+
+            // when
+            rentService.checkPayment(33L, loginedUserId);
+
+            //then
+            assertAll(() -> assertThat(history.getPaidBy())
+                            .isEqualTo(userToRent),
+                    () -> assertThat(history.getPaidAt())
+                            .isBeforeOrEqualTo(LocalDateTime.now()),
+                    () -> then(userService).should(times(1))
+                            .findUserById(loginedUserId),
+                    () -> then(rentRepository).should(times(1))
+                            .findById(33L),
+                    () -> then(rentRepository).should(times(1))
+                            .save(history)
+            );
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 사용자면 예외를 발생시킨다.")
+        void nonExistingUser() {
+
+            // given
+            long loginedUserId = 7L;
+            given(userService.findUserById(loginedUserId))
+                    .willThrow(NonExistingMemberException.class);
+
+            // when & then
+            assertAll(() -> assertThatThrownBy(() -> rentService.checkPayment(33L, loginedUserId))
+                            .isInstanceOf(NonExistingMemberException.class),
+                    () -> then(userService).should(times(1))
+                            .findUserById(loginedUserId),
+                    () -> then(rentRepository).shouldHaveNoInteractions());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 대여 내역 고유번호이면 예외를 발생시킨다.")
+        void nonExistingHistory() {
+
+            // given
+            long loginedUserId = 7L;
+            given(userService.findUserById(loginedUserId))
+                    .willReturn(userToRent);
+            given(rentRepository.findById(33L))
+                    .willThrow(NonExistingHistoryException.class);
+
+            // when & then
+            assertAll(() -> assertThatThrownBy(() -> rentService.checkPayment(33L, loginedUserId))
+                            .isInstanceOf(NonExistingHistoryException.class),
+                    () -> then(userService).should(times(1))
+                            .findUserById(loginedUserId),
+                    () -> then(rentRepository).should(times(1))
+                            .findById(33L),
+                    () -> then(rentRepository).shouldHaveNoMoreInteractions());
         }
     }
 }
