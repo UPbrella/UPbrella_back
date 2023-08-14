@@ -9,10 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
-import upbrella.be.store.dto.response.SingleClassificationResponse;
-import upbrella.be.store.dto.response.SingleStoreResponse;
-import upbrella.be.store.dto.response.SingleSubClassificationResponse;
-import upbrella.be.store.dto.response.StoreFindByIdResponse;
+import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.*;
 import upbrella.be.store.exception.NonExistingStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
@@ -656,6 +653,46 @@ public class StoreDetailServiceTest {
                         .hasFieldOrPropertyWithValue("address", request.getAddress())
                         .hasFieldOrPropertyWithValue("addressDetail", request.getAddressDetail())
                         .hasFieldOrPropertyWithValue("content", request.getContent())
+        );
+    }
+
+    @Test
+    @DisplayName("사용자는 협업지점 소개 페이지를 조회할 수 있다.")
+    void findStoreIntroductionTest() {
+        // given
+        StoreMeta storeMeta = StoreMeta.builder()
+                .id(3L)
+                .name("스타벅스")
+                .deleted(false)
+                .latitude(37.503716)
+                .longitude(127.053718)
+                .activated(true)
+                .deleted(false)
+                .category("카페, 디저트")
+                .build();
+
+        StoreDetail storeDetail = StoreDetail.builder()
+                .id(2L)
+                .storeMeta(storeMeta)
+                .content("모티브 카페 소개")
+                .address("모티브로 32길")
+                .contactInfo("010-5252-8282")
+                .instaUrl("모티브 인서타")
+                .workingHour("매일 7시 ~ 12시")
+                .umbrellaLocation("문 앞")
+                .storeImages(Set.of())
+                .build();
+
+        given(storeDetailRepository.findAllStores()).willReturn(List.of(storeDetail));
+
+        // when
+        AllStoreIntroductionResponse response = storeDetailService.findAllStoreIntroductions();
+        SingleStoreIntroductionResponse stores = response.getStores().get(0);
+        // then
+        assertAll(
+                () -> assertThat(stores.getId()).isEqualTo(storeDetail.getId()),
+                () -> assertThat(stores.getName()).isEqualTo(storeDetail.getStoreMeta().getName()),
+                () -> assertThat(stores.getCategory()).isEqualTo(storeDetail.getStoreMeta().getCategory())
         );
     }
 }
