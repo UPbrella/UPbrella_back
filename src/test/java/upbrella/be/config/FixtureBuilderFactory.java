@@ -5,11 +5,12 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
+import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
-import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
@@ -170,4 +171,14 @@ public class FixtureBuilderFactory {
                 .set("totalRentCount", buildLong(1000))
                 .set("missingRate", missingRate);
     }
+
+    public static ArbitraryBuilder<Classification> builderClassification() {
+
+        return fixtureMonkey.giveMeBuilder(Classification.class)
+                .set("id", buildLong(100))
+                .set("name", pickRandomString(nameList))
+                .set("latitude", buildDouble())
+                .set("longitude", buildDouble());
+    }
+
 }

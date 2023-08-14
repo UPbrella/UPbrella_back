@@ -207,7 +207,7 @@ public class StoreController {
     }
 
     @PostMapping("/subClassifications")
-    public ResponseEntity<CustomResponse> createSubClassification(HttpSession session, @RequestBody CreateSubClassificationRequest newSubClassification) {
+    public ResponseEntity<CustomResponse> createSubClassification(@RequestBody CreateSubClassificationRequest newSubClassification, HttpSession session) {
 
         classificationService.createSubClassification(newSubClassification);
 
@@ -221,9 +221,9 @@ public class StoreController {
     }
 
     @DeleteMapping("/subClassifications/{subClassificationId}")
-    public ResponseEntity<CustomResponse> deleteSubClassification(HttpSession session, @PathVariable long subClassificationId) {
+    public ResponseEntity<CustomResponse> deleteSubClassification(@PathVariable long subClassificationId, HttpSession session) {
 
-        classificationService.deleteClassification(subClassificationId);
+        classificationService.deleteSubClassification(subClassificationId);
 
         return ResponseEntity
                 .ok()
@@ -232,5 +232,17 @@ public class StoreController {
                         200,
                         "소분류 삭제 성공"
                 ));
+    }
+
+    @GetMapping("/introductions")
+    public ResponseEntity<CustomResponse<AllStoreIntroductionResponse>> findAllStoreMeta(HttpSession session) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 메타 전체 조회 성공",
+                        storeDetailService.findAllStoreIntroductions()));
     }
 }
