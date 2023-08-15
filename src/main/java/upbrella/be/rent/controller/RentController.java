@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
-import upbrella.be.rent.dto.response.*;
+import upbrella.be.rent.dto.response.ConditionReportPageResponse;
+import upbrella.be.rent.dto.response.ImprovementReportPageResponse;
+import upbrella.be.rent.dto.response.RentFormResponse;
+import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
@@ -138,6 +141,36 @@ public class RentController {
                         200,
                         "개선 요청 내역 조회 성공",
                         improvementReports
+                ));
+    }
+
+    @PatchMapping("/histories/refund/{historyId}")
+    public ResponseEntity<CustomResponse> refundRent(@PathVariable long historyId, HttpSession httpSession) {
+
+        long loginedUserId = (long) httpSession.getAttribute("userId");
+
+        rentService.checkRefund(historyId, loginedUserId);
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse(
+                        "success",
+                        200,
+                        "환급 확인 성공"
+                ));
+    }
+
+    @PatchMapping("/histories/payment/{historyId}")
+    public ResponseEntity<CustomResponse> checkPayment(@PathVariable long historyId, HttpSession httpSession) {
+
+        long loginedUserId = (long) httpSession.getAttribute("userId");
+
+        rentService.checkPayment(historyId, loginedUserId);
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse(
+                        "success",
+                        200,
+                        "입금 확인 성공"
                 ));
     }
 }
