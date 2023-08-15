@@ -41,7 +41,22 @@ public class History {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refunded_by")
     private User refundedBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paid_by")
+    private User paidBy;
     private String etc;
+
+    public void refund(User user, LocalDateTime refundedAt) {
+
+            this.refundedAt = refundedAt;
+            this.refundedBy = user;
+    }
+
+    public void paid(User user, LocalDateTime paidAt) {
+
+        this.paidBy = user;
+        this.paidAt = paidAt;
+    }
 
     public static History ofCreatedByNewRent(Umbrella umbrella, User user, StoreMeta rentStoreMeta) {
 
