@@ -165,8 +165,7 @@ public class RentService {
 
         User loginedUser = userService.findUserById(userId);
 
-        History history = rentRepository.findById(historyId)
-                .orElseThrow(() -> new NonExistingHistoryException("[ERROR] 해당 대여 기록이 없습니다."));
+        History history = findHistoryById(historyId);
 
         history.refund(loginedUser, LocalDateTime.now());
         rentRepository.save(history);
@@ -177,10 +176,13 @@ public class RentService {
 
         User loginedUser = userService.findUserById(userId);
 
-        History history = rentRepository.findById(historyId)
-                .orElseThrow(() -> new NonExistingHistoryException("[ERROR] 해당 대여 기록이 없습니다."));
-
+        History history = findHistoryById(historyId);
         history.paid(loginedUser, LocalDateTime.now());
         rentRepository.save(history);
+    }
+
+    private History findHistoryById(long historyId) {
+        return rentRepository.findById(historyId)
+                .orElseThrow(() -> new NonExistingHistoryException("[ERROR] 해당 대여 기록이 없습니다."));
     }
 }
