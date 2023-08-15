@@ -5,6 +5,7 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
+import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
@@ -179,6 +180,12 @@ public class FixtureBuilderFactory {
                 .set("name", pickRandomString(nameList))
                 .set("latitude", buildDouble())
                 .set("longitude", buildDouble());
+    }
+
+    public static ArbitraryBuilder<BusinessHour> builderBusinessHour() {
+
+        return fixtureMonkey.giveMeBuilder(BusinessHour.class)
+                .set("id", buildLong(100));
     }
 
 }
