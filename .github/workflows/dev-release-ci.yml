@@ -2,17 +2,19 @@ name: Upbrella DEV CI
 
 on:
   push:
-    branches: [ "release-dev" ]
+    branches: [ "release-dev", "feat-161-backend-pipeline" ]
 
 env:
   WORKING_DIRECTORY: ./
   DOCKERFILE_DIRECTORY: ./.github/workflows
-  CODE_DEPLOY_APPLICATION_NAME: upbrella-dev-deploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: UpbrellaServerDev
-  S3_BUCKET_NAME: upbrella-storage
+  ECS_SERVICE: upbrella-server
+  ECS_CLUSTER: upbrella-cluster
+  ECR_REPOSITORY: upbrella-ecr
+  CONTAINER_NAME: upbrella-server
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   build:
@@ -41,25 +43,44 @@ jobs:
         WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
         aws-region: ${{ secrets.AWS_REGION }} 
 
-    - name: Make zip file
-      run: zip -r ./$GITHUB_SHA.zip .
-      shell: bash
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
+    - name: docker build and push
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        sudo docker buildx build --load --platform linux/amd64 -t upbrella-ecr .
+        sudo docker tag upbrella-ecr:latest 641876149891.dkr.ecr.ap-northeast-2.amazonaws.com/upbrella-ecr:latest
+        sudo docker push 641876149891.dkr.ecr.ap-northeast-2.amazonaws.com/upbrella-ecr:latest
 
-    - name: Upload to S3
-      run:
-        aws s3 cp $GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/server-dev-deploy/$GITHUB_SHA.zip --region ${{ secrets.AWS_REGION }}
+    - name: Get latest ECS task definition
+      id: get-latest-task-def
+      run: |
+        TASK_DEF=$(aws ecs describe-services --cluster ${ECS_CLUSTER} --services ${ECS_SERVICE} --region ${AWS_REGION} --query "services[0].taskDefinition" --output text)
+        aws ecs describe-task-definition --task-definition $TASK_DEF --region ${AWS_REGION} --query "taskDefinition" --output json > task-definition.json
+        echo "TASK_DEF_JSON=$(pwd)/task-definition.json" >> $GITHUB_ENV
 
-    - name: Code Deploy
-      run: | 
-        aws deploy create-deployment \
-        --deployment-config-name CodeDeployDefault.AllAtOnce \
-        --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-        --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-        --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=server-dev-deploy/$GITHUB_SHA.zip
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ env.TASK_DEF_JSON }}
+        container-name: ${{ env.CONTAINER_NAME }}
+        image: ${{ steps.build-image.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
