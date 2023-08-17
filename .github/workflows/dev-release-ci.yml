@@ -10,7 +10,7 @@ env:
   ECS_SERVICE: upbrella-api-service
   ECS_CLUSTER: upbrella-cluster
   ECR_REPOSITORY: upbrella-ecr
-  CONTAINER_NAME: upbrella-api-server
+  CONTAINER_NAME: upbrella-server
 
 permissions:
   contents: read
