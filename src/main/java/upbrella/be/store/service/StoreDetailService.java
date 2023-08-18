@@ -96,6 +96,11 @@ public class StoreDetailService {
         return AllStoreIntroductionResponse.of(collect);
     }
 
+    public void saveStoreDetail(StoreDetail storeDetail) {
+
+        storeDetailRepository.save(storeDetail);
+    }
+
     private SingleStoreIntroductionResponse createSingleIntroduction(StoreDetail storeDetail) {
 
         List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail.getStoreImages());
