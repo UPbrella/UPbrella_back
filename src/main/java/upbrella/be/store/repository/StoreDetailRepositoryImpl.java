@@ -26,8 +26,9 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
                 .join(storeDetail.storeMeta, storeMeta).fetchJoin()
                 .join(storeMeta.classification, classification).fetchJoin()
                 .join(storeMeta.subClassification, classification).fetchJoin()
-                .join(storeMeta.businessHours, businessHour).fetchJoin()
+                .leftJoin(storeMeta.businessHours, businessHour).fetchJoin()
                 .leftJoin(storeDetail.storeImages, storeImage).fetchJoin()
+                .where(storeMeta.deleted.isFalse())
                 .distinct()
                 .fetch();
     }
