@@ -49,17 +49,29 @@
 
 ### Infrastructure & CI/CD
 
-<img src="https://img.shields.io/badge/AWS%20EC2-FA7343?style=flat&logo=amazonec2&logoColor=white"/> <img src="https://img.shields.io/badge/AWS%20S3-569A31?style=flat&logo=amazons3&logoColor=white"/> 
+
 ![nginx](https://img.shields.io/badge/nginx-009639?style=flat&logo=nginx&logoColor=white)
+<img src="https://img.shields.io/badge/Amazon%20EC2-FA7343?style=flat&logo=amazonec2&logoColor=white"/>
+![AWS ECR](https://img.shields.io/badge/Amazon%20ECR-FF9900?style=flat)
+![AWS ECS](https://img.shields.io/badge/Amazon%20ECS-FF9900?style=flat&logo=amazonecs&logoColor=white)
+![AWS S3](https://img.shields.io/badge/Amazon%20S3-569A31?style=flat&logo=amazons3&logoColor=white)
+![AWS RDS](https://img.shields.io/badge/Amazon%20RDS-527FFF?style=flat&logo=amazonrds&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)
 ![Github Actions](https://img.shields.io/badge/Github%20Actions-2088FF?style=flat&logo=GithubActions&logoColor=white)
-![AWS Codedeploy](https://img.shields.io/badge/AWS%20Codedeploy-yellowgreen?style=flat)
 
 ### Back-End
 
 <img src="https://img.shields.io/badge/Java-007396?style=flat&logo=java&logoColor=white"/> <img src="https://img.shields.io/badge/Gradle-02303A?style=flat&logo=Gradle&logoColor=white"/> <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring%20Data%20JPA-03EF62?style=flat"/> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/> ![QueryDSL](https://img.shields.io/badge/QueryDSL-blueviolet?style=flat)
 ![OAuth 2.0](https://img.shields.io/badge/OAuth-EB5424?style=flat) ![Jacoco](https://img.shields.io/badge/Jacoco-23E396?style=flat&logoColor=white) ![RestDocs](https://img.shields.io/badge/RestDocs-63E296?style=flat&logoColor=white)
-![Fixture Monkey](https://img.shields.io/badge/FixtureMonkey-138888?style=flat&logoColor=white)
 ![IntelliJ IDEA](https://img.shields.io/badge/-IntelliJ%20IDEA-FF3850?style=flat&logo=IntelliJ%20IDEA&logoColor=white)
+
+## ☁ 인프라 구성도
+![image](https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/4ced41e1-9540-4afa-9646-878724e08caf)
+
+
+## 🌊 CI/CD 흐름도
+![image](https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/e6d3ee85-06d1-495d-8287-c8d0a7e477fe)
+
 
 ## 🌂 기타
 
