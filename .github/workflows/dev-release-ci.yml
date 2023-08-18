@@ -8,7 +8,7 @@ env:
   WORKING_DIRECTORY: ./
   AWS_REGION: ap-northeast-2
   DOCKERFILE_DIRECTORY: ./.github/workflows
-  ECS_SERVICE: upbrella-was-server
+  ECS_SERVICE: upbrella-api-service
   ECS_CLUSTER: upbrella-cluster
   ECR_REPOSITORY: upbrella-ecr
   CONTAINER_NAME: upbrella-server
