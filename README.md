@@ -39,7 +39,7 @@
 |[luke](https://github.com/acceptor-gyu)  |  [poro](https://github.com/Gwonwoo-Nam)|                          [birdie](https://github.com/birdieHyun)                          |
 <br>
 
-
+<br></br>
 ## 🧾 기술 스택
 
 ### 공통
@@ -64,15 +64,15 @@
 <img src="https://img.shields.io/badge/Java-007396?style=flat&logo=java&logoColor=white"/> <img src="https://img.shields.io/badge/Gradle-02303A?style=flat&logo=Gradle&logoColor=white"/> <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring%20Data%20JPA-03EF62?style=flat"/> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=MySQL&logoColor=white"/> ![QueryDSL](https://img.shields.io/badge/QueryDSL-blueviolet?style=flat)
 ![OAuth 2.0](https://img.shields.io/badge/OAuth-EB5424?style=flat) ![Jacoco](https://img.shields.io/badge/Jacoco-23E396?style=flat&logoColor=white) ![RestDocs](https://img.shields.io/badge/RestDocs-63E296?style=flat&logoColor=white)
 ![IntelliJ IDEA](https://img.shields.io/badge/-IntelliJ%20IDEA-FF3850?style=flat&logo=IntelliJ%20IDEA&logoColor=white)
-
+<br></br>
 ## ☁ 인프라 구성도
 ![image](https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/4ced41e1-9540-4afa-9646-878724e08caf)
 
-
+<br></br>
 ## 🌊 CI/CD 흐름도
 ![image](https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/e6d3ee85-06d1-495d-8287-c8d0a7e477fe)
 
-
+<br></br>
 ## 🌂 기타
 
 ### [Rest API Docs](https://github.com/UPbrella/UPbrella_back/wiki/REST-API-Docs)
