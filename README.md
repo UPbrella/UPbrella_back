@@ -49,7 +49,7 @@
 
 ### Infrastructure & CI/CD
 
-
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
 ![nginx](https://img.shields.io/badge/nginx-009639?style=flat&logo=nginx&logoColor=white)
 <img src="https://img.shields.io/badge/Amazon%20EC2-FA7343?style=flat&logo=amazonec2&logoColor=white"/>
 ![AWS ECR](https://img.shields.io/badge/Amazon%20ECR-FF9900?style=flat)
