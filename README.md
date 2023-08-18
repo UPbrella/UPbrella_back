@@ -66,7 +66,8 @@
 ![IntelliJ IDEA](https://img.shields.io/badge/-IntelliJ%20IDEA-FF3850?style=flat&logo=IntelliJ%20IDEA&logoColor=white)
 <br></br>
 ## ☁ 인프라 구성도
-![image](https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/4ced41e1-9540-4afa-9646-878724e08caf)
+![image](https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/3de59b99-8984-43cf-a8e3-262c46804623)
+
 
 <br></br>
 ## 🌊 CI/CD 흐름도
