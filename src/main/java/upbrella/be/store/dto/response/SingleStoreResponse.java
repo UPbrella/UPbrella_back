@@ -46,7 +46,7 @@ public class SingleStoreResponse {
                 .businessHour(storeDetail.getWorkingHour())
                 .contactNumber(storeDetail.getContactInfo())
                 .instagramId(storeDetail.getInstaUrl())
-                .latitude(storeDetail.getStoreMeta().getLongitude())
+                .latitude(storeDetail.getStoreMeta().getLatitude())
                 .longitude(storeDetail.getStoreMeta().getLongitude())
                 .content(storeDetail.getContent())
                 .password(storeDetail.getStoreMeta().getPassword())
