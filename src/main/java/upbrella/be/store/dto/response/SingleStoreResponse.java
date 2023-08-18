@@ -34,7 +34,7 @@ public class SingleStoreResponse {
     public static SingleStoreResponse ofCreateSingleStoreResponse(StoreDetail storeDetail, String thumbnail, List<SingleImageUrlResponse> images, List<SingleBusinessHourResponse> businessHours) {
 
         return SingleStoreResponse.builder()
-                .id(storeDetail.getStoreMeta().getId())
+                .id(storeDetail.getId())
                 .name(storeDetail.getStoreMeta().getName())
                 .category(storeDetail.getStoreMeta().getCategory())
                 .classification(SingleClassificationResponse.ofCreateClassification(storeDetail.getStoreMeta().getClassification()))
