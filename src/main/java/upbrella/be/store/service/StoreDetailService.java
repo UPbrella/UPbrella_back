@@ -32,17 +32,19 @@ public class StoreDetailService {
     @Transactional
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 
+        StoreDetail storeDetailById = findStoreDetailById(storeId);
+        long storeMetaId = storeDetailById.getStoreMeta().getId();
+
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(request.getSubClassificationId());
 
-        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request.getBusinessHours());
+        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeMetaId, request.getBusinessHours());
 
         StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification, businessHours);
 
-        StoreMeta foundStoreMeta = storeMetaService.findStoreMetaById(storeId);
+        StoreMeta foundStoreMeta = storeDetailById.getStoreMeta();
         foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
 
-        StoreDetail storeDetailById = findStoreDetailById(storeId);
         storeDetailById.updateStore(foundStoreMeta, request);
     }
 
@@ -92,6 +94,11 @@ public class StoreDetailService {
                 .collect(Collectors.toList());
 
         return AllStoreIntroductionResponse.of(collect);
+    }
+
+    public void saveStoreDetail(StoreDetail storeDetail) {
+
+        storeDetailRepository.save(storeDetail);
     }
 
     private SingleStoreIntroductionResponse createSingleIntroduction(StoreDetail storeDetail) {
