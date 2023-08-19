@@ -49,13 +49,14 @@
 
 ### Infrastructure & CI/CD
 
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
-![nginx](https://img.shields.io/badge/nginx-009639?style=flat&logo=nginx&logoColor=white)
-<img src="https://img.shields.io/badge/Amazon%20EC2-FA7343?style=flat&logo=amazonec2&logoColor=white"/>
+![AWS EC2](https://img.shields.io/badge/Amazon%20EC2-FA7343?style=flat&logo=amazonec2&logoColor=white)
 ![AWS ECR](https://img.shields.io/badge/Amazon%20ECR-FF9900?style=flat)
 ![AWS ECS](https://img.shields.io/badge/Amazon%20ECS-FF9900?style=flat&logo=amazonecs&logoColor=white)
 ![AWS S3](https://img.shields.io/badge/Amazon%20S3-569A31?style=flat&logo=amazons3&logoColor=white)
 ![AWS RDS](https://img.shields.io/badge/Amazon%20RDS-527FFF?style=flat&logo=amazonrds&logoColor=white)
+<br></br>
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![nginx](https://img.shields.io/badge/nginx-009639?style=flat&logo=nginx&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)
 ![Github Actions](https://img.shields.io/badge/Github%20Actions-2088FF?style=flat&logo=GithubActions&logoColor=white)
 
@@ -66,7 +67,8 @@
 ![IntelliJ IDEA](https://img.shields.io/badge/-IntelliJ%20IDEA-FF3850?style=flat&logo=IntelliJ%20IDEA&logoColor=white)
 <br></br>
 ## ☁ 인프라 구성도
-![image](https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/3de59b99-8984-43cf-a8e3-262c46804623)
+![image](https://github.com/Gwonwoo-Nam/Upbrella_back/assets/112251635/b2305124-b90f-402d-a37f-ff69f5303eae)
+
 
 
 <br></br>
