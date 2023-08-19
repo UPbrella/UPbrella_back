@@ -29,6 +29,7 @@ import upbrella.be.user.exception.*;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -215,6 +216,30 @@ public class UserControllerTest extends RestDocsSupport {
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
                                     .isInstanceOf(InvalidLoginCodeException.class));
+        }
+
+        @Test
+        @DisplayName("회원인 경우 로그인이 진행된다.")
+        void upbrellaLoginTest() throws Exception {
+            // given
+            MockHttpSession session = new MockHttpSession();
+
+            SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+            session.setAttribute("kakaoId", 123123L);
+            given(userService.login(any())).willReturn(sessionUser);
+
+            // when
+
+            // then
+            mockMvc.perform(
+                            get("/users/login")
+                                    .session(session)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("user-upbrella-login-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse()
+                    ));
         }
     }
 

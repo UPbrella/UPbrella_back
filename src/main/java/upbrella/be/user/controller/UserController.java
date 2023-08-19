@@ -107,7 +107,7 @@ public class UserController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "카카오 로그인 성공",
+                        "업브렐라 로그인 성공",
                         null));
     }
 
