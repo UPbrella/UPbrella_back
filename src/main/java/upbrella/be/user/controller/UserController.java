@@ -37,18 +37,8 @@ public class UserController {
     @GetMapping("/loggedIn")
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
 
-        /**
-         * TODO: 세션 처리으로 로그인한 유저의 id 가져오기
-         *       interceptor에서 userId를 가져올 것인지, user 객체를 가져올 것인지 논의 후 구현
-         */
-
-        // session에서 꺼낸 것이라는 의미로 repository로부터 findById를 하지 않고 빌더를 사용해서 만들었음.
-        User loggedInUser = User.builder()
-                .id(1L)
-                .name("사용자")
-                .phoneNumber("010-0000-0000")
-                .adminStatus(false)
-                .build();
+        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
+        User user = userService.findUserById(sessionUser.getId());
 
         return ResponseEntity
                 .ok()
@@ -56,7 +46,7 @@ public class UserController {
                         "success",
                         200,
                         "로그인 유저 정보 조회 성공",
-                        UserInfoResponse.fromUser(loggedInUser)));
+                        UserInfoResponse.fromUser(user)));
     }
 
     @GetMapping("/loggedIn/umbrella")

@@ -69,10 +69,19 @@ public class UserControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 로그인된 유저 정보를 조회할 수 있다.")
     @Test
     void findUserInfoTest() throws Exception {
+        // given
+        MockHttpSession session = new MockHttpSession();
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        User user = FixtureBuilderFactory.builderUser().sample();
+
+        session.setAttribute("user", sessionUser);
+        given(userService.findUserById(anyLong()))
+                .willReturn(user);
 
         // when & then
         mockMvc.perform(
                         get("/users/loggedIn")
+                                .session(session)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-user-info-doc",
@@ -85,7 +94,11 @@ public class UserControllerTest extends RestDocsSupport {
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
-                                        .description("사용자 전화번호")
+                                        .description("사용자 전화번호"),
+                                fieldWithPath("bank").type(JsonFieldType.STRING)
+                                        .description("사용자 은행"),
+                                fieldWithPath("accountNumber").type(JsonFieldType.STRING)
+                                        .description("사용자 계좌번호")
                         )));
     }
 
