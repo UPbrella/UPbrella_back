@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.BlackListUserException;
@@ -21,15 +22,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final BlackListRepository blackListRepository;
 
-    public long login(Long socialId) {
+    public SessionUser login(Long socialId) {
 
         User foundUser = userRepository.findBySocialId(socialId)
                 .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."));
 
-        return foundUser.getId();
+        return SessionUser.fromUser(foundUser);
     }
 
-    public long join(long socialId, JoinRequest joinRequest) {
+    public SessionUser join(long socialId, JoinRequest joinRequest) {
 
         if (userRepository.existsBySocialId(socialId)) {
             throw new ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
@@ -40,7 +41,7 @@ public class UserService {
 
         User joinedUser = userRepository.save(User.createNewUser(socialId, joinRequest));
 
-        return joinedUser.getId();
+        return SessionUser.fromUser(joinedUser);
     }
 
     public AllUsersInfoResponse findUsers() {
