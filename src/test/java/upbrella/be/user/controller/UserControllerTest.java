@@ -93,6 +93,11 @@ public class UserControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 유저가 빌린 우산을 조회할 수 있다.")
     void findUmbrellaBorrowedByUserTest() throws Exception {
         // given
+        MockHttpSession httpSession = new MockHttpSession();
+        SessionUser user = FixtureBuilderFactory.builderSessionUser().sample();
+
+        httpSession.setAttribute("user", user);
+
         Umbrella borrowedUmbrella = FixtureBuilderFactory.builderUmbrella().sample();
         History rentalHistory = FixtureFactory.buildHistoryWithUmbrella(borrowedUmbrella);
 
@@ -102,6 +107,7 @@ public class UserControllerTest extends RestDocsSupport {
         // when
         mockMvc.perform(
                         get("/users/loggedIn/umbrella")
+                                .session(httpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-umbrella-borrowed-by-user-doc",

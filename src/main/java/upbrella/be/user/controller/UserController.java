@@ -62,20 +62,9 @@ public class UserController {
     @GetMapping("/loggedIn/umbrella")
     public ResponseEntity<CustomResponse<UmbrellaBorrowedByUserResponse>> findUmbrellaBorrowedByUser(HttpSession httpSession) {
 
-        /**
-         * TODO: 세션 처리으로 로그인한 유저의 id 가져오기
-         *       interceptor에서 userId를 가져올 것인지, user 객체를 가져올 것인지 논의 후 구현
-         */
+        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
 
-        // session에서 꺼낸 것이라는 의미로 repository로부터 findById를 하지 않고 빌더를 사용해서 만들었음.
-        User loggedInUser = User.builder()
-                .id(72L)
-                .name("사용자")
-                .phoneNumber("010-1234-5678")
-                .adminStatus(false)
-                .build();
-
-        History rentalHistory = rentRepository.findByUserAndReturnedAtIsNull(loggedInUser.getId())
+        History rentalHistory = rentRepository.findByUserAndReturnedAtIsNull(sessionUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 사용자가 빌린 우산이 없습니다."));
 
         long borrowedUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
