@@ -70,6 +70,11 @@ dependencies {
 
     // Test용 H2 In-memory DB
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+    // Spring Data Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Spring Session Data Redis
+    implementation 'org.springframework.session:spring-session-data-redis'
 }
 
 ext {
