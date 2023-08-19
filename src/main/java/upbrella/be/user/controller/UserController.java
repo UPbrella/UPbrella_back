@@ -9,10 +9,7 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
-import upbrella.be.user.dto.response.AllUsersInfoResponse;
-import upbrella.be.user.dto.response.KakaoLoginResponse;
-import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
-import upbrella.be.user.dto.response.UserInfoResponse;
+import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
 import upbrella.be.user.entity.User;
@@ -94,22 +91,38 @@ public class UserController {
                                 .build()));
     }
 
-    @GetMapping("/login")
+    @GetMapping("/oauth/login")
     public ResponseEntity<CustomResponse> kakaoLogin(HttpSession session, String code) {
 
         OauthToken kakaoAccessToken;
+
         try {
             kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
         } catch (HttpClientErrorException e) {
             throw new InvalidLoginCodeException("[ERROR] 로그인 코드가 유효하지 않습니다.");
         }
-        session.setAttribute("authToken", kakaoAccessToken);
 
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
-        long loginedUserId = userService.login(kakaoLoggedInUser.getId());
-        session.removeAttribute("authToken");
+        session.setAttribute("kakaoId", kakaoLoggedInUser.getId());
 
-        session.setAttribute("userId", loginedUserId);
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "카카오 로그인 성공",
+                        null));
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<CustomResponse> upbrellaLogin(HttpSession session) {
+
+        Long kakaoId = (Long) session.getAttribute("kakaoId");
+        SessionUser loginedUserId = userService.login(kakaoId);
+
+        session.removeAttribute("kakaoId");
+        session.setAttribute("user", loginedUserId);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -122,22 +135,19 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<CustomResponse> kakaoJoin(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
-        OauthToken kakaoAccessToken = (OauthToken) session.getAttribute("authToken");
+        Long kakaoId = (Long) session.getAttribute("kakaoId");
 
-        if (session.getAttribute("userId") != null) {
+        if (session.getAttribute("user") != null) {
             throw new LoginedMemberException("[ERROR] 이미 로그인된 상태입니다.");
         }
-
-        if (kakaoAccessToken == null) {
-            throw new NotSocialLoginedException("[ERROR] 로그인을 먼저 해주세요.");
+        if (kakaoId == null) {
+            throw new NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.");
         }
 
-        KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
+        SessionUser loggedInUser = userService.join(kakaoId, joinRequest);
 
-        long loginedUserId = userService.join(kakaoLoggedInUser.getId(), joinRequest);
-
-        session.removeAttribute("authToken");
-        session.setAttribute("userId", loginedUserId);
+        session.removeAttribute("kakaoId");
+        session.setAttribute("user", loggedInUser);
 
         return ResponseEntity
                 .ok()
