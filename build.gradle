@@ -67,6 +67,14 @@ dependencies {
 
     // Fixture 생성 라이브러리
     testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:0.5.3")
+
+    // Test용 H2 In-memory DB
+    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+    // Spring Data Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Spring Session Data Redis
+    implementation 'org.springframework.session:spring-session-data-redis'
 }
 
 ext {

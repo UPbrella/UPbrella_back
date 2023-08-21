@@ -829,7 +829,7 @@ class StoreControllerTest extends RestDocsSupport {
         // given
         long subClassificationId = 1L;
 
-        doNothing().when(classificationService).deleteClassification(subClassificationId);
+        doNothing().when(classificationService).deleteSubClassification(subClassificationId);
 
         // when
 
@@ -844,6 +844,48 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("subClassificationId").description("소분류 고유번호")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 협업지점 소개 페이지를 조회할 수 있다.")
+    void findStoreIntroductionTest() throws Exception {
+        // given
+        SingleStoreIntroductionResponse store = SingleStoreIntroductionResponse.builder()
+                .id(1L)
+                .name("가게 이름")
+                .category("가게 카테고리")
+                .thumbnail("가게 썸네일")
+                .build();
+        AllStoreIntroductionResponse response = AllStoreIntroductionResponse.builder()
+                .stores(List.of(store))
+                .build();
+
+        given(storeDetailService.findAllStoreIntroductions()).willReturn(response);
+
+        // when
+
+
+        // then
+        mockMvc.perform(
+                get("/stores/introductions")
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-find-store-introduction-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("stores[]").type(JsonFieldType.ARRAY)
+                                        .description("가게 소개 목록"),
+                                fieldWithPath("stores[].id").type(JsonFieldType.NUMBER)
+                                        .description("가게 고유번호"),
+                                fieldWithPath("stores[].name").type(JsonFieldType.STRING)
+                                        .description("가게 이름"),
+                                fieldWithPath("stores[].category").type(JsonFieldType.STRING)
+                                        .description("가게 카테고리"),
+                                fieldWithPath("stores[].thumbnail").type(JsonFieldType.STRING)
+                                        .description("가게 썸네일")
                         )));
     }
 }

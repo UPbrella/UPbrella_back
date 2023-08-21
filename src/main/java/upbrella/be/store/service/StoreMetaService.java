@@ -1,6 +1,6 @@
 package upbrella.be.store.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.CoordinateRequest;
@@ -15,7 +15,6 @@ import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.DeletedStoreDetailException;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
-import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
@@ -27,14 +26,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class StoreMetaService {
 
     private final UmbrellaRepository umbrellaRepository;
     private final StoreMetaRepository storeMetaRepository;
-    private final StoreDetailRepository storeDetailRepository;
+    private final StoreDetailService storeDetailService;
     private final ClassificationService classificationService;
     private final BusinessHourService businessHourService;
+
+    public StoreMetaService(UmbrellaRepository umbrellaRepository, StoreMetaRepository storeMetaRepository, @Lazy StoreDetailService storeDetailService, ClassificationService classificationService, BusinessHourService businessHourService) {
+        this.umbrellaRepository = umbrellaRepository;
+        this.storeMetaRepository = storeMetaRepository;
+        this.storeDetailService = storeDetailService;
+        this.classificationService = classificationService;
+        this.businessHourService = businessHourService;
+    }
 
     @Transactional(readOnly = true)
     public CurrentUmbrellaStoreResponse findCurrentStoreIdByUmbrella(long umbrellaId) {
@@ -90,9 +96,10 @@ public class StoreMetaService {
     }
 
     @Transactional
-    public void deleteStoreMeta(long storeMetaId) {
+    public void deleteStoreMeta(long storeDetailId) {
+        StoreDetail storeDetail = storeDetailService.findStoreDetailById(storeDetailId);
 
-        findStoreMetaById(storeMetaId).delete();
+        findStoreMetaById(storeDetail.getStoreMeta().getId()).delete();
     }
 
     @Transactional(readOnly = true)
@@ -122,11 +129,16 @@ public class StoreMetaService {
 
     private void saveStoreDetail(CreateStoreRequest store, StoreMeta storeMeta) {
 
-        storeDetailRepository.save(StoreDetail.createForSave(store, storeMeta));
+        storeDetailService.saveStoreDetail(StoreDetail.createForSave(store, storeMeta));
     }
 
     public boolean existByStoreId(long storeId) {
 
         return storeMetaRepository.existsById(storeId);
+    }
+
+    public boolean existByClassificationId(long classificationId) {
+
+        return storeMetaRepository.existsByClassificationId(classificationId);
     }
 }

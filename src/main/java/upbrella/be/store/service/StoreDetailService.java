@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
-import upbrella.be.store.dto.response.SingleBusinessHourResponse;
-import upbrella.be.store.dto.response.SingleImageUrlResponse;
-import upbrella.be.store.dto.response.SingleStoreResponse;
-import upbrella.be.store.dto.response.StoreFindByIdResponse;
+import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
@@ -35,17 +32,19 @@ public class StoreDetailService {
     @Transactional
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 
+        StoreDetail storeDetailById = findStoreDetailById(storeId);
+        long storeMetaId = storeDetailById.getStoreMeta().getId();
+
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(request.getSubClassificationId());
 
-        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeId, request.getBusinessHours());
+        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeMetaId, request.getBusinessHours());
 
         StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification, businessHours);
 
-        StoreMeta foundStoreMeta = storeMetaService.findStoreMetaById(storeId);
+        StoreMeta foundStoreMeta = storeDetailById.getStoreMeta();
         foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
 
-        StoreDetail storeDetailById = findStoreDetailById(storeId);
         storeDetailById.updateStore(foundStoreMeta, request);
     }
 
@@ -84,5 +83,29 @@ public class StoreDetailService {
         List<BusinessHour> businessHourList = new ArrayList<>(businessHourSet);
         List<SingleBusinessHourResponse> businessHours = businessHourService.createBusinessHourResponse(businessHourList);
         return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail, thumbnail, imageUrls, businessHours);
+    }
+
+    public AllStoreIntroductionResponse findAllStoreIntroductions() {
+
+        List<StoreDetail> storeIntroductions = storeDetailRepository.findAllStores();
+
+        List<SingleStoreIntroductionResponse> collect = storeIntroductions.stream()
+                .map(this::createSingleIntroduction)
+                .collect(Collectors.toList());
+
+        return AllStoreIntroductionResponse.of(collect);
+    }
+
+    public void saveStoreDetail(StoreDetail storeDetail) {
+
+        storeDetailRepository.save(storeDetail);
+    }
+
+    private SingleStoreIntroductionResponse createSingleIntroduction(StoreDetail storeDetail) {
+
+        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail.getStoreImages());
+        String thumbnail = storeImageService.createThumbnail(imageUrls);
+        StoreMeta storeMeta = storeDetail.getStoreMeta();
+        return SingleStoreIntroductionResponse.of(storeDetail.getId(), thumbnail, storeMeta.getName(), storeMeta.getCategory());
     }
 }
