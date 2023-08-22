@@ -10,6 +10,7 @@ import upbrella.be.rent.dto.response.RentFormResponse;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
+import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
@@ -18,6 +19,7 @@ import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +32,7 @@ public class RentService {
     private final UmbrellaService umbrellaService;
     private final StoreMetaService storeMetaService;
     private final ImprovementReportService improvementReportService;
+    private final UserService userService;
     private final RentRepository rentRepository;
 
     public RentFormResponse findRentForm(long umbrellaId) {
@@ -155,5 +158,31 @@ public class RentService {
 
     public long countTotalRentByStoreId(long storeId) {
         return rentRepository.countByRentStoreMetaId(storeId);
+    }
+
+    @Transactional
+    public void checkRefund(long historyId, long userId) {
+
+        User loginedUser = userService.findUserById(userId);
+
+        History history = findHistoryById(historyId);
+
+        history.refund(loginedUser, LocalDateTime.now());
+        rentRepository.save(history);
+    }
+
+    @Transactional
+    public void checkPayment(long historyId, long userId) {
+
+        User loginedUser = userService.findUserById(userId);
+
+        History history = findHistoryById(historyId);
+        history.paid(loginedUser, LocalDateTime.now());
+        rentRepository.save(history);
+    }
+
+    private History findHistoryById(long historyId) {
+        return rentRepository.findById(historyId)
+                .orElseThrow(() -> new NonExistingHistoryException("[ERROR] 해당 대여 기록이 없습니다."));
     }
 }
