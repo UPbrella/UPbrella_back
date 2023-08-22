@@ -2,7 +2,7 @@ name: Upbrella DEV CI
 
 on:
   push:
-    branches: [ "release-dev", "feat-161-backend-pipeline" ]
+    branches: [ "release-dev" ]
 
 env:
   WORKING_DIRECTORY: ./
