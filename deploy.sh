@@ -6,7 +6,7 @@ cd $REPOSITORY
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep '.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
-CURRENT_PID=$(pgrep -f $APP_NAME)
+CURRENT_PID=$(pgrep java -fl | awk '{print $1}')
 
 if [ -z $CURRENT_PID ]
 then
