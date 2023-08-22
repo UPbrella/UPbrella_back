@@ -1,5 +1,5 @@
 #!/bin/bash
-REPOSITORY=/dev/testapp
+REPOSITORY=/opt/testapp
 APP_NAME=upbrella-dev-deploy
 cd $REPOSITORY
 
