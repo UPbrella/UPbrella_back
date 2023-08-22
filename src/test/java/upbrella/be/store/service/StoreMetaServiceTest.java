@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
@@ -49,7 +50,7 @@ class StoreMetaServiceTest {
     @Mock
     private StoreMetaRepository storeMetaRepository;
     @Mock
-    private StoreDetailRepository storeDetailRepository;
+    private StoreDetailService storeDetailService;
     @Mock
     private ClassificationService classificationService;
     @Mock
@@ -396,7 +397,8 @@ class StoreMetaServiceTest {
             given(classificationService.findClassificationById(classificationId)).willReturn(classification);
             given(classificationService.findSubClassificationById(subClassificationId)).willReturn(subClassification);
             given(storeMetaRepository.save(any(StoreMeta.class))).willReturn(storeMeta);
-            given(storeDetailRepository.save(any(StoreDetail.class))).willReturn(storeDetail);
+//            given(storeDetailService.saveStoreDetail(any(StoreDetail.class)));
+            doNothing().when(storeDetailService).saveStoreDetail(any());
             doNothing().when(businessHourService).saveAllBusinessHour(any());
 
             // when
@@ -451,10 +453,16 @@ class StoreMetaServiceTest {
                 .businessHours(Set.of(businessHour))
                 .build();
 
+        StoreDetail storeDetail = StoreDetail.builder()
+                .id(1L)
+                .storeMeta(storeMeta).build();
+
+        given(storeDetailService.findStoreDetailById(anyLong())).willReturn(storeDetail);
         given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta));
 
         // when
         storeMetaService.deleteStoreMeta(1L);
+
 
         // then
         assertAll(
