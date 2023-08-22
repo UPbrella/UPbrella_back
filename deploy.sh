@@ -1,14 +1,12 @@
 #!/bin/bash
-container_name=upbrella-server-dev
-
 REPOSITORY=/opt/testapp
+APP_NAME=upbrella-dev-deploy
 cd $REPOSITORY
 
-APP_NAME=action_codedeploy
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep '.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
-CURRENT_PID=$(pgrep -f $APP_NAME)
+CURRENT_PID=$(pgrep java -fl | awk '{print $1}')
 
 if [ -z $CURRENT_PID ]
 then
@@ -21,4 +19,4 @@ fi
 echo "> $JAR_PATH 배포"
 
 
-nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
+nohup java -jar -Dspring.profiles.active=dev $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
