@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -316,6 +318,56 @@ public class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("improvementReports[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항")
+                        )));
+
+    }
+
+    @Test
+    @DisplayName("사용자는 특정 대여 내역을 환급 처리할 수 있다.")
+    void refundRentTest() throws Exception {
+
+        // given
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("userId", 2L);
+        doNothing().when(rentService)
+                .checkRefund(1L,2L);
+
+        mockMvc.perform(
+                        patch("/rent/histories/refund/{historyId}", 1L)
+                                .session(mockHttpSession)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("refund-rent-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("historyId")
+                                        .description("대여 내역 고유번호")
+                        )));
+
+    }
+
+    @Test
+    @DisplayName("사용자는 특정 대여 내역을 입금 확인 처리할 수 있다.")
+    void checkPaymentTest() throws Exception {
+
+        // given
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("userId", 2L);
+        doNothing().when(rentService)
+                .checkPayment(1L,2L);
+
+        mockMvc.perform(
+                        patch("/rent/histories/payment/{historyId}", 1L)
+                                .session(mockHttpSession)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("check-payment-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("historyId")
+                                        .description("대여 내역 고유번호")
                         )));
 
     }

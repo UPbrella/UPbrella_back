@@ -12,6 +12,7 @@ import upbrella.be.user.entity.User;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class HistoryTest {
 
@@ -192,5 +193,51 @@ class HistoryTest {
         assertThat(singleHistoryResponse)
                 .usingRecursiveComparison()
                 .isEqualTo(expectedResponse);
+    }
+
+    @Test
+    @DisplayName("환급 처리할 유저와 환급 처리 시각을 입력받아 해당 대여 내역을 환급 확인한다.")
+    void refundTest() {
+
+        //given
+        history = History.builder()
+                .id(33L)
+                .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
+                .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
+                .returnStoreMeta(foundStoreMeta)
+                .umbrella(foundUmbrella)
+                .user(userToRent)
+                .rentStoreMeta(foundStoreMeta)
+                .build();
+
+        // when
+        history.refund(userToRent, LocalDateTime.of(1000, 1, 2, 3, 4, 5));
+
+        // then
+        assertAll(() -> history.getRefundedBy().equals(userToRent),
+                  () -> history.getRefundedAt().equals(LocalDateTime.of(1000, 1, 2, 3, 4, 5)));
+    }
+
+    @Test
+    @DisplayName("지불 처리할 유저와 처리 시각을 입력받아 해당 대여 내역을 지불 확인 처리한다.")
+    void paidTest() {
+
+        //given
+        history = History.builder()
+                .id(33L)
+                .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
+                .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
+                .returnStoreMeta(foundStoreMeta)
+                .umbrella(foundUmbrella)
+                .user(userToRent)
+                .rentStoreMeta(foundStoreMeta)
+                .build();
+
+        // when
+        history.paid(userToRent, LocalDateTime.of(1000, 1, 2, 3, 4, 5));
+
+        // then
+        assertAll(() -> history.getPaidBy().equals(userToRent),
+                () -> history.getPaidAt().equals(LocalDateTime.of(1000, 1, 2, 3, 4, 5)));
     }
 }

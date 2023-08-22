@@ -1,0 +1,94 @@
+name: Upbrella API CI
+
+on:
+  push:
+    branches: [ "release-production" ]
+
+env:
+  WORKING_DIRECTORY: ./
+  AWS_REGION: ap-northeast-2
+  DOCKERFILE_DIRECTORY: ./.github/workflows
+  ECS_SERVICE: upbrella-api-service
+  ECS_CLUSTER: upbrella-cluster
+  ECR_REPOSITORY: upbrella-ecr
+  CONTAINER_NAME: upbrella-server
+  
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Set application properties
+      run: |
+        touch src/main/resources/application.properties
+        echo "${{ secrets.APPLICATION_PROPERTIES_DEV }}" > src/main/resources/application.properties
+     
+    - name: Build with Gradle
+      run: |
+        chmod +x gradlew
+        ./gradlew clean build
+      env:
+        WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-region: ap-northeast-2
+        role-session-name: GitHubActions
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+    
+    - name: Build & Push image
+      uses: docker/build-push-action@v2
+      id: build-image
+      with:
+        platforms: linux/amd64
+        tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+        push: true
+        file: ./.github/workflows/Dockerfile
+        builder: ${{ steps.buildx.outputs.name }}
+        context: .
+            
+    - name: Get latest ECS task definition
+      id: get-latest-task-def
+      run: |
+        TASK_DEF=$(aws ecs describe-services --cluster ${ECS_CLUSTER} --services ${ECS_SERVICE} --region ${AWS_REGION} --query "services[0].taskDefinition" --output text)
+        aws ecs describe-task-definition --task-definition $TASK_DEF --region ${AWS_REGION} --query "taskDefinition" --output json > task-definition.json
+        echo "TASK_DEF_JSON=$(pwd)/task-definition.json" >> $GITHUB_ENV
+
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ env.TASK_DEF_JSON }}
+        container-name: ${{ env.CONTAINER_NAME }}
+        image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
