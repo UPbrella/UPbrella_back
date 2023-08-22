@@ -2,7 +2,7 @@ name: Upbrella API CI
 
 on:
   push:
-    branches: [ "release-dev", "release-production" ]
+    branches: [ "release-production" ]
 
 env:
   WORKING_DIRECTORY: ./
@@ -64,7 +64,7 @@ jobs:
       id: build-image
       with:
         platforms: linux/amd64
-        tags: ${{ steps.login-ecr.outputs.registry }}/upbrella-ecr:latest
+        tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
         push: true
         file: ./.github/workflows/Dockerfile
         builder: ${{ steps.buildx.outputs.name }}
@@ -83,7 +83,7 @@ jobs:
       with:
         task-definition: ${{ env.TASK_DEF_JSON }}
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.login-ecr.outputs.registry }}/upbrella-ecr:latest
+        image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
