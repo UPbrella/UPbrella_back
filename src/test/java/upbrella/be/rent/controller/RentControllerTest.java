@@ -198,21 +198,15 @@ public class RentControllerTest extends RestDocsSupport {
                         .build())
                 ).build();
 
-        HistoryFilterRequest filter = HistoryFilterRequest.builder()
-                .build();
-
-        Pageable pageable = PageRequest.of(0, 5);
-
         given(rentService.findAllHistories(any(), any())).willReturn(response);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("refunded", "true");
         params.add("page", "0");
         params.add("size", "5");
 
         mockMvc.perform(
                         get("/rent/histories")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(filter))
                                 .params(params)
                 )
                 .andDo(print())
