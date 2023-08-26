@@ -3,6 +3,7 @@ package upbrella.be.rent.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.entity.History;
 
@@ -19,7 +20,7 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<History> findAll(HistoryFilterRequest filter) {
+    public List<History> findAll(HistoryFilterRequest filter, Pageable pageable) {
         return queryFactory
                 .selectFrom(history)
                 .join(history.user, user).fetchJoin()
@@ -31,6 +32,8 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
                 .orderBy(history.refundedAt.desc().nullsFirst(),
                         history.returnedAt.desc().nullsFirst(),
                         history.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 

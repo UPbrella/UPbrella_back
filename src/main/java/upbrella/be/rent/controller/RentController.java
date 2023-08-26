@@ -1,6 +1,7 @@
 package upbrella.be.rent.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
@@ -98,9 +99,9 @@ public class RentController {
     }
 
     @GetMapping("/histories")
-    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(HistoryFilterRequest filter, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(@ModelAttribute HistoryFilterRequest filter, Pageable pageable, HttpSession httpSession) {
 
-        RentalHistoriesPageResponse histories = rentService.findAllHistories(filter);
+        RentalHistoriesPageResponse histories = rentService.findAllHistories(filter, pageable);
 
         return ResponseEntity
                 .ok()

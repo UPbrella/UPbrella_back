@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
@@ -188,6 +190,8 @@ class RentServiceTest {
             filter = HistoryFilterRequest.builder()
                     .build();
 
+            Pageable pageable = PageRequest.of(0, 5);
+
             RentalHistoriesPageResponse historyResponse = RentalHistoriesPageResponse.builder()
                     .rentalHistoryResponsePage(
                             List.of(
@@ -207,11 +211,11 @@ class RentServiceTest {
                                             .build())
                     ).build();
 
-            given(rentRepository.findAll(filter))
+            given(rentRepository.findAll(filter, pageable))
                     .willReturn(List.of(history));
 
             // when
-            RentalHistoriesPageResponse allHistories = rentService.findAllHistories(filter);
+            RentalHistoriesPageResponse allHistories = rentService.findAllHistories(filter, pageable);
 
             //then
             assertAll(() -> assertThat(allHistories)
@@ -220,7 +224,7 @@ class RentServiceTest {
                     () -> assertThat(allHistories.getRentalHistoryResponsePage().size())
                             .isEqualTo(1),
                     () -> then(rentRepository).should(times(1))
-                            .findAll(filter)
+                            .findAll(filter, pageable)
             );
 
         }

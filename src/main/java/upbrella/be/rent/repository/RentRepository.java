@@ -12,5 +12,4 @@ public interface RentRepository extends JpaRepository<History, Long>, RentReposi
     Optional<History> findByUserIdAndReturnedAtIsNull(Long userId);
 
     long countByRentStoreMetaId(long storeId);
-
 }

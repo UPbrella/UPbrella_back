@@ -196,7 +196,7 @@ public class RentControllerTest extends RestDocsSupport {
         HistoryFilterRequest filter = HistoryFilterRequest.builder()
                 .build();
 
-        given(rentService.findAllHistories(any())).willReturn(response);
+        given(rentService.findAllHistories(any(), any())).willReturn(response);
 
         mockMvc.perform(
                         get("/rent/histories")

@@ -1,6 +1,7 @@
 package upbrella.be.rent.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
@@ -73,9 +74,9 @@ public class RentService {
         addImprovementReportFromReturnByUser(updatedHistory, request);
     }
 
-    public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
+    public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter, Pageable pageable) {
 
-        return RentalHistoriesPageResponse.of(findAllRentalHistory(filter));
+        return RentalHistoriesPageResponse.of(findAllRentalHistory(filter, pageable));
     }
 
     public AllHistoryResponse findAllHistoriesByUser(long userId) {
@@ -105,17 +106,17 @@ public class RentService {
         return rentRepository.findAllByUserId(userId);
     }
 
-    private List<RentalHistoryResponse> findAllRentalHistory(HistoryFilterRequest filter) {
+    private List<RentalHistoryResponse> findAllRentalHistory(HistoryFilterRequest filter, Pageable pageable) {
 
-        return findAll(filter)
+        return findAll(filter, pageable)
                 .stream()
                 .map(this::toRentalHistoryResponse)
                 .collect(Collectors.toList());
     }
 
-    private List<History> findAll(HistoryFilterRequest filter) {
+    private List<History> findAll(HistoryFilterRequest filter, Pageable pageable) {
 
-        return rentRepository.findAll(filter);
+        return rentRepository.findAll(filter, pageable);
     }
 
     private SingleHistoryResponse toSingleHistoryResponse(History history) {
