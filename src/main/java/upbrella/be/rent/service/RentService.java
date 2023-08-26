@@ -74,7 +74,11 @@ public class RentService {
         addImprovementReportFromReturnByUser(updatedHistory, request);
     }
 
+    @Transactional
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter, Pageable pageable) {
+
+        long countOfAllHistories = rentRepository.countAll(filter, pageable);
+        long countOfAllPages = countOfAllHistories / pageable.getPageSize() + 1;
 
         return RentalHistoriesPageResponse.of(findAllRentalHistory(filter, pageable));
     }
@@ -187,6 +191,7 @@ public class RentService {
     }
 
     private History findHistoryById(long historyId) {
+
         return rentRepository.findById(historyId)
                 .orElseThrow(() -> new NonExistingHistoryException("[ERROR] 해당 대여 기록이 없습니다."));
     }

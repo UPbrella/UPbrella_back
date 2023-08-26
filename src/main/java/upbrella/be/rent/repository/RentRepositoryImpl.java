@@ -21,6 +21,7 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
 
     @Override
     public List<History> findAll(HistoryFilterRequest filter, Pageable pageable) {
+
         return queryFactory
                 .selectFrom(history)
                 .join(history.user, user).fetchJoin()
@@ -35,6 +36,23 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
+
+    @Override
+    public long countAll(HistoryFilterRequest filter, Pageable pageable) {
+
+        return queryFactory
+                .selectFrom(history)
+                .join(history.user, user).fetchJoin()
+                .leftJoin(history.refundedBy, user).fetchJoin()
+                .join(history.umbrella, umbrella).fetchJoin()
+                .join(history.rentStoreMeta, storeMeta).fetchJoin()
+                .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
+                .where(filterRefunded(filter))
+                .orderBy(history.refundedAt.desc().nullsFirst(),
+                        history.returnedAt.desc().nullsFirst(),
+                        history.id.desc())
+                .fetchCount();
     }
 
     @Override

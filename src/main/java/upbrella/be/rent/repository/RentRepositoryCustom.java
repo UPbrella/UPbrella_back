@@ -10,5 +10,7 @@ public interface RentRepositoryCustom {
 
     List<History> findAll(HistoryFilterRequest filter, Pageable pageable);
 
+    long countAll(HistoryFilterRequest filter, Pageable pageable);
+
     List<History> findAllByUserId(long userId);
 }
