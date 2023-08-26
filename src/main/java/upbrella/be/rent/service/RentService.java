@@ -80,7 +80,7 @@ public class RentService {
         long countOfAllHistories = rentRepository.countAll(filter, pageable);
         long countOfAllPages = countOfAllHistories / pageable.getPageSize() + 1;
 
-        return RentalHistoriesPageResponse.of(findAllRentalHistory(filter, pageable));
+        return RentalHistoriesPageResponse.of(findAllRentalHistory(filter, pageable), countOfAllHistories, countOfAllPages);
     }
 
     public AllHistoryResponse findAllHistoriesByUser(long userId) {
