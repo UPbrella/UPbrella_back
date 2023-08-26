@@ -5,9 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
@@ -91,6 +95,7 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("우산 고유번호"),
                                 fieldWithPath("password").type(JsonFieldType.STRING)
                                         .description("비밀번호")
+                                        .optional()
                         )));
     }
 
@@ -196,12 +201,19 @@ public class RentControllerTest extends RestDocsSupport {
         HistoryFilterRequest filter = HistoryFilterRequest.builder()
                 .build();
 
+        Pageable pageable = PageRequest.of(0, 5);
+
         given(rentService.findAllHistories(any(), any())).willReturn(response);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", "0");
+        params.add("size", "5");
 
         mockMvc.perform(
                         get("/rent/histories")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(filter))
+                                .params(params)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -330,7 +342,7 @@ public class RentControllerTest extends RestDocsSupport {
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("userId", 2L);
         doNothing().when(rentService)
-                .checkRefund(1L,2L);
+                .checkRefund(1L, 2L);
 
         mockMvc.perform(
                         patch("/rent/histories/refund/{historyId}", 1L)
@@ -355,7 +367,7 @@ public class RentControllerTest extends RestDocsSupport {
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("userId", 2L);
         doNothing().when(rentService)
-                .checkPayment(1L,2L);
+                .checkPayment(1L, 2L);
 
         mockMvc.perform(
                         patch("/rent/histories/payment/{historyId}", 1L)
