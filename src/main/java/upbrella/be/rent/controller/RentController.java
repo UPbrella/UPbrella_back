@@ -1,5 +1,6 @@
 package upbrella.be.rent.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
+import upbrella.be.slack.service.SlackAlarmService;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
 import upbrella.be.util.CustomResponse;
@@ -27,6 +29,7 @@ public class RentController {
     private final ConditionReportService conditionReportService;
     private final ImprovementReportService improvementReportService;
     private final RentService rentService;
+    private final SlackAlarmService slackAlarmService;
 
     // 가짜 유저 사용을 위해 임시로 UserRepository 주입
     private final UserRepository userRepository;
@@ -51,7 +54,7 @@ public class RentController {
 
         // TODO: 세션을 통해 유저 꺼내기
         // 임시로 가짜 유저 사용
-        User userToRent = userRepository.findById(1L)
+        User userToRent = userRepository.findById(70L)
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
 
         rentService.addRental(rentUmbrellaByUserRequest, userToRent);
@@ -66,7 +69,7 @@ public class RentController {
     }
 
     @PatchMapping
-    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) throws JsonProcessingException {
 
         // TODO: 세션을 통해 유저 꺼내기
         /**
@@ -76,18 +79,11 @@ public class RentController {
          *                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
          */
         // 임시로 가짜 유저 사용
-        User userToReturn = User.builder()
-                .id(87L)
-                .socialId(87L)
-                .name("루크")
-                .phoneNumber("010-1234-5678")
-                .adminStatus(false)
-                .bank("우리")
-                .accountNumber("1002-892")
-                .build();
+        User userToReturn = userRepository.findById(70L).get();
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest);
 
+        slackAlarmService.notifyReturn(userToReturn, returnUmbrellaByUserRequest);
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
