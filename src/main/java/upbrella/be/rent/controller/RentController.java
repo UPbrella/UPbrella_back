@@ -82,8 +82,9 @@ public class RentController {
         User userToReturn = userRepository.findById(70L).get();
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest);
+        long unrefundedRentCount = rentService.countUnrefundedRent();
 
-        slackAlarmService.notifyReturn(userToReturn, returnUmbrellaByUserRequest);
+        slackAlarmService.notifyReturn(unrefundedRentCount);
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(

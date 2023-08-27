@@ -1,13 +1,9 @@
 package upbrella.be.slack.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
-import upbrella.be.user.entity.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,18 +14,13 @@ import static org.springframework.http.HttpMethod.POST;
 @RequiredArgsConstructor
 public class SlackAlarmService {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-    public void notifyReturn(User userToReturn, ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest) throws JsonProcessingException {
+    public void notifyReturn(long unrefundedCount) {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("--- 반납 유저 정보 ---\n")
-                .append("```")
-                .append(objectMapper.writeValueAsString(userToReturn))
-                .append("```")
-                .append("\n--- 반납 우산 정보 ---\n")
-                .append("```")
-                .append(objectMapper.writeValueAsString(returnUmbrellaByUserRequest))
-                .append("```");
+        sb.append("*우산이 반납되었습니다. 보증금을 환급해주세요.*\n\n")
+                .append("*환급 대기 건수* : ")
+                .append(unrefundedCount);
+
         send(sb.toString());
     }
 

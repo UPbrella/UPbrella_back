@@ -12,7 +12,6 @@ import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.repository.RentRepository;
-import upbrella.be.slack.service.SlackAlarmService;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -159,6 +158,11 @@ public class RentService {
 
     public long countTotalRentByStoreId(long storeId) {
         return rentRepository.countByRentStoreMetaId(storeId);
+    }
+
+    public long countUnrefundedRent() {
+
+        return rentRepository.countAllByReturnedAtIsNotNullAndPaidAtIsNotNullAndRefundedAtIsNull();
     }
 
     @Transactional
