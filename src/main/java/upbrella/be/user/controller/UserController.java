@@ -9,10 +9,7 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
-import upbrella.be.user.dto.response.AllUsersInfoResponse;
-import upbrella.be.user.dto.response.KakaoLoginResponse;
-import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
-import upbrella.be.user.dto.response.UserInfoResponse;
+import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
 import upbrella.be.user.entity.User;
@@ -40,18 +37,8 @@ public class UserController {
     @GetMapping("/loggedIn")
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
 
-        /**
-         * TODO: 세션 처리으로 로그인한 유저의 id 가져오기
-         *       interceptor에서 userId를 가져올 것인지, user 객체를 가져올 것인지 논의 후 구현
-         */
-
-        // session에서 꺼낸 것이라는 의미로 repository로부터 findById를 하지 않고 빌더를 사용해서 만들었음.
-        User loggedInUser = User.builder()
-                .id(1L)
-                .name("사용자")
-                .phoneNumber("010-0000-0000")
-                .adminStatus(false)
-                .build();
+        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
+        User user = userService.findUserById(sessionUser.getId());
 
         return ResponseEntity
                 .ok()
@@ -59,26 +46,15 @@ public class UserController {
                         "success",
                         200,
                         "로그인 유저 정보 조회 성공",
-                        UserInfoResponse.fromUser(loggedInUser)));
+                        UserInfoResponse.fromUser(user)));
     }
 
     @GetMapping("/loggedIn/umbrella")
     public ResponseEntity<CustomResponse<UmbrellaBorrowedByUserResponse>> findUmbrellaBorrowedByUser(HttpSession httpSession) {
 
-        /**
-         * TODO: 세션 처리으로 로그인한 유저의 id 가져오기
-         *       interceptor에서 userId를 가져올 것인지, user 객체를 가져올 것인지 논의 후 구현
-         */
+        SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
 
-        // session에서 꺼낸 것이라는 의미로 repository로부터 findById를 하지 않고 빌더를 사용해서 만들었음.
-        User loggedInUser = User.builder()
-                .id(72L)
-                .name("사용자")
-                .phoneNumber("010-1234-5678")
-                .adminStatus(false)
-                .build();
-
-        History rentalHistory = rentRepository.findByUserAndReturnedAtIsNull(loggedInUser.getId())
+        History rentalHistory = rentRepository.findByUserAndReturnedAtIsNull(sessionUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 사용자가 빌린 우산이 없습니다."));
 
         long borrowedUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
@@ -94,22 +70,20 @@ public class UserController {
                                 .build()));
     }
 
-    @GetMapping("/login")
+    @GetMapping("/oauth/login")
     public ResponseEntity<CustomResponse> kakaoLogin(HttpSession session, String code) {
 
         OauthToken kakaoAccessToken;
+
         try {
             kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
         } catch (HttpClientErrorException e) {
             throw new InvalidLoginCodeException("[ERROR] 로그인 코드가 유효하지 않습니다.");
         }
-        session.setAttribute("authToken", kakaoAccessToken);
 
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
-        long loginedUserId = userService.login(kakaoLoggedInUser.getId());
-        session.removeAttribute("authToken");
+        session.setAttribute("kakaoId", kakaoLoggedInUser.getId());
 
-        session.setAttribute("userId", loginedUserId);
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -119,25 +93,44 @@ public class UserController {
                         null));
     }
 
+    @GetMapping("/login")
+    public ResponseEntity<CustomResponse> upbrellaLogin(HttpSession session) {
+
+        if (session.getAttribute("kakaoId") == null) {
+            throw new NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.");
+        }
+
+        Long kakaoId = (Long) session.getAttribute("kakaoId");
+        SessionUser loggedInUser = userService.login(kakaoId);
+
+        session.removeAttribute("kakaoId");
+        session.setAttribute("user", loggedInUser);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "업브렐라 로그인 성공",
+                        null));
+    }
+
     @PostMapping("/join")
     public ResponseEntity<CustomResponse> kakaoJoin(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
-        OauthToken kakaoAccessToken = (OauthToken) session.getAttribute("authToken");
+        Long kakaoId = (Long) session.getAttribute("kakaoId");
 
-        if (session.getAttribute("userId") != null) {
+        if (session.getAttribute("user") != null) {
             throw new LoginedMemberException("[ERROR] 이미 로그인된 상태입니다.");
         }
-
-        if (kakaoAccessToken == null) {
-            throw new NotSocialLoginedException("[ERROR] 로그인을 먼저 해주세요.");
+        if (kakaoId == null) {
+            throw new NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.");
         }
 
-        KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
+        SessionUser loggedInUser = userService.join(kakaoId, joinRequest);
 
-        long loginedUserId = userService.join(kakaoLoggedInUser.getId(), joinRequest);
-
-        session.removeAttribute("authToken");
-        session.setAttribute("userId", loginedUserId);
+        session.removeAttribute("kakaoId");
+        session.setAttribute("user", loggedInUser);
 
         return ResponseEntity
                 .ok()
@@ -193,7 +186,7 @@ public class UserController {
                 ));
     }
 
-    @DeleteMapping("loggedIn")
+    @DeleteMapping("/loggedIn")
     public ResponseEntity<CustomResponse> deleteUser(HttpSession session) {
 
         long loginedUserId = (long) session.getAttribute("userId");

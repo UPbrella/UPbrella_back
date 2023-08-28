@@ -13,6 +13,7 @@ import upbrella.be.config.FixtureFactory;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleUserInfoResponse;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
@@ -68,11 +69,11 @@ class UserServiceTest {
                     .willReturn(Optional.of(user));
 
             // when
-            long loginedUserId = userService.login(user.getSocialId());
+            SessionUser loginedUserId = userService.login(user.getSocialId());
 
             // then
             assertAll(
-                    () -> assertThat(loginedUserId).isEqualTo(user.getId()),
+                    () -> assertThat(loginedUserId.getId()).isEqualTo(user.getId()),
                     () -> then(userRepository).should(times(1))
                             .findBySocialId(user.getSocialId()));
         }
@@ -122,11 +123,11 @@ class UserServiceTest {
                     .willReturn(user);
 
             // when
-            long joinedUserId = userService.join(notExistingSocialId, joinRequest);
+            SessionUser joinedUserId = userService.join(notExistingSocialId, joinRequest);
 
             // then
             assertAll(
-                    () -> assertThat(joinedUserId).isEqualTo(user.getId()),
+                    () -> assertThat(joinedUserId.getId()).isEqualTo(user.getId()),
                     () -> then(userRepository).should(times(1))
                             .save(any(User.class)),
                     () -> then(userRepository).should(times(1))
