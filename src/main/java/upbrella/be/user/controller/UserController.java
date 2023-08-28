@@ -96,11 +96,15 @@ public class UserController {
     @GetMapping("/login")
     public ResponseEntity<CustomResponse> upbrellaLogin(HttpSession session) {
 
+        if (session.getAttribute("kakaoId") == null) {
+            throw new NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.");
+        }
+
         Long kakaoId = (Long) session.getAttribute("kakaoId");
-        SessionUser loginedUserId = userService.login(kakaoId);
+        SessionUser loggedInUser = userService.login(kakaoId);
 
         session.removeAttribute("kakaoId");
-        session.setAttribute("user", loginedUserId);
+        session.setAttribute("user", loggedInUser);
 
         return ResponseEntity
                 .ok()
