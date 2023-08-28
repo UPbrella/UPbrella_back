@@ -15,6 +15,7 @@ import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 
@@ -188,4 +189,13 @@ public class FixtureBuilderFactory {
                 .set("id", buildLong(100));
     }
 
+    public static ArbitraryBuilder<SessionUser> builderSessionUser() {
+
+        return fixtureMonkey.giveMeBuilder(SessionUser.class)
+                .set("id", buildLong(100))
+                .set("socialId", buildLong(100))
+                .set("adminStatus", false)
+                .set("name", pickRandomString(nameList))
+                .set("phoneNumber", pickPhoneNumberString());
+    }
 }

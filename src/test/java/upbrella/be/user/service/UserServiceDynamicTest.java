@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.NonExistingMemberException;
@@ -51,8 +52,8 @@ class UserServiceDynamicTest {
 
         return List.of(
                 DynamicTest.dynamicTest("새로 가입한 유저는 DB에 저장된다.", () -> {
-                    long joined = userService.join(user.getSocialId(), joinRequest);
-                    Optional<User> foundUser = userRepository.findById(joined);
+                    SessionUser joined = userService.join(user.getSocialId(), joinRequest);
+                    Optional<User> foundUser = userRepository.findById(joined.getId());
 
                     assertAll(() -> assertTrue(foundUser.isPresent()),
                             () -> assertEquals(user.getName(), foundUser.get().getName()),
@@ -72,8 +73,8 @@ class UserServiceDynamicTest {
                             .isInstanceOf(NonExistingMemberException.class);
                 }),
                 DynamicTest.dynamicTest("회원 가입한 아이디로 로그인할 수 있다.", () -> {
-                    long logined = userService.login(user.getSocialId());
-                    Optional<User> foundUser = userRepository.findById(logined);
+                    SessionUser logined = userService.login(user.getSocialId());
+                    Optional<User> foundUser = userRepository.findById(logined.getId());
 
                     assertAll(() -> assertTrue(foundUser.isPresent()),
                             () -> assertEquals(user.getName(), foundUser.get().getName()),

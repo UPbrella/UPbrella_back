@@ -29,6 +29,7 @@ import upbrella.be.user.exception.*;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,10 +70,19 @@ public class UserControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 로그인된 유저 정보를 조회할 수 있다.")
     @Test
     void findUserInfoTest() throws Exception {
+        // given
+        MockHttpSession session = new MockHttpSession();
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        User user = FixtureBuilderFactory.builderUser().sample();
+
+        session.setAttribute("user", sessionUser);
+        given(userService.findUserById(anyLong()))
+                .willReturn(user);
 
         // when & then
         mockMvc.perform(
                         get("/users/loggedIn")
+                                .session(session)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-user-info-doc",
@@ -85,7 +95,11 @@ public class UserControllerTest extends RestDocsSupport {
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
-                                        .description("사용자 전화번호")
+                                        .description("사용자 전화번호"),
+                                fieldWithPath("bank").type(JsonFieldType.STRING)
+                                        .description("사용자 은행"),
+                                fieldWithPath("accountNumber").type(JsonFieldType.STRING)
+                                        .description("사용자 계좌번호")
                         )));
     }
 
@@ -93,6 +107,11 @@ public class UserControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 유저가 빌린 우산을 조회할 수 있다.")
     void findUmbrellaBorrowedByUserTest() throws Exception {
         // given
+        MockHttpSession httpSession = new MockHttpSession();
+        SessionUser user = FixtureBuilderFactory.builderSessionUser().sample();
+
+        httpSession.setAttribute("user", user);
+
         Umbrella borrowedUmbrella = FixtureBuilderFactory.builderUmbrella().sample();
         History rentalHistory = FixtureFactory.buildHistoryWithUmbrella(borrowedUmbrella);
 
@@ -102,6 +121,7 @@ public class UserControllerTest extends RestDocsSupport {
         // when
         mockMvc.perform(
                         get("/users/loggedIn/umbrella")
+                                .session(httpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-umbrella-borrowed-by-user-doc",
@@ -121,7 +141,6 @@ public class UserControllerTest extends RestDocsSupport {
         private String code;
         private OauthToken oauthToken;
         private KakaoLoginResponse kakaoLoginResponse;
-        private long userId;
         private MockHttpSession mockHttpSession = new MockHttpSession();
 
         @BeforeEach
@@ -129,7 +148,6 @@ public class UserControllerTest extends RestDocsSupport {
             code = "1kdfjq0243f";
             oauthToken = FixtureFactory.buildOauthToken();
             kakaoLoginResponse = FixtureFactory.buildKakaoLoginResponse();
-            userId = FixtureBuilderFactory.buildLong(1000);
         }
 
         @Test
@@ -143,12 +161,10 @@ public class UserControllerTest extends RestDocsSupport {
                     .willReturn(kakaoLoginResponse);
             given(kakaoOauthInfo.getLoginUri())
                     .willReturn("http://kakao.login.com");
-            given(userService.login(kakaoLoginResponse.getId()))
-                    .willReturn(userId);
 
             // when
             mockMvc.perform(
-                            get("/users/login")
+                            get("/users/oauth/login")
                                     .param("code", code)
                                     .session(mockHttpSession)
                     ).andDo(print())
@@ -163,13 +179,6 @@ public class UserControllerTest extends RestDocsSupport {
         @DisplayName("존재하지 않는 사용자는 400 에러가 반환된다.")
         void loginFail() throws Exception {
 
-            // given
-            given(oauthLoginService.getOauthToken(eq(code), any()))
-                    .willReturn(oauthToken);
-            given(oauthLoginService.processKakaoLogin(eq(oauthToken.getAccessToken()), any()))
-                    .willReturn(kakaoLoginResponse);
-            given(kakaoOauthInfo.getLoginUri())
-                    .willReturn("http://kakao.login.com");
             given(userService.login(any()))
                     .willThrow(new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."));
             MockHttpSession mockHttpSession = new MockHttpSession();
@@ -200,13 +209,37 @@ public class UserControllerTest extends RestDocsSupport {
 
             // when
             mockMvc.perform(
-                            get("/users/login")
+                            get("/users/oauth/login")
                                     .param("code", code)
                                     .session(mockHttpSession))
                     .andExpect(status().isBadRequest())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
                                     .isInstanceOf(InvalidLoginCodeException.class));
+        }
+
+        @Test
+        @DisplayName("회원인 경우 로그인이 진행된다.")
+        void upbrellaLoginTest() throws Exception {
+            // given
+            MockHttpSession session = new MockHttpSession();
+
+            SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+            session.setAttribute("kakaoId", 123123L);
+            given(userService.login(any())).willReturn(sessionUser);
+
+            // when
+
+            // then
+            mockMvc.perform(
+                            get("/users/login")
+                                    .session(session)
+                    ).andDo(print())
+                    .andExpect(status().isOk())
+                    .andDo(document("user-upbrella-login-doc",
+                            getDocumentRequest(),
+                            getDocumentResponse()
+                    ));
         }
     }
 
@@ -217,16 +250,12 @@ public class UserControllerTest extends RestDocsSupport {
         private JoinRequest joinRequest;
         private OauthToken oauthToken;
         private MockHttpSession mockHttpSession;
-        private KakaoLoginResponse kakaoLoginResponse;
-        private long userId;
 
         @BeforeEach
         void setUp() {
 
             joinRequest = FixtureBuilderFactory.builderJoinRequest().sample();
             oauthToken = FixtureFactory.buildOauthToken();
-            kakaoLoginResponse = FixtureFactory.buildKakaoLoginResponse();
-            userId = FixtureBuilderFactory.buildLong(1000);
             mockHttpSession = new MockHttpSession();
         }
 
@@ -235,13 +264,17 @@ public class UserControllerTest extends RestDocsSupport {
         void joinTest() throws Exception {
 
             // given
-            mockHttpSession.setAttribute("authToken", oauthToken);
-            given(oauthLoginService.processKakaoLogin(anyString(), anyString()))
-                    .willReturn(kakaoLoginResponse);
-            given(kakaoOauthInfo.getLoginUri())
-                    .willReturn("http://kakao.login.com");
-            given(userService.join(eq(kakaoLoginResponse.getId()), any(JoinRequest.class)))
-                    .willReturn(userId);
+            SessionUser user = SessionUser.builder()
+                    .id(1L)
+                    .socialId(12312L)
+                    .adminStatus(false)
+                    .phoneNumber("010-1234-1234")
+                    .name("홍길동")
+                    .build();
+
+            mockHttpSession.setAttribute("kakaoId", 1L);
+            given(userService.join(anyLong(), any(JoinRequest.class)))
+                    .willReturn(user);
 
             // when
             mockMvc.perform(
@@ -273,12 +306,8 @@ public class UserControllerTest extends RestDocsSupport {
         void joinedMember() throws Exception {
 
             // given
-            mockHttpSession.setAttribute("authToken", oauthToken);
-            given(oauthLoginService.processKakaoLogin(anyString(), anyString()))
-                    .willReturn(kakaoLoginResponse);
-            given(kakaoOauthInfo.getLoginUri())
-                    .willReturn("http://kakao.login.com");
-            given(userService.join(eq(kakaoLoginResponse.getId()), any(JoinRequest.class)))
+            mockHttpSession.setAttribute("kakaoId", 1L);
+            given(userService.join(anyLong(), any(JoinRequest.class)))
                     .willThrow(new ExistingMemberException("[ERROR] 이미 가입된 회원입니다."));
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
@@ -300,7 +329,7 @@ public class UserControllerTest extends RestDocsSupport {
         void loginedMember() throws Exception {
 
             // given
-            mockHttpSession.setAttribute("userId", userId);
+            mockHttpSession.setAttribute("user", SessionUser.builder().build());
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
 

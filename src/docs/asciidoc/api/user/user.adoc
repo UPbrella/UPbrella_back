@@ -8,6 +8,14 @@ include::{snippets}/user-login-doc/http-request.adoc[]
 
 include::{snippets}/user-login-doc/http-response.adoc[]
 
+=== 카카오 로그인을 통한 업브렐라 로그인
+
+==== HTTP Request
+include::{snippets}/user-upbrella-login-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-upbrella-login-doc/http-response.adoc[]
+
 === 회원 가입
 
 ==== HTTP Request
