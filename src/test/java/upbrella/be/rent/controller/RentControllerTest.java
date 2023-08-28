@@ -196,7 +196,10 @@ public class RentControllerTest extends RestDocsSupport {
                         .refundCompleted(true)
                         .etc("기타")
                         .build())
-                ).build();
+                )
+                .countOfAllPages(5)
+                .countOfAllHistories(22)
+                .build();
 
         given(rentService.findAllHistories(any(), any())).willReturn(response);
 
@@ -216,7 +219,7 @@ public class RentControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("rentalHistoryResponsePage").type(JsonFieldType.ARRAY)
+                                fieldWithPath("rentalHistoryResponsePage").type(JsonFieldType.OBJECT)
                                         .description("대여 내역 페이지 목록"),
                                 fieldWithPath("rentalHistoryResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("대여 내역 고유번호"),
@@ -245,7 +248,11 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("환불 완료 여부"),
                                 fieldWithPath("rentalHistoryResponsePage[].etc").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("기타 사항")
+                                        .description("기타 사항"),
+                                fieldWithPath("countOfAllPages").type(JsonFieldType.NUMBER)
+                                        .description("총 페이지 수"),
+                                fieldWithPath("countOfAllHistories").type(JsonFieldType.NUMBER)
+                                        .description("총 대여 내역 수")
                         )));
     }
 
