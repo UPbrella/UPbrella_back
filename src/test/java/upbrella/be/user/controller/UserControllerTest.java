@@ -184,7 +184,7 @@ public class UserControllerTest extends RestDocsSupport {
             MockHttpSession mockHttpSession = new MockHttpSession();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
-
+            mockHttpSession.setAttribute("kakaoId", 1L);
             // when
             mockMvc.perform(
                             get("/users/login")
@@ -266,10 +266,7 @@ public class UserControllerTest extends RestDocsSupport {
             // given
             SessionUser user = SessionUser.builder()
                     .id(1L)
-                    .socialId(12312L)
                     .adminStatus(false)
-                    .phoneNumber("010-1234-1234")
-                    .name("홍길동")
                     .build();
 
             mockHttpSession.setAttribute("kakaoId", 1L);

@@ -21,7 +21,7 @@ public class AdminInterceptor implements HandlerInterceptor {
         }
         if (session.getAttribute("user") != null) {
             SessionUser user = (SessionUser) session.getAttribute("user");
-            if (user.isAdminStatus() == false) {
+            if (user.getAdminStatus() == false) {
                 return false;
             }
         }
