@@ -16,8 +16,10 @@ import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
+import upbrella.be.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,11 +48,11 @@ public class RentControllerTest extends RestDocsSupport {
     @Mock
     private RentService rentService;
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     protected Object initController() {
-        return new RentController(conditionReportService, improvementReportService, rentService, userRepository);
+        return new RentController(conditionReportService, improvementReportService, rentService, userService);
     }
 
     @Test
@@ -98,6 +100,12 @@ public class RentControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
     void rentUmbrellaTest() throws Exception {
 
+        SessionUser sessionUser = SessionUser.builder()
+                .id(1L)
+                .socialId(1L)
+                .adminStatus(false)
+                .build();
+
         RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder()
                 .region("신촌")
                 .storeId(1L)
@@ -112,13 +120,17 @@ public class RentControllerTest extends RestDocsSupport {
                 .adminStatus(false)
                 .build();
 
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("user", sessionUser);
 
-        given(userRepository.findById(1L)).willReturn(Optional.of(newUser));
+
+        given(userService.findUserById(1L)).willReturn(newUser);
 
         mockMvc.perform(
                         post("/rent")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .session(session)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -142,6 +154,12 @@ public class RentControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     void returnUmbrellaTest() throws Exception {
 
+        SessionUser sessionUser = SessionUser.builder()
+                .id(1L)
+                .socialId(1L)
+                .adminStatus(false)
+                .build();
+
         ReturnUmbrellaByUserRequest request = ReturnUmbrellaByUserRequest.builder()
                 .returnStoreId(1L)
                 .bank("우리은행")
@@ -149,10 +167,15 @@ public class RentControllerTest extends RestDocsSupport {
                 .improvementReportContent("개선 요청 사항")
                 .build();
 
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("user", sessionUser);
+
+
         mockMvc.perform(
                         patch("/rent")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .session(session)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
