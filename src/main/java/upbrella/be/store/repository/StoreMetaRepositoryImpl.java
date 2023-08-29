@@ -17,7 +17,6 @@ public class StoreMetaRepositoryImpl implements StoreMetaRepositoryCustom {
     @Override
     public List<StoreMeta> findAllStoresByClassification(long classificationId) {
 
-        // StoreMeta List로 가져간다음 통계값은 Umbrella에서 GroupBy로 얻은다음에 합치기
         return queryFactory
                 .selectFrom(storeMeta)
                 .leftJoin(storeMeta.businessHours, businessHour).fetchJoin()

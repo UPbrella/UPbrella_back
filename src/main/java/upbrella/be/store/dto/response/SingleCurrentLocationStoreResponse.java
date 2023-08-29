@@ -16,6 +16,7 @@ public class SingleCurrentLocationStoreResponse {
     private long rentableUmbrellasCount;
 
     public static SingleCurrentLocationStoreResponse fromStoreMeta(boolean openStatus, long rentableUmbrellasCount, StoreMeta storeMeta) {
+
         return SingleCurrentLocationStoreResponse.builder()
                 .id(storeMeta.getId())
                 .name(storeMeta.getName())
