@@ -125,6 +125,7 @@ class StoreControllerTest extends RestDocsSupport {
                                                         .latitude(37.503716)
                                                         .longitude(127.053718)
                                                         .openStatus(true)
+                                                        .rentableUmbrellasCount(3)
                                                         .build()))
                                 .build());
 
