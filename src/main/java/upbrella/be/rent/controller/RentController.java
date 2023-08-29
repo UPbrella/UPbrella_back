@@ -14,13 +14,9 @@ import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
-<<<<<<< HEAD
 import upbrella.be.slack.service.SlackAlarmService;
-=======
 import upbrella.be.user.dto.response.SessionUser;
->>>>>>> dev
 import upbrella.be.user.entity.User;
-import upbrella.be.user.repository.UserRepository;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
@@ -34,14 +30,8 @@ public class RentController {
     private final ConditionReportService conditionReportService;
     private final ImprovementReportService improvementReportService;
     private final RentService rentService;
-<<<<<<< HEAD
-    private final SlackAlarmService slackAlarmService;
-
-    // 가짜 유저 사용을 위해 임시로 UserRepository 주입
-    private final UserRepository userRepository;
-=======
     private final UserService userService;
->>>>>>> dev
+    private final SlackAlarmService slackAlarmService;
 
     @GetMapping("/form/{umbrellaId}")
     public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId, HttpSession httpSession) {
@@ -80,7 +70,6 @@ public class RentController {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());
-        // 임시로 가짜 유저 사용
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest);
         long unrefundedRentCount = rentService.countUnrefundedRent();

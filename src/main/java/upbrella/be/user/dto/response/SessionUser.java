@@ -4,9 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import upbrella.be.user.entity.User;
 
+import java.io.Serializable;
+
 @Getter
 @Builder
-public class SessionUser {
+public class SessionUser implements Serializable {
 
     private long id;
     private long socialId;
