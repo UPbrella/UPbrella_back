@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface StoreMetaRepositoryCustom {
 
-    List<StoreMeta> findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(double latitudeFrom, double latitudeTo, double longitudeFrom, double longitudeTo);
+    List<StoreMeta> findAllStoresByClassification(long classificationId);
 }

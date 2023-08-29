@@ -15,14 +15,13 @@ public class StoreMetaRepositoryImpl implements StoreMetaRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<StoreMeta> findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(double latitudeFrom, double latitudeTo, double longitudeFrom, double longitudeTo) {
+    public List<StoreMeta> findAllStoresByClassification(long classificationId) {
 
         return queryFactory
                 .selectFrom(storeMeta)
                 .leftJoin(storeMeta.businessHours, businessHour).fetchJoin()
                 .where(storeMeta.deleted.eq(false)
-                        .and(storeMeta.latitude.between(latitudeFrom, latitudeTo))
-                        .and(storeMeta.longitude.between(longitudeFrom, longitudeTo)))
+                        .and(storeMeta.classification.id.eq(classificationId)))
                 .distinct()
                 .fetch();
 
