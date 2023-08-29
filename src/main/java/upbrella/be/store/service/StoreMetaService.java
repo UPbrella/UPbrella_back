@@ -3,7 +3,6 @@ package upbrella.be.store.service;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
@@ -54,20 +53,17 @@ public class StoreMetaService {
         return CurrentUmbrellaStoreResponse.fromUmbrella(foundUmbrella);
     }
 
-    public AllCurrentLocationStoreResponse findStoresInCurrentMap(CoordinateRequest coordinateRequest, LocalDateTime currentTime) {
+    public AllCurrentLocationStoreResponse findStoresInCurrentMap(long classificationId, LocalDateTime currentTime) {
 
-        return AllCurrentLocationStoreResponse.ofCreate(findAllStores(coordinateRequest, currentTime));
+        return AllCurrentLocationStoreResponse.ofCreate(findAllStores(classificationId, currentTime));
     }
 
-    private List<SingleCurrentLocationStoreResponse> findAllStores(CoordinateRequest coordinateRequest, LocalDateTime currentTime) {
+    private List<SingleCurrentLocationStoreResponse> findAllStores(long classificationId, LocalDateTime currentTime) {
 
-        List<StoreMeta> storeMetaListInCurrentMap = storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(
-                coordinateRequest.getLatitudeFrom(), coordinateRequest.getLatitudeTo(),
-                coordinateRequest.getLongitudeFrom(), coordinateRequest.getLongitudeTo()
-        );
+        List<StoreMeta> storeMetaListInCurrentMap = storeMetaRepository.findAllStoresByClassification(classificationId);
 
         return storeMetaListInCurrentMap.stream()
-                .map(storeMeta -> mapToSingleCurrentLocationStoreResponse(storeMeta, currentTime))
+                .map(storeMeta -> mapToSingleCurrentLocationStoreResponse(storeMeta, umbrellaRepository.countRentableUmbrellasByStore(storeMeta.getId()), currentTime))
                 .collect(Collectors.toList());
     }
 
@@ -83,9 +79,9 @@ public class StoreMetaService {
                                 && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));
     }
 
-    private SingleCurrentLocationStoreResponse mapToSingleCurrentLocationStoreResponse(StoreMeta storeMeta, LocalDateTime currentTime) {
+    private SingleCurrentLocationStoreResponse mapToSingleCurrentLocationStoreResponse(StoreMeta storeMeta, long rentableUmbrellaCount, LocalDateTime currentTime) {
 
-        return SingleCurrentLocationStoreResponse.fromStoreMeta(isOpenStore(storeMeta, currentTime), storeMeta);
+        return SingleCurrentLocationStoreResponse.fromStoreMeta(isOpenStore(storeMeta, currentTime), rentableUmbrellaCount, storeMeta);
     }
 
     @Transactional

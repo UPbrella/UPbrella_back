@@ -31,12 +31,13 @@ class StoreMetaRepositoryImplTest {
     @Autowired
     private EntityManager em;
     private StoreMeta expectedStoreMeta;
+    private Classification classification;
 
     @BeforeEach
     void setUp() {
 
         // given
-        Classification classification = FixtureBuilderFactory.builderClassification()
+        classification = FixtureBuilderFactory.builderClassification()
                 .set("type", ClassificationType.CLASSIFICATION)
                 .set("id", null).sample();
 
@@ -71,11 +72,11 @@ class StoreMetaRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("지정한 위도, 경도 범위 내의 협업 지점의 메타 정보를 조회한다.")
+    @DisplayName("지정한 대분류 고유번호에 해당하는 협업 지점의 메타 정보를 조회한다.")
     void findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween() {
 
         // when
-        List<StoreMeta> storeMetas = storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(20.0, 40.0, 40.0, 60.0);
+        List<StoreMeta> storeMetas = storeMetaRepository.findAllStoresByClassification(classification.getId());
 
         // then
         assertAll(

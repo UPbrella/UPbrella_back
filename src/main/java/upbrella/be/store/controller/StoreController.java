@@ -38,8 +38,8 @@ public class StoreController {
                         storeDetailService.findStoreDetailByStoreMetaId(storeId)));
     }
 
-    @GetMapping("/location")
-    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(HttpSession session, @ModelAttribute CoordinateRequest coordinateRequest) {
+    @GetMapping("/classification/{classificationId}")
+    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(HttpSession session, @PathVariable long classificationId) {
 
         return ResponseEntity
                 .ok()
@@ -47,7 +47,7 @@ public class StoreController {
                         "success",
                         200,
                         "현재 위치 기준 가게 조회 성공",
-                        storeMetaService.findStoresInCurrentMap(coordinateRequest, LocalDateTime.now())));
+                        storeMetaService.findStoresInCurrentMap(classificationId, LocalDateTime.now())));
     }
 
     @GetMapping("/location/{umbrellaId}")

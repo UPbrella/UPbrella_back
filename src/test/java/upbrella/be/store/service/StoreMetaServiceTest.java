@@ -9,8 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import upbrella.be.config.FixtureBuilderFactory;
-import upbrella.be.store.dto.request.CoordinateRequest;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
@@ -19,7 +17,6 @@ import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.entity.*;
 import upbrella.be.store.exception.DeletedStoreDetailException;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
-import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
@@ -148,7 +145,7 @@ class StoreMetaServiceTest {
     }
 
     @Nested
-    @DisplayName("현재 지도 상에 보이는 위도, 경도와 현재 시각을 입력받아")
+    @DisplayName("대분류 태그 ID를 입력받아")
     class findStoresInCurrentMapTest {
         private List<StoreMeta> storeMetaList = new ArrayList<>();
 
@@ -223,15 +220,15 @@ class StoreMetaServiceTest {
         }
 
         @Test
-        @DisplayName("지도 상의 협업 지점과 현재 시각을 토대로 영업 여부를 판단하여 정보를 반환한다.")
+        @DisplayName("대분류에 해당하는 협업 지점과 현재 시각을 토대로 영업 여부를 판단하여 정보를 반환한다.")
         void success() {
 
             //given
-            given(storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(3.0, 5.0, 2.0, 4.0))
+            given(storeMetaRepository.findAllStoresByClassification(1L))
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023, 8, 4, 13, 0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(1L, LocalDateTime.of(2023, 8, 4, 13, 0));
 
             //then
             assertAll(
@@ -248,11 +245,11 @@ class StoreMetaServiceTest {
         void isNotActiveStore() {
 
             //given
-            given(storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(3.0, 5.0, 2.0, 4.0))
+            given(storeMetaRepository.findAllStoresByClassification(1L))
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023, 8, 4, 13, 0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(1L, LocalDateTime.of(2023, 8, 4, 13, 0));
 
             //then
             assertAll(
@@ -268,11 +265,11 @@ class StoreMetaServiceTest {
         void isNotOpen() {
 
             //given
-            given(storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(3.0, 5.0, 2.0, 4.0))
+            given(storeMetaRepository.findAllStoresByClassification(1L))
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(2023, 8, 4, 3, 0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(1L, LocalDateTime.of(2023, 8, 4, 3, 0));
 
             //then
             assertAll(
@@ -289,11 +286,11 @@ class StoreMetaServiceTest {
         void empty() {
 
             //given
-            given(storeMetaRepository.findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween(3.0, 5.0, 2.0, 4.0))
+            given(storeMetaRepository.findAllStoresByClassification(1L))
                     .willReturn(List.of());
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(new CoordinateRequest(3.0, 5.0, 2.0, 4.0), LocalDateTime.of(1995, 7, 18, 13, 0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(1L, LocalDateTime.of(1995, 7, 18, 13, 0));
 
             //then
             assertThat(storesInCurrentMap.getStores().size())

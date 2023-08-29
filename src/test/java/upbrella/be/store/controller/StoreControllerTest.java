@@ -24,8 +24,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -109,16 +108,13 @@ class StoreControllerTest extends RestDocsSupport {
     }
 
     @Test
-    @DisplayName("사용자는 우산의 위도, 경도 범위로 협업지점을 조회할 수 있다.")
+    @DisplayName("사용자는 협업지점 대분류 ID로 협업지점 목록을 조회할 수 있다.")
     void test() throws Exception {
 
         // given
-        final double latitudeFrom = 37.5666103;
-        final double latitudeTo = 77.5666103;
-        final double longitudeFrom = 36.9783882;
-        final double longitudeTo = 126.9783882;
+        final long classificationId = 1L;
 
-        given(storeMetaService.findStoresInCurrentMap(any(CoordinateRequest.class), any(LocalDateTime.class)))
+        given(storeMetaService.findStoresInCurrentMap(anyLong(), any(LocalDateTime.class)))
                 .willReturn(
                         AllCurrentLocationStoreResponse.builder()
                                 .stores(
@@ -129,31 +125,22 @@ class StoreControllerTest extends RestDocsSupport {
                                                         .latitude(37.503716)
                                                         .longitude(127.053718)
                                                         .openStatus(true)
+                                                        .rentableUmbrellasCount(3)
                                                         .build()))
                                 .build());
 
         // when & then
         mockMvc.perform(
-                        get("/stores/location")
-                                .param("latitudeFrom", String.valueOf(latitudeFrom))
-                                .param("latitudeTo", String.valueOf(latitudeTo))
-                                .param("longitudeFrom", String.valueOf(longitudeFrom))
-                                .param("longitudeTo", String.valueOf(longitudeTo))
+                        get("/stores/classification/{classificationId}", classificationId)
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-find-by-location-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        requestParameters(
-                                parameterWithName("latitudeFrom")
-                                        .description("위도 경계 시작"),
-                                parameterWithName("latitudeTo")
-                                        .description("위도 경계 종료"),
-                                parameterWithName("longitudeFrom")
-                                        .description("경도 경계 시작"),
-                                parameterWithName("longitudeTo")
-                                        .description("경도 경계 종료")
+                        pathParameters(
+                                parameterWithName("classificationId")
+                                        .description("대분류 고유번호")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
@@ -168,8 +155,10 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("stores[].latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
                                 fieldWithPath("stores[].longitude").type(JsonFieldType.NUMBER)
-                                        .description("경도")
-                        )));
+                                        .description("경도"),
+                                fieldWithPath("stores[].rentableUmbrellasCount").type(JsonFieldType.NUMBER)
+                                        .description("대여 가능 우산 개수")
+                                )));
     }
 
     @Test
