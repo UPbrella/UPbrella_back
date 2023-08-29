@@ -13,14 +13,17 @@ public class SingleCurrentLocationStoreResponse {
     private boolean openStatus;
     private double latitude;
     private double longitude;
+    private long rentableUmbrellasCount;
 
-    public static SingleCurrentLocationStoreResponse fromStoreMeta(boolean openStatus, StoreMeta storeMeta) {
+    public static SingleCurrentLocationStoreResponse fromStoreMeta(boolean openStatus, long rentableUmbrellasCount, StoreMeta storeMeta) {
+
         return SingleCurrentLocationStoreResponse.builder()
                 .id(storeMeta.getId())
                 .name(storeMeta.getName())
                 .openStatus(openStatus)
                 .latitude(storeMeta.getLatitude())
                 .longitude(storeMeta.getLongitude())
+                .rentableUmbrellasCount(rentableUmbrellasCount)
                 .build();
     }
 }
