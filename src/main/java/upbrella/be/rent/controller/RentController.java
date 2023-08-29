@@ -1,5 +1,6 @@
 package upbrella.be.rent.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,9 @@ import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
+import upbrella.be.slack.service.SlackAlarmService;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.entity.User;
-import upbrella.be.user.repository.UserRepository;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
@@ -30,6 +31,7 @@ public class RentController {
     private final ImprovementReportService improvementReportService;
     private final RentService rentService;
     private final UserService userService;
+    private final SlackAlarmService slackAlarmService;
 
     @GetMapping("/form/{umbrellaId}")
     public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId, HttpSession httpSession) {
@@ -64,14 +66,15 @@ public class RentController {
     }
 
     @PatchMapping
-    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) throws JsonProcessingException {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());
-        // 임시로 가짜 유저 사용
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest);
+        long unrefundedRentCount = rentService.countUnrefundedRent();
 
+        slackAlarmService.notifyReturn(unrefundedRentCount);
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
