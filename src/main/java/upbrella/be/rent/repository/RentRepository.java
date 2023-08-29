@@ -13,4 +13,5 @@ public interface RentRepository extends JpaRepository<History, Long>, RentReposi
 
     long countByRentStoreMetaId(long storeId);
 
+    long countAllByReturnedAtIsNotNullAndPaidAtIsNotNullAndRefundedAtIsNull();
 }
