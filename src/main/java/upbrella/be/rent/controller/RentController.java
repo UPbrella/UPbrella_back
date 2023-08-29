@@ -14,9 +14,14 @@ import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
+<<<<<<< HEAD
 import upbrella.be.slack.service.SlackAlarmService;
+=======
+import upbrella.be.user.dto.response.SessionUser;
+>>>>>>> dev
 import upbrella.be.user.entity.User;
 import upbrella.be.user.repository.UserRepository;
+import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
@@ -29,10 +34,14 @@ public class RentController {
     private final ConditionReportService conditionReportService;
     private final ImprovementReportService improvementReportService;
     private final RentService rentService;
+<<<<<<< HEAD
     private final SlackAlarmService slackAlarmService;
 
     // 가짜 유저 사용을 위해 임시로 UserRepository 주입
     private final UserRepository userRepository;
+=======
+    private final UserService userService;
+>>>>>>> dev
 
     @GetMapping("/form/{umbrellaId}")
     public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId, HttpSession httpSession) {
@@ -52,10 +61,8 @@ public class RentController {
     @PostMapping
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
-        // TODO: 세션을 통해 유저 꺼내기
-        // 임시로 가짜 유저 사용
-        User userToRent = userRepository.findById(70L)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        User userToRent = userService.findUserById(user.getId());
 
         rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
@@ -71,15 +78,9 @@ public class RentController {
     @PatchMapping
     public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) throws JsonProcessingException {
 
-        // TODO: 세션을 통해 유저 꺼내기
-        /**
-         * 세션 처리 이후 로직
-         *
-         * User userToReturn = userRepository.findById(87L)
-         *                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 유저 고유번호입니다."));
-         */
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        User userToReturn = userService.findUserById(user.getId());
         // 임시로 가짜 유저 사용
-        User userToReturn = userRepository.findById(70L).get();
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest);
         long unrefundedRentCount = rentService.countUnrefundedRent();
@@ -111,8 +112,6 @@ public class RentController {
 
     @GetMapping("/histories/status")
     public ResponseEntity<CustomResponse<ConditionReportPageResponse>> findConditionReports(HttpSession httpSession) {
-
-        // TODO: 세션 정보로 관리자 식별
 
         ConditionReportPageResponse conditionReports = conditionReportService.findAll();
 
