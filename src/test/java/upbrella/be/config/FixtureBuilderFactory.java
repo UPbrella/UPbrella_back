@@ -5,6 +5,7 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
+import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreMeta;
@@ -18,6 +19,8 @@ import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
+
+import java.time.LocalDateTime;
 
 public class FixtureBuilderFactory {
 
@@ -197,5 +200,22 @@ public class FixtureBuilderFactory {
                 .set("adminStatus", false)
                 .set("name", pickRandomString(nameList))
                 .set("phoneNumber", pickPhoneNumberString());
+    }
+
+    public static ArbitraryBuilder<RentalHistoryResponse> builderRentalHistoryResponse() {
+
+        return fixtureMonkey.giveMeBuilder(RentalHistoryResponse.class)
+                .set("id", buildLong(10000))
+                .set("name", pickRandomString(nameList))
+                .set("phoneNumber", pickPhoneNumberString())
+                .set("rentStoreName", pickRandomString(cafeList))
+                .set("rentAt", LocalDateTime.now())
+                .set("elapsedDay", buildInteger(100))
+                .set("umbrellaUuid", buildLong(100))
+                .set("returnStoreName", pickRandomString(cafeList))
+                .set("returnAt", LocalDateTime.now())
+                .set("totalRentalDay", buildInteger(100))
+                .set("refundCompleted", false)
+                .set("etc", pickRandomString(nameList));
     }
 }
