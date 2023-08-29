@@ -16,14 +16,13 @@ import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
+import upbrella.be.slack.service.SlackAlarmService;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.entity.User;
-import upbrella.be.user.repository.UserRepository;
 import upbrella.be.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -50,9 +49,12 @@ public class RentControllerTest extends RestDocsSupport {
     @Mock
     private UserService userService;
 
+    @Mock
+    private SlackAlarmService slackAlarmService;
+
     @Override
     protected Object initController() {
-        return new RentController(conditionReportService, improvementReportService, rentService, userService);
+        return new RentController(conditionReportService, improvementReportService, rentService, userService, slackAlarmService);
     }
 
     @Test
