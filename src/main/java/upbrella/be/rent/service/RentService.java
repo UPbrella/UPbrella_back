@@ -160,6 +160,11 @@ public class RentService {
         return rentRepository.countByRentStoreMetaId(storeId);
     }
 
+    public long countUnrefundedRent() {
+
+        return rentRepository.countAllByReturnedAtIsNotNullAndPaidAtIsNotNullAndRefundedAtIsNull();
+    }
+
     @Transactional
     public void checkRefund(long historyId, long userId) {
 

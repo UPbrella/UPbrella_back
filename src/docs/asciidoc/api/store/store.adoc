@@ -10,12 +10,12 @@ include::{snippets}/store-find-by-id-doc/path-parameters.adoc[]
 include::{snippets}/store-find-by-id-doc/http-response.adoc[]
 include::{snippets}/store-find-by-id-doc/response-fields-data.adoc[]
 
-=== 현 위치에서 보여지는 협업 지점 목록
+=== 대분류 태그 별 협업 지점 목록
 
 ==== HTTP Request
 
 include::{snippets}/store-find-by-location-doc/http-request.adoc[]
-include::{snippets}/store-find-by-location-doc/request-parameters.adoc[]
+include::{snippets}/store-find-by-location-doc/path-parameters.adoc[]
 
 
 ==== HTTP Response
