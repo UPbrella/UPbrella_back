@@ -11,6 +11,7 @@ import upbrella.be.rent.dto.response.RentFormResponse;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
+import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.repository.RentRepository;
@@ -47,6 +48,11 @@ public class RentService {
 
     @Transactional
     public History addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
+
+        rentRepository.findByUserAndReturnedAtIsNull(userToRent.getId())
+                .ifPresent(history -> {
+                    throw new ExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 있습니다.");
+                });
 
         Umbrella willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.getUmbrellaId());
 
