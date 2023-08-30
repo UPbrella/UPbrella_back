@@ -17,11 +17,13 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
+import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
@@ -158,7 +160,8 @@ class RentServiceTest {
                             .findUmbrellaById(99L),
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(25L),
-                    () -> then(rentRepository).shouldHaveNoInteractions()
+                    () -> then(rentRepository).should(times(1))
+                            .findByUserAndReturnedAtIsNull(userToRent.getId())
             );
         }
 
@@ -175,9 +178,7 @@ class RentServiceTest {
                             rentService.addRental(rentUmbrellaByUserRequest, userToRent))
                             .isInstanceOf(IllegalArgumentException.class),
                     () -> then(umbrellaService).should(times(1))
-                            .findUmbrellaById(99L),
-                    () -> then(storeMetaService).shouldHaveNoInteractions(),
-                    () -> then(rentRepository).shouldHaveNoInteractions()
+                            .findUmbrellaById(99L)
             );
         }
     }
