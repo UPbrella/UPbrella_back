@@ -211,11 +211,14 @@ public class RentControllerTest extends RestDocsSupport {
                         .rentStoreName("대여점 이름")
                         .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
                         .elapsedDay(3)
+                        .paid(true)
                         .umbrellaUuid(30L)
                         .returnStoreName("반납점 이름")
                         .returnAt(LocalDateTime.now())
                         .totalRentalDay(5)
                         .refundCompleted(true)
+                        .bank("우리은행")
+                        .accountNumber("1002-111-111111")
                         .etc("기타")
                         .build())
                 )
@@ -255,6 +258,8 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("대여 시간"),
                                 fieldWithPath("rentalHistoryResponsePage[].elapsedDay").type(JsonFieldType.NUMBER)
                                         .description("대여 기간"),
+                                fieldWithPath("rentalHistoryResponsePage[].paid").type(JsonFieldType.BOOLEAN)
+                                        .description("보증금 입금 여부"),
                                 fieldWithPath("rentalHistoryResponsePage[].umbrellaUuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("rentalHistoryResponsePage[].returnStoreName").type(JsonFieldType.STRING)
@@ -268,6 +273,12 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("총 대여 기간"),
                                 fieldWithPath("rentalHistoryResponsePage[].refundCompleted").type(JsonFieldType.BOOLEAN)
                                         .description("환불 완료 여부"),
+                                fieldWithPath("rentalHistoryResponsePage[].bank").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("환불 받을 은행"),
+                                fieldWithPath("rentalHistoryResponsePage[].accountNumber").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("환불 받을 계좌번호"),
                                 fieldWithPath("rentalHistoryResponsePage[].etc").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("기타 사항"),

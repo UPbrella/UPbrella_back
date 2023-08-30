@@ -102,11 +102,14 @@ public class FixtureFactory {
                 .set("rentStoreName", history.getRentStoreMeta().getName())
                 .set("rentAt", history.getRentedAt())
                 .set("elapsedDay", calElapsedDay(history))
+                .set("paid", history.getPaidAt() != null)
                 .set("umbrellaUuid", history.getUmbrella().getUuid())
                 .set("returnStoreName", history.getReturnStoreMeta().getName())
                 .set("returnAt", history.getReturnedAt())
                 .set("totalRentalDay", history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear())
                 .set("refundCompleted", true)
+                .set("bank", history.getBank())
+                .set("accountNumber", history.getAccountNumber())
                 .set("etc", history.getEtc())
                 .sample();
     }

@@ -26,7 +26,6 @@ public class RentalHistoryResponse {
     private boolean paid;
     private String bank;
     private String accountNumber;
-    // TODO: 보증금 입금 여부, 환급 은행, 환급 계좌번호
     private String etc;
 
     public static RentalHistoryResponse createReturnedHistory(History history, int elapsedDay, int totalRentalDay, boolean isReturned) {
@@ -38,7 +37,7 @@ public class RentalHistoryResponse {
                 .rentStoreName(history.getRentStoreMeta().getName())
                 .rentAt(history.getRentedAt())
                 .elapsedDay(elapsedDay)
-                .paid(timeToBoolean(history.getPaidAt()))
+                .paid(history.getPaidAt() != null)
                 .umbrellaUuid(history.getUmbrella().getUuid())
                 .returnStoreName(history.getReturnStoreMeta().getName())
                 .returnAt(history.getReturnedAt())
@@ -59,21 +58,12 @@ public class RentalHistoryResponse {
                 .rentStoreName(history.getRentStoreMeta().getName())
                 .rentAt(history.getRentedAt())
                 .elapsedDay(elapsedDay)
-                .paid(timeToBoolean(history.getPaidAt()))
+                .paid(history.getPaidAt() != null)
                 .umbrellaUuid(history.getUmbrella().getUuid())
                 .refundCompleted(isReturned)
                 .bank(history.getBank())
                 .accountNumber(history.getAccountNumber())
                 .etc(history.getEtc())
                 .build();
-    }
-
-    private static boolean timeToBoolean(LocalDateTime time) {
-
-        if (time != null) {
-            return true;
-        }
-
-        return false;
     }
 }

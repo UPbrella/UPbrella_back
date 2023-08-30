@@ -217,6 +217,9 @@ public class FixtureBuilderFactory {
                 .set("paidAt", LocalDateTime.of(2021, 1, 1, 0, 0, 0))
                 .set("refundedAt", LocalDateTime.of(2021, 1, 1, 0, 0, 1))
                 .set("refundedBy", builderUser().sample())
+                .set("paidBy", builderUser().sample())
+                .set("bank", pickRandomString(bankList))
+                .set("accountNumber", pickAccountNumberString())
                 .set("etc", pickRandomString(etcList));
     }
 }
