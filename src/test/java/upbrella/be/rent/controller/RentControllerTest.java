@@ -5,15 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
@@ -214,7 +211,7 @@ public class RentControllerTest extends RestDocsSupport {
                         .rentStoreName("대여점 이름")
                         .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
                         .elapsedDay(3)
-                        .umbrellaUuid(30)
+                        .umbrellaUuid(30L)
                         .returnStoreName("반납점 이름")
                         .returnAt(LocalDateTime.now())
                         .totalRentalDay(5)
@@ -222,8 +219,8 @@ public class RentControllerTest extends RestDocsSupport {
                         .etc("기타")
                         .build())
                 )
-                .countOfAllPages(5)
-                .countOfAllHistories(22)
+                .countOfAllPages(5L)
+                .countOfAllHistories(22L)
                 .build();
 
         given(rentService.findAllHistories(any(), any())).willReturn(response);
@@ -244,7 +241,7 @@ public class RentControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("rentalHistoryResponsePage").type(JsonFieldType.OBJECT)
+                                fieldWithPath("rentalHistoryResponsePage").type(JsonFieldType.ARRAY)
                                         .description("대여 내역 페이지 목록"),
                                 fieldWithPath("rentalHistoryResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("대여 내역 고유번호"),

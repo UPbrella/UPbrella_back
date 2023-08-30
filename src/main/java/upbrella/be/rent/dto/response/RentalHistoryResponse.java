@@ -23,6 +23,7 @@ public class RentalHistoryResponse {
     private LocalDateTime returnAt;
     private Integer totalRentalDay;
     private boolean refundCompleted;
+    // TODO: 보증금 입금 여부, 환급 은행, 환급 계좌번호
     private String etc;
 
     public static RentalHistoryResponse createReturnedHistory(History history, int elapsedDay, int totalRentalDay, boolean isReturned) {

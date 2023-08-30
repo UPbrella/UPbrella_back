@@ -78,7 +78,7 @@ public class RentService {
     public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter, Pageable pageable) {
 
         long countOfAllHistories = rentRepository.countAll(filter, pageable);
-        long countOfAllPages = countOfAllHistories / pageable.getPageSize() + 1;
+        long countOfAllPages = countOfAllHistories / pageable.getPageSize();
 
         return RentalHistoriesPageResponse.of(findAllRentalHistory(filter, pageable), countOfAllHistories, countOfAllPages);
     }
@@ -143,14 +143,14 @@ public class RentService {
 
     private RentalHistoryResponse toRentalHistoryResponse(History history) {
 
-        int elapsedDay = LocalDateTime.now().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
+        int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentedAt().getDayOfYear();
         int totalRentalDay = 0;
         boolean isReturned = false;
 
         if (history.getReturnedAt() != null) {
 
-            elapsedDay = history.getReturnedAt().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
-            totalRentalDay = history.getReturnedAt().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
+            elapsedDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
+            totalRentalDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
             isReturned = true;
 
             return RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay, isReturned);

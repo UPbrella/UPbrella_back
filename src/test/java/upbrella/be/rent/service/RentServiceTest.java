@@ -10,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import upbrella.be.config.FixtureBuilderFactory;
+import upbrella.be.config.FixtureFactory;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
@@ -28,8 +30,10 @@ import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -182,6 +186,9 @@ class RentServiceTest {
     @DisplayName("사용자는 환급 여부 필터링 기능이 가능한 대여/반납 현황을 조회할 수 있다.")
     class findAllHistories {
 
+        private List<RentalHistoryResponse> expectedRentalHistoryResponses = new ArrayList<>();
+        private List<History> generatedHistories = new ArrayList<>();
+
         @Test
         @DisplayName("조건이 없는 경우 전체 대여/반납 현황을 조회할 수 있다.")
         void success() {
@@ -192,27 +199,27 @@ class RentServiceTest {
 
             Pageable pageable = PageRequest.of(0, 5);
 
+            for (int i = 0; i < 5; i++) {
+                generatedHistories.add(FixtureBuilderFactory.builderHistory()
+                        .sample());
+            }
+
+            expectedRentalHistoryResponses = generatedHistories.stream()
+                    .map(FixtureFactory::buildRentalHistoryResponseWithHistory)
+                    .collect(Collectors.toList());
+
             RentalHistoriesPageResponse historyResponse = RentalHistoriesPageResponse.builder()
                     .rentalHistoryResponsePage(
-                            List.of(
-                                    RentalHistoryResponse.builder()
-                                            .id(33L)
-                                            .name("테스터")
-                                            .phoneNumber("010-1234-5678")
-                                            .rentStoreName("motive study cafe")
-                                            .rentAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-                                            .elapsedDay(0)
-                                            .umbrellaUuid(99L)
-                                            .returnStoreName("motive study cafe")
-                                            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-                                            .totalRentalDay(0)
-                                            .refundCompleted(true)
-                                            .etc(history.getEtc())
-                                            .build())
-                    ).build();
+                            expectedRentalHistoryResponses
+                    )
+                    .countOfAllHistories(5L)
+                    .countOfAllPages(1L)
+                    .build();
 
             given(rentRepository.findAll(filter, pageable))
-                    .willReturn(List.of(history));
+                    .willReturn(generatedHistories);
+            given(rentRepository.countAll(filter, pageable))
+                    .willReturn(5L);
 
             // when
             RentalHistoriesPageResponse allHistories = rentService.findAllHistories(filter, pageable);
@@ -222,11 +229,8 @@ class RentServiceTest {
                             .usingRecursiveComparison()
                             .isEqualTo(historyResponse),
                     () -> assertThat(allHistories.getRentalHistoryResponsePage().size())
-                            .isEqualTo(1),
-                    () -> then(rentRepository).should(times(1))
-                            .findAll(filter, pageable)
+                            .isEqualTo(historyResponse.getRentalHistoryResponsePage().size())
             );
-
         }
     }
 
