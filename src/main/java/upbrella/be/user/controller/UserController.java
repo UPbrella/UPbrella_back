@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
@@ -30,7 +29,6 @@ public class UserController {
     private final OauthLoginService oauthLoginService;
     private final UserService userService;
     private final KakaoOauthInfo kakaoOauthInfo;
-    private final RentRepository rentRepository;
     private final RentService rentService;
 
     @GetMapping("/loggedIn")
@@ -166,11 +164,11 @@ public class UserController {
     }
 
     @PatchMapping("/bankAccount")
-    public ResponseEntity<CustomResponse> updateUserBankAccount(HttpSession session, @Valid @RequestBody UpdateBankAccountRequest updateBankAccountRequest) {
+    public ResponseEntity<CustomResponse> updateUserBankAccount(@Valid @RequestBody UpdateBankAccountRequest updateBankAccountRequest, HttpSession session) {
 
-        long loginedUserId = (long) session.getAttribute("userId");
+        SessionUser sessionUser = (SessionUser) session.getAttribute("user");
 
-        userService.updateUserBankAccount(loginedUserId, updateBankAccountRequest);
+        userService.updateUserBankAccount(sessionUser.getId(), updateBankAccountRequest);
 
         return ResponseEntity
                 .ok()

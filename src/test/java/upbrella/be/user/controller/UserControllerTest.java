@@ -15,7 +15,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
@@ -55,13 +54,11 @@ public class UserControllerTest extends RestDocsSupport {
     @Mock
     private KakaoOauthInfo kakaoOauthInfo;
     @Mock
-    private RentRepository rentRepository;
-    @Mock
     private RentService rentService;
 
     @Override
     protected Object initController() {
-        return new UserController(oauthLoginService, userService, kakaoOauthInfo, rentRepository, rentService);
+        return new UserController(oauthLoginService, userService, kakaoOauthInfo, rentService);
     }
 
     @DisplayName("사용자는 로그인된 유저 정보를 조회할 수 있다.")
@@ -461,7 +458,8 @@ public class UserControllerTest extends RestDocsSupport {
         // given
         UpdateBankAccountRequest updateBankAccountRequest = FixtureBuilderFactory.builderBankAccount().sample();
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 70L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
 
         // when
 
