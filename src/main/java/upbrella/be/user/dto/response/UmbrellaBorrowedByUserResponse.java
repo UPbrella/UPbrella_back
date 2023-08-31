@@ -8,4 +8,10 @@ import lombok.Getter;
 public class UmbrellaBorrowedByUserResponse {
 
     private long uuid;
+
+    public static UmbrellaBorrowedByUserResponse of(long uuid) {
+        return UmbrellaBorrowedByUserResponse.builder()
+                .uuid(uuid)
+                .build();
+    }
 }

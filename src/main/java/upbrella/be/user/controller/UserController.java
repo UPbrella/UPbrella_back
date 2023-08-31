@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
-import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.*;
@@ -54,20 +52,17 @@ public class UserController {
     public ResponseEntity<CustomResponse<UmbrellaBorrowedByUserResponse>> findUmbrellaBorrowedByUser(HttpSession httpSession) {
 
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-        History rentalHistory = rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId())
-                .orElseThrow(() -> new NonExistingBorrowedHistoryException("[ERROR] 사용자가 빌린 우산이 없습니다."));
 
-        long borrowedUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
+        UmbrellaBorrowedByUserResponse umbrellaBorrowedByUserResponse = userService.findUmbrellaBorrowedByUser(sessionUser);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
-                  정      "success",
+                        "success",
                         200,
                         "사용자가 빌린 우산 조회 성공",
-                        UmbrellaBorrowedByUserResponse.builder()
-                                .uuid(borrowedUmbrellaUuid)
-                                .build()));
+                        umbrellaBorrowedByUserResponse
+                        ));
     }
 
     @GetMapping("/oauth/login")

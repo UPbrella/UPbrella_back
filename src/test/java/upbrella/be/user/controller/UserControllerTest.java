@@ -15,7 +15,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.rent.entity.History;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -29,10 +28,8 @@ import upbrella.be.user.exception.*;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -113,10 +110,9 @@ public class UserControllerTest extends RestDocsSupport {
         httpSession.setAttribute("user", user);
 
         Umbrella borrowedUmbrella = FixtureBuilderFactory.builderUmbrella().sample();
-        History rentalHistory = FixtureFactory.buildHistoryWithUmbrella(borrowedUmbrella);
 
-        given(rentRepository.findByUserAndReturnedAtIsNull(anyLong()))
-                .willReturn(Optional.ofNullable(rentalHistory));
+        given(userService.findUmbrellaBorrowedByUser(user))
+                .willReturn(UmbrellaBorrowedByUserResponse.of(borrowedUmbrella.getUuid()));
 
         // when
         mockMvc.perform(

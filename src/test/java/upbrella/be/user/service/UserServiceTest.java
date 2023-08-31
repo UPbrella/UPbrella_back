@@ -10,11 +10,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
+import upbrella.be.rent.entity.History;
+import upbrella.be.rent.repository.RentRepository;
+import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleUserInfoResponse;
+import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.BlackListUserException;
@@ -43,6 +47,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private BlackListRepository blackListRepository;
+    @Mock
+    private RentRepository rentRepository;
     @InjectMocks
     private UserService userService;
 
@@ -149,6 +155,57 @@ class UserServiceTest {
                             .existsBySocialId(existingSocialId),
                     () -> then(userRepository).should(never())
                             .save(any(User.class)));
+        }
+    }
+
+    @Nested
+    @DisplayName("우산을 빌린 사용자는")
+    class findBorrowedUmbrellaTest {
+
+        private SessionUser sessionUser;
+        private History history;
+
+        @BeforeEach
+        void setUp() {
+
+            User user = FixtureBuilderFactory.builderUser().sample();
+            sessionUser = SessionUser.fromUser(user);
+            history = FixtureBuilderFactory.builderHistory().sample();
+        }
+
+        @Test
+        @DisplayName("자신이 빌린 우산 대여 내역을 조회할 수 있다.")
+        void success() {
+
+            // given
+            given(rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId()))
+                    .willReturn(Optional.of(history));
+
+            // when
+            UmbrellaBorrowedByUserResponse umbrellaBorrowedByUser = userService.findUmbrellaBorrowedByUser(sessionUser);
+
+            // then
+            assertAll(
+                    () -> assertThat(umbrellaBorrowedByUser.getUuid())
+                            .isEqualTo(history.getUmbrella().getUuid()),
+                    () -> then(rentRepository).should(times(1))
+                            .findByUserIdAndReturnedAtIsNull(sessionUser.getId()));
+        }
+
+        @Test
+        @DisplayName("빌린 우산이 없으면 예외가 반환된다.")
+        void nonExistingBorrowedUmbrella() {
+
+            // given
+            given(rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId()))
+                    .willReturn(Optional.ofNullable(null));
+
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() -> userService.findUmbrellaBorrowedByUser(sessionUser))
+                            .isInstanceOf(NonExistingBorrowedHistoryException.class),
+                    () -> then(rentRepository).should(times(1))
+                            .findByUserIdAndReturnedAtIsNull(sessionUser.getId()));
         }
     }
 

@@ -5,6 +5,7 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
+import upbrella.be.rent.entity.History;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreMeta;
@@ -197,5 +198,18 @@ public class FixtureBuilderFactory {
                 .set("adminStatus", false)
                 .set("name", pickRandomString(nameList))
                 .set("phoneNumber", pickPhoneNumberString());
+    }
+
+    public static ArbitraryBuilder<History> builderHistory() {
+
+        return fixtureMonkey.giveMeBuilder(History.class)
+                .set("id", buildLong(100))
+                .set("umbrella", builderUmbrella().sample())
+                .set("user", builderUser().sample())
+                .set("bank", pickRandomString(bankList))
+                .set("accountNumber", pickAccountNumberString())
+                .set("returnStoreMeta", builderStoreMeta().sample())
+                .set("rentStoreMeta", builderStoreMeta().sample())
+                .set("etc", pickRandomString(nameList));
     }
 }
