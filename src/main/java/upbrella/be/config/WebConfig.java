@@ -12,8 +12,9 @@ public class WebConfig implements WebMvcConfigurer {
 
         //TODO: CORS 세부 설정 예정
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("*")
+                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://upbrella-dev.site:80")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
                 .allowedHeaders("*");
     }
 }
