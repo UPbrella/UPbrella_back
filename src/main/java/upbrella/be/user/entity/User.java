@@ -65,4 +65,11 @@ public class User {
         this.bank = null;
         this.accountNumber = null;
     }
+
+    public User decryptData() {
+
+        this.bank = AesEncryptor.decrypt(this.bank);
+        this.accountNumber = AesEncryptor.decrypt(this.accountNumber);
+        return this;
+    }
 }

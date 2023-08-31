@@ -18,6 +18,7 @@ import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
+import upbrella.be.util.AesEncryptor;
 
 public class FixtureBuilderFactory {
 
@@ -130,8 +131,8 @@ public class FixtureBuilderFactory {
                 .set("socialId", buildLong(100000000))
                 .set("name", pickRandomString(nameList))
                 .set("phoneNumber", pickPhoneNumberString())
-                .set("bank", pickRandomString(bankList))
-                .set("accountNumber", pickAccountNumberString());
+                .set("bank", AesEncryptor.encrypt(pickRandomString(bankList)))
+                .set("accountNumber", AesEncryptor.encrypt(pickAccountNumberString()));
     }
 
 
