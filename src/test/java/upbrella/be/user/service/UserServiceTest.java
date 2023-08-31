@@ -22,6 +22,7 @@ import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
+import upbrella.be.util.AesEncryptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -228,8 +229,8 @@ class UserServiceTest {
         assertAll(
                 () -> then(userRepository).should(times(1))
                         .findById(user.getId()),
-                () -> assertThat(user.getBank()).isEqualTo(updateBankInfoRequest.getBank()),
-                () -> assertThat(user.getAccountNumber()).isEqualTo(updateBankInfoRequest.getAccountNumber()));
+                () -> assertThat(user.getBank()).isEqualTo(AesEncryptor.encrypt(updateBankInfoRequest.getBank())),
+                () -> assertThat(user.getAccountNumber()).isEqualTo(AesEncryptor.encrypt(updateBankInfoRequest.getAccountNumber())));
     }
 
     @Test

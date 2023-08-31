@@ -2,6 +2,7 @@ package upbrella.be.user.entity;
 
 import lombok.*;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.util.AesEncryptor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,34 +21,34 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotNull
-    private long socialId;
+    private Long socialId;
     private String name;
     private String phoneNumber;
     private boolean adminStatus;
     private String bank;
     private String accountNumber;
 
-    public static User createNewUser(long socialId, JoinRequest joinRequest) {
+    public static User createNewUser(Long socialId, JoinRequest joinRequest) {
 
         return User.builder()
-                .socialId(socialId)
+                .socialId((long) socialId.hashCode())
                 .name(joinRequest.getName())
                 .phoneNumber(joinRequest.getPhoneNumber())
                 .adminStatus(false)
-                .bank(joinRequest.getBank())
-                .accountNumber(joinRequest.getAccountNumber())
+                .bank(AesEncryptor.encrypt(joinRequest.getBank()))
+                .accountNumber(AesEncryptor.encrypt(joinRequest.getAccountNumber()))
                 .build();
     }
 
     public void updateBankAccount(String bank, String accountNumber) {
 
-        this.bank = bank;
-        this.accountNumber = accountNumber;
+        this.bank = AesEncryptor.encrypt(bank);
+        this.accountNumber = AesEncryptor.encrypt(accountNumber);
     }
 
     public void deleteUser() {
 
-        this.socialId = 0;
+        this.socialId = 0L;
         this.name = "탈퇴한 회원";
         this.phoneNumber = "deleted";
         this.adminStatus = false;
@@ -57,7 +58,7 @@ public class User {
 
     public void withdrawUser() {
 
-        this.socialId = 0;
+        this.socialId = 0L;
         this.name = "정지된 회원";
         this.phoneNumber = "deleted";
         this.adminStatus = false;
