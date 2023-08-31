@@ -420,9 +420,10 @@ public class UserControllerTest extends RestDocsSupport {
 
         AllHistoryResponse historyResponse = AllHistoryResponse.of(historyResponses);
 
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 70L);
-        given(rentService.findAllHistoriesByUser(70L))
+        mockHttpSession.setAttribute("user", sessionUser);
+        given(rentService.findAllHistoriesByUser(sessionUser.getId()))
                 .willReturn(historyResponse);
 
         // when & then

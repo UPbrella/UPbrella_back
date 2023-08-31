@@ -153,7 +153,7 @@ public class UserController {
     @GetMapping("/histories")
     public ResponseEntity<CustomResponse> readUserHistories(HttpSession session) {
 
-        long loginedUserId = (long) session.getAttribute("userId");
+        SessionUser sessionUser = (SessionUser)session.getAttribute("user");
 
         return ResponseEntity
                 .ok()
@@ -161,7 +161,7 @@ public class UserController {
                         "success",
                         200,
                         "사용자 대여 목록 조회 성공",
-                        rentService.findAllHistoriesByUser(loginedUserId)
+                        rentService.findAllHistoriesByUser(sessionUser.getId())
                 ));
     }
 
