@@ -163,7 +163,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("경도"),
                                 fieldWithPath("stores[].rentableUmbrellasCount").type(JsonFieldType.NUMBER)
                                         .description("대여 가능 우산 개수")
-                                )));
+                        )));
     }
 
     @Test
@@ -227,10 +227,11 @@ class StoreControllerTest extends RestDocsSupport {
                         .instagramId("instagramId")
                         .latitude(33.33)
                         .longitude(33.33)
-                        .imageUrls(List.of(SingleImageUrlResponse.builder()
-                                .id(1L)
-                                .imageUrl("url")
-                                .build()))
+                        .imageUrls(
+                                List.of(SingleImageUrlResponse.builder()
+                                        .id(1L)
+                                        .imageUrl("url")
+                                        .build()))
                         .password("비밀번호")
                         .businessHours(
                                 List.of(
@@ -862,8 +863,8 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                get("/stores/introductions")
-        ).andDo(print())
+                        get("/stores/introductions")
+                ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-find-store-introduction-doc",
                         getDocumentRequest(),
