@@ -23,6 +23,9 @@ public class RentalHistoryResponse {
     private LocalDateTime returnAt;
     private Integer totalRentalDay;
     private boolean refundCompleted;
+    private boolean paid;
+    private String bank;
+    private String accountNumber;
     private String etc;
 
     public static RentalHistoryResponse createReturnedHistory(History history, int elapsedDay, int totalRentalDay, boolean isReturned) {
@@ -34,11 +37,14 @@ public class RentalHistoryResponse {
                 .rentStoreName(history.getRentStoreMeta().getName())
                 .rentAt(history.getRentedAt())
                 .elapsedDay(elapsedDay)
+                .paid(history.getPaidAt() != null)
                 .umbrellaUuid(history.getUmbrella().getUuid())
                 .returnStoreName(history.getReturnStoreMeta().getName())
                 .returnAt(history.getReturnedAt())
                 .totalRentalDay(totalRentalDay)
                 .refundCompleted(isReturned)
+                .bank(history.getBank())
+                .accountNumber(history.getAccountNumber())
                 .etc(history.getEtc())
                 .build();
     }
@@ -52,8 +58,11 @@ public class RentalHistoryResponse {
                 .rentStoreName(history.getRentStoreMeta().getName())
                 .rentAt(history.getRentedAt())
                 .elapsedDay(elapsedDay)
+                .paid(history.getPaidAt() != null)
                 .umbrellaUuid(history.getUmbrella().getUuid())
                 .refundCompleted(isReturned)
+                .bank(history.getBank())
+                .accountNumber(history.getAccountNumber())
                 .etc(history.getEtc())
                 .build();
     }

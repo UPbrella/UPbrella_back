@@ -8,6 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import upbrella.be.config.FixtureBuilderFactory;
+import upbrella.be.config.FixtureFactory;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
@@ -18,16 +22,20 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.service.UserService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -152,7 +160,8 @@ class RentServiceTest {
                             .findUmbrellaById(99L),
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(25L),
-                    () -> then(rentRepository).shouldHaveNoInteractions()
+                    () -> then(rentRepository).should(times(1))
+                            .findByUserIdAndReturnedAtIsNull(userToRent.getId())
             );
         }
 
@@ -169,9 +178,7 @@ class RentServiceTest {
                             rentService.addRental(rentUmbrellaByUserRequest, userToRent))
                             .isInstanceOf(IllegalArgumentException.class),
                     () -> then(umbrellaService).should(times(1))
-                            .findUmbrellaById(99L),
-                    () -> then(storeMetaService).shouldHaveNoInteractions(),
-                    () -> then(rentRepository).shouldHaveNoInteractions()
+                            .findUmbrellaById(99L)
             );
         }
     }
@@ -179,6 +186,9 @@ class RentServiceTest {
     @Nested
     @DisplayName("사용자는 환급 여부 필터링 기능이 가능한 대여/반납 현황을 조회할 수 있다.")
     class findAllHistories {
+
+        private List<RentalHistoryResponse> expectedRentalHistoryResponses = new ArrayList<>();
+        private List<History> generatedHistories = new ArrayList<>();
 
         @Test
         @DisplayName("조건이 없는 경우 전체 대여/반납 현황을 조회할 수 있다.")
@@ -188,41 +198,44 @@ class RentServiceTest {
             filter = HistoryFilterRequest.builder()
                     .build();
 
+            Pageable pageable = PageRequest.of(0, 5);
+
+            for (int i = 0; i < 5; i++) {
+                generatedHistories.add(FixtureBuilderFactory.builderHistory()
+                        .sample());
+            }
+
+            expectedRentalHistoryResponses = generatedHistories.stream()
+                    .map(FixtureFactory::buildRentalHistoryResponseWithHistory)
+                    .collect(Collectors.toList());
+
             RentalHistoriesPageResponse historyResponse = RentalHistoriesPageResponse.builder()
                     .rentalHistoryResponsePage(
-                            List.of(
-                                    RentalHistoryResponse.builder()
-                                            .id(33L)
-                                            .name("테스터")
-                                            .phoneNumber("010-1234-5678")
-                                            .rentStoreName("motive study cafe")
-                                            .rentAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-                                            .elapsedDay(0)
-                                            .umbrellaUuid(99L)
-                                            .returnStoreName("motive study cafe")
-                                            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-                                            .totalRentalDay(0)
-                                            .refundCompleted(true)
-                                            .etc(history.getEtc())
-                                            .build())
-                    ).build();
+                            expectedRentalHistoryResponses
+                    )
+                    .countOfAllHistories(5L)
+                    .countOfAllPages(1L)
+                    .build();
 
-            given(rentRepository.findAll(filter))
-                    .willReturn(List.of(history));
+            given(rentRepository.findAll(filter, pageable))
+                    .willReturn(generatedHistories);
+            given(rentRepository.countAll(filter, pageable))
+                    .willReturn(5L);
 
             // when
-            RentalHistoriesPageResponse allHistories = rentService.findAllHistories(filter);
+            RentalHistoriesPageResponse allHistories = rentService.findAllHistories(filter, pageable);
 
             //then
             assertAll(() -> assertThat(allHistories)
                             .usingRecursiveComparison()
                             .isEqualTo(historyResponse),
                     () -> assertThat(allHistories.getRentalHistoryResponsePage().size())
-                            .isEqualTo(1),
+                            .isEqualTo(historyResponse.getRentalHistoryResponsePage().size()),
                     () -> then(rentRepository).should(times(1))
-                            .findAll(filter)
+                            .countAll(filter, pageable),
+                    () -> then(rentRepository).should(times(1))
+                            .findAll(filter, pageable)
             );
-
         }
     }
 
@@ -437,6 +450,51 @@ class RentServiceTest {
                     () -> then(rentRepository).should(times(1))
                             .findById(33L),
                     () -> then(rentRepository).shouldHaveNoMoreInteractions());
+        }
+    }
+
+    @Nested
+    @DisplayName("로그인한 사용자의 정보를 입력받아")
+    class findByRentHistoryByUserTest {
+
+        @Test
+        @DisplayName("해당 사용자의 대여 내역을 조회할 수 있다.")
+        void success() {
+
+            // given
+            SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+            History history = FixtureBuilderFactory.builderHistory().sample();
+            given(rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId()))
+                    .willReturn(Optional.of(history));
+
+
+            // when
+            History rentalHistoryByUser = rentService.findRentalHistoryByUser(sessionUser);
+
+            //then
+            assertAll(() -> assertThat(rentalHistoryByUser)
+                            .isEqualTo(history),
+                    () -> then(rentRepository).should(times(1))
+                            .findByUserIdAndReturnedAtIsNull(sessionUser.getId())
+            );
+        }
+
+        @Test
+        @DisplayName("빌린 우산이 없으면 예외가 반환된다.")
+        void nonExistingBorrowedUmbrella() {
+
+            // given
+            // given
+            SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+            given(rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId()))
+                    .willThrow(NonExistingBorrowedHistoryException.class);
+
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() -> rentService.findRentalHistoryByUser(sessionUser))
+                            .isInstanceOf(NonExistingBorrowedHistoryException.class),
+                    () -> then(rentRepository).should(times(1))
+                            .findByUserIdAndReturnedAtIsNull(sessionUser.getId()));
         }
     }
 }

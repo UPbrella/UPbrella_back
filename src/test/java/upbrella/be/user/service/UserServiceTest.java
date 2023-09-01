@@ -10,11 +10,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
+import upbrella.be.rent.entity.History;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleUserInfoResponse;
+import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.BlackListUserException;
@@ -22,6 +25,7 @@ import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
+import upbrella.be.util.AesEncryptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +47,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private BlackListRepository blackListRepository;
+    @Mock
+    private RentService rentService;
     @InjectMocks
     private UserService userService;
 
@@ -153,16 +159,71 @@ class UserServiceTest {
     }
 
     @Nested
-    @DisplayName("사용자는")
-    class findUsersTest {
+    @DisplayName("우산을 빌린 사용자는")
+    class findBorrowedUmbrellaTest {
 
-        List<User> users = new ArrayList<>();
+        private SessionUser sessionUser;
+        private History history;
 
         @BeforeEach
         void setUp() {
 
-            for (int i = 0; i < 5; i++) {
-                users.add(FixtureBuilderFactory.builderUser().sample());
+            User user = FixtureBuilderFactory.builderUser().sample();
+            sessionUser = SessionUser.fromUser(user);
+            history = FixtureBuilderFactory.builderHistory().sample();
+        }
+
+        @Test
+        @DisplayName("자신이 빌린 우산 대여 내역을 조회할 수 있다.")
+        void success() {
+
+            // given
+            given(rentService.findRentalHistoryByUser(sessionUser))
+                    .willReturn(history);
+
+            // when
+            UmbrellaBorrowedByUserResponse umbrellaBorrowedByUser = userService.findUmbrellaBorrowedByUser(sessionUser);
+
+            // then
+            assertAll(
+                    () -> assertThat(umbrellaBorrowedByUser.getUuid())
+                            .isEqualTo(history.getUmbrella().getUuid()),
+                    () -> then(rentService).should(times(1))
+                            .findRentalHistoryByUser(sessionUser));
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자는")
+    class findUsersTest {
+
+        List<User> users = new ArrayList<>();
+        List<User> expectedUsers = new ArrayList<>();
+
+        @BeforeEach
+        void setUp() {
+
+            for (int i = 0; i < 1; i++) {
+                User sample = User.builder()
+                        .id(1L)
+                        .socialId(1L)
+                        .name("사용자")
+                        .phoneNumber("010-1234-5678")
+                        .bank(AesEncryptor.encrypt("농협"))
+                        .accountNumber(AesEncryptor.encrypt("123-456-789"))
+                        .build();
+
+                User expectedSample = User.builder()
+                        .id(1L)
+                        .socialId(1L)
+                        .name("사용자")
+                        .phoneNumber("010-1234-5678")
+                        .bank(AesEncryptor.encrypt("농협"))
+                        .accountNumber(AesEncryptor.encrypt("123-456-789"))
+                        .build();
+
+                users.add(sample);
+                expectedUsers.add(expectedSample);
             }
         }
 
@@ -173,7 +234,8 @@ class UserServiceTest {
             // given
             AllUsersInfoResponse expected = AllUsersInfoResponse.builder()
                     .users(
-                            users.stream()
+                            expectedUsers.stream()
+                                    .map(user -> user.decryptData())
                                     .map(SingleUserInfoResponse::fromUser)
                                     .collect(Collectors.toList())
                     )
@@ -228,8 +290,8 @@ class UserServiceTest {
         assertAll(
                 () -> then(userRepository).should(times(1))
                         .findById(user.getId()),
-                () -> assertThat(user.getBank()).isEqualTo(updateBankInfoRequest.getBank()),
-                () -> assertThat(user.getAccountNumber()).isEqualTo(updateBankInfoRequest.getAccountNumber()));
+                () -> assertThat(user.getBank()).isEqualTo(AesEncryptor.encrypt(updateBankInfoRequest.getBank())),
+                () -> assertThat(user.getAccountNumber()).isEqualTo(AesEncryptor.encrypt(updateBankInfoRequest.getAccountNumber())));
     }
 
     @Test
