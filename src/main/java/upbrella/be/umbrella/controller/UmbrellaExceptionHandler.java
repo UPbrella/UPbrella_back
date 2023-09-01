@@ -29,7 +29,7 @@ public class UmbrellaExceptionHandler {
                 .badRequest()
                 .body(new CustomErrorResponse(
                         "fail",
-                        400,
+                        404,
                         "존재하지 않는 우산 고유 번호입니다."));
     }
 
@@ -40,7 +40,7 @@ public class UmbrellaExceptionHandler {
                 .badRequest()
                 .body(new CustomErrorResponse(
                         "fail",
-                        400,
+                        404,
                         "사용자가 빌린 우산이 없습니다."));
     }
 }

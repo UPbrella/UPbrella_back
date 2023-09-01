@@ -15,8 +15,10 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.service.UserService;
@@ -189,5 +191,11 @@ public class RentService {
     private History findHistoryById(long historyId) {
         return rentRepository.findById(historyId)
                 .orElseThrow(() -> new NonExistingHistoryException("[ERROR] 해당 대여 기록이 없습니다."));
+    }
+
+    public History findRentalHistoryByUser(SessionUser sessionUser) {
+
+        return rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId())
+                .orElseThrow(() -> new NonExistingBorrowedHistoryException("[ERROR] 사용자가 빌린 우산이 없습니다."));
     }
 }
