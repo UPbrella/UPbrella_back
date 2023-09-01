@@ -18,8 +18,10 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.service.UserService;
@@ -49,7 +51,7 @@ public class RentService {
     @Transactional
     public History addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
 
-        rentRepository.findByUserAndReturnedAtIsNull(userToRent.getId())
+        rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.getId())
                 .ifPresent(history -> {
                     throw new ExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 있습니다.");
                 });
@@ -205,5 +207,11 @@ public class RentService {
 
         return rentRepository.findById(historyId)
                 .orElseThrow(() -> new NonExistingHistoryException("[ERROR] 해당 대여 기록이 없습니다."));
+    }
+
+    public History findRentalHistoryByUser(SessionUser sessionUser) {
+
+        return rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId())
+                .orElseThrow(() -> new NonExistingBorrowedHistoryException("[ERROR] 사용자가 빌린 우산이 없습니다."));
     }
 }

@@ -1,12 +1,15 @@
 package upbrella.be.user.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import upbrella.be.rent.entity.History;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SessionUser;
+import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.BlackListUserException;
@@ -19,11 +22,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
+    public UserService(UserRepository userRepository, BlackListRepository blackListRepository, @Lazy RentService rentService) {
+        this.userRepository = userRepository;
+        this.blackListRepository = blackListRepository;
+        this.rentService = rentService;
+    }
 
     private final UserRepository userRepository;
     private final BlackListRepository blackListRepository;
+    private final RentService rentService;
 
     public SessionUser login(Long socialId) {
 
@@ -53,6 +61,15 @@ public class UserService {
                 .map(user -> user.decryptData())
                 .collect(Collectors.toList());
         return AllUsersInfoResponse.fromUsers(users);
+    }
+
+    public UmbrellaBorrowedByUserResponse findUmbrellaBorrowedByUser(SessionUser sessionUser) {
+
+        History rentalHistory = rentService.findRentalHistoryByUser(sessionUser);
+
+        long borrowedUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
+
+        return UmbrellaBorrowedByUserResponse.of(borrowedUmbrellaUuid);
     }
 
     @Transactional

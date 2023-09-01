@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import upbrella.be.rent.entity.History;
-import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
@@ -31,7 +29,6 @@ public class UserController {
     private final OauthLoginService oauthLoginService;
     private final UserService userService;
     private final KakaoOauthInfo kakaoOauthInfo;
-    private final RentRepository rentRepository;
     private final RentService rentService;
 
     @GetMapping("/loggedIn")
@@ -54,10 +51,7 @@ public class UserController {
 
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
 
-        History rentalHistory = rentRepository.findByUserAndReturnedAtIsNull(sessionUser.getId())
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 사용자가 빌린 우산이 없습니다."));
-
-        long borrowedUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
+        UmbrellaBorrowedByUserResponse umbrellaBorrowedByUserResponse = userService.findUmbrellaBorrowedByUser(sessionUser);
 
         return ResponseEntity
                 .ok()
@@ -65,9 +59,8 @@ public class UserController {
                         "success",
                         200,
                         "사용자가 빌린 우산 조회 성공",
-                        UmbrellaBorrowedByUserResponse.builder()
-                                .uuid(borrowedUmbrellaUuid)
-                                .build()));
+                        umbrellaBorrowedByUserResponse
+                        ));
     }
 
     @GetMapping("/oauth/login")
@@ -158,7 +151,7 @@ public class UserController {
     @GetMapping("/histories")
     public ResponseEntity<CustomResponse> readUserHistories(HttpSession session) {
 
-        long loginedUserId = (long) session.getAttribute("userId");
+        SessionUser sessionUser = (SessionUser)session.getAttribute("user");
 
         return ResponseEntity
                 .ok()
@@ -166,16 +159,16 @@ public class UserController {
                         "success",
                         200,
                         "사용자 대여 목록 조회 성공",
-                        rentService.findAllHistoriesByUser(loginedUserId)
+                        rentService.findAllHistoriesByUser(sessionUser.getId())
                 ));
     }
 
     @PatchMapping("/bankAccount")
-    public ResponseEntity<CustomResponse> updateUserBankAccount(HttpSession session, @Valid @RequestBody UpdateBankAccountRequest updateBankAccountRequest) {
+    public ResponseEntity<CustomResponse> updateUserBankAccount(@Valid @RequestBody UpdateBankAccountRequest updateBankAccountRequest, HttpSession session) {
 
-        long loginedUserId = (long) session.getAttribute("userId");
+        SessionUser sessionUser = (SessionUser) session.getAttribute("user");
 
-        userService.updateUserBankAccount(loginedUserId, updateBankAccountRequest);
+        userService.updateUserBankAccount(sessionUser.getId(), updateBankAccountRequest);
 
         return ResponseEntity
                 .ok()
