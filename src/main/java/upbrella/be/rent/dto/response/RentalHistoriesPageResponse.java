@@ -10,11 +10,15 @@ import java.util.List;
 public class RentalHistoriesPageResponse {
 
     private List<RentalHistoryResponse> rentalHistoryResponsePage;
+    private long countOfAllHistories;
+    private long countOfAllPages;
 
-    public static RentalHistoriesPageResponse of(List<RentalHistoryResponse> rentalHistories) {
+    public static RentalHistoriesPageResponse of(List<RentalHistoryResponse> rentalHistories, long countOfAllHistories, long countOfAllPages) {
 
         return RentalHistoriesPageResponse.builder()
                 .rentalHistoryResponsePage(rentalHistories)
+                .countOfAllHistories(countOfAllHistories)
+                .countOfAllPages(countOfAllPages)
                 .build();
     }
 }
