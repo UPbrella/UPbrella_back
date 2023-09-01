@@ -65,9 +65,9 @@ public class RentControllerTest extends RestDocsSupport {
         // given
         RentFormResponse rentFormResponse = RentFormResponse.builder()
                 .classificationName("신촌")
+                .storeMetaId(233L)
                 .rentStoreName("motive study cafe")
                 .umbrellaUuid(99L)
-                .password("1234")
                 .build();
 
         given(rentService.findRentForm(2L))
@@ -86,17 +86,15 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("우산 번호 (uuid 아님)")
                         ),
                         responseFields(
-                                beneathPath("data")
-                                        .withSubsectionId("data"),
+                                beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("classificationName").type(JsonFieldType.STRING)
                                         .description("지역"),
+                                fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("rentStoreName").type(JsonFieldType.STRING)
                                         .description("대여 지점 이름"),
                                 fieldWithPath("umbrellaUuid").type(JsonFieldType.NUMBER)
-                                        .description("우산 고유번호"),
-                                fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호")
-                                        .optional()
+                                        .description("우산 고유번호")
                         )));
     }
 

@@ -12,7 +12,6 @@ public class RentFormResponse {
     private long storeMetaId;
     private String rentStoreName;
     private long umbrellaUuid;
-    private String password;
 
     public static RentFormResponse of(Umbrella umbrella) {
 
@@ -21,7 +20,6 @@ public class RentFormResponse {
                 .storeMetaId(umbrella.getStoreMeta().getId())
                 .rentStoreName(umbrella.getStoreMeta().getName())
                 .umbrellaUuid(umbrella.getUuid())
-                .password(umbrella.getStoreMeta().getPassword())
                 .build();
     }
 }
