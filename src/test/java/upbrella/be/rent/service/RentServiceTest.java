@@ -230,7 +230,11 @@ class RentServiceTest {
                             .usingRecursiveComparison()
                             .isEqualTo(historyResponse),
                     () -> assertThat(allHistories.getRentalHistoryResponsePage().size())
-                            .isEqualTo(historyResponse.getRentalHistoryResponsePage().size())
+                            .isEqualTo(historyResponse.getRentalHistoryResponsePage().size()),
+                    () -> then(rentRepository).should(times(1))
+                            .countAll(filter, pageable),
+                    () -> then(rentRepository).should(times(1))
+                            .findAll(filter, pageable)
             );
         }
     }
