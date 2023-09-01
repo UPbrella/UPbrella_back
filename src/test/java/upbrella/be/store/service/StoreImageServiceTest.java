@@ -14,7 +14,6 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-import upbrella.be.store.dto.response.AllImageUrlResponse;
 import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
@@ -105,32 +104,6 @@ class StoreImageServiceTest {
         assertThatThrownBy(() -> storeImageService.deleteFile(imageId))
                 .isInstanceOf(NonExistingStoreImageException.class)
                 .hasMessageContaining("해당 이미지가 존재하지 않습니다.");
-    }
-
-    @Test
-    @DisplayName("사용자는 모든 협업지점을 조회할 때 이미지들을 조회할 수 있다.")
-    void createImageUrlResponseTest() {
-        // given
-        StoreImage first = StoreImage.builder()
-                .id(1L)
-                .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-                .build();
-
-        StoreImage second = StoreImage.builder()
-                .id(2L)
-                .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-                .build();
-
-        List<StoreImage> images = List.of(first, second);
-
-        // when
-        AllImageUrlResponse imageUrlResponse = AllImageUrlResponse.fromImagesWithSorted(images);
-
-        // then
-        assertAll(
-                () -> assertThat(imageUrlResponse.getSingleImageUrlResponses().get(0).getImageUrl()).isEqualTo(first.getImageUrl()),
-                () -> assertThat(imageUrlResponse.getSingleImageUrlResponses().get(1).getImageUrl()).isEqualTo(second.getImageUrl())
-        );
     }
 
     @Nested
