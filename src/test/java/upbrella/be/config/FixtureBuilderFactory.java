@@ -5,7 +5,6 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import com.navercorp.fixturemonkey.api.random.Randoms;
 import net.jqwik.api.Arbitraries;
-import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;

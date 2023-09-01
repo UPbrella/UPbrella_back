@@ -17,15 +17,15 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
-import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
-import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
+import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.NonExistingMemberException;
@@ -161,7 +161,7 @@ class RentServiceTest {
                     () -> then(storeMetaService).should(times(1))
                             .findStoreMetaById(25L),
                     () -> then(rentRepository).should(times(1))
-                            .findByUserAndReturnedAtIsNull(userToRent.getId())
+                            .findByUserIdAndReturnedAtIsNull(userToRent.getId())
             );
         }
 
@@ -450,6 +450,51 @@ class RentServiceTest {
                     () -> then(rentRepository).should(times(1))
                             .findById(33L),
                     () -> then(rentRepository).shouldHaveNoMoreInteractions());
+        }
+    }
+
+    @Nested
+    @DisplayName("로그인한 사용자의 정보를 입력받아")
+    class findByRentHistoryByUserTest {
+
+        @Test
+        @DisplayName("해당 사용자의 대여 내역을 조회할 수 있다.")
+        void success() {
+
+            // given
+            SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+            History history = FixtureBuilderFactory.builderHistory().sample();
+            given(rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId()))
+                    .willReturn(Optional.of(history));
+
+
+            // when
+            History rentalHistoryByUser = rentService.findRentalHistoryByUser(sessionUser);
+
+            //then
+            assertAll(() -> assertThat(rentalHistoryByUser)
+                            .isEqualTo(history),
+                    () -> then(rentRepository).should(times(1))
+                            .findByUserIdAndReturnedAtIsNull(sessionUser.getId())
+            );
+        }
+
+        @Test
+        @DisplayName("빌린 우산이 없으면 예외가 반환된다.")
+        void nonExistingBorrowedUmbrella() {
+
+            // given
+            // given
+            SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+            given(rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId()))
+                    .willThrow(NonExistingBorrowedHistoryException.class);
+
+            // when & then
+            assertAll(
+                    () -> assertThatThrownBy(() -> rentService.findRentalHistoryByUser(sessionUser))
+                            .isInstanceOf(NonExistingBorrowedHistoryException.class),
+                    () -> then(rentRepository).should(times(1))
+                            .findByUserIdAndReturnedAtIsNull(sessionUser.getId()));
         }
     }
 }

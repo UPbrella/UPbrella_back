@@ -10,11 +10,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
+import upbrella.be.rent.entity.History;
+import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleUserInfoResponse;
+import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.BlackListUserException;
@@ -44,6 +47,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private BlackListRepository blackListRepository;
+    @Mock
+    private RentService rentService;
     @InjectMocks
     private UserService userService;
 
@@ -150,6 +155,41 @@ class UserServiceTest {
                             .existsBySocialId(existingSocialId),
                     () -> then(userRepository).should(never())
                             .save(any(User.class)));
+        }
+    }
+
+    @Nested
+    @DisplayName("우산을 빌린 사용자는")
+    class findBorrowedUmbrellaTest {
+
+        private SessionUser sessionUser;
+        private History history;
+
+        @BeforeEach
+        void setUp() {
+
+            User user = FixtureBuilderFactory.builderUser().sample();
+            sessionUser = SessionUser.fromUser(user);
+            history = FixtureBuilderFactory.builderHistory().sample();
+        }
+
+        @Test
+        @DisplayName("자신이 빌린 우산 대여 내역을 조회할 수 있다.")
+        void success() {
+
+            // given
+            given(rentService.findRentalHistoryByUser(sessionUser))
+                    .willReturn(history);
+
+            // when
+            UmbrellaBorrowedByUserResponse umbrellaBorrowedByUser = userService.findUmbrellaBorrowedByUser(sessionUser);
+
+            // then
+            assertAll(
+                    () -> assertThat(umbrellaBorrowedByUser.getUuid())
+                            .isEqualTo(history.getUmbrella().getUuid()),
+                    () -> then(rentService).should(times(1))
+                            .findRentalHistoryByUser(sessionUser));
         }
     }
 
