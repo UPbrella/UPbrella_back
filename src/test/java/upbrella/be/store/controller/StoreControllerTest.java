@@ -67,6 +67,9 @@ class StoreControllerTest extends RestDocsSupport {
                 .openStatus(true)
                 .latitude(37.503716)
                 .longitude(127.053718)
+                .imageUrls(List.of("https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/1.jpg",
+                        "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/2.jpg",
+                        "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/3.jpg"))
                 .build();
 
         given(storeDetailService.findStoreDetailByStoreMetaId(2L))
@@ -103,7 +106,9 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER)
-                                        .description("경도")
+                                        .description("경도"),
+                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
+                                        .description("이미지 목록")
                         )));
     }
 

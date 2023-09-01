@@ -12,23 +12,23 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import upbrella.be.store.dto.response.AllImageUrlResponse;
 import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.exception.NonExistingStoreImageException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -121,15 +121,15 @@ class StoreImageServiceTest {
                 .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
                 .build();
 
-        Set<StoreImage> images = Set.of(first, second);
+        List<StoreImage> images = List.of(first, second);
 
         // when
-        List<SingleImageUrlResponse> imageUrlResponse = storeImageService.createImageUrlResponse(images);
+        AllImageUrlResponse imageUrlResponse = AllImageUrlResponse.fromImagesWithSorted(images);
 
         // then
         assertAll(
-                () -> assertThat(imageUrlResponse.get(0).getImageUrl()).isEqualTo(first.getImageUrl()),
-                () -> assertThat(imageUrlResponse.get(1).getImageUrl()).isEqualTo(second.getImageUrl())
+                () -> assertThat(imageUrlResponse.getSingleImageUrlResponses().get(0).getImageUrl()).isEqualTo(first.getImageUrl()),
+                () -> assertThat(imageUrlResponse.getSingleImageUrlResponses().get(1).getImageUrl()).isEqualTo(second.getImageUrl())
         );
     }
 

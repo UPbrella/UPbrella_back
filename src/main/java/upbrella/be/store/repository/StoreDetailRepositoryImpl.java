@@ -39,6 +39,7 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
         return Optional.ofNullable(queryFactory
                 .selectFrom(storeDetail)
                 .join(storeDetail.storeMeta, storeMeta).fetchJoin()
+                .leftJoin(storeDetail.storeImages, storeImage).fetchJoin()
                 .where(storeDetail.storeMeta.id.eq(storeMetaId))
                 .where(storeMeta.deleted.isFalse())
                 .fetchOne());
