@@ -1,6 +1,7 @@
 package upbrella.be.rent.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
@@ -10,6 +11,8 @@ import upbrella.be.rent.dto.response.RentFormResponse;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
+import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
+import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
@@ -46,6 +49,11 @@ public class RentService {
     @Transactional
     public History addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
 
+        rentRepository.findByUserAndReturnedAtIsNull(userToRent.getId())
+                .ifPresent(history -> {
+                    throw new ExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 있습니다.");
+                });
+
         Umbrella willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.getUmbrellaId());
 
         StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
@@ -62,7 +70,7 @@ public class RentService {
     public void returnUmbrellaByUser(User userToReturn, ReturnUmbrellaByUserRequest request) {
 
         History history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.getId())
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다."));
+                .orElseThrow(() -> new NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다."));
 
         StoreMeta returnStore = storeMetaService.findStoreMetaById(request.getReturnStoreId());
 
@@ -72,9 +80,13 @@ public class RentService {
         addImprovementReportFromReturnByUser(updatedHistory, request);
     }
 
-    public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter) {
+    @Transactional
+    public RentalHistoriesPageResponse findAllHistories(HistoryFilterRequest filter, Pageable pageable) {
 
-        return RentalHistoriesPageResponse.of(findAllRentalHistory(filter));
+        long countOfAllHistories = rentRepository.countAll(filter, pageable);
+        long countOfAllPages = countOfAllHistories / pageable.getPageSize();
+
+        return RentalHistoriesPageResponse.of(findAllRentalHistory(filter, pageable), countOfAllHistories, countOfAllPages);
     }
 
     public AllHistoryResponse findAllHistoriesByUser(long userId) {
@@ -100,20 +112,21 @@ public class RentService {
     }
 
     private List<History> findAllByUser(long userId) {
+
         return rentRepository.findAllByUserId(userId);
     }
 
-    private List<RentalHistoryResponse> findAllRentalHistory(HistoryFilterRequest filter) {
+    private List<RentalHistoryResponse> findAllRentalHistory(HistoryFilterRequest filter, Pageable pageable) {
 
-        return findAll(filter)
+        return findAll(filter, pageable)
                 .stream()
                 .map(this::toRentalHistoryResponse)
                 .collect(Collectors.toList());
     }
 
-    private List<History> findAll(HistoryFilterRequest filter) {
+    private List<History> findAll(HistoryFilterRequest filter, Pageable pageable) {
 
-        return rentRepository.findAll(filter);
+        return rentRepository.findAll(filter, pageable);
     }
 
     private SingleHistoryResponse toSingleHistoryResponse(History history) {
@@ -136,14 +149,14 @@ public class RentService {
 
     private RentalHistoryResponse toRentalHistoryResponse(History history) {
 
-        int elapsedDay = LocalDateTime.now().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
+        int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentedAt().getDayOfYear();
         int totalRentalDay = 0;
         boolean isReturned = false;
 
         if (history.getReturnedAt() != null) {
 
-            elapsedDay = history.getReturnedAt().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
-            totalRentalDay = history.getReturnedAt().getDayOfMonth() - history.getRentedAt().getDayOfMonth();
+            elapsedDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
+            totalRentalDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
             isReturned = true;
 
             return RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay, isReturned);
@@ -153,10 +166,12 @@ public class RentService {
     }
 
     public long countTotalRent() {
+
         return rentRepository.count();
     }
 
     public long countTotalRentByStoreId(long storeId) {
+
         return rentRepository.countByRentStoreMetaId(storeId);
     }
 
@@ -187,6 +202,7 @@ public class RentService {
     }
 
     private History findHistoryById(long historyId) {
+
         return rentRepository.findById(historyId)
                 .orElseThrow(() -> new NonExistingHistoryException("[ERROR] 해당 대여 기록이 없습니다."));
     }
