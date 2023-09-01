@@ -22,6 +22,7 @@ import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
+import upbrella.be.util.AesEncryptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,12 +158,32 @@ class UserServiceTest {
     class findUsersTest {
 
         List<User> users = new ArrayList<>();
+        List<User> expectedUsers = new ArrayList<>();
 
         @BeforeEach
         void setUp() {
 
-            for (int i = 0; i < 5; i++) {
-                users.add(FixtureBuilderFactory.builderUser().sample());
+            for (int i = 0; i < 1; i++) {
+                User sample = User.builder()
+                        .id(1L)
+                        .socialId(1L)
+                        .name("사용자")
+                        .phoneNumber("010-1234-5678")
+                        .bank(AesEncryptor.encrypt("농협"))
+                        .accountNumber(AesEncryptor.encrypt("123-456-789"))
+                        .build();
+
+                User expectedSample = User.builder()
+                        .id(1L)
+                        .socialId(1L)
+                        .name("사용자")
+                        .phoneNumber("010-1234-5678")
+                        .bank(AesEncryptor.encrypt("농협"))
+                        .accountNumber(AesEncryptor.encrypt("123-456-789"))
+                        .build();
+
+                users.add(sample);
+                expectedUsers.add(expectedSample);
             }
         }
 
@@ -173,7 +194,8 @@ class UserServiceTest {
             // given
             AllUsersInfoResponse expected = AllUsersInfoResponse.builder()
                     .users(
-                            users.stream()
+                            expectedUsers.stream()
+                                    .map(user -> user.decryptData())
                                     .map(SingleUserInfoResponse::fromUser)
                                     .collect(Collectors.toList())
                     )
@@ -228,8 +250,8 @@ class UserServiceTest {
         assertAll(
                 () -> then(userRepository).should(times(1))
                         .findById(user.getId()),
-                () -> assertThat(user.getBank()).isEqualTo(updateBankInfoRequest.getBank()),
-                () -> assertThat(user.getAccountNumber()).isEqualTo(updateBankInfoRequest.getAccountNumber()));
+                () -> assertThat(user.getBank()).isEqualTo(AesEncryptor.encrypt(updateBankInfoRequest.getBank())),
+                () -> assertThat(user.getAccountNumber()).isEqualTo(AesEncryptor.encrypt(updateBankInfoRequest.getAccountNumber())));
     }
 
     @Test
