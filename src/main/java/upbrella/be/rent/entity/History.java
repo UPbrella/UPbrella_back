@@ -20,27 +20,35 @@ public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "umbrella_id")
     private Umbrella umbrella;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
     private LocalDateTime paidAt;
     private String bank;
     private String accountNumber;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rent_store_meta_id")
     private StoreMeta rentStoreMeta;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "return_store_meta_id")
     private StoreMeta returnStoreMeta;
+
     private LocalDateTime rentedAt;
     private LocalDateTime returnedAt;
     private LocalDateTime refundedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refunded_by")
     private User refundedBy;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "paid_by")
     private User paidBy;

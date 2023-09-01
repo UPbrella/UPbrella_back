@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
+import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.util.CustomErrorResponse;
 
@@ -28,7 +29,18 @@ public class UmbrellaExceptionHandler {
                 .badRequest()
                 .body(new CustomErrorResponse(
                         "fail",
-                        400,
+                        404,
                         "존재하지 않는 우산 고유 번호입니다."));
+    }
+
+    @ExceptionHandler(NonExistingBorrowedHistoryException.class)
+    public ResponseEntity<CustomErrorResponse> nonExistingBorrowedHistory(NonExistingBorrowedHistoryException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        404,
+                        "사용자가 빌린 우산이 없습니다."));
     }
 }

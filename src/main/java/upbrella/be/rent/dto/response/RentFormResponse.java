@@ -9,17 +9,17 @@ import upbrella.be.umbrella.entity.Umbrella;
 public class RentFormResponse {
 
     private String classificationName;
+    private long storeMetaId;
     private String rentStoreName;
     private long umbrellaUuid;
-    private String password;
 
     public static RentFormResponse of(Umbrella umbrella) {
 
         return RentFormResponse.builder()
                 .classificationName(umbrella.getStoreMeta().getClassification().getName())
+                .storeMetaId(umbrella.getStoreMeta().getId())
                 .rentStoreName(umbrella.getStoreMeta().getName())
                 .umbrellaUuid(umbrella.getUuid())
-                .password(umbrella.getStoreMeta().getPassword())
                 .build();
     }
 }

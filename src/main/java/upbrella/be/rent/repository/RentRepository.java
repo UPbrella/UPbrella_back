@@ -7,8 +7,6 @@ import java.util.Optional;
 
 public interface RentRepository extends JpaRepository<History, Long>, RentRepositoryCustom {
 
-    Optional<History> findByUserAndReturnedAtIsNull(Long userId);
-
     Optional<History> findByUserIdAndReturnedAtIsNull(Long userId);
 
     long countByRentStoreMetaId(long storeId);
