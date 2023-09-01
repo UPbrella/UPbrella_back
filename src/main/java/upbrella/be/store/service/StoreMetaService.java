@@ -8,6 +8,7 @@ import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
+import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
@@ -53,35 +54,34 @@ public class StoreMetaService {
         return CurrentUmbrellaStoreResponse.fromUmbrella(foundUmbrella);
     }
 
-    public AllCurrentLocationStoreResponse findStoresInCurrentMap(long classificationId, LocalDateTime currentTime) {
+    public AllCurrentLocationStoreResponse findAllStoresByClassification(long classificationId, LocalDateTime currentTime) {
 
-        return AllCurrentLocationStoreResponse.ofCreate(findAllStores(classificationId, currentTime));
+        List<StoreMetaWithUmbrellaCount> storeMetaWithUmbrellaCounts = storeMetaRepository.findAllStoresByClassification(classificationId);
+        
+        return AllCurrentLocationStoreResponse.ofCreate(
+                storeMetaWithUmbrellaCounts.stream()
+                        .map(storeMetaWithUmbrellaCount -> mapToSingleCurrentLocationStoreResponse(storeMetaWithUmbrellaCount, currentTime))
+                        .collect(Collectors.toList())
+        );
     }
 
-    private List<SingleCurrentLocationStoreResponse> findAllStores(long classificationId, LocalDateTime currentTime) {
+    private boolean isOpenStore(StoreMetaWithUmbrellaCount storeMetaWithUmbrellaCount, LocalDateTime currentTime) {
 
-        List<StoreMeta> storeMetaListInCurrentMap = storeMetaRepository.findAllStoresByClassification(classificationId);
-
-        return storeMetaListInCurrentMap.stream()
-                .map(storeMeta -> mapToSingleCurrentLocationStoreResponse(storeMeta, umbrellaRepository.countRentableUmbrellasByStore(storeMeta.getId()), currentTime))
-                .collect(Collectors.toList());
-    }
-
-    private boolean isOpenStore(StoreMeta storeMeta, LocalDateTime currentTime) {
-
-        Set<BusinessHour> businessHours = storeMeta.getBusinessHours();
+        Set<BusinessHour> businessHours = storeMetaWithUmbrellaCount.getStoreMeta().getBusinessHours();
 
         return businessHours.stream()
                 .filter(businessHour -> businessHour.getDate().equals(currentTime.getDayOfWeek()))
-                .filter(e -> storeMeta.isActivated())
+                .filter(e -> storeMetaWithUmbrellaCount.getStoreMeta().isActivated())
                 .anyMatch(businessHour ->
                         currentTime.toLocalTime().isAfter(businessHour.getOpenAt())
                                 && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));
     }
 
-    private SingleCurrentLocationStoreResponse mapToSingleCurrentLocationStoreResponse(StoreMeta storeMeta, long rentableUmbrellaCount, LocalDateTime currentTime) {
+    private SingleCurrentLocationStoreResponse mapToSingleCurrentLocationStoreResponse(StoreMetaWithUmbrellaCount storeMetaWithUmbrellaCount, LocalDateTime currentTime) {
 
-        return SingleCurrentLocationStoreResponse.fromStoreMeta(isOpenStore(storeMeta, currentTime), rentableUmbrellaCount, storeMeta);
+        return SingleCurrentLocationStoreResponse.fromStoreMeta(
+                isOpenStore(storeMetaWithUmbrellaCount, currentTime), storeMetaWithUmbrellaCount
+        );
     }
 
     @Transactional
