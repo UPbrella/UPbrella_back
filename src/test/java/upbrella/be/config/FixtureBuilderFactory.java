@@ -19,6 +19,9 @@ import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
+import upbrella.be.util.AesEncryptor;
+
+import java.time.LocalDateTime;
 
 public class FixtureBuilderFactory {
 
@@ -31,6 +34,7 @@ public class FixtureBuilderFactory {
     private static String[] cafeList = {"투썸", "스타벅스", "이디야", "커피빈", "엔젤리너스", "할리스", "탐앤탐스", "커피마마", "커피에반하다", "커피나무"};
     private static String[] bankList = {"농협", "신한", "우리", "카카오뱅크", "하나", "기업", "케이뱅크", "SC제일", "경남", "광주", "대구", "부산", "전북", "제주", "수협", "새마을", "신협", "우체국", "전북", "제주", "수협", "새마을", "신협", "우체국"};
     private static String[] addressList = {"신촌", "홍대", "강남", "강북", "강서", "강동", "서초", "서대문", "마포", "종로", "용산", "성동", "성북", "중랑", "중구", "동대문", "동작", "관악"};
+    private static String[] etcList = {"파손", "분실", "폐기", "기타"};
 
     private static String pickRandomString(String[] names) {
 
@@ -131,8 +135,8 @@ public class FixtureBuilderFactory {
                 .set("socialId", buildLong(100000000))
                 .set("name", pickRandomString(nameList))
                 .set("phoneNumber", pickPhoneNumberString())
-                .set("bank", pickRandomString(bankList))
-                .set("accountNumber", pickAccountNumberString());
+                .set("bank", AesEncryptor.encrypt(pickRandomString(bankList)))
+                .set("accountNumber", AesEncryptor.encrypt(pickAccountNumberString()));
     }
 
 
@@ -204,12 +208,18 @@ public class FixtureBuilderFactory {
 
         return fixtureMonkey.giveMeBuilder(History.class)
                 .set("id", buildLong(100))
-                .set("umbrella", builderUmbrella().sample())
                 .set("user", builderUser().sample())
+                .set("umbrella", builderUmbrella().sample())
+                .set("rentStoreMeta", builderStoreMeta().sample())
+                .set("rentedAt", LocalDateTime.of(2021, 1, 1, 0, 0, 0))
+                .set("returnedAt", LocalDateTime.of(2021, 1, 14, 0, 0, 0))
+                .set("returnStoreMeta", builderStoreMeta().sample())
+                .set("paidAt", LocalDateTime.of(2021, 1, 2, 0, 0, 0))
+                .set("refundedAt", LocalDateTime.of(2021, 1, 15, 0, 0, 0))
+                .set("refundedBy", builderUser().sample())
+                .set("paidBy", builderUser().sample())
                 .set("bank", pickRandomString(bankList))
                 .set("accountNumber", pickAccountNumberString())
-                .set("returnStoreMeta", builderStoreMeta().sample())
-                .set("rentStoreMeta", builderStoreMeta().sample())
-                .set("etc", pickRandomString(nameList));
+                .set("etc", pickRandomString(etcList));
     }
 }

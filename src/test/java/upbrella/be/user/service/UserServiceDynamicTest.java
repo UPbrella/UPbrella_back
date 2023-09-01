@@ -12,6 +12,7 @@ import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
+import upbrella.be.util.AesEncryptor;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,8 +37,8 @@ class UserServiceDynamicTest {
         User user = User.builder()
                 .id(1L)
                 .socialId(23132L)
-                .accountNumber("110-421-674103")
-                .bank("신한")
+                .accountNumber(AesEncryptor.encrypt("110-421-674103"))
+                .bank(AesEncryptor.encrypt("신한"))
                 .name("홍길동")
                 .phoneNumber("010-2084-3478")
                 .adminStatus(false)
@@ -52,7 +53,7 @@ class UserServiceDynamicTest {
 
         return List.of(
                 DynamicTest.dynamicTest("새로 가입한 유저는 DB에 저장된다.", () -> {
-                    SessionUser joined = userService.join(user.getSocialId(), joinRequest);
+                    SessionUser joined = userService.join(user.getSocialId().hashCode(), joinRequest);
                     Optional<User> foundUser = userRepository.findById(joined.getId());
 
                     assertAll(() -> assertTrue(foundUser.isPresent()),

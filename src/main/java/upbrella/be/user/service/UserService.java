@@ -18,6 +18,9 @@ import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService {
     public UserService(UserRepository userRepository, BlackListRepository blackListRepository, @Lazy RentService rentService) {
@@ -54,7 +57,10 @@ public class UserService {
 
     public AllUsersInfoResponse findUsers() {
 
-        return AllUsersInfoResponse.fromUsers(userRepository.findAll());
+        List<User> users = userRepository.findAll().stream()
+                .map(user -> user.decryptData())
+                .collect(Collectors.toList());
+        return AllUsersInfoResponse.fromUsers(users);
     }
 
     public UmbrellaBorrowedByUserResponse findUmbrellaBorrowedByUser(SessionUser sessionUser) {
@@ -96,6 +102,7 @@ public class UserService {
     public User findUserById(Long id) {
 
         return userRepository.findById(id)
-                .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."))
+                .decryptData();
     }
 }

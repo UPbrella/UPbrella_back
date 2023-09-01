@@ -8,8 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import upbrella.be.docs.utils.RestDocsSupport;
-import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
@@ -64,9 +65,9 @@ public class RentControllerTest extends RestDocsSupport {
         // given
         RentFormResponse rentFormResponse = RentFormResponse.builder()
                 .classificationName("신촌")
+                .storeMetaId(233L)
                 .rentStoreName("motive study cafe")
                 .umbrellaUuid(99L)
-                .password("1234")
                 .build();
 
         given(rentService.findRentForm(2L))
@@ -85,16 +86,15 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("우산 번호 (uuid 아님)")
                         ),
                         responseFields(
-                                beneathPath("data")
-                                        .withSubsectionId("data"),
+                                beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("classificationName").type(JsonFieldType.STRING)
                                         .description("지역"),
+                                fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("rentStoreName").type(JsonFieldType.STRING)
                                         .description("대여 지점 이름"),
                                 fieldWithPath("umbrellaUuid").type(JsonFieldType.NUMBER)
-                                        .description("우산 고유번호"),
-                                fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호")
+                                        .description("우산 고유번호")
                         )));
     }
 
@@ -209,24 +209,31 @@ public class RentControllerTest extends RestDocsSupport {
                         .rentStoreName("대여점 이름")
                         .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
                         .elapsedDay(3)
-                        .umbrellaUuid(30)
+                        .paid(true)
+                        .umbrellaUuid(30L)
                         .returnStoreName("반납점 이름")
                         .returnAt(LocalDateTime.now())
                         .totalRentalDay(5)
                         .refundCompleted(true)
+                        .bank("우리은행")
+                        .accountNumber("1002-111-111111")
                         .etc("기타")
                         .build())
-                ).build();
-
-        HistoryFilterRequest filter = HistoryFilterRequest.builder()
+                )
+                .countOfAllPages(5L)
+                .countOfAllHistories(22L)
                 .build();
 
-        given(rentService.findAllHistories(any())).willReturn(response);
+        given(rentService.findAllHistories(any(), any())).willReturn(response);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("refunded", "true");
+        params.add("page", "0");
+        params.add("size", "5");
 
         mockMvc.perform(
                         get("/rent/histories")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(filter))
+                                .params(params)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -249,6 +256,8 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("대여 시간"),
                                 fieldWithPath("rentalHistoryResponsePage[].elapsedDay").type(JsonFieldType.NUMBER)
                                         .description("대여 기간"),
+                                fieldWithPath("rentalHistoryResponsePage[].paid").type(JsonFieldType.BOOLEAN)
+                                        .description("보증금 입금 여부"),
                                 fieldWithPath("rentalHistoryResponsePage[].umbrellaUuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
                                 fieldWithPath("rentalHistoryResponsePage[].returnStoreName").type(JsonFieldType.STRING)
@@ -262,9 +271,19 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("총 대여 기간"),
                                 fieldWithPath("rentalHistoryResponsePage[].refundCompleted").type(JsonFieldType.BOOLEAN)
                                         .description("환불 완료 여부"),
+                                fieldWithPath("rentalHistoryResponsePage[].bank").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("환불 받을 은행"),
+                                fieldWithPath("rentalHistoryResponsePage[].accountNumber").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("환불 받을 계좌번호"),
                                 fieldWithPath("rentalHistoryResponsePage[].etc").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("기타 사항")
+                                        .description("기타 사항"),
+                                fieldWithPath("countOfAllPages").type(JsonFieldType.NUMBER)
+                                        .description("총 페이지 수"),
+                                fieldWithPath("countOfAllHistories").type(JsonFieldType.NUMBER)
+                                        .description("총 대여 내역 수")
                         )));
     }
 
@@ -355,7 +374,7 @@ public class RentControllerTest extends RestDocsSupport {
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("userId", 2L);
         doNothing().when(rentService)
-                .checkRefund(1L,2L);
+                .checkRefund(1L, 2L);
 
         mockMvc.perform(
                         patch("/rent/histories/refund/{historyId}", 1L)
@@ -380,7 +399,7 @@ public class RentControllerTest extends RestDocsSupport {
         MockHttpSession mockHttpSession = new MockHttpSession();
         mockHttpSession.setAttribute("userId", 2L);
         doNothing().when(rentService)
-                .checkPayment(1L,2L);
+                .checkPayment(1L, 2L);
 
         mockMvc.perform(
                         patch("/rent/histories/payment/{historyId}", 1L)
