@@ -22,7 +22,7 @@ public class DevCorsConfig implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        if (request.getHeader("Origin").contains("upbrella-dev.site")) {
+        if (request.getHeader("Host").contains("upbrella-dev.site")) {
             response.setHeader("Access-Control-Allow-Origin", "http://upbrella-dev.site");
         } else {
             response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
