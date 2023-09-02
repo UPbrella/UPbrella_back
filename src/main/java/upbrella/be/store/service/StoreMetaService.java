@@ -21,7 +21,6 @@ import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,21 +66,10 @@ public class StoreMetaService {
                 .collect(Collectors.toList());
     }
 
-    private boolean isOpenStore(StoreMeta storeMeta, LocalDateTime currentTime) {
-
-        Set<BusinessHour> businessHours = storeMeta.getBusinessHours();
-
-        return businessHours.stream()
-                .filter(businessHour -> businessHour.getDate().equals(currentTime.getDayOfWeek()))
-                .filter(e -> storeMeta.isActivated())
-                .anyMatch(businessHour ->
-                        currentTime.toLocalTime().isAfter(businessHour.getOpenAt())
-                                && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));
-    }
 
     private SingleCurrentLocationStoreResponse mapToSingleCurrentLocationStoreResponse(StoreMeta storeMeta, long rentableUmbrellaCount, LocalDateTime currentTime) {
 
-        return SingleCurrentLocationStoreResponse.fromStoreMeta(isOpenStore(storeMeta, currentTime), rentableUmbrellaCount, storeMeta);
+        return SingleCurrentLocationStoreResponse.fromStoreMeta(storeMeta.isOpenStore(currentTime), rentableUmbrellaCount, storeMeta);
     }
 
     @Transactional
