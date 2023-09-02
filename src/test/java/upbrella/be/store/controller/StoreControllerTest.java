@@ -119,7 +119,7 @@ class StoreControllerTest extends RestDocsSupport {
         // given
         final long classificationId = 1L;
 
-        given(storeMetaService.findStoresInCurrentMap(anyLong(), any(LocalDateTime.class)))
+        given(storeMetaService.findAllStoresByClassification(anyLong(), any(LocalDateTime.class)))
                 .willReturn(
                         AllCurrentLocationStoreResponse.builder()
                                 .stores(
