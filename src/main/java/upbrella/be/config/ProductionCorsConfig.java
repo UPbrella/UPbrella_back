@@ -13,7 +13,6 @@ public class ProductionCorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 
-        //TODO: CORS 세부 설정 예정
         registry.addMapping("/**")
                 .allowedOrigins("https://upbrella.co.kr")
                 .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PATCH.name(), HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name())
