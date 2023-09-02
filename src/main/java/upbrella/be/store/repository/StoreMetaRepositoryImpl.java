@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import upbrella.be.store.dto.response.QStoreMetaWithUmbrellaCount;
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static upbrella.be.store.entity.QBusinessHour.businessHour;
@@ -17,8 +15,6 @@ import static upbrella.be.umbrella.entity.QUmbrella.umbrella;
 @RequiredArgsConstructor
 public class StoreMetaRepositoryImpl implements StoreMetaRepositoryCustom {
 
-    @PersistenceContext
-    private EntityManager entityManager;
     private final JPAQueryFactory queryFactory;
 
     @Override
