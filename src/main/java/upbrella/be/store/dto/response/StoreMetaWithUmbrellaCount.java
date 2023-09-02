@@ -14,6 +14,7 @@ public class StoreMetaWithUmbrellaCount {
 
     @QueryProjection
     public StoreMetaWithUmbrellaCount(StoreMeta storeMeta, long rentableUmbrellasCount) {
+
         this.storeMeta = storeMeta;
         this.rentableUmbrellasCount = rentableUmbrellasCount;
     }
