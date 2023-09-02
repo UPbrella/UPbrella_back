@@ -5,6 +5,7 @@ import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,11 +36,6 @@ public class StoreMeta {
     private String password;
     @OneToMany(mappedBy = "storeMeta", cascade = CascadeType.ALL)
     private Set<BusinessHour> businessHours;
-
-    public void delete() {
-
-        this.deleted = true;
-    }
 
     public static StoreMeta createStoreMetaForSave(CreateStoreRequest request, Classification classification, Classification subClassification) {
 
@@ -84,5 +80,22 @@ public class StoreMeta {
         this.longitude = storeMeta.getLongitude();
         this.password = storeMeta.getPassword();
         this.businessHours = storeMeta.getBusinessHours();
+    }
+
+    public void delete() {
+
+        this.deleted = true;
+    }
+
+    public boolean isOpenStore(LocalDateTime currentTime) {
+
+        Set<BusinessHour> businessHours = this.getBusinessHours();
+
+        return businessHours.stream()
+                .filter(businessHour -> businessHour.getDate().equals(currentTime.getDayOfWeek()))
+                .filter(e -> this.isActivated())
+                .anyMatch(businessHour ->
+                        currentTime.toLocalTime().isAfter(businessHour.getOpenAt())
+                                && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));
     }
 }

@@ -5,7 +5,9 @@ import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -55,5 +57,12 @@ public class StoreDetail {
         this.address = request.getAddress();
         this.addressDetail = request.getAddressDetail();
         this.content = request.getContent();
+    }
+
+    public List<StoreImage> getSortedStoreImages() {
+
+        return storeImages.stream()
+                .sorted((o1, o2) -> (int) (o1.getId() - o2.getId()))
+                .collect(Collectors.toList());
     }
 }

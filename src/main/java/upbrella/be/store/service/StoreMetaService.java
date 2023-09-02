@@ -77,6 +77,7 @@ public class StoreMetaService {
                                 && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));
     }
 
+
     private SingleCurrentLocationStoreResponse mapToSingleCurrentLocationStoreResponse(StoreMetaWithUmbrellaCount storeMetaWithUmbrellaCount, LocalDateTime currentTime) {
 
         return SingleCurrentLocationStoreResponse.fromStoreMeta(
