@@ -9,10 +9,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.QueryDslTestConfig;
+import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
 import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.umbrella.entity.Umbrella;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -30,7 +32,7 @@ class StoreMetaRepositoryImplTest {
 
     @Autowired
     private EntityManager em;
-    private StoreMeta expectedStoreMeta;
+    private StoreMetaWithUmbrellaCount expectedStoreMeta;
     private Classification classification;
 
     @BeforeEach
@@ -50,7 +52,7 @@ class StoreMetaRepositoryImplTest {
         em.flush();
 
 
-        expectedStoreMeta = FixtureBuilderFactory.builderStoreMeta()
+        StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta()
                 .set("id", null)
                 .set("classification", classification)
                 .set("subClassification", subClassification)
@@ -59,24 +61,39 @@ class StoreMetaRepositoryImplTest {
                 .set("longitude", 50.0)
                 .set("delete", false).sample();
 
-        em.persist(expectedStoreMeta);
+        em.persist(storeMeta);
         em.flush();
 
         BusinessHour businessHour = FixtureBuilderFactory.builderBusinessHour()
                 .set("id", null)
-                .set("storeMeta", expectedStoreMeta).sample();
+                .set("storeMeta", storeMeta).sample();
 
 
         em.persist(businessHour);
         em.flush();
+
+        Umbrella umbrella = FixtureBuilderFactory.builderUmbrella()
+                .set("id", 0)
+                .set("rentable", true)
+                .set("missed", false)
+                .set("storeMeta", storeMeta)
+                .sample();
+
+        em.persist(umbrella);
+        em.flush();
+
+        expectedStoreMeta = new StoreMetaWithUmbrellaCount(storeMeta, 1L);
+
     }
 
     @Test
     @DisplayName("지정한 대분류 고유번호에 해당하는 협업 지점의 메타 정보를 조회한다.")
     void findAllByDeletedIsFalseAndLatitudeBetweenAndLongitudeBetween() {
 
+        // given
+
         // when
-        List<StoreMeta> storeMetas = storeMetaRepository.findAllStoresByClassification(classification.getId());
+        List<StoreMetaWithUmbrellaCount> storeMetas = storeMetaRepository.findAllStoresByClassification(classification.getId());
 
         // then
         assertAll(

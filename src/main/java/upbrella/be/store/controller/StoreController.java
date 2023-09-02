@@ -27,7 +27,7 @@ public class StoreController {
     private final StoreDetailService storeDetailService;
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(HttpSession session, @PathVariable long storeId) {
+    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeId, HttpSession session) {
 
         return ResponseEntity
                 .ok()
@@ -39,19 +39,19 @@ public class StoreController {
     }
 
     @GetMapping("/classification/{classificationId}")
-    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(HttpSession session, @PathVariable long classificationId) {
+    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(@PathVariable long classificationId, HttpSession session) {
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "현재 위치 기준 가게 조회 성공",
-                        storeMetaService.findStoresInCurrentMap(classificationId, LocalDateTime.now())));
+                        "대분류 기준 가게 조회 성공",
+                        storeMetaService.findAllStoresByClassification(classificationId, LocalDateTime.now())));
     }
 
     @GetMapping("/location/{umbrellaId}")
-    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(HttpSession session, @PathVariable long umbrellaId) {
+    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(@PathVariable long umbrellaId, HttpSession session) {
 
         return ResponseEntity
                 .ok()
