@@ -1,22 +1,43 @@
 package upbrella.be.config;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpMethod;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.stereotype.Component;
 
-@Configuration
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @Profile("dev")
-public class DevCorsConfig implements WebMvcConfigurer {
+@Component
+public class DevCorsConfig implements Filter {
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void init(FilterConfig filterConfig) {
 
-        registry.addMapping("/**")
-                .allowedOrigins("http://upbrella-dev.site")
-                .allowedMethods(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PATCH.name(), HttpMethod.DELETE.name(), HttpMethod.HEAD.name(), HttpMethod.OPTIONS.name())
-                .allowCredentials(true)
-                .allowedHeaders("*");
+    }
+
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+
+        if (request.getHeader("Origin").contains("upbrella-dev.site")) {
+            response.setHeader("Access-Control-Allow-Origin", "http://upbrella-dev.site");
+        } else {
+            response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        }
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods","GET, POST, PATCH, DELETE, HEAD, OPTIONS");
+        response.setHeader("Access-Control-Max-Age", "10");
+        response.setHeader("Access-Control-Allow-Headers",
+                "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+
     }
 }
