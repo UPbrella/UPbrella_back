@@ -53,7 +53,7 @@ class UserServiceDynamicTest {
 
         return List.of(
                 DynamicTest.dynamicTest("새로 가입한 유저는 DB에 저장된다.", () -> {
-                    SessionUser joined = userService.join(user.getSocialId().hashCode(), joinRequest);
+                    SessionUser joined = userService.join((long) user.getSocialId().hashCode(), joinRequest);
                     Optional<User> foundUser = userRepository.findById(joined.getId());
 
                     assertAll(() -> assertTrue(foundUser.isPresent()),
