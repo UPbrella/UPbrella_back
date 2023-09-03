@@ -153,18 +153,16 @@ public class RentService {
 
         int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentedAt().getDayOfYear();
         int totalRentalDay = 0;
-        boolean isReturned = false;
 
         if (history.getReturnedAt() != null) {
 
             elapsedDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
             totalRentalDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
-            isReturned = true;
 
-            return RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay, isReturned);
+            return RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay);
         }
 
-        return RentalHistoryResponse.createNonReturnedHistory(history, elapsedDay, isReturned);
+        return RentalHistoryResponse.createNonReturnedHistory(history, elapsedDay);
     }
 
     public long countTotalRent() {
