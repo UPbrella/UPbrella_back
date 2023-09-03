@@ -70,7 +70,7 @@ public class UserControllerTest extends RestDocsSupport {
         User user = FixtureBuilderFactory.builderUser().sample();
 
         session.setAttribute("user", sessionUser);
-        given(userService.findUserById(anyLong()))
+        given(userService.findDecryptedUserById(anyLong()))
                 .willReturn(user);
 
         // when & then

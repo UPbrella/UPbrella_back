@@ -35,7 +35,7 @@ public class UserController {
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
 
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-        User user = userService.findUserById(sessionUser.getId());
+        User user = userService.findDecryptedUserById(sessionUser.getId());
 
         return ResponseEntity
                 .ok()

@@ -102,7 +102,16 @@ public class UserService {
     public User findUserById(Long id) {
 
         return userRepository.findById(id)
+                .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."));
+    }
+
+
+    public User findDecryptedUserById(Long id) {
+
+        // Deep copy 객체를 반환함에 유의
+        return userRepository.findById(id)
                 .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."))
                 .decryptData();
     }
+
 }
