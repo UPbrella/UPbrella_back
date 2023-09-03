@@ -487,7 +487,8 @@ public class UserControllerTest extends RestDocsSupport {
     void deleteUserTest() throws Exception {
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 70L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
 
         // when
 

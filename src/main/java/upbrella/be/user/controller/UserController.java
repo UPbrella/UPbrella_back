@@ -182,9 +182,9 @@ public class UserController {
     @DeleteMapping("/loggedIn")
     public ResponseEntity<CustomResponse> deleteUser(HttpSession session) {
 
-        long loginedUserId = (long) session.getAttribute("userId");
+        SessionUser loginedUser = (SessionUser) session.getAttribute("user");
 
-        userService.deleteUser(loginedUserId);
+        userService.deleteUser(loginedUser.getId());
 
         return ResponseEntity
                 .ok()
