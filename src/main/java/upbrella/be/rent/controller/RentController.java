@@ -133,9 +133,9 @@ public class RentController {
     @PatchMapping("/histories/refund/{historyId}")
     public ResponseEntity<CustomResponse> refundRent(@PathVariable long historyId, HttpSession httpSession) {
 
-        long loginedUserId = (long) httpSession.getAttribute("userId");
+        SessionUser loginedUser = (SessionUser) httpSession.getAttribute("user");
 
-        rentService.checkRefund(historyId, loginedUserId);
+        rentService.checkRefund(historyId, loginedUser.getId());
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
@@ -148,9 +148,9 @@ public class RentController {
     @PatchMapping("/histories/payment/{historyId}")
     public ResponseEntity<CustomResponse> checkPayment(@PathVariable long historyId, HttpSession httpSession) {
 
-        long loginedUserId = (long) httpSession.getAttribute("userId");
+        SessionUser loginedUser = (SessionUser) httpSession.getAttribute("user");
 
-        rentService.checkPayment(historyId, loginedUserId);
+        rentService.checkPayment(historyId, loginedUser.getId());
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
