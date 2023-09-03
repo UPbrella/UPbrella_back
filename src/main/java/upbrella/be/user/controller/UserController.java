@@ -35,7 +35,7 @@ public class UserController {
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
 
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-        User user = userService.findUserById(sessionUser.getId());
+        User user = userService.findDecryptedUserById(sessionUser.getId());
 
         return ResponseEntity
                 .ok()
@@ -182,9 +182,9 @@ public class UserController {
     @DeleteMapping("/loggedIn")
     public ResponseEntity<CustomResponse> deleteUser(HttpSession session) {
 
-        long loginedUserId = (long) session.getAttribute("userId");
+        SessionUser loginedUser = (SessionUser) session.getAttribute("user");
 
-        userService.deleteUser(loginedUserId);
+        userService.deleteUser(loginedUser.getId());
 
         return ResponseEntity
                 .ok()

@@ -10,6 +10,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
@@ -372,9 +373,10 @@ public class RentControllerTest extends RestDocsSupport {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 2L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
         doNothing().when(rentService)
-                .checkRefund(1L, 2L);
+                .checkRefund(1L, sessionUser.getId());
 
         mockMvc.perform(
                         patch("/rent/histories/refund/{historyId}", 1L)
@@ -397,9 +399,10 @@ public class RentControllerTest extends RestDocsSupport {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 2L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
         doNothing().when(rentService)
-                .checkPayment(1L, 2L);
+                .checkPayment(1L, sessionUser.getId());
 
         mockMvc.perform(
                         patch("/rent/histories/payment/{historyId}", 1L)
