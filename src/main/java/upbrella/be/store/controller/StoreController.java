@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/stores")
 @RequiredArgsConstructor
 public class StoreController {
 

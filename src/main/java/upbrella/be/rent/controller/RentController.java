@@ -24,7 +24,6 @@ import upbrella.be.util.CustomResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/rent")
 @RequiredArgsConstructor
 public class RentController {
 
@@ -34,7 +33,7 @@ public class RentController {
     private final UserService userService;
     private final SlackAlarmService slackAlarmService;
 
-    @GetMapping("/form/{umbrellaId}")
+    @GetMapping("/rent/form/{umbrellaId}")
     public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId, HttpSession httpSession) {
 
         RentFormResponse rentForm = rentService.findRentForm(umbrellaId);
@@ -49,7 +48,7 @@ public class RentController {
                 ));
     }
 
-    @PostMapping
+    @PostMapping("/rent")
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
@@ -66,7 +65,7 @@ public class RentController {
                 ));
     }
 
-    @PatchMapping
+    @PatchMapping("/rent")
     public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) throws JsonProcessingException {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
@@ -85,7 +84,7 @@ public class RentController {
                 ));
     }
 
-    @GetMapping("/histories")
+    @GetMapping("/admin/rent/histories")
     public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(@ModelAttribute HistoryFilterRequest filter, Pageable pageable, HttpSession httpSession) {
 
         RentalHistoriesPageResponse histories = rentService.findAllHistories(filter, pageable);
@@ -95,12 +94,12 @@ public class RentController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "대여 내역 조회 성공",
+                        "어드민 대여 내역 조회 성공",
                         histories
                 ));
     }
 
-    @GetMapping("/histories/status")
+    @GetMapping("/admin/rent/histories/status")
     public ResponseEntity<CustomResponse<ConditionReportPageResponse>> findConditionReports(HttpSession httpSession) {
 
         ConditionReportPageResponse conditionReports = conditionReportService.findAll();
@@ -115,7 +114,7 @@ public class RentController {
                 ));
     }
 
-    @GetMapping("/histories/improvements")
+    @GetMapping("/admin/rent/histories/improvements")
     public ResponseEntity<CustomResponse<ImprovementReportPageResponse>> findImprovements(HttpSession httpSession) {
 
         ImprovementReportPageResponse improvementReports = improvementReportService.findAll();
@@ -130,7 +129,7 @@ public class RentController {
                 ));
     }
 
-    @PatchMapping("/histories/refund/{historyId}")
+    @PatchMapping("/admin/rent/histories/refund/{historyId}")
     public ResponseEntity<CustomResponse> refundRent(@PathVariable long historyId, HttpSession httpSession) {
 
         SessionUser loginedUser = (SessionUser) httpSession.getAttribute("user");
@@ -145,7 +144,7 @@ public class RentController {
                 ));
     }
 
-    @PatchMapping("/histories/payment/{historyId}")
+    @PatchMapping("/admin/rent/histories/payment/{historyId}")
     public ResponseEntity<CustomResponse> checkPayment(@PathVariable long historyId, HttpSession httpSession) {
 
         SessionUser loginedUser = (SessionUser) httpSession.getAttribute("user");

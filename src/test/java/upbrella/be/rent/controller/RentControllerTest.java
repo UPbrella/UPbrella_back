@@ -233,7 +233,7 @@ public class RentControllerTest extends RestDocsSupport {
         params.add("size", "5");
 
         mockMvc.perform(
-                        get("/rent/histories")
+                        get("/admin/rent/histories")
                                 .params(params)
                 )
                 .andDo(print())
@@ -306,7 +306,7 @@ public class RentControllerTest extends RestDocsSupport {
         given(conditionReportService.findAll()).willReturn(conditionReportsResponse);
 
         mockMvc.perform(
-                        get("/rent/histories/status")
+                        get("/admin/rent/histories/status")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-condition-reports-doc",
@@ -345,7 +345,7 @@ public class RentControllerTest extends RestDocsSupport {
         given(improvementReportService.findAll()).willReturn(improvementReportsResponse);
 
         mockMvc.perform(
-                        get("/rent/histories/improvements")
+                        get("/admin/rent/histories/improvements")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-improvements-doc",
@@ -379,7 +379,7 @@ public class RentControllerTest extends RestDocsSupport {
                 .checkRefund(1L, sessionUser.getId());
 
         mockMvc.perform(
-                        patch("/rent/histories/refund/{historyId}", 1L)
+                        patch("/admin/rent/histories/refund/{historyId}", 1L)
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -405,7 +405,7 @@ public class RentControllerTest extends RestDocsSupport {
                 .checkPayment(1L, sessionUser.getId());
 
         mockMvc.perform(
-                        patch("/rent/histories/payment/{historyId}", 1L)
+                        patch("/admin/rent/histories/payment/{historyId}", 1L)
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
