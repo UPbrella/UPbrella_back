@@ -213,6 +213,7 @@ public class RentService {
                 .orElseThrow(() -> new NonExistingBorrowedHistoryException("[ERROR] 사용자가 빌린 우산이 없습니다."));
     }
 
+    @Transactional
     public void deleteBankAccount(long historyId) {
 
         History history = findHistoryById(historyId);
