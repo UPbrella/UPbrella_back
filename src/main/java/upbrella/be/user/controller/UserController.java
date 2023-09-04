@@ -60,7 +60,7 @@ public class UserController {
                         200,
                         "사용자가 빌린 우산 조회 성공",
                         umbrellaBorrowedByUserResponse
-                        ));
+                ));
     }
 
     @GetMapping("/oauth/login")
@@ -151,7 +151,7 @@ public class UserController {
     @GetMapping("/histories")
     public ResponseEntity<CustomResponse> readUserHistories(HttpSession session) {
 
-        SessionUser sessionUser = (SessionUser)session.getAttribute("user");
+        SessionUser sessionUser = (SessionUser) session.getAttribute("user");
 
         return ResponseEntity
                 .ok()
