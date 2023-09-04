@@ -226,4 +226,19 @@ public class UserController {
                 ));
 
     }
+
+    @GetMapping("/blacklist")
+    public ResponseEntity<CustomResponse<AllBlackListResponse>> findBlackList(HttpSession session) {
+
+        AllBlackListResponse blackListResponse = userService.findBlackList();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "블랙리스트 조회 성공",
+                        blackListResponse
+                ));
+    }
 }

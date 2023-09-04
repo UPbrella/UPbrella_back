@@ -7,6 +7,7 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
+import upbrella.be.user.dto.response.AllBlackListResponse;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
@@ -46,7 +47,7 @@ public class UserService {
         if (userRepository.existsBySocialId((long) socialId.hashCode())) {
             throw new ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
         }
-        if(blackListRepository.existsBySocialId((long) socialId.hashCode())) {
+        if (blackListRepository.existsBySocialId((long) socialId.hashCode())) {
             throw new BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.");
         }
 
@@ -122,4 +123,10 @@ public class UserService {
         foundUser.deleteBankAccount();
     }
 
+    public AllBlackListResponse findBlackList() {
+
+        List<BlackList> blackLists = blackListRepository.findAll();
+
+        return AllBlackListResponse.of(blackLists);
+    }
 }
