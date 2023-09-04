@@ -227,8 +227,8 @@ public class UserController {
 
     }
 
-    @GetMapping("/blacklist")
-    public ResponseEntity<CustomResponse<AllBlackListResponse>> findBlackList(HttpSession session) {
+    @GetMapping("/blackList")
+    public ResponseEntity<CustomResponse<AllBlackListResponse>> findBlackList() {
 
         AllBlackListResponse blackListResponse = userService.findBlackList();
 

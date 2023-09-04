@@ -27,6 +27,7 @@ import upbrella.be.user.exception.*;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -553,5 +554,42 @@ public class UserControllerTest extends RestDocsSupport {
                                 getDocumentResponse()
                         )
                 );
+    }
+
+    @Test
+    @DisplayName("사용자는 블랙리스트를 조회할 수 있다.")
+    void findAllBlackListTest() throws Exception {
+        // given
+        AllBlackListResponse blackLists = AllBlackListResponse.builder()
+                .blackList(List.of(SingleBlackListResponse.builder()
+                        .id(1L)
+                        .socialId(1L)
+                        .blockedAt(LocalDateTime.now())
+                        .build()))
+                .build();
+
+        // when
+        given(userService.findBlackList())
+                .willReturn(blackLists);
+
+        // then
+        mockMvc.perform(
+                get("/users/blackList")
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("find-all-black-list-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("blackList[]").type(JsonFieldType.ARRAY)
+                                        .description("블랙리스트 목록"),
+                                fieldWithPath("blackList[].id").type(JsonFieldType.NUMBER)
+                                        .description("블랙리스트 고유번호"),
+                                fieldWithPath("blackList[].socialId").type(JsonFieldType.NUMBER)
+                                        .description("블랙리스트 소셜 고유번호"),
+                                fieldWithPath("blackList[].blockedAt")
+                                        .description("블랙리스트 등록 날짜")
+                        )));
     }
 }

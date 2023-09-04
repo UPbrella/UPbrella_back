@@ -14,10 +14,7 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
-import upbrella.be.user.dto.response.AllUsersInfoResponse;
-import upbrella.be.user.dto.response.SessionUser;
-import upbrella.be.user.dto.response.SingleUserInfoResponse;
-import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
+import upbrella.be.user.dto.response.*;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.BlackListUserException;
@@ -27,6 +24,7 @@ import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
 import upbrella.be.util.AesEncryptor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -371,6 +369,27 @@ class UserServiceTest {
         assertAll(
                 () -> assertThat(user.getBank()).isNull(),
                 () -> assertThat(user.getAccountNumber()).isNull()
+        );
+    }
+
+    @Test
+    @DisplayName("사용자는 블랙리스트를 조회할 수 있다.")
+    void blackListTest() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+
+        // when
+        given(blackListRepository.findAll()).willReturn(List.of(BlackList.builder()
+                .id(1L)
+                .socialId(1L)
+                .blockedAt(now)
+                .build()));
+
+        // then
+        assertAll(
+                () -> assertThat(userService.findBlackList().getBlackList().size()).isEqualTo(1),
+                () -> assertThat(userService.findBlackList().getBlackList().get(0).getSocialId()).isEqualTo(1L),
+                () -> assertThat(userService.findBlackList().getBlackList().get(0).getBlockedAt()).isEqualTo(now)
         );
     }
 }

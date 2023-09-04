@@ -123,6 +123,7 @@ public class UserService {
         foundUser.deleteBankAccount();
     }
 
+    @Transactional
     public AllBlackListResponse findBlackList() {
 
         List<BlackList> blackLists = blackListRepository.findAll();
