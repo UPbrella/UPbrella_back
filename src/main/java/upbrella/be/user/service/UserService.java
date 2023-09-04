@@ -114,6 +114,7 @@ public class UserService {
                 .decryptData();
     }
 
+    @Transactional
     public void deleteUserBankAccount(Long id) {
 
         User foundUser = findUserById(id);
