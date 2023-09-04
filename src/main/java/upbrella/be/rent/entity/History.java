@@ -2,6 +2,7 @@ package upbrella.be.rent.entity;
 
 import lombok.*;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
+import upbrella.be.rent.exception.NotReturnedException;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
@@ -56,8 +57,8 @@ public class History {
 
     public void refund(User user, LocalDateTime refundedAt) {
 
-            this.refundedAt = refundedAt;
-            this.refundedBy = user;
+        this.refundedAt = refundedAt;
+        this.refundedBy = user;
     }
 
     public void paid(User user, LocalDateTime paidAt) {
@@ -116,5 +117,14 @@ public class History {
                 .isReturned(isReturned)
                 .isRefunded(isRefunded)
                 .build();
+    }
+
+    public void deleteBankAccount() {
+
+        if (this.returnedAt == null) {
+            throw new NotReturnedException("[ERROR] 우산 반납이 완료되지 않았습니다.");
+        }
+        this.bank = null;
+        this.accountNumber = null;
     }
 }

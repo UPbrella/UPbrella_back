@@ -212,4 +212,11 @@ public class RentService {
         return rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId())
                 .orElseThrow(() -> new NonExistingBorrowedHistoryException("[ERROR] 사용자가 빌린 우산이 없습니다."));
     }
+
+    public void deleteBankAccount(long historyId) {
+
+        History history = findHistoryById(historyId);
+
+        history.deleteBankAccount();
+    }
 }
