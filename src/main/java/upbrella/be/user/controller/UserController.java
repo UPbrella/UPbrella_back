@@ -241,4 +241,18 @@ public class UserController {
                         blackListResponse
                 ));
     }
+
+    @DeleteMapping("/blackList/{blackListId}")
+    public ResponseEntity<CustomResponse> deleteBlackList(@PathVariable long blackListId) {
+
+        userService.deleteBlackList(blackListId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "블랙리스트 삭제 성공"
+                ));
+    }
 }

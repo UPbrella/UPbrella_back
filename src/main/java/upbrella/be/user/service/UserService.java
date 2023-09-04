@@ -130,4 +130,10 @@ public class UserService {
 
         return AllBlackListResponse.of(blackLists);
     }
+
+    @Transactional
+    public void deleteBlackList(long blackListId) {
+
+        blackListRepository.deleteById(blackListId);
+    }
 }

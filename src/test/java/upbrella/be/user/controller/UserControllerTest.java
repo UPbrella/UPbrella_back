@@ -592,4 +592,27 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("블랙리스트 등록 날짜")
                         )));
     }
+
+    @Test
+    @DisplayName("사용자는 블랙리스트를 삭제할 수 있다.")
+    void deleteBlackListTest() throws Exception {
+        // given
+        long blackListId = 1L;
+
+        // when
+        doNothing().when(userService).deleteBlackList(blackListId);
+
+        // then
+        mockMvc.perform(
+                delete("/users/blackList/{blackListId}", blackListId)
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("delete-black-list-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("blackListId").description("블랙리스트 고유번호")
+                        )));
+
+    }
 }

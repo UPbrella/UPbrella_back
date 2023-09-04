@@ -36,8 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -391,5 +390,19 @@ class UserServiceTest {
                 () -> assertThat(userService.findBlackList().getBlackList().get(0).getSocialId()).isEqualTo(1L),
                 () -> assertThat(userService.findBlackList().getBlackList().get(0).getBlockedAt()).isEqualTo(now)
         );
+    }
+
+    @Test
+    @DisplayName("블랙리스트 삭제 테스트")
+    void deleteBlackListTest() {
+        // given
+        long blackListId = 1L;
+        doNothing().when(blackListRepository).deleteById(blackListId);
+
+        // when
+        userService.deleteBlackList(blackListId);
+
+        // then
+        verify(blackListRepository, times(1)).deleteById(blackListId);
     }
 }
