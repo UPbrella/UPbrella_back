@@ -36,9 +36,11 @@ public class AuthConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(adminInterceptor)
                 .order(LOWEST_PRECEDENCE)
-                .addPathPatterns("/**")
+                .addPathPatterns("/admin/**")
                 .excludePathPatterns(
-                        "/users/**",
+                        "/users/login/**",
+                        "/users/oauth/login/**",
+                        "/users/join/**",
                         "/index.html",
                         "/error/**",
                         "/api/error/**",

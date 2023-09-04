@@ -18,7 +18,6 @@ public class AdminInterceptor implements HandlerInterceptor {
 
         SessionUser user = (SessionUser) session.getAttribute("user");
 
-        System.out.println("user.getAdminStatus() = " + user.getAdminStatus());
         if (user.getAdminStatus() == false) {
             request.getRequestDispatcher("/api/error").forward(request, response);
             return false;

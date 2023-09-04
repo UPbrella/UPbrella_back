@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpSession;
+import upbrella.be.config.FixtureBuilderFactory;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.repository.UserRepository;
 
 import javax.servlet.RequestDispatcher;
@@ -21,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OAuthLoginInterceptorTest {
+class LoginInterceptorTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -104,13 +106,14 @@ class OAuthLoginInterceptorTest {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 3L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
 
         given(httpServletRequest.getSession(false))
                 .willReturn(mockHttpSession);
         given(httpServletRequest.getRequestDispatcher(any()))
                 .willReturn(requestDispatcher);
-        given(userRepository.existsById(3L))
+        given(userRepository.existsById(sessionUser.getId()))
                 .willReturn(false);
         willDoNothing().given(requestDispatcher)
                 .forward(any(HttpServletRequest.class), any(HttpServletResponse.class));
@@ -127,7 +130,7 @@ class OAuthLoginInterceptorTest {
                         .getSession(false),
                 () -> then(userRepository)
                         .should(times(1))
-                        .existsById(3L),
+                        .existsById(sessionUser.getId()),
                 () -> then(httpServletRequest)
                         .should(times(1))
                         .getRequestDispatcher("/api/error"),
@@ -143,11 +146,12 @@ class OAuthLoginInterceptorTest {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 3L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
 
         given(httpServletRequest.getSession(false))
                 .willReturn(mockHttpSession);
-        given(userRepository.existsById(3L))
+        given(userRepository.existsById(sessionUser.getId()))
                 .willReturn(true);
 
         // when
@@ -162,7 +166,7 @@ class OAuthLoginInterceptorTest {
                         .getSession(false),
                 () -> then(userRepository)
                         .should(times(1))
-                        .existsById(3L)
+                        .existsById(sessionUser.getId())
         );
     }
 }
