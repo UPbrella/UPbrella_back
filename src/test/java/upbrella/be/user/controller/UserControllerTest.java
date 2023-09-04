@@ -376,7 +376,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        get("/users")
+                        get("/admin/users")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-users-info-doc",
@@ -517,7 +517,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        delete("/users/{userId}", userId)
+                        delete("/admin/users/{userId}", userId)
                                 .session(mockHttpSession)
                 ).andExpect(status().isOk())
                 .andDo(print())
