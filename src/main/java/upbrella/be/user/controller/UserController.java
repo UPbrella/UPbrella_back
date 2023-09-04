@@ -209,4 +209,20 @@ public class UserController {
                 ));
 
     }
+
+    @DeleteMapping("/users/bankAccount")
+    public ResponseEntity<CustomResponse> deleteUserBankAccount(HttpSession session) {
+
+        SessionUser sessionUser = (SessionUser) session.getAttribute("user");
+
+        userService.deleteUserBankAccount(sessionUser.getId());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "사용자 계좌 정보 삭제 성공"
+                ));
+    }
 }

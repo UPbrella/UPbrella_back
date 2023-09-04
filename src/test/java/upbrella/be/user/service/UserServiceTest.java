@@ -356,4 +356,21 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.join(blackList, joinRequest))
                 .isInstanceOf(BlackListUserException.class);
     }
+
+    @Test
+    @DisplayName("사용자는 계좌 정보를 삭제할 수 있다.")
+    void deleteUserBankAccountTest() {
+        // given
+        User user = FixtureBuilderFactory.builderUser().sample();
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+        // when
+        userService.deleteUser(user.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(user.getBank()).isNull(),
+                () -> assertThat(user.getAccountNumber()).isNull()
+        );
+    }
 }

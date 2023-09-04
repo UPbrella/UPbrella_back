@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -528,5 +529,29 @@ public class UserControllerTest extends RestDocsSupport {
                                 parameterWithName("userId").description("회원 고유번호")
                         )));
 
+    }
+
+    @Test
+    @DisplayName("사용자는 자신의 계좌정보를 삭제할 수 있다.")
+    void deleteBackAccountTest() throws Exception {
+        // given
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("user", sessionUser);
+
+        // when
+        doNothing().when(userService).deleteUserBankAccount(sessionUser.getId());
+
+        // then
+        mockMvc.perform(
+                        delete("/users/bankAccount")
+                                .session(mockHttpSession)
+                ).andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("delete-user-bank-account-doc",
+                                getDocumentRequest(),
+                                getDocumentResponse()
+                        )
+                );
     }
 }
