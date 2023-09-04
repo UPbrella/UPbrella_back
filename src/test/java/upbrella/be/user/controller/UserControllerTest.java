@@ -529,4 +529,28 @@ public class UserControllerTest extends RestDocsSupport {
                         )));
 
     }
+
+    @Test
+    @DisplayName("사용자는 자신의 계좌정보를 삭제할 수 있다.")
+    void deleteBackAccountTest() throws Exception {
+        // given
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("user", sessionUser);
+
+        // when
+
+
+        // then
+        mockMvc.perform(
+                        delete("/users/bankAccount")
+                                .session(mockHttpSession)
+                ).andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("delete-user-bank-account-doc",
+                                getDocumentRequest(),
+                                getDocumentResponse()
+                        )
+                );
+    }
 }
