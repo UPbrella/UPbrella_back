@@ -11,6 +11,14 @@ spring:
       hibernate:
         default_batch_fetch_size: 1000
         format_sql: true
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+    timeout: 60000
+  session:
+    store-type: redis
+    timeout: 3600
 
     show-sql: true
 logging:

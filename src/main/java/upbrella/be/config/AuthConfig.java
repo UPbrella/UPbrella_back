@@ -7,31 +7,41 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import upbrella.be.config.interceptor.AdminInterceptor;
 import upbrella.be.config.interceptor.LoginInterceptor;
-import upbrella.be.config.interceptor.OAuthLoginInterceptor;
+
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Profile(value = "!dev")
 @Configuration
 @RequiredArgsConstructor
 public class AuthConfig implements WebMvcConfigurer {
 
-    private final OAuthLoginInterceptor oAuthLoginInterceptor;
     private final LoginInterceptor loginInterceptor;
     private final AdminInterceptor adminInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(oAuthLoginInterceptor)
+        registry.addInterceptor(loginInterceptor)
+                .order(HIGHEST_PRECEDENCE)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/users/login/**",
+                        "/users/oauth/login/**",
                         "/users/join/**",
                         "/index.html",
                         "/error/**",
                         "/api/error/**",
                         "/docs/**");
 
-        registry.addInterceptor(loginInterceptor);
 
-        registry.addInterceptor(adminInterceptor);
+        registry.addInterceptor(adminInterceptor)
+                .order(LOWEST_PRECEDENCE)
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/users/**",
+                        "/index.html",
+                        "/error/**",
+                        "/api/error/**",
+                        "/docs/**");
     }
 }

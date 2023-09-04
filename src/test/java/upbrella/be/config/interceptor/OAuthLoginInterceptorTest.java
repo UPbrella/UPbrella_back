@@ -36,7 +36,7 @@ class OAuthLoginInterceptorTest {
     private Object handler;
 
     @InjectMocks
-    private OAuthLoginInterceptor oAuthLoginInterceptor;
+    private LoginInterceptor loginInterceptor;
 
     @Test
     @DisplayName("세션이 없는 경우 false를 반환한다.")
@@ -49,7 +49,7 @@ class OAuthLoginInterceptorTest {
         willDoNothing().given(requestDispatcher)
                 .forward(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
-        boolean result = oAuthLoginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
+        boolean result = loginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
 
         assertAll(
                 () -> assertThat(result)
@@ -81,7 +81,7 @@ class OAuthLoginInterceptorTest {
         willDoNothing().given(requestDispatcher)
                 .forward(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
-        boolean result = oAuthLoginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
+        boolean result = loginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
 
         assertAll(
                 () -> assertThat(result)
@@ -116,7 +116,7 @@ class OAuthLoginInterceptorTest {
                 .forward(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
         // when
-        boolean result = oAuthLoginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
+        boolean result = loginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
 
         // then
         assertAll(
@@ -151,7 +151,7 @@ class OAuthLoginInterceptorTest {
                 .willReturn(true);
 
         // when
-        boolean result = oAuthLoginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
+        boolean result = loginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
 
         // then
         assertAll(
