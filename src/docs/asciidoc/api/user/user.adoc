@@ -81,6 +81,9 @@ include::{snippets}/user-history-doc/response-fields-data.adoc[]
 include::{snippets}/update-user-bank-account-doc/http-request.adoc[]
 include::{snippets}/update-user-bank-account-doc/request-fields.adoc[]
 
+=== 사용자 은행 정보 삭제
+include::{snippets}/delete-user-bank-account-doc/http-request.adoc[]
+
 === 사용자 회원 탈퇴
 include::{snippets}/delete-user-doc/http-request.adoc[]
 
