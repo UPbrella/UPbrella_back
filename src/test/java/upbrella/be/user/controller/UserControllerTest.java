@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -539,7 +540,7 @@ public class UserControllerTest extends RestDocsSupport {
         mockHttpSession.setAttribute("user", sessionUser);
 
         // when
-
+        doNothing().when(userService).deleteUserBankAccount(sessionUser.getId());
 
         // then
         mockMvc.perform(
