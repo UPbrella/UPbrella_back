@@ -121,7 +121,7 @@ public class History {
 
     public void deleteBankAccount() {
 
-        if (this.paidAt == null) {
+        if (this.refundedAt == null) {
             throw new NotRefundedException("[ERROR] 보증금 환급이 완료되지 않았습니다.");
         }
         this.bank = null;

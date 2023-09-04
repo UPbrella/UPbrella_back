@@ -418,4 +418,27 @@ public class RentControllerTest extends RestDocsSupport {
                         )));
 
     }
+
+    @Test
+    @DisplayName("대여 기록의 계좌 삭제 성공 테스트")
+    void deleteRentAccountTest() throws Exception {
+        // given
+        long historyId = 1L;
+
+        // when
+        doNothing().when(rentService).deleteBankAccount(historyId);
+
+        // then
+        mockMvc.perform(
+                        delete("/rent/histories/{historyId}/account", historyId)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("delete-rent-account-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("historyId")
+                                        .description("대여 기록 고유번호")
+                        )));
+    }
 }
