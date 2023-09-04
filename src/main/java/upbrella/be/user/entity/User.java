@@ -78,4 +78,11 @@ public class User {
                 .accountNumber(AesEncryptor.decrypt(this.accountNumber))
                 .build();
     }
+
+    public void deleteBankAccount() {
+
+        this.bank = null;
+        this.accountNumber = null;
+    }
+
 }
