@@ -207,9 +207,8 @@ public class UserController {
                         "사용자 탈퇴 성공"
                 ));
     }
-
     @DeleteMapping("/admin/users/{userId}")
-    public ResponseEntity<CustomResponse> withdrawUser(@PathVariable long userId, HttpSession session) {
+    public ResponseEntity<CustomResponse> withdrawUser(HttpSession session, @PathVariable long userId) {
 
         userService.withdrawUser(userId);
 
