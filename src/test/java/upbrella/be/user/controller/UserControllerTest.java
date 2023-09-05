@@ -73,7 +73,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         session.setAttribute("user", sessionUser);
         given(userService.findDecryptedUserById(anyLong()))
-                .willReturn(user);
+                .willReturn(user.decryptData());
 
         // when & then
         mockMvc.perform(
@@ -369,6 +369,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         AllUsersInfoResponse allUsersInfoResponse = AllUsersInfoResponse.builder()
                 .users(users.stream()
+                        .map(User::decryptData)
                         .map(SingleUserInfoResponse::fromUser)
                         .collect(Collectors.toList()))
                 .build();

@@ -17,7 +17,7 @@ include::common.adoc[]
 [[User-API]]
 = 사용자 API
 
-[[User-API]]
+[[Joined-User-API]]
 == 회원 API
 include::api/user/user.adoc[]
 
