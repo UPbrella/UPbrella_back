@@ -1,0 +1,28 @@
+=== 유저 목록 조회
+
+==== HTTP Request
+
+include::{snippets}/find-users-info-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/find-users-info-doc/http-response.adoc[]
+
+include::{snippets}/find-users-info-doc/response-fields-data.adoc[]
+
+=== 회원 정지
+include::{snippets}/withdraw-user-doc/http-request.adoc[]
+include::{snippets}/withdraw-user-doc/path-parameters.adoc[]
+
+=== 블랙리스트 조회
+==== HTTP Request
+include::{snippets}/find-all-black-list-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/find-all-black-list-doc/http-response.adoc[]
+include::{snippets}/find-all-black-list-doc/response-fields-data.adoc[]
+
+=== 블랙리스트 삭제
+include::{snippets}/delete-black-list-doc/http-request.adoc[]
+include::{snippets}/delete-black-list-doc/path-parameters.adoc[]
+

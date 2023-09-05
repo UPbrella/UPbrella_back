@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpSession;
+import upbrella.be.config.FixtureBuilderFactory;
+import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.repository.UserRepository;
 
 import javax.servlet.RequestDispatcher;
@@ -21,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OAuthLoginInterceptorTest {
+class LoginInterceptorTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -36,7 +38,7 @@ class OAuthLoginInterceptorTest {
     private Object handler;
 
     @InjectMocks
-    private OAuthLoginInterceptor oAuthLoginInterceptor;
+    private LoginInterceptor loginInterceptor;
 
     @Test
     @DisplayName("세션이 없는 경우 false를 반환한다.")
@@ -49,7 +51,7 @@ class OAuthLoginInterceptorTest {
         willDoNothing().given(requestDispatcher)
                 .forward(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
-        boolean result = oAuthLoginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
+        boolean result = loginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
 
         assertAll(
                 () -> assertThat(result)
@@ -81,7 +83,7 @@ class OAuthLoginInterceptorTest {
         willDoNothing().given(requestDispatcher)
                 .forward(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
-        boolean result = oAuthLoginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
+        boolean result = loginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
 
         assertAll(
                 () -> assertThat(result)
@@ -104,19 +106,20 @@ class OAuthLoginInterceptorTest {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 3L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
 
         given(httpServletRequest.getSession(false))
                 .willReturn(mockHttpSession);
         given(httpServletRequest.getRequestDispatcher(any()))
                 .willReturn(requestDispatcher);
-        given(userRepository.existsById(3L))
+        given(userRepository.existsById(sessionUser.getId()))
                 .willReturn(false);
         willDoNothing().given(requestDispatcher)
                 .forward(any(HttpServletRequest.class), any(HttpServletResponse.class));
 
         // when
-        boolean result = oAuthLoginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
+        boolean result = loginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
 
         // then
         assertAll(
@@ -127,7 +130,7 @@ class OAuthLoginInterceptorTest {
                         .getSession(false),
                 () -> then(userRepository)
                         .should(times(1))
-                        .existsById(3L),
+                        .existsById(sessionUser.getId()),
                 () -> then(httpServletRequest)
                         .should(times(1))
                         .getRequestDispatcher("/api/error"),
@@ -143,15 +146,16 @@ class OAuthLoginInterceptorTest {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 3L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
 
         given(httpServletRequest.getSession(false))
                 .willReturn(mockHttpSession);
-        given(userRepository.existsById(3L))
+        given(userRepository.existsById(sessionUser.getId()))
                 .willReturn(true);
 
         // when
-        boolean result = oAuthLoginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
+        boolean result = loginInterceptor.preHandle(httpServletRequest, httpServletResponse, handler);
 
         // then
         assertAll(
@@ -162,7 +166,7 @@ class OAuthLoginInterceptorTest {
                         .getSession(false),
                 () -> then(userRepository)
                         .should(times(1))
-                        .existsById(3L)
+                        .existsById(sessionUser.getId())
         );
     }
 }
