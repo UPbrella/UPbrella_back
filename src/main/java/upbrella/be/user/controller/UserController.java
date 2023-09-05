@@ -22,7 +22,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,11 +30,11 @@ public class UserController {
     private final KakaoOauthInfo kakaoOauthInfo;
     private final RentService rentService;
 
-    @GetMapping("/loggedIn")
+    @GetMapping("/users/loggedIn")
     public ResponseEntity<CustomResponse<UserInfoResponse>> findUserInfo(HttpSession httpSession) {
 
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
-        User user = userService.findUserById(sessionUser.getId());
+        User user = userService.findDecryptedUserById(sessionUser.getId());
 
         return ResponseEntity
                 .ok()
@@ -46,7 +45,7 @@ public class UserController {
                         UserInfoResponse.fromUser(user)));
     }
 
-    @GetMapping("/loggedIn/umbrella")
+    @GetMapping("/users/loggedIn/umbrella")
     public ResponseEntity<CustomResponse<UmbrellaBorrowedByUserResponse>> findUmbrellaBorrowedByUser(HttpSession httpSession) {
 
         SessionUser sessionUser = (SessionUser) httpSession.getAttribute("user");
@@ -60,10 +59,10 @@ public class UserController {
                         200,
                         "사용자가 빌린 우산 조회 성공",
                         umbrellaBorrowedByUserResponse
-                        ));
+                ));
     }
 
-    @GetMapping("/oauth/login")
+    @GetMapping("/users/oauth/login")
     public ResponseEntity<CustomResponse> kakaoLogin(HttpSession session, String code) {
 
         OauthToken kakaoAccessToken;
@@ -86,7 +85,7 @@ public class UserController {
                         null));
     }
 
-    @GetMapping("/login")
+    @GetMapping("/users/login")
     public ResponseEntity<CustomResponse> upbrellaLogin(HttpSession session) {
 
         if (session.getAttribute("kakaoId") == null) {
@@ -108,7 +107,7 @@ public class UserController {
                         null));
     }
 
-    @PostMapping("/join")
+    @PostMapping("/users/join")
     public ResponseEntity<CustomResponse> kakaoJoin(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
         Long kakaoId = (Long) session.getAttribute("kakaoId");
@@ -134,7 +133,7 @@ public class UserController {
                         null));
     }
 
-    @GetMapping
+    @GetMapping("/admin/users")
     public ResponseEntity<CustomResponse<AllUsersInfoResponse>> findUsers(HttpSession httpSession) {
 
         AllUsersInfoResponse allUsersInfoResponse = userService.findUsers();
@@ -148,10 +147,10 @@ public class UserController {
                         allUsersInfoResponse));
     }
 
-    @GetMapping("/histories")
+    @GetMapping("/users/histories")
     public ResponseEntity<CustomResponse> readUserHistories(HttpSession session) {
 
-        SessionUser sessionUser = (SessionUser)session.getAttribute("user");
+        SessionUser sessionUser = (SessionUser) session.getAttribute("user");
 
         return ResponseEntity
                 .ok()
@@ -163,7 +162,7 @@ public class UserController {
                 ));
     }
 
-    @PatchMapping("/bankAccount")
+    @PatchMapping("/users/bankAccount")
     public ResponseEntity<CustomResponse> updateUserBankAccount(@Valid @RequestBody UpdateBankAccountRequest updateBankAccountRequest, HttpSession session) {
 
         SessionUser sessionUser = (SessionUser) session.getAttribute("user");
@@ -179,12 +178,12 @@ public class UserController {
                 ));
     }
 
-    @DeleteMapping("/loggedIn")
+    @DeleteMapping("/users/loggedIn")
     public ResponseEntity<CustomResponse> deleteUser(HttpSession session) {
 
-        long loginedUserId = (long) session.getAttribute("userId");
+        SessionUser loginedUser = (SessionUser) session.getAttribute("user");
 
-        userService.deleteUser(loginedUserId);
+        userService.deleteUser(loginedUser.getId());
 
         return ResponseEntity
                 .ok()
@@ -196,7 +195,7 @@ public class UserController {
     }
 
     // TODO: 관리자 권한 어디서 처리할것인지
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/admin/users/{userId}")
     public ResponseEntity<CustomResponse> withdrawUser(HttpSession session, @PathVariable long userId) {
 
         userService.withdrawUser(userId);
@@ -209,5 +208,50 @@ public class UserController {
                         "사용자 탈퇴 성공"
                 ));
 
+    }
+
+    @DeleteMapping("/users/bankAccount")
+    public ResponseEntity<CustomResponse> deleteUserBankAccount(HttpSession session) {
+
+        SessionUser sessionUser = (SessionUser) session.getAttribute("user");
+
+        userService.deleteUserBankAccount(sessionUser.getId());
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "사용자 계좌 정보 삭제 성공"
+                ));
+    }
+
+    @GetMapping("/users/blackList")
+    public ResponseEntity<CustomResponse<AllBlackListResponse>> findBlackList() {
+
+        AllBlackListResponse blackListResponse = userService.findBlackList();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "블랙리스트 조회 성공",
+                        blackListResponse
+                ));
+    }
+
+    @DeleteMapping("/users/blackList/{blackListId}")
+    public ResponseEntity<CustomResponse> deleteBlackList(@PathVariable long blackListId) {
+
+        userService.deleteBlackList(blackListId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "블랙리스트 삭제 성공"
+                ));
     }
 }

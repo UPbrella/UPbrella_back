@@ -27,6 +27,7 @@ import upbrella.be.user.exception.*;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -70,8 +72,8 @@ public class UserControllerTest extends RestDocsSupport {
         User user = FixtureBuilderFactory.builderUser().sample();
 
         session.setAttribute("user", sessionUser);
-        given(userService.findUserById(anyLong()))
-                .willReturn(user);
+        given(userService.findDecryptedUserById(anyLong()))
+                .willReturn(user.decryptData());
 
         // when & then
         mockMvc.perform(
@@ -367,6 +369,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         AllUsersInfoResponse allUsersInfoResponse = AllUsersInfoResponse.builder()
                 .users(users.stream()
+                        .map(User::decryptData)
                         .map(SingleUserInfoResponse::fromUser)
                         .collect(Collectors.toList()))
                 .build();
@@ -376,7 +379,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        get("/users")
+                        get("/admin/users")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-users-info-doc",
@@ -487,7 +490,8 @@ public class UserControllerTest extends RestDocsSupport {
     void deleteUserTest() throws Exception {
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 70L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
 
         // when
 
@@ -516,7 +520,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        delete("/users/{userId}", userId)
+                        delete("/admin/users/{userId}", userId)
                                 .session(mockHttpSession)
                 ).andExpect(status().isOk())
                 .andDo(print())
@@ -525,6 +529,90 @@ public class UserControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("userId").description("회원 고유번호")
+                        )));
+
+    }
+
+    @Test
+    @DisplayName("사용자는 자신의 계좌정보를 삭제할 수 있다.")
+    void deleteBackAccountTest() throws Exception {
+        // given
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("user", sessionUser);
+
+        // when
+        doNothing().when(userService).deleteUserBankAccount(sessionUser.getId());
+
+        // then
+        mockMvc.perform(
+                        delete("/users/bankAccount")
+                                .session(mockHttpSession)
+                ).andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("delete-user-bank-account-doc",
+                                getDocumentRequest(),
+                                getDocumentResponse()
+                        )
+                );
+    }
+
+    @Test
+    @DisplayName("사용자는 블랙리스트를 조회할 수 있다.")
+    void findAllBlackListTest() throws Exception {
+        // given
+        AllBlackListResponse blackLists = AllBlackListResponse.builder()
+                .blackList(List.of(SingleBlackListResponse.builder()
+                        .id(1L)
+                        .socialId(1L)
+                        .blockedAt(LocalDateTime.now())
+                        .build()))
+                .build();
+
+        // when
+        given(userService.findBlackList())
+                .willReturn(blackLists);
+
+        // then
+        mockMvc.perform(
+                get("/users/blackList")
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("find-all-black-list-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("blackList[]").type(JsonFieldType.ARRAY)
+                                        .description("블랙리스트 목록"),
+                                fieldWithPath("blackList[].id").type(JsonFieldType.NUMBER)
+                                        .description("블랙리스트 고유번호"),
+                                fieldWithPath("blackList[].socialId").type(JsonFieldType.NUMBER)
+                                        .description("블랙리스트 소셜 고유번호"),
+                                fieldWithPath("blackList[].blockedAt")
+                                        .description("블랙리스트 등록 날짜")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 블랙리스트를 삭제할 수 있다.")
+    void deleteBlackListTest() throws Exception {
+        // given
+        long blackListId = 1L;
+
+        // when
+        doNothing().when(userService).deleteBlackList(blackListId);
+
+        // then
+        mockMvc.perform(
+                delete("/users/blackList/{blackListId}", blackListId)
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("delete-black-list-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("blackListId").description("블랙리스트 고유번호")
                         )));
 
     }

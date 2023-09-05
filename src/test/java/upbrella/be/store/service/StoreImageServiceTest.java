@@ -12,23 +12,22 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.exception.NonExistingStoreImageException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -105,32 +104,6 @@ class StoreImageServiceTest {
         assertThatThrownBy(() -> storeImageService.deleteFile(imageId))
                 .isInstanceOf(NonExistingStoreImageException.class)
                 .hasMessageContaining("해당 이미지가 존재하지 않습니다.");
-    }
-
-    @Test
-    @DisplayName("사용자는 모든 협업지점을 조회할 때 이미지들을 조회할 수 있다.")
-    void createImageUrlResponseTest() {
-        // given
-        StoreImage first = StoreImage.builder()
-                .id(1L)
-                .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-                .build();
-
-        StoreImage second = StoreImage.builder()
-                .id(2L)
-                .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-                .build();
-
-        Set<StoreImage> images = Set.of(first, second);
-
-        // when
-        List<SingleImageUrlResponse> imageUrlResponse = storeImageService.createImageUrlResponse(images);
-
-        // then
-        assertAll(
-                () -> assertThat(imageUrlResponse.get(0).getImageUrl()).isEqualTo(first.getImageUrl()),
-                () -> assertThat(imageUrlResponse.get(1).getImageUrl()).isEqualTo(second.getImageUrl())
-        );
     }
 
     @Nested

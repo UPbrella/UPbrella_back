@@ -40,20 +40,6 @@ include::{snippets}/find-user-info-doc/http-response.adoc[]
 
 include::{snippets}/find-user-info-doc/response-fields-data.adoc[]
 
-=== 유저 목록 조회
-
-==== HTTP Request
-
-include::{snippets}/find-users-info-doc/http-request.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/find-users-info-doc/http-response.adoc[]
-
-include::{snippets}/find-users-info-doc/response-fields-data.adoc[]
-
-
-
 === 사용자가 빌린 우산 조회
 
 ==== HTTP Request
@@ -81,9 +67,8 @@ include::{snippets}/user-history-doc/response-fields-data.adoc[]
 include::{snippets}/update-user-bank-account-doc/http-request.adoc[]
 include::{snippets}/update-user-bank-account-doc/request-fields.adoc[]
 
+=== 사용자 은행 정보 삭제
+include::{snippets}/delete-user-bank-account-doc/http-request.adoc[]
+
 === 사용자 회원 탈퇴
 include::{snippets}/delete-user-doc/http-request.adoc[]
-
-=== 관리자가 회원 정지
-include::{snippets}/withdraw-user-doc/http-request.adoc[]
-include::{snippets}/withdraw-user-doc/path-parameters.adoc[]
