@@ -60,7 +60,7 @@ public class UserController {
                         200,
                         "사용자가 빌린 우산 조회 성공",
                         umbrellaBorrowedByUserResponse
-                        ));
+                ));
     }
 
     @GetMapping("/oauth/login")
@@ -151,7 +151,7 @@ public class UserController {
     @GetMapping("/histories")
     public ResponseEntity<CustomResponse> readUserHistories(HttpSession session) {
 
-        SessionUser sessionUser = (SessionUser)session.getAttribute("user");
+        SessionUser sessionUser = (SessionUser) session.getAttribute("user");
 
         return ResponseEntity
                 .ok()
@@ -225,5 +225,34 @@ public class UserController {
                         "사용자 탈퇴 성공"
                 ));
 
+    }
+
+    @GetMapping("/blackList")
+    public ResponseEntity<CustomResponse<AllBlackListResponse>> findBlackList() {
+
+        AllBlackListResponse blackListResponse = userService.findBlackList();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "블랙리스트 조회 성공",
+                        blackListResponse
+                ));
+    }
+
+    @DeleteMapping("/blackList/{blackListId}")
+    public ResponseEntity<CustomResponse> deleteBlackList(@PathVariable long blackListId) {
+
+        userService.deleteBlackList(blackListId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "블랙리스트 삭제 성공"
+                ));
     }
 }
