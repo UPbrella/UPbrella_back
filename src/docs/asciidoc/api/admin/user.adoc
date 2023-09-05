@@ -10,6 +10,6 @@ include::{snippets}/find-users-info-doc/http-response.adoc[]
 
 include::{snippets}/find-users-info-doc/response-fields-data.adoc[]
 
-=== 관리자가 회원 정지
+=== 회원 정지
 include::{snippets}/withdraw-user-doc/http-request.adoc[]
 include::{snippets}/withdraw-user-doc/path-parameters.adoc[]

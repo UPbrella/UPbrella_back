@@ -1,4 +1,4 @@
-=== 관리자 페이지에서 전체 협업 지점 조회
+=== 전체 협업 지점 조회
 
 ==== HTTP Request
 
@@ -23,14 +23,14 @@ include::{snippets}/upload-file/request-parts.adoc[]
 include::{snippets}/store-delete-images-doc/http-request.adoc[]
 include::{snippets}/store-delete-images-doc/path-parameters.adoc[]
 
-=== 관리자 페이지에서 새로운 협업 지점 등록
+=== 협업 지점 등록
 
 ==== HTTP Request
 
 include::{snippets}/store-create-doc/http-request.adoc[]
 include::{snippets}/store-create-doc/request-fields.adoc[]
 
-=== 관리자 페이지에서 협업 지점 변경
+=== 협업 지점 변경
 
 ==== HTTP Request
 
@@ -39,7 +39,7 @@ include::{snippets}/store-update-doc/path-parameters.adoc[]
 include::{snippets}/store-update-doc/request-fields.adoc[]
 
 
-=== 관리자 페이지에서 협업 지점 삭제
+=== 협업 지점 삭제
 
 ==== HTTP Request
 
