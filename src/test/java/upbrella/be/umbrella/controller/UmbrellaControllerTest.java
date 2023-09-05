@@ -75,7 +75,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
         // when & then
         mockMvc.perform(
-                        get("/umbrellas")
+                        get("/admin/umbrellas")
                                 .params(info)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -121,7 +121,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
         // when & then
         mockMvc.perform(
-                        get("/umbrellas/{storeId}", storeId)
+                        get("/admin/umbrellas/{storeId}", storeId)
                                 .params(info)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -162,7 +162,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            post("/umbrellas")
+                            post("/admin/umbrellas")
                                     .content(objectMapper.writeValueAsString(umbrellaCreateRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON)
@@ -198,7 +198,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            post("/umbrellas")
+                            post("/admin/umbrellas")
                                     .content(objectMapper.writeValueAsString(umbrellaCreateRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON))
@@ -227,7 +227,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            patch("/umbrellas/{umbrellaId}", id)
+                            patch("/admin/umbrellas/{umbrellaId}", id)
                                     .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON)
@@ -269,7 +269,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            patch("/umbrellas/{umbrellaId}", id)
+                            patch("/admin/umbrellas/{umbrellaId}", id)
                                     .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON))
@@ -295,7 +295,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            patch("/umbrellas/{umbrellaId}", id)
+                            patch("/admin/umbrellas/{umbrellaId}", id)
                                     .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .accept(MediaType.APPLICATION_JSON))
@@ -320,7 +320,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            delete("/umbrellas/{umbrellaId}", id)
+                            delete("/admin/umbrellas/{umbrellaId}", id)
                     ).andDo(print())
                     .andExpect(status().isOk())
                     .andDo(document("delete-umbrella-doc",
@@ -344,7 +344,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            delete("/umbrellas/{umbrellaId}", id))
+                            delete("/admin/umbrellas/{umbrellaId}", id))
                     .andExpect(status().isBadRequest())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -367,7 +367,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
         // when & then
         mockMvc.perform(
-                        get("/umbrellas/statistics")
+                        get("/admin/umbrellas/statistics")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-umbrellas-statistics-doc",
@@ -409,7 +409,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            get("/umbrellas/statistics/{storeId}", storeId)
+                            get("/admin/umbrellas/statistics/{storeId}", storeId)
                     ).andDo(print())
                     .andExpect(status().isOk())
                     .andDo(document("show-umbrellas-statistics-by-store-doc",
@@ -445,7 +445,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             // when & then
             mockMvc.perform(
-                            get("/umbrellas/statistics/{storeId}", storeId))
+                            get("/admin/umbrellas/statistics/{storeId}", storeId))
                     .andExpect(status().isBadRequest())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())

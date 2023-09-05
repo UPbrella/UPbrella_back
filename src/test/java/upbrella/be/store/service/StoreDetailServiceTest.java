@@ -48,6 +48,18 @@ public class StoreDetailServiceTest {
     @DisplayName("협업 지점의 고유번호를 입력받아")
     class findStoreDetailByStoreMetaIdTest {
 
+        BusinessHour monday = BusinessHour.builder()
+                .date(DayOfWeek.MONDAY)
+                .openAt(LocalTime.of(9, 0))
+                .closeAt(LocalTime.of(18, 0))
+                .build();
+        BusinessHour tuesday = BusinessHour.builder()
+                .date(DayOfWeek.TUESDAY)
+                .openAt(LocalTime.of(9, 0))
+                .closeAt(LocalTime.of(18, 0))
+                .build();
+        Set<BusinessHour> businessHours = Set.of(monday, tuesday);
+
         StoreMeta storeMeta = StoreMeta.builder()
                 .id(3L)
                 .name("스타벅스")
@@ -57,6 +69,7 @@ public class StoreDetailServiceTest {
                 .activated(true)
                 .deleted(false)
                 .category("카페, 디저트")
+                .businessHours(businessHours)
                 .build();
 
         StoreDetail storeDetail = StoreDetail.builder()
@@ -71,23 +84,16 @@ public class StoreDetailServiceTest {
                 .storeImages(Set.of())
                 .build();
 
-        StoreFindByIdResponse storeFindByIdResponseExpected = StoreFindByIdResponse.builder()
-                .id(2L)
-                .name("스타벅스")
-                .businessHours("매일 7시 ~ 12시")
-                .contactNumber("010-5252-8282")
-                .address("모티브로 32길")
-                .availableUmbrellaCount(10)
-                .openStatus(true)
-                .latitude(37.503716)
-                .longitude(127.053718)
-                .build();
+        StoreFindByIdResponse storeFindByIdResponseExpected = StoreFindByIdResponse.fromStoreDetail(storeDetail, 10L);
+
+
 
         @DisplayName("해당하는 협업 지점의 정보를 성공적으로 반환한다.")
         @Test
         void success() {
 
-            //given
+            // given
+
             given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(3L))
                     .willReturn(Optional.of(storeDetail));
 
@@ -225,56 +231,41 @@ public class StoreDetailServiceTest {
                 .build();
 
         @Test
-        @DisplayName("전체 협업지점 조회를 위해 단일 협업지점 응답 객체를 생성할 수 있다.")
-        void createSingleStoreResponseTest() {
-            // given
-
-            // when
-            SingleStoreResponse singleStoreResponse = storeDetailService.createSingleStoreResponse(storeDetail);
-
-
-            // then
-            assertAll(
-                    () -> assertThat(singleStoreResponse)
-                            .usingRecursiveComparison()
-                            .isEqualTo(SingleStoreResponse.builder()
-                                    .id(1L)
-                                    .name("협업 지점명")
-                                    .activateStatus(true)
-                                    .classification(SingleClassificationResponse.builder()
-                                            .id(1L)
-                                            .name("대분류")
-                                            .type(ClassificationType.CLASSIFICATION)
-                                            .latitude(33.33)
-                                            .longitude(33.33)
-                                            .build())
-                                    .subClassification(SingleSubClassificationResponse.builder()
-                                            .id(2L)
-                                            .type(ClassificationType.SUB_CLASSIFICATION)
-                                            .name("소분류")
-                                            .build())
-                                    .category("카테고리")
-                                    .latitude(33.33)
-                                    .longitude(33.33)
-                                    .password("비밀번호")
-                                    .businessHours(List.of())
-                                    .umbrellaLocation("우산 위치")
-                                    .businessHour("근무 시간")
-                                    .instagramId("인스타그램 주소")
-                                    .contactNumber("연락처")
-                                    .address("주소")
-                                    .addressDetail("상세 주소")
-                                    .content("내용")
-                                    .imageUrls(List.of())
-                                    .build())
-            );
-        }
-
-        @Test
         @DisplayName("모든 협업 지점의 정보를 조회할 수 있다.")
         void findAllTest() {
             // given
             given(storeDetailRepository.findAllStores()).willReturn(List.of(storeDetail));
+
+            SingleStoreResponse expected = SingleStoreResponse.builder()
+                    .id(1L)
+                    .name("협업 지점명")
+                    .activateStatus(true)
+                    .classification(SingleClassificationResponse.builder()
+                            .id(1L)
+                            .name("대분류")
+                            .type(ClassificationType.CLASSIFICATION)
+                            .latitude(33.33)
+                            .longitude(33.33)
+                            .build())
+                    .subClassification(SingleSubClassificationResponse.builder()
+                            .id(2L)
+                            .type(ClassificationType.SUB_CLASSIFICATION)
+                            .name("소분류")
+                            .build())
+                    .category("카테고리")
+                    .latitude(33.33)
+                    .longitude(33.33)
+                    .password("비밀번호")
+                    .businessHours(List.of())
+                    .umbrellaLocation("우산 위치")
+                    .businessHour("근무 시간")
+                    .instagramId("인스타그램 주소")
+                    .contactNumber("연락처")
+                    .address("주소")
+                    .addressDetail("상세 주소")
+                    .content("내용")
+                    .imageUrls(List.of(SingleImageUrlResponse.createImageUrlResponse(first), SingleImageUrlResponse.createImageUrlResponse(second)))
+                    .build();
 
             // when
             List<SingleStoreResponse> allStores = storeDetailService.findAllStores();
@@ -284,36 +275,7 @@ public class StoreDetailServiceTest {
                     () -> assertThat(allStores).hasSize(1),
                     () -> assertThat(allStores.get(0))
                             .usingRecursiveComparison()
-                            .isEqualTo(SingleStoreResponse.builder()
-                                    .id(1L)
-                                    .name("협업 지점명")
-                                    .activateStatus(true)
-                                    .classification(SingleClassificationResponse.builder()
-                                            .id(1L)
-                                            .name("대분류")
-                                            .type(ClassificationType.CLASSIFICATION)
-                                            .latitude(33.33)
-                                            .longitude(33.33)
-                                            .build())
-                                    .subClassification(SingleSubClassificationResponse.builder()
-                                            .id(2L)
-                                            .type(ClassificationType.SUB_CLASSIFICATION)
-                                            .name("소분류")
-                                            .build())
-                                    .category("카테고리")
-                                    .latitude(33.33)
-                                    .longitude(33.33)
-                                    .password("비밀번호")
-                                    .businessHours(List.of())
-                                    .umbrellaLocation("우산 위치")
-                                    .businessHour("근무 시간")
-                                    .instagramId("인스타그램 주소")
-                                    .contactNumber("연락처")
-                                    .address("주소")
-                                    .addressDetail("상세 주소")
-                                    .content("내용")
-                                    .imageUrls(List.of())
-                                    .build())
+                            .isEqualTo(expected)
             );
         }
     }

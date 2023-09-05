@@ -67,6 +67,9 @@ class StoreControllerTest extends RestDocsSupport {
                 .openStatus(true)
                 .latitude(37.503716)
                 .longitude(127.053718)
+                .imageUrls(List.of("https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/1.jpg",
+                        "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/2.jpg",
+                        "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/3.jpg"))
                 .build();
 
         given(storeDetailService.findStoreDetailByStoreMetaId(2L))
@@ -103,7 +106,9 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER)
-                                        .description("경도")
+                                        .description("경도"),
+                                fieldWithPath("imageUrls[]").type(JsonFieldType.ARRAY)
+                                        .description("이미지 목록")
                         )));
     }
 
@@ -114,7 +119,7 @@ class StoreControllerTest extends RestDocsSupport {
         // given
         final long classificationId = 1L;
 
-        given(storeMetaService.findStoresInCurrentMap(anyLong(), any(LocalDateTime.class)))
+        given(storeMetaService.findAllStoresByClassification(anyLong(), any(LocalDateTime.class)))
                 .willReturn(
                         AllCurrentLocationStoreResponse.builder()
                                 .stores(
@@ -158,7 +163,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("경도"),
                                 fieldWithPath("stores[].rentableUmbrellasCount").type(JsonFieldType.NUMBER)
                                         .description("대여 가능 우산 개수")
-                                )));
+                        )));
     }
 
     @Test
@@ -222,10 +227,11 @@ class StoreControllerTest extends RestDocsSupport {
                         .instagramId("instagramId")
                         .latitude(33.33)
                         .longitude(33.33)
-                        .imageUrls(List.of(SingleImageUrlResponse.builder()
-                                .id(1L)
-                                .imageUrl("url")
-                                .build()))
+                        .imageUrls(
+                                List.of(SingleImageUrlResponse.builder()
+                                        .id(1L)
+                                        .imageUrl("url")
+                                        .build()))
                         .password("비밀번호")
                         .businessHours(
                                 List.of(
@@ -272,7 +278,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        get("/stores")
+                        get("/admin/stores")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -413,7 +419,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
 
-        mockMvc.perform(post("/stores")
+        mockMvc.perform(post("/admin/stores")
                         .content(objectMapper.writeValueAsString(store))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -528,7 +534,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
 
-        mockMvc.perform(patch("/stores/{storeId}", storeId)
+        mockMvc.perform(patch("/admin/stores/{storeId}", storeId)
                         .content(objectMapper.writeValueAsString(store))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -594,7 +600,7 @@ class StoreControllerTest extends RestDocsSupport {
         // when
 
         // then
-        mockMvc.perform(multipart("/stores/{storeId}/images", 1L)
+        mockMvc.perform(multipart("/admin/stores/{storeId}/images", 1L)
                         .file(firstFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
@@ -619,7 +625,7 @@ class StoreControllerTest extends RestDocsSupport {
         doNothing().when(storeImageService).deleteFile(imageId);
 
         // then
-        mockMvc.perform(delete("/stores/images/{imageId}", imageId))
+        mockMvc.perform(delete("/admin/stores/images/{imageId}", imageId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-images-doc",
@@ -640,7 +646,7 @@ class StoreControllerTest extends RestDocsSupport {
 
 
         // then
-        mockMvc.perform(delete("/stores/{storeId}", storeMetaId))
+        mockMvc.perform(delete("/admin/stores/{storeId}", storeMetaId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-doc",
@@ -708,7 +714,7 @@ class StoreControllerTest extends RestDocsSupport {
         given(classificationService.createClassification(any(CreateClassificationRequest.class))).willReturn(Classification.builder().build());
 
         // then
-        mockMvc.perform(post("/stores/classifications")
+        mockMvc.perform(post("/admin/stores/classifications")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -737,7 +743,7 @@ class StoreControllerTest extends RestDocsSupport {
         doNothing().when(classificationService).deleteClassification(classificationId);
 
         // then
-        mockMvc.perform(delete("/stores/classifications/{classificationId}", classificationId))
+        mockMvc.perform(delete("/admin/stores/classifications/{classificationId}", classificationId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-classification-doc",
@@ -767,7 +773,7 @@ class StoreControllerTest extends RestDocsSupport {
 
 
         // then
-        mockMvc.perform(get("/stores/subClassifications"))
+        mockMvc.perform(get("/admin/stores/subClassifications"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-find-all-sub-classification-doc",
@@ -798,7 +804,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        post("/stores/subClassifications")
+                        post("/admin/stores/subClassifications")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
@@ -825,7 +831,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        delete("/stores/subClassifications/{subClassificationId}", subClassificationId)
+                        delete("/admin/stores/subClassifications/{subClassificationId}", subClassificationId)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-delete-sub-classification-doc",
@@ -857,8 +863,8 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                get("/stores/introductions")
-        ).andDo(print())
+                        get("/stores/introductions")
+                ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-find-store-introduction-doc",
                         getDocumentRequest(),

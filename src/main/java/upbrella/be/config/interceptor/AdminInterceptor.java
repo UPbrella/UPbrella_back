@@ -16,15 +16,16 @@ public class AdminInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession(false);
 
-        if (session == null) {
+        SessionUser user = (SessionUser) session.getAttribute("user");
+
+        if (user.getAdminStatus() == false) {
+            request.getRequestDispatcher("/api/error").forward(request, response);
             return false;
         }
-        if (session.getAttribute("user") != null) {
-            SessionUser user = (SessionUser) session.getAttribute("user");
-            if (user.getAdminStatus() == false) {
-                return false;
-            }
-        }
+        
+
+        // 세션 갱신
+        request.setAttribute("user", session.getAttribute("user"));
 
         return true;
     }

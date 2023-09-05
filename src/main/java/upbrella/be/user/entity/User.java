@@ -68,8 +68,21 @@ public class User {
 
     public User decryptData() {
 
-        this.bank = AesEncryptor.decrypt(this.bank);
-        this.accountNumber = AesEncryptor.decrypt(this.accountNumber);
-        return this;
+        return User.builder()
+                .id(this.id)
+                .socialId(this.socialId)
+                .name(this.name)
+                .phoneNumber(this.phoneNumber)
+                .adminStatus(this.adminStatus)
+                .bank(AesEncryptor.decrypt(this.bank))
+                .accountNumber(AesEncryptor.decrypt(this.accountNumber))
+                .build();
     }
+
+    public void deleteBankAccount() {
+
+        this.bank = null;
+        this.accountNumber = null;
+    }
+
 }

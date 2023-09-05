@@ -10,6 +10,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
@@ -232,7 +233,7 @@ public class RentControllerTest extends RestDocsSupport {
         params.add("size", "5");
 
         mockMvc.perform(
-                        get("/rent/histories")
+                        get("/admin/rent/histories")
                                 .params(params)
                 )
                 .andDo(print())
@@ -305,7 +306,7 @@ public class RentControllerTest extends RestDocsSupport {
         given(conditionReportService.findAll()).willReturn(conditionReportsResponse);
 
         mockMvc.perform(
-                        get("/rent/histories/status")
+                        get("/admin/rent/histories/status")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-condition-reports-doc",
@@ -344,7 +345,7 @@ public class RentControllerTest extends RestDocsSupport {
         given(improvementReportService.findAll()).willReturn(improvementReportsResponse);
 
         mockMvc.perform(
-                        get("/rent/histories/improvements")
+                        get("/admin/rent/histories/improvements")
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("show-all-improvements-doc",
@@ -372,12 +373,13 @@ public class RentControllerTest extends RestDocsSupport {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 2L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
         doNothing().when(rentService)
-                .checkRefund(1L, 2L);
+                .checkRefund(1L, sessionUser.getId());
 
         mockMvc.perform(
-                        patch("/rent/histories/refund/{historyId}", 1L)
+                        patch("/admin/rent/histories/refund/{historyId}", 1L)
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -397,12 +399,13 @@ public class RentControllerTest extends RestDocsSupport {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
-        mockHttpSession.setAttribute("userId", 2L);
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        mockHttpSession.setAttribute("user", sessionUser);
         doNothing().when(rentService)
-                .checkPayment(1L, 2L);
+                .checkPayment(1L, sessionUser.getId());
 
         mockMvc.perform(
-                        patch("/rent/histories/payment/{historyId}", 1L)
+                        patch("/admin/rent/histories/payment/{historyId}", 1L)
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -414,5 +417,28 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("대여 내역 고유번호")
                         )));
 
+    }
+
+    @Test
+    @DisplayName("대여 기록의 계좌 삭제 성공 테스트")
+    void deleteRentAccountTest() throws Exception {
+        // given
+        long historyId = 1L;
+
+        // when
+        doNothing().when(rentService).deleteBankAccount(historyId);
+
+        // then
+        mockMvc.perform(
+                        delete("/admin/rent/histories/{historyId}/account", historyId)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("delete-rent-account-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("historyId")
+                                        .description("대여 기록 고유번호")
+                        )));
     }
 }

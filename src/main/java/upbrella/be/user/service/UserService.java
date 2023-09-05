@@ -7,6 +7,7 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
+import upbrella.be.user.dto.response.AllBlackListResponse;
 import upbrella.be.user.dto.response.AllUsersInfoResponse;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
@@ -35,18 +36,18 @@ public class UserService {
 
     public SessionUser login(Long socialId) {
 
-        User foundUser = userRepository.findBySocialId(socialId)
+        User foundUser = userRepository.findBySocialId((long) socialId.hashCode())
                 .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."));
 
         return SessionUser.fromUser(foundUser);
     }
 
-    public SessionUser join(long socialId, JoinRequest joinRequest) {
+    public SessionUser join(Long socialId, JoinRequest joinRequest) {
 
-        if (userRepository.existsBySocialId(socialId)) {
+        if (userRepository.existsBySocialId((long) socialId.hashCode())) {
             throw new ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.");
         }
-        if(blackListRepository.existsBySocialId(socialId)){
+        if (blackListRepository.existsBySocialId((long) socialId.hashCode())) {
             throw new BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.");
         }
 
@@ -102,7 +103,37 @@ public class UserService {
     public User findUserById(Long id) {
 
         return userRepository.findById(id)
+                .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."));
+    }
+
+
+    public User findDecryptedUserById(Long id) {
+
+        // Deep copy 객체를 반환함에 유의
+        return userRepository.findById(id)
                 .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."))
                 .decryptData();
+    }
+
+    @Transactional
+    public void deleteUserBankAccount(Long id) {
+
+        User foundUser = findUserById(id);
+
+        foundUser.deleteBankAccount();
+    }
+
+    @Transactional
+    public AllBlackListResponse findBlackList() {
+
+        List<BlackList> blackLists = blackListRepository.findAll();
+
+        return AllBlackListResponse.of(blackLists);
+    }
+
+    @Transactional
+    public void deleteBlackList(long blackListId) {
+
+        blackListRepository.deleteById(blackListId);
     }
 }

@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class StoreDetailService {
 
     private final ClassificationService classificationService;
-    private final StoreMetaService storeMetaService;
     private final UmbrellaService umbrellaService;
     private final StoreDetailRepository storeDetailRepository;
     private final BusinessHourService businessHourService;
@@ -77,12 +76,15 @@ public class StoreDetailService {
 
     public SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
 
-        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail.getStoreImages());
-        String thumbnail = storeImageService.createThumbnail(imageUrls);
+        List<SingleImageUrlResponse> sortedImageUrls = storeDetail.getSortedStoreImages().stream()
+                .map(SingleImageUrlResponse::createImageUrlResponse)
+                .collect(Collectors.toList());
+
+        String thumbnail = storeImageService.createThumbnail(sortedImageUrls);
         Set<BusinessHour> businessHourSet = storeDetail.getStoreMeta().getBusinessHours();
         List<BusinessHour> businessHourList = new ArrayList<>(businessHourSet);
         List<SingleBusinessHourResponse> businessHours = businessHourService.createBusinessHourResponse(businessHourList);
-        return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail, thumbnail, imageUrls, businessHours);
+        return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail, thumbnail, sortedImageUrls, businessHours);
     }
 
     public AllStoreIntroductionResponse findAllStoreIntroductions() {
@@ -103,8 +105,11 @@ public class StoreDetailService {
 
     private SingleStoreIntroductionResponse createSingleIntroduction(StoreDetail storeDetail) {
 
-        List<SingleImageUrlResponse> imageUrls = storeImageService.createImageUrlResponse(storeDetail.getStoreImages());
-        String thumbnail = storeImageService.createThumbnail(imageUrls);
+        List<SingleImageUrlResponse> sortedImageUrls = storeDetail.getSortedStoreImages().stream()
+                .map(SingleImageUrlResponse::createImageUrlResponse)
+                .collect(Collectors.toList());
+
+        String thumbnail = storeImageService.createThumbnail(sortedImageUrls);
         StoreMeta storeMeta = storeDetail.getStoreMeta();
         return SingleStoreIntroductionResponse.of(storeDetail.getId(), thumbnail, storeMeta.getName(), storeMeta.getCategory());
     }

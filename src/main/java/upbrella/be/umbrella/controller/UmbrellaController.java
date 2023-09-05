@@ -15,13 +15,12 @@ import upbrella.be.util.CustomResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/umbrellas")
 @RequiredArgsConstructor
 public class UmbrellaController {
 
     private final UmbrellaService umbrellaService;
 
-    @GetMapping
+    @GetMapping("/admin/umbrellas")
     public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showAllUmbrellas(Pageable pageable, HttpSession httpSession) {
 
         return ResponseEntity
@@ -36,7 +35,7 @@ public class UmbrellaController {
                                 ).build()));
     }
 
-    @GetMapping("/{storeId}")
+    @GetMapping("/admin/umbrellas/{storeId}")
     public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showUmbrellasByStoreId(@PathVariable long storeId, Pageable pageable, HttpSession httpSession) {
 
         return ResponseEntity
@@ -51,7 +50,7 @@ public class UmbrellaController {
                                 ).build()));
     }
 
-    @PostMapping
+    @PostMapping("/admin/umbrellas")
     public ResponseEntity<CustomResponse> addUmbrella(@RequestBody UmbrellaCreateRequest umbrellaCreateRequest, HttpSession httpSession) {
 
         umbrellaService.addUmbrella(umbrellaCreateRequest);
@@ -64,7 +63,7 @@ public class UmbrellaController {
                         null));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/admin/umbrellas/{id}")
     public ResponseEntity<CustomResponse> modifyUmbrella(@RequestBody UmbrellaModifyRequest umbrellaModifyRequest, @PathVariable long id, HttpSession httpSession) {
 
         umbrellaService.modifyUmbrella(id, umbrellaModifyRequest);
@@ -77,7 +76,7 @@ public class UmbrellaController {
                         null));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/umbrellas/{id}")
     public ResponseEntity<CustomResponse> deleteUmbrella(@PathVariable long id, HttpSession httpSession) {
 
         umbrellaService.deleteUmbrella(id);
@@ -90,7 +89,7 @@ public class UmbrellaController {
                         null));
     }
 
-    @GetMapping("/statistics")
+    @GetMapping("/admin/umbrellas/statistics")
     public ResponseEntity<CustomResponse<UmbrellaStatisticsResponse>> showAllUmbrellasStatistics(HttpSession httpSession) {
 
         return ResponseEntity
@@ -102,7 +101,7 @@ public class UmbrellaController {
                         umbrellaService.getUmbrellaAllStatistics()));
     }
 
-    @GetMapping("/statistics/{storeId}")
+    @GetMapping("/admin/umbrellas/statistics/{storeId}")
     public ResponseEntity<CustomResponse<UmbrellaStatisticsResponse>> showUmbrellasStatisticsByStore(@PathVariable long storeId, HttpSession httpSession) {
 
         return ResponseEntity

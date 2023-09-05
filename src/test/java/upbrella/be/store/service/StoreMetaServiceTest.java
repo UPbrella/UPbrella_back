@@ -14,6 +14,7 @@ import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
+import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount;
 import upbrella.be.store.entity.*;
 import upbrella.be.store.exception.DeletedStoreDetailException;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
@@ -147,7 +148,7 @@ class StoreMetaServiceTest {
     @Nested
     @DisplayName("대분류 태그 ID를 입력받아")
     class findStoresInCurrentMapTest {
-        private List<StoreMeta> storeMetaList = new ArrayList<>();
+        private List<StoreMetaWithUmbrellaCount> storeMetaList = new ArrayList<>();
 
         private SingleCurrentLocationStoreResponse expected;
         private Set<BusinessHour> businessHours;
@@ -207,16 +208,25 @@ class StoreMetaServiceTest {
                     .businessHours(businessHours)
                     .build();
 
+            StoreMetaWithUmbrellaCount storeMetaWithUmbrellaCount = new StoreMetaWithUmbrellaCount(
+                    storeIn,
+                    3L);
+
+            StoreMetaWithUmbrellaCount storeMetaWithUmbrellaCount2 = new StoreMetaWithUmbrellaCount(
+                    storeOff,
+                    3L);
+
             expected = SingleCurrentLocationStoreResponse.builder()
                     .id(1)
                     .latitude(4)
                     .longitude(3)
                     .name("모티브 카페 신촌 지점")
                     .openStatus(true)
+                    .rentableUmbrellasCount(3L)
                     .build();
 
-            storeMetaList.add(storeIn);
-            storeMetaList.add(storeOff);
+            storeMetaList.add(storeMetaWithUmbrellaCount);
+            storeMetaList.add(storeMetaWithUmbrellaCount2);
         }
 
         @Test
@@ -228,7 +238,7 @@ class StoreMetaServiceTest {
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(1L, LocalDateTime.of(2023, 8, 4, 13, 0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findAllStoresByClassification(1L, LocalDateTime.of(2023, 8, 4, 13, 0));
 
             //then
             assertAll(
@@ -249,7 +259,7 @@ class StoreMetaServiceTest {
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(1L, LocalDateTime.of(2023, 8, 4, 13, 0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findAllStoresByClassification(1L, LocalDateTime.of(2023, 8, 4, 13, 0));
 
             //then
             assertAll(
@@ -269,7 +279,7 @@ class StoreMetaServiceTest {
                     .willReturn(storeMetaList);
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(1L, LocalDateTime.of(2023, 8, 4, 3, 0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findAllStoresByClassification(1L, LocalDateTime.of(2023, 8, 4, 3, 0));
 
             //then
             assertAll(
@@ -290,7 +300,7 @@ class StoreMetaServiceTest {
                     .willReturn(List.of());
 
             //when
-            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findStoresInCurrentMap(1L, LocalDateTime.of(1995, 7, 18, 13, 0));
+            AllCurrentLocationStoreResponse storesInCurrentMap = storeMetaService.findAllStoresByClassification(1L, LocalDateTime.of(1995, 7, 18, 13, 0));
 
             //then
             assertThat(storesInCurrentMap.getStores().size())

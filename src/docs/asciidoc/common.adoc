@@ -1,4 +1,4 @@
-=== Host
+== Host
 
 |===
 | 환경 | Host
@@ -11,7 +11,7 @@
 |===
 
 [[HTTP-STATUS-CODE]]
-=== HTTP status codes
+== HTTP status codes
 
 |===
 | 상태 코드 | 설명
@@ -36,10 +36,10 @@
 |===
 
 === Common Response
-
 include::{snippets}/common-docs/custom-response-fields.adoc[]
-===== Response Example
+
+=== Response Example
 include::{snippets}/common-docs/http-response.adoc[]
 
-===== Response Error Example
+=== Response Error Example
 include::{snippets}/error-docs/http-response.adoc[]

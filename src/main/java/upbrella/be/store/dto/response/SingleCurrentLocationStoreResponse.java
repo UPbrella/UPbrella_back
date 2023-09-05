@@ -2,7 +2,6 @@ package upbrella.be.store.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import upbrella.be.store.entity.StoreMeta;
 
 @Getter
 @Builder
@@ -15,15 +14,15 @@ public class SingleCurrentLocationStoreResponse {
     private double longitude;
     private long rentableUmbrellasCount;
 
-    public static SingleCurrentLocationStoreResponse fromStoreMeta(boolean openStatus, long rentableUmbrellasCount, StoreMeta storeMeta) {
+    public static SingleCurrentLocationStoreResponse fromStoreMeta(boolean openStatus, StoreMetaWithUmbrellaCount storeMetaWithUmbrellaCount) {
 
         return SingleCurrentLocationStoreResponse.builder()
-                .id(storeMeta.getId())
-                .name(storeMeta.getName())
+                .id(storeMetaWithUmbrellaCount.getStoreMeta().getId())
+                .name(storeMetaWithUmbrellaCount.getStoreMeta().getName())
                 .openStatus(openStatus)
-                .latitude(storeMeta.getLatitude())
-                .longitude(storeMeta.getLongitude())
-                .rentableUmbrellasCount(rentableUmbrellasCount)
+                .latitude(storeMetaWithUmbrellaCount.getStoreMeta().getLatitude())
+                .longitude(storeMetaWithUmbrellaCount.getStoreMeta().getLongitude())
+                .rentableUmbrellasCount(storeMetaWithUmbrellaCount.getRentableUmbrellasCount())
                 .build();
     }
 }

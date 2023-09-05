@@ -14,10 +14,7 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
-import upbrella.be.user.dto.response.AllUsersInfoResponse;
-import upbrella.be.user.dto.response.SessionUser;
-import upbrella.be.user.dto.response.SingleUserInfoResponse;
-import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse;
+import upbrella.be.user.dto.response.*;
 import upbrella.be.user.entity.BlackList;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.BlackListUserException;
@@ -27,6 +24,7 @@ import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
 import upbrella.be.util.AesEncryptor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,8 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -355,5 +352,57 @@ class UserServiceTest {
         // then
         assertThatThrownBy(() -> userService.join(blackList, joinRequest))
                 .isInstanceOf(BlackListUserException.class);
+    }
+
+    @Test
+    @DisplayName("사용자는 계좌 정보를 삭제할 수 있다.")
+    void deleteUserBankAccountTest() {
+        // given
+        User user = FixtureBuilderFactory.builderUser().sample();
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+
+        // when
+        userService.deleteUser(user.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(user.getBank()).isNull(),
+                () -> assertThat(user.getAccountNumber()).isNull()
+        );
+    }
+
+    @Test
+    @DisplayName("사용자는 블랙리스트를 조회할 수 있다.")
+    void blackListTest() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+
+        // when
+        given(blackListRepository.findAll()).willReturn(List.of(BlackList.builder()
+                .id(1L)
+                .socialId(1L)
+                .blockedAt(now)
+                .build()));
+
+        // then
+        assertAll(
+                () -> assertThat(userService.findBlackList().getBlackList().size()).isEqualTo(1),
+                () -> assertThat(userService.findBlackList().getBlackList().get(0).getSocialId()).isEqualTo(1L),
+                () -> assertThat(userService.findBlackList().getBlackList().get(0).getBlockedAt()).isEqualTo(now)
+        );
+    }
+
+    @Test
+    @DisplayName("블랙리스트 삭제 테스트")
+    void deleteBlackListTest() {
+        // given
+        long blackListId = 1L;
+        doNothing().when(blackListRepository).deleteById(blackListId);
+
+        // when
+        userService.deleteBlackList(blackListId);
+
+        // then
+        verify(blackListRepository, times(1)).deleteById(blackListId);
     }
 }
