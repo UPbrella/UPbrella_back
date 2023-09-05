@@ -18,6 +18,7 @@ import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.exception.NonExistingHistoryException;
+import upbrella.be.rent.exception.NotRefundedException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
@@ -496,5 +497,35 @@ class RentServiceTest {
                     () -> then(rentRepository).should(times(1))
                             .findByUserIdAndReturnedAtIsNull(sessionUser.getId()));
         }
+    }
+
+    @Test
+    @DisplayName("대여 기록의 계좌 삭제 성공")
+    void deleteRentAccount() {
+        // given
+        History history = FixtureBuilderFactory.builderHistory().sample();
+
+        // when
+        history.deleteBankAccount();
+
+        // then
+        assertAll(
+                () -> assertThat(history.getBank()).isNull(),
+                () -> assertThat(history.getAccountNumber()).isNull()
+        );
+    }
+
+    @Test
+    @DisplayName("반납되지 않은 대여 기록의 계좌 삭제 실패")
+    void deleteRentAccountThrowTest() {
+        // given
+        History history = FixtureBuilderFactory.builderHistory()
+                .set("refundedAt", null)
+                .sample();
+        // when
+
+        // then
+        assertThatThrownBy(history::deleteBankAccount)
+                .isInstanceOf(NotRefundedException.class);
     }
 }
