@@ -1,9 +1,6 @@
 package upbrella.be.user.controller;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -238,19 +235,40 @@ public class UserControllerTest extends RestDocsSupport {
         }
     }
 
+    @Test
+    @DisplayName("사용자는 로그아웃을 할 수 있다.")
+    void loginSuccess() throws Exception {
+
+        // given
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("user", FixtureBuilderFactory.builderSessionUser().sample());
+
+        // when
+        mockMvc.perform(
+                        get("/users/logout")
+                                .session(mockHttpSession)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-logout-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse()
+                ));
+
+        // then
+        assertThat(mockHttpSession.isInvalid()).isEqualTo(true);
+    }
+
     @Nested
     @DisplayName("사용자는 소셜 로그인된 상태에서 회원가입 정보를 담아 POST 요청을 보내면")
     class JoinTest {
 
         private JoinRequest joinRequest;
-        private OauthToken oauthToken;
         private MockHttpSession mockHttpSession;
 
         @BeforeEach
         void setUp() {
 
             joinRequest = FixtureBuilderFactory.builderJoinRequest().sample();
-            oauthToken = FixtureFactory.buildOauthToken();
             mockHttpSession = new MockHttpSession();
         }
 

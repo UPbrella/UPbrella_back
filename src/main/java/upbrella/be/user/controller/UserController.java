@@ -107,6 +107,20 @@ public class UserController {
                         null));
     }
 
+    @GetMapping("/users/logout")
+    public ResponseEntity<CustomResponse> upbrellaLogout(HttpSession session) {
+
+        session.invalidate();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "업브렐라 로그아웃 성공",
+                        null));
+    }
+
     @PostMapping("/users/join")
     public ResponseEntity<CustomResponse> kakaoJoin(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
@@ -194,9 +208,8 @@ public class UserController {
                 ));
     }
 
-    // TODO: 관리자 권한 어디서 처리할것인지
     @DeleteMapping("/admin/users/{userId}")
-    public ResponseEntity<CustomResponse> withdrawUser(HttpSession session, @PathVariable long userId) {
+    public ResponseEntity<CustomResponse> withdrawUser(@PathVariable long userId, HttpSession session) {
 
         userService.withdrawUser(userId);
 
