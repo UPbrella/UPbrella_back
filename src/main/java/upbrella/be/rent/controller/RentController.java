@@ -158,4 +158,18 @@ public class RentController {
                         "입금 확인 성공"
                 ));
     }
+
+    @DeleteMapping("/admin/rent/histories/{historyId}/account")
+    public ResponseEntity<CustomResponse> deleteBankAccount(@PathVariable long historyId) {
+
+        rentService.deleteBankAccount(historyId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse(
+                        "success",
+                        200,
+                        "대여 기록의 계좌 삭제 성공"
+                ));
+    }
 }

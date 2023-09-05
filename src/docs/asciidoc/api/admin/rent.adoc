@@ -40,3 +40,8 @@ include::{snippets}/refund-rent-doc/path-parameters.adoc[]
 
 include::{snippets}/check-payment-doc/http-request.adoc[]
 include::{snippets}/check-payment-doc/path-parameters.adoc[]
+
+=== 보증금 환급한 대여 기록 계좌 정보 삭제
+==== HTTP Request
+include::{snippets}/delete-rent-account-doc/http-request.adoc[]
+include::{snippets}/delete-rent-account-doc/path-parameters.adoc[]
