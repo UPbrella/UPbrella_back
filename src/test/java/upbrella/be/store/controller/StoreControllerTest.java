@@ -278,7 +278,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        get("/stores")
+                        get("/admin/stores")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -419,7 +419,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
 
-        mockMvc.perform(post("/stores")
+        mockMvc.perform(post("/admin/stores")
                         .content(objectMapper.writeValueAsString(store))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -534,7 +534,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
 
-        mockMvc.perform(patch("/stores/{storeId}", storeId)
+        mockMvc.perform(patch("/admin/stores/{storeId}", storeId)
                         .content(objectMapper.writeValueAsString(store))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -600,7 +600,7 @@ class StoreControllerTest extends RestDocsSupport {
         // when
 
         // then
-        mockMvc.perform(multipart("/stores/{storeId}/images", 1L)
+        mockMvc.perform(multipart("/admin/stores/{storeId}/images", 1L)
                         .file(firstFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
@@ -625,7 +625,7 @@ class StoreControllerTest extends RestDocsSupport {
         doNothing().when(storeImageService).deleteFile(imageId);
 
         // then
-        mockMvc.perform(delete("/stores/images/{imageId}", imageId))
+        mockMvc.perform(delete("/admin/stores/images/{imageId}", imageId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-images-doc",
@@ -646,7 +646,7 @@ class StoreControllerTest extends RestDocsSupport {
 
 
         // then
-        mockMvc.perform(delete("/stores/{storeId}", storeMetaId))
+        mockMvc.perform(delete("/admin/stores/{storeId}", storeMetaId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-doc",
@@ -714,7 +714,7 @@ class StoreControllerTest extends RestDocsSupport {
         given(classificationService.createClassification(any(CreateClassificationRequest.class))).willReturn(Classification.builder().build());
 
         // then
-        mockMvc.perform(post("/stores/classifications")
+        mockMvc.perform(post("/admin/stores/classifications")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -743,7 +743,7 @@ class StoreControllerTest extends RestDocsSupport {
         doNothing().when(classificationService).deleteClassification(classificationId);
 
         // then
-        mockMvc.perform(delete("/stores/classifications/{classificationId}", classificationId))
+        mockMvc.perform(delete("/admin/stores/classifications/{classificationId}", classificationId))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-delete-classification-doc",
@@ -773,7 +773,7 @@ class StoreControllerTest extends RestDocsSupport {
 
 
         // then
-        mockMvc.perform(get("/stores/subClassifications"))
+        mockMvc.perform(get("/admin/stores/subClassifications"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-find-all-sub-classification-doc",
@@ -804,7 +804,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        post("/stores/subClassifications")
+                        post("/admin/stores/subClassifications")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
@@ -831,7 +831,7 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                        delete("/stores/subClassifications/{subClassificationId}", subClassificationId)
+                        delete("/admin/stores/subClassifications/{subClassificationId}", subClassificationId)
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-delete-sub-classification-doc",

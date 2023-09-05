@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/stores")
 @RequiredArgsConstructor
 public class StoreController {
 
@@ -26,7 +25,7 @@ public class StoreController {
     private final ClassificationService classificationService;
     private final StoreDetailService storeDetailService;
 
-    @GetMapping("/{storeId}")
+    @GetMapping("/stores/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeId, HttpSession session) {
 
         return ResponseEntity
@@ -38,7 +37,7 @@ public class StoreController {
                         storeDetailService.findStoreDetailByStoreMetaId(storeId)));
     }
 
-    @GetMapping("/classification/{classificationId}")
+    @GetMapping("/stores/classification/{classificationId}")
     public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(@PathVariable long classificationId, HttpSession session) {
 
         return ResponseEntity
@@ -50,7 +49,7 @@ public class StoreController {
                         storeMetaService.findAllStoresByClassification(classificationId, LocalDateTime.now())));
     }
 
-    @GetMapping("/location/{umbrellaId}")
+    @GetMapping("/stores/location/{umbrellaId}")
     public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(@PathVariable long umbrellaId, HttpSession session) {
 
         return ResponseEntity
@@ -63,7 +62,7 @@ public class StoreController {
     }
 
 
-    @GetMapping
+    @GetMapping("/admin/stores")
     public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores(HttpSession session) {
 
         List<SingleStoreResponse> allStores = storeDetailService.findAllStores();
@@ -73,14 +72,14 @@ public class StoreController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "가게 전체 조회 성공",
+                        "어드민 가게 전체 조회 성공",
                         AllStoreResponse.builder()
                                 .stores(allStores)
                                 .build()
                 ));
     }
 
-    @PostMapping
+    @PostMapping("/admin/stores")
     public ResponseEntity<CustomResponse> createStore(HttpSession session, @RequestBody CreateStoreRequest newStore) {
 
         storeMetaService.createStore(newStore);
@@ -94,7 +93,7 @@ public class StoreController {
                 ));
     }
 
-    @PatchMapping("/{storeId}")
+    @PatchMapping("/admin/stores/{storeId}")
     public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, @RequestBody UpdateStoreRequest updateStore) {
 
         storeDetailService.updateStore(storeId, updateStore);
@@ -108,7 +107,7 @@ public class StoreController {
                 ));
     }
 
-    @PostMapping(value = "/{storeId}/images", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/admin/stores/{storeId}/images", consumes = {"multipart/form-data"})
     public ResponseEntity<CustomResponse> uploadStoreImage(HttpSession session, @RequestPart MultipartFile image, @PathVariable long storeId) {
 
         storeImageService.uploadFile(image, storeId, storeImageService.makeRandomId());
@@ -122,7 +121,7 @@ public class StoreController {
                 ));
     }
 
-    @DeleteMapping("/images/{imageId}")
+    @DeleteMapping("/admin/stores/images/{imageId}")
     public ResponseEntity<CustomResponse> deleteStoreImage(HttpSession session, @PathVariable long imageId) {
 
         storeImageService.deleteFile(imageId);
@@ -136,7 +135,7 @@ public class StoreController {
                 ));
     }
 
-    @DeleteMapping("/{storeId}")
+    @DeleteMapping("/admin/stores/{storeId}")
     public ResponseEntity<CustomResponse> deleteStore(HttpSession session, @PathVariable long storeId) {
 
         storeMetaService.deleteStoreMeta(storeId);
@@ -150,7 +149,7 @@ public class StoreController {
                 ));
     }
 
-    @GetMapping("/classifications")
+    @GetMapping("/stores/classifications")
     public ResponseEntity<CustomResponse<AllClassificationResponse>> findAllClassification(HttpSession session) {
 
         AllClassificationResponse classifications = classificationService.findAllClassification();
@@ -164,7 +163,7 @@ public class StoreController {
                         classifications));
     }
 
-    @PostMapping("/classifications")
+    @PostMapping("/admin/stores/classifications")
     public ResponseEntity<CustomResponse> createClassification(HttpSession session, @RequestBody CreateClassificationRequest newClassification) {
 
         classificationService.createClassification(newClassification);
@@ -178,7 +177,7 @@ public class StoreController {
                 ));
     }
 
-    @DeleteMapping("/classifications/{classificationId}")
+    @DeleteMapping("/admin/stores/classifications/{classificationId}")
     public ResponseEntity<CustomResponse> deleteClassification(HttpSession session, @PathVariable long classificationId) {
 
         classificationService.deleteClassification(classificationId);
@@ -192,7 +191,7 @@ public class StoreController {
                 ));
     }
 
-    @GetMapping("/subClassifications")
+    @GetMapping("/admin/stores/subClassifications")
     public ResponseEntity<CustomResponse<AllSubClassificationResponse>> findAllSubClassification(HttpSession session) {
 
         AllSubClassificationResponse subClassifications = classificationService.findAllSubClassification();
@@ -206,7 +205,7 @@ public class StoreController {
                         subClassifications));
     }
 
-    @PostMapping("/subClassifications")
+    @PostMapping("/admin/stores/subClassifications")
     public ResponseEntity<CustomResponse> createSubClassification(@RequestBody CreateSubClassificationRequest newSubClassification, HttpSession session) {
 
         classificationService.createSubClassification(newSubClassification);
@@ -220,7 +219,7 @@ public class StoreController {
                 ));
     }
 
-    @DeleteMapping("/subClassifications/{subClassificationId}")
+    @DeleteMapping("/admin/stores/subClassifications/{subClassificationId}")
     public ResponseEntity<CustomResponse> deleteSubClassification(@PathVariable long subClassificationId, HttpSession session) {
 
         classificationService.deleteSubClassification(subClassificationId);
@@ -234,7 +233,7 @@ public class StoreController {
                 ));
     }
 
-    @GetMapping("/introductions")
+    @GetMapping("/stores/introductions")
     public ResponseEntity<CustomResponse<AllStoreIntroductionResponse>> findAllStoreMeta(HttpSession session) {
 
         return ResponseEntity
