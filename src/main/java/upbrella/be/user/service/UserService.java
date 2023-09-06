@@ -93,7 +93,7 @@ public class UserService {
     public void withdrawUser(Long id) {
 
         User foundUser = findUserById(id);
-        long socialId = foundUser.getSocialId();
+        Long socialId = foundUser.getSocialId();
         BlackList newBlackList = BlackList.createNewBlackList(socialId);
         blackListRepository.save(newBlackList);
 
