@@ -85,4 +85,8 @@ public class User {
         this.accountNumber = null;
     }
 
+    public void updateAdminStatus() {
+
+        this.adminStatus = !this.adminStatus;
+    }
 }

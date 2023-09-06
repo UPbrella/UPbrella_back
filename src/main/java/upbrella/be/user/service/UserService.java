@@ -136,4 +136,12 @@ public class UserService {
 
         blackListRepository.deleteById(blackListId);
     }
+
+    @Transactional
+    public void updateAdminStatus(Long id) {
+
+        User foundUser = findUserById(id);
+
+        foundUser.updateAdminStatus();
+    }
 }

@@ -208,6 +208,7 @@ public class UserController {
                         "사용자 탈퇴 성공"
                 ));
     }
+
     @DeleteMapping("/admin/users/{userId}")
     public ResponseEntity<CustomResponse> withdrawUser(HttpSession session, @PathVariable long userId) {
 
@@ -265,6 +266,20 @@ public class UserController {
                         "success",
                         200,
                         "블랙리스트 삭제 성공"
+                ));
+    }
+
+    @PatchMapping("/admin/users/{userId}")
+    public ResponseEntity<CustomResponse> updateAdminStatus(@PathVariable long userId) {
+
+        userService.updateAdminStatus(userId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "관리자 권한 변경 성공"
                 ));
     }
 }
