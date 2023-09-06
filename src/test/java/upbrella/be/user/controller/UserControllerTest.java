@@ -15,6 +15,7 @@ import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.LoginCodeRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
@@ -127,17 +128,17 @@ public class UserControllerTest extends RestDocsSupport {
     }
 
     @Nested
-    @DisplayName("사용자는 인증 코드로 GET 요청을 보내면")
+    @DisplayName("사용자는 인증 코드로 POST 요청을 보내면")
     class LoginTest {
 
-        private String code;
+        private LoginCodeRequest code;
         private OauthToken oauthToken;
         private KakaoLoginResponse kakaoLoginResponse;
         private MockHttpSession mockHttpSession = new MockHttpSession();
 
         @BeforeEach
         void setUp() {
-            code = "1kdfjq0243f";
+            code = LoginCodeRequest.builder().code("1kdfjq0243f").build();;
             oauthToken = FixtureFactory.buildOauthToken();
             kakaoLoginResponse = FixtureFactory.buildKakaoLoginResponse();
         }
@@ -147,7 +148,7 @@ public class UserControllerTest extends RestDocsSupport {
         void loginSuccess() throws Exception {
 
             // given
-            given(oauthLoginService.getOauthToken(eq(code), any()))
+            given(oauthLoginService.getOauthToken(eq(code.getCode()), any()))
                     .willReturn(oauthToken);
             given(oauthLoginService.processKakaoLogin(eq(oauthToken.getAccessToken()), any()))
                     .willReturn(kakaoLoginResponse);
@@ -156,8 +157,9 @@ public class UserControllerTest extends RestDocsSupport {
 
             // when
             mockMvc.perform(
-                            get("/users/oauth/login")
-                                    .param("code", code)
+                            post("/users/oauth/login")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(code))
                                     .session(mockHttpSession)
                     ).andDo(print())
                     .andExpect(status().isOk())
@@ -179,8 +181,8 @@ public class UserControllerTest extends RestDocsSupport {
             mockHttpSession.setAttribute("kakaoId", 1L);
             // when
             mockMvc.perform(
-                            get("/users/login")
-                                    .param("code", code)
+                            post("/users/login")
+                                    .content(objectMapper.writeValueAsString(code))
                                     .session(mockHttpSession))
                     .andExpect(status().isBadRequest())
                     .andExpect(result ->
@@ -201,8 +203,9 @@ public class UserControllerTest extends RestDocsSupport {
 
             // when
             mockMvc.perform(
-                            get("/users/oauth/login")
-                                    .param("code", code)
+                            post("/users/oauth/login")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsBytes(code))
                                     .session(mockHttpSession))
                     .andExpect(status().isBadRequest())
                     .andExpect(result ->
@@ -224,7 +227,7 @@ public class UserControllerTest extends RestDocsSupport {
 
             // then
             mockMvc.perform(
-                            get("/users/login")
+                            post("/users/login")
                                     .session(session)
                     ).andDo(print())
                     .andExpect(status().isOk())
@@ -245,7 +248,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         // when
         mockMvc.perform(
-                        get("/users/logout")
+                        post("/users/logout")
                                 .session(mockHttpSession)
                 ).andDo(print())
                 .andExpect(status().isOk())
