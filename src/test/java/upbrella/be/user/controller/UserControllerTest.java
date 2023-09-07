@@ -15,6 +15,7 @@ import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.KakaoAccount;
 import upbrella.be.user.dto.request.LoginCodeRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.*;
@@ -173,12 +174,20 @@ public class UserControllerTest extends RestDocsSupport {
         @DisplayName("존재하지 않는 사용자는 400 에러가 반환된다.")
         void loginFail() throws Exception {
 
+            KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                    .id(1L)
+                    .kakaoAccount(
+                            KakaoAccount.builder()
+                                    .email("email@email.com")
+                                    .build())
+                    .build();
+
             given(userService.login(any()))
                     .willThrow(new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."));
             MockHttpSession mockHttpSession = new MockHttpSession();
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());
-            mockHttpSession.setAttribute("kakaoId", 1L);
+            mockHttpSession.setAttribute("kakaoUser", kakaoUser);
             // when
             mockMvc.perform(
                             post("/users/login")
@@ -217,10 +226,19 @@ public class UserControllerTest extends RestDocsSupport {
         @DisplayName("회원인 경우 로그인이 진행된다.")
         void upbrellaLoginTest() throws Exception {
             // given
+
+            KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                    .id(1L)
+                    .kakaoAccount(
+                            KakaoAccount.builder()
+                                    .email("email@email.com")
+                                    .build())
+                    .build();
+
             MockHttpSession session = new MockHttpSession();
 
             SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
-            session.setAttribute("kakaoId", 123123L);
+            session.setAttribute("kakaoUser", kakaoUser);
             given(userService.login(any())).willReturn(sessionUser);
 
             // when
@@ -285,8 +303,16 @@ public class UserControllerTest extends RestDocsSupport {
                     .adminStatus(false)
                     .build();
 
-            mockHttpSession.setAttribute("kakaoId", 1L);
-            given(userService.join(anyLong(), any(JoinRequest.class)))
+            KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                    .id(1L)
+                    .kakaoAccount(
+                            KakaoAccount.builder()
+                                    .email("email@email.com")
+                                    .build())
+                    .build();
+
+            mockHttpSession.setAttribute("kakaoUser", kakaoUser);
+            given(userService.join(any(KakaoLoginResponse.class), any(JoinRequest.class)))
                     .willReturn(user);
 
             // when
@@ -305,8 +331,6 @@ public class UserControllerTest extends RestDocsSupport {
                                             .description("이름"),
                                     fieldWithPath("phoneNumber")
                                             .description("연락처"),
-                                    fieldWithPath("email")
-                                            .description("이메일"),
                                     fieldWithPath("bank")
                                             .optional()
                                             .description("은행"),
@@ -321,8 +345,17 @@ public class UserControllerTest extends RestDocsSupport {
         void joinedMember() throws Exception {
 
             // given
-            mockHttpSession.setAttribute("kakaoId", 1L);
-            given(userService.join(anyLong(), any(JoinRequest.class)))
+
+            KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                    .id(1L)
+                    .kakaoAccount(
+                            KakaoAccount.builder()
+                                    .email("email@email.com")
+                                    .build())
+                    .build();
+
+            mockHttpSession.setAttribute("kakaoUser", kakaoUser);
+            given(userService.join(any(), any(JoinRequest.class)))
                     .willThrow(new ExistingMemberException("[ERROR] 이미 가입된 회원입니다."));
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UserExceptionHandler());

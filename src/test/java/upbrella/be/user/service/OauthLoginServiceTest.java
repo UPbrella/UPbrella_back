@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import upbrella.be.config.FixtureFactory;
+import upbrella.be.user.dto.request.KakaoAccount;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
 import upbrella.be.user.dto.token.OauthToken;
@@ -65,7 +66,7 @@ class OauthLoginServiceTest {
         String oauthToken = "abc";
         String loginUri = "login.com";
         given(restTemplate.exchange(anyString(), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
-                .willReturn(ResponseEntity.of(Optional.of(new KakaoLoginResponse(3L))));
+                .willReturn(ResponseEntity.of(Optional.of(new KakaoLoginResponse(3L, KakaoAccount.builder().build()))));
 
         // when
         KakaoLoginResponse kakaoLoginResponse = oauthLoginService.processKakaoLogin(oauthToken, loginUri);
