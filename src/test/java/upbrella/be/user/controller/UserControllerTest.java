@@ -15,6 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
@@ -109,9 +110,11 @@ public class UserControllerTest extends RestDocsSupport {
         httpSession.setAttribute("user", user);
 
         Umbrella borrowedUmbrella = FixtureBuilderFactory.builderUmbrella().sample();
+        History history = FixtureBuilderFactory.builderHistory().sample();
+        int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentedAt().getDayOfYear();
 
         given(userService.findUmbrellaBorrowedByUser(user))
-                .willReturn(UmbrellaBorrowedByUserResponse.of(borrowedUmbrella.getUuid()));
+                .willReturn(UmbrellaBorrowedByUserResponse.of(borrowedUmbrella.getUuid(), elapsedDay));
 
         // when
         mockMvc.perform(
@@ -125,7 +128,9 @@ public class UserControllerTest extends RestDocsSupport {
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
                                 fieldWithPath("uuid").type(JsonFieldType.NUMBER)
-                                        .description("우산 고유번호")
+                                        .description("우산 고유번호"),
+                                fieldWithPath("elapsedDay").type(JsonFieldType.NUMBER)
+                                        .description("대여 경과일")
                         )));
     }
 

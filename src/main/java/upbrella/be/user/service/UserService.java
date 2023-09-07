@@ -70,7 +70,7 @@ public class UserService {
         History rentalHistory = rentService.findRentalHistoryByUser(sessionUser);
 
         long borrowedUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
-        int elapsedDay = rentalHistory.getRentedAt().getDayOfYear() - LocalDateTime.now().getDayOfYear();
+        int elapsedDay = LocalDateTime.now().getDayOfYear() - rentalHistory.getRentedAt().getDayOfYear();
 
         return UmbrellaBorrowedByUserResponse.of(borrowedUmbrellaUuid, elapsedDay);
     }
