@@ -72,3 +72,7 @@ include::{snippets}/delete-user-bank-account-doc/http-request.adoc[]
 
 === 사용자 회원 탈퇴
 include::{snippets}/delete-user-doc/http-request.adoc[]
+
+=== 사용자 관리자 권한 수정
+include::{snippets}/update-admin-status-doc/http-request.adoc[]
+include::{snippets}/update-admin-status-doc/path-parameters.adoc[]
