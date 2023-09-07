@@ -2,6 +2,7 @@ package upbrella.be.user.entity;
 
 import lombok.*;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.util.AesEncryptor;
 
 import javax.persistence.Entity;
@@ -29,13 +30,13 @@ public class User {
     private String bank;
     private String accountNumber;
 
-    public static User createNewUser(Long socialId, JoinRequest joinRequest) {
+    public static User createNewUser(KakaoLoginResponse kakaoUser, JoinRequest joinRequest) {
 
         return User.builder()
-                .socialId((long) socialId.hashCode())
+                .socialId((long) kakaoUser.getId().hashCode())
                 .name(joinRequest.getName())
                 .phoneNumber(joinRequest.getPhoneNumber())
-                .email(joinRequest.getEmail())
+                .email(kakaoUser.getKakaoAccount().getEmail())
                 .adminStatus(false)
                 .bank(AesEncryptor.encrypt(joinRequest.getBank()))
                 .accountNumber(AesEncryptor.encrypt(joinRequest.getAccountNumber()))

@@ -75,7 +75,7 @@ public class UserController {
         }
 
         KakaoLoginResponse kakaoLoggedInUser = oauthLoginService.processKakaoLogin(kakaoAccessToken.getAccessToken(), kakaoOauthInfo.getLoginUri());
-        session.setAttribute("kakaoId", kakaoLoggedInUser.getId());
+        session.setAttribute("kakaoUser", kakaoLoggedInUser);
 
         return ResponseEntity
                 .ok()
@@ -89,14 +89,14 @@ public class UserController {
     @PostMapping("/users/login")
     public ResponseEntity<CustomResponse> upbrellaLogin(HttpSession session) {
 
-        if (session.getAttribute("kakaoId") == null) {
+        if (session.getAttribute("kakaoUser") == null) {
             throw new NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.");
         }
 
-        Long kakaoId = (Long) session.getAttribute("kakaoId");
-        SessionUser loggedInUser = userService.login(kakaoId);
+        KakaoLoginResponse kakaoUser = (KakaoLoginResponse) session.getAttribute("kakaoUser");
+        SessionUser loggedInUser = userService.login(kakaoUser.getId());
 
-        session.removeAttribute("kakaoId");
+        session.removeAttribute("kakaoUser");
         session.setAttribute("user", loggedInUser);
 
         return ResponseEntity
@@ -125,16 +125,16 @@ public class UserController {
     @PostMapping("/users/join")
     public ResponseEntity<CustomResponse> kakaoJoin(HttpSession session, @RequestBody JoinRequest joinRequest) {
 
-        Long kakaoId = (Long) session.getAttribute("kakaoId");
+        KakaoLoginResponse kakaoUser = (KakaoLoginResponse) session.getAttribute("kakaoUser");
 
         if (session.getAttribute("user") != null) {
             throw new LoginedMemberException("[ERROR] 이미 로그인된 상태입니다.");
         }
-        if (kakaoId == null) {
+        if (kakaoUser == null) {
             throw new NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.");
         }
 
-        SessionUser loggedInUser = userService.join(kakaoId, joinRequest);
+        SessionUser loggedInUser = userService.join(kakaoUser, joinRequest);
 
         session.removeAttribute("kakaoId");
         session.setAttribute("user", loggedInUser);
