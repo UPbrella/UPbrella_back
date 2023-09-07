@@ -9,12 +9,13 @@ import java.util.List;
 @Builder
 public class AllStoreIntroductionResponse {
 
-    private List<SingleStoreIntroductionResponse> stores;
 
-    public static AllStoreIntroductionResponse of(List<SingleStoreIntroductionResponse> stores) {
+    private List<StoreIntroductionsResponseByClassification> storesByClassification;
+
+    public static AllStoreIntroductionResponse of(List<StoreIntroductionsResponseByClassification> storesByClassification) {
 
         return AllStoreIntroductionResponse.builder()
-                .stores(stores)
+                .storesByClassification(storesByClassification)
                 .build();
     }
 }

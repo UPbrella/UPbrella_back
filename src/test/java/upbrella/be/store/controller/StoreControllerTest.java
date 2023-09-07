@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
+//1hour
 @ExtendWith(MockitoExtension.class)
 class StoreControllerTest extends RestDocsSupport {
     @Mock
@@ -60,9 +61,13 @@ class StoreControllerTest extends RestDocsSupport {
         StoreFindByIdResponse storeFindByIdResponse = StoreFindByIdResponse.builder()
                 .id(1)
                 .name("업브렐라")
+                .category("카페")
+                .umbrellaLocation("가게 앞")
+                .instaUrl("인스타 ID 예시")
                 .businessHours("09:00 ~ 18:00")
                 .contactNumber("010-0000-0000")
                 .address("서울특별시 강남구 테헤란로 427")
+                .description("우리 카페는 맛있고 뷰가 좋습니다.")
                 .availableUmbrellaCount(10)
                 .openStatus(true)
                 .latitude(37.503716)
@@ -93,16 +98,24 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("협업 지점 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("이름"),
-                                fieldWithPath("businessHours").type(JsonFieldType.STRING)
-                                        .description("영업 시간"),
-                                fieldWithPath("contactNumber").type(JsonFieldType.STRING)
-                                        .description("연락처"),
-                                fieldWithPath("address").type(JsonFieldType.STRING)
-                                        .description("주소"),
+                                fieldWithPath("category").type(JsonFieldType.STRING)
+                                        .description("카테고리"),
                                 fieldWithPath("availableUmbrellaCount").type(JsonFieldType.NUMBER)
                                         .description("사용가능한 우산 개수"),
                                 fieldWithPath("openStatus").type(JsonFieldType.BOOLEAN)
                                         .description("오픈 여부"),
+                                fieldWithPath("businessHours").type(JsonFieldType.STRING)
+                                        .description("영업 시간"),
+                                fieldWithPath("contactNumber").type(JsonFieldType.STRING)
+                                        .description("연락처"),
+                                fieldWithPath("instaUrl").type(JsonFieldType.STRING)
+                                        .description("인스타그램 URL"),
+                                fieldWithPath("address").type(JsonFieldType.STRING)
+                                        .description("주소"),
+                                fieldWithPath("umbrellaLocation").type(JsonFieldType.STRING)
+                                        .description("우산 위치"),
+                                fieldWithPath("description").type(JsonFieldType.STRING)
+                                        .description("소개 글"),
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER)
@@ -845,23 +858,21 @@ class StoreControllerTest extends RestDocsSupport {
     @Test
     @DisplayName("사용자는 협업지점 소개 페이지를 조회할 수 있다.")
     void findStoreIntroductionTest() throws Exception {
+
         // given
-        SingleStoreIntroductionResponse store = SingleStoreIntroductionResponse.builder()
-                .id(1L)
-                .name("가게 이름")
-                .category("가게 카테고리")
-                .thumbnail("가게 썸네일")
+        StoreIntroductionsResponseByClassification storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification
+                .builder()
+                .subClassificationId(1)
+                .stores(List.of(SingleStoreIntroductionResponse.of(1L, "가게 이름", "가게 카테고리", "가게 썸네일")))
                 .build();
+
         AllStoreIntroductionResponse response = AllStoreIntroductionResponse.builder()
-                .stores(List.of(store))
+                .storesByClassification(List.of(storeIntroductionsResponseByClassification))
                 .build();
 
         given(storeDetailService.findAllStoreIntroductions()).willReturn(response);
 
-        // when
-
-
-        // then
+        // when & then
         mockMvc.perform(
                         get("/stores/introductions")
                 ).andDo(print())
@@ -871,15 +882,19 @@ class StoreControllerTest extends RestDocsSupport {
                         getDocumentResponse(),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
-                                fieldWithPath("stores[]").type(JsonFieldType.ARRAY)
-                                        .description("가게 소개 목록"),
-                                fieldWithPath("stores[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("storesByClassification[]").type(JsonFieldType.ARRAY)
+                                        .description("전체 협업 지점 소개 목록"),
+                                fieldWithPath("storesByClassification[].subClassificationId").type(JsonFieldType.NUMBER)
+                                        .description("협업 지점 소분류 고유번호"),
+                                fieldWithPath("storesByClassification[].stores[]").type(JsonFieldType.ARRAY)
+                                        .description("소분류별 협업 지점 목록"),
+                                fieldWithPath("storesByClassification[].stores[].id").type(JsonFieldType.NUMBER)
                                         .description("가게 고유번호"),
-                                fieldWithPath("stores[].name").type(JsonFieldType.STRING)
+                                fieldWithPath("storesByClassification[].stores[].name").type(JsonFieldType.STRING)
                                         .description("가게 이름"),
-                                fieldWithPath("stores[].category").type(JsonFieldType.STRING)
+                                fieldWithPath("storesByClassification[].stores[].category").type(JsonFieldType.STRING)
                                         .description("가게 카테고리"),
-                                fieldWithPath("stores[].thumbnail").type(JsonFieldType.STRING)
+                                fieldWithPath("storesByClassification[].stores[].thumbnail").type(JsonFieldType.STRING)
                                         .description("가게 썸네일")
                         )));
     }
