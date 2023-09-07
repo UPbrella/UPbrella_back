@@ -10,6 +10,7 @@ public class JoinRequest {
 
     private String name;
     private String phoneNumber;
+    private String email;
     private String bank;
     private String accountNumber;
 }

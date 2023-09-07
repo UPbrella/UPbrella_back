@@ -24,6 +24,7 @@ public class User {
     private Long socialId;
     private String name;
     private String phoneNumber;
+    private String email;
     private boolean adminStatus;
     private String bank;
     private String accountNumber;
@@ -34,6 +35,7 @@ public class User {
                 .socialId((long) socialId.hashCode())
                 .name(joinRequest.getName())
                 .phoneNumber(joinRequest.getPhoneNumber())
+                .email(joinRequest.getEmail())
                 .adminStatus(false)
                 .bank(AesEncryptor.encrypt(joinRequest.getBank()))
                 .accountNumber(AesEncryptor.encrypt(joinRequest.getAccountNumber()))
@@ -61,6 +63,7 @@ public class User {
         this.socialId = 0L;
         this.name = "정지된 회원";
         this.phoneNumber = "deleted";
+        this.email = "deleted";
         this.adminStatus = false;
         this.bank = null;
         this.accountNumber = null;
@@ -74,6 +77,7 @@ public class User {
                 .name(this.name)
                 .phoneNumber(this.phoneNumber)
                 .adminStatus(this.adminStatus)
+                .email(this.email)
                 .bank(AesEncryptor.decrypt(this.bank))
                 .accountNumber(AesEncryptor.decrypt(this.accountNumber))
                 .build();
@@ -85,4 +89,8 @@ public class User {
         this.accountNumber = null;
     }
 
+    public void updateAdminStatus() {
+
+        this.adminStatus = !this.adminStatus;
+    }
 }

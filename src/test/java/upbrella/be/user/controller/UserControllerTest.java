@@ -138,7 +138,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         @BeforeEach
         void setUp() {
-            code = LoginCodeRequest.builder().code("1kdfjq0243f").build();;
+            code = LoginCodeRequest.builder().code("1kdfjq0243f").build();
             oauthToken = FixtureFactory.buildOauthToken();
             kakaoLoginResponse = FixtureFactory.buildKakaoLoginResponse();
         }
@@ -305,6 +305,8 @@ public class UserControllerTest extends RestDocsSupport {
                                             .description("이름"),
                                     fieldWithPath("phoneNumber")
                                             .description("연락처"),
+                                    fieldWithPath("email")
+                                            .description("이메일"),
                                     fieldWithPath("bank")
                                             .optional()
                                             .description("은행"),
@@ -418,6 +420,8 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("사용자 이름"),
                                 fieldWithPath("users[].phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
+                                fieldWithPath("users[].email").type(JsonFieldType.STRING)
+                                        .description("사용자 이메일"),
                                 fieldWithPath("users[].bank").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("은행 이름"),
@@ -596,8 +600,8 @@ public class UserControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                get("/users/blackList")
-        ).andDo(print())
+                        get("/users/blackList")
+                ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-all-black-list-doc",
                         getDocumentRequest(),
@@ -626,8 +630,8 @@ public class UserControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                delete("/users/blackList/{blackListId}", blackListId)
-        ).andDo(print())
+                        delete("/users/blackList/{blackListId}", blackListId)
+                ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("delete-black-list-doc",
                         getDocumentRequest(),
@@ -636,5 +640,27 @@ public class UserControllerTest extends RestDocsSupport {
                                 parameterWithName("blackListId").description("블랙리스트 고유번호")
                         )));
 
+    }
+
+    @Test
+    @DisplayName("관리자가 회원의 관리자 상태를 변경할 수 있다.")
+    void updateAdminStatusTest() throws Exception {
+        // given
+        long userId = 1L;
+        doNothing().when(userService).updateAdminStatus(userId);
+
+        // when
+
+        // then
+        mockMvc.perform(
+                        patch("/admin/users/{userId}", userId)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("update-admin-status-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("userId").description("회원 고유번호")
+                        )));
     }
 }

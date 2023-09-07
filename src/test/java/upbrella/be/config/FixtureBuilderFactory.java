@@ -135,6 +135,7 @@ public class FixtureBuilderFactory {
                 .set("socialId", buildLong(100000000))
                 .set("name", pickRandomString(nameList))
                 .set("phoneNumber", pickPhoneNumberString())
+                .set("email", "email@email.com")
                 .set("bank", AesEncryptor.encrypt(pickRandomString(bankList)))
                 .set("accountNumber", AesEncryptor.encrypt(pickAccountNumberString()));
     }

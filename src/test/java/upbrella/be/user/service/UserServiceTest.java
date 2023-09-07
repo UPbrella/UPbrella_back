@@ -405,4 +405,21 @@ class UserServiceTest {
         // then
         verify(blackListRepository, times(1)).deleteById(blackListId);
     }
+
+    @Test
+    @DisplayName("사용자는 관리자 권한을 변경할 수 있다.")
+    void updateAdminStatusTest() {
+        // given
+        User user = FixtureBuilderFactory.builderUser()
+                .set("adminStatus", false)
+                .sample();
+
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+
+        // when
+        userService.updateAdminStatus(1L);
+
+        // then
+        assertThat(user.isAdminStatus()).isTrue();
+    }
 }
