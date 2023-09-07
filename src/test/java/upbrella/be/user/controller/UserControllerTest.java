@@ -305,6 +305,8 @@ public class UserControllerTest extends RestDocsSupport {
                                             .description("이름"),
                                     fieldWithPath("phoneNumber")
                                             .description("연락처"),
+                                    fieldWithPath("email")
+                                            .description("이메일"),
                                     fieldWithPath("bank")
                                             .optional()
                                             .description("은행"),
@@ -418,6 +420,8 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("사용자 이름"),
                                 fieldWithPath("users[].phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
+                                fieldWithPath("users[].email").type(JsonFieldType.STRING)
+                                        .description("사용자 이메일"),
                                 fieldWithPath("users[].bank").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("은행 이름"),

@@ -12,6 +12,7 @@ public class SingleUserInfoResponse {
     private long socialId;
     private String name;
     private String phoneNumber;
+    private String email;
     private String bank;
     private String accountNumber;
     private boolean adminStatus;
@@ -23,6 +24,7 @@ public class SingleUserInfoResponse {
                 .socialId(user.getSocialId())
                 .name(user.getName())
                 .phoneNumber(user.getPhoneNumber())
+                .email(user.getEmail())
                 .bank(user.getBank())
                 .accountNumber(user.getAccountNumber())
                 .adminStatus(user.isAdminStatus())
