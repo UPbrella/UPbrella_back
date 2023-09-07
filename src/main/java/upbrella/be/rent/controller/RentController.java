@@ -58,7 +58,8 @@ public class RentController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "반납 폼 조회 성공"
+                        "반납 폼 조회 성공",
+                        returnForm
                 ));
     }
 
