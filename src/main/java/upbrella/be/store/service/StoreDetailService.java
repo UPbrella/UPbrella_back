@@ -13,9 +13,7 @@ import upbrella.be.store.exception.NonExistingStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,28 +87,22 @@ public class StoreDetailService {
 
     public AllStoreIntroductionResponse findAllStoreIntroductions() {
 
-        List<StoreDetail> storeIntroductions = storeDetailRepository.findAllStores();
+        List<StoreDetail> storeDetails = storeDetailRepository.findAllStores();
 
-        List<SingleStoreIntroductionResponse> collect = storeIntroductions.stream()
-                .map(this::createSingleIntroduction)
+        Map<Long, List<StoreDetail>> collected = storeDetails.stream()
+                .collect(Collectors.groupingBy(storeDetail -> storeDetail.getStoreMeta().getSubClassification().getId()));
+
+        //같은 ID끼리 리스트로 모은 것을 StoreIntroductionsResponseByClassification으로 변환
+        List<StoreIntroductionsResponseByClassification> storeDetailsByClassification = collected.entrySet().stream()
+                .sorted(Comparator.comparingLong(Map.Entry::getKey))
+                .map(entry -> StoreIntroductionsResponseByClassification.of(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
 
-        return AllStoreIntroductionResponse.of(collect);
+        return AllStoreIntroductionResponse.of(storeDetailsByClassification);
     }
 
     public void saveStoreDetail(StoreDetail storeDetail) {
 
         storeDetailRepository.save(storeDetail);
-    }
-
-    private SingleStoreIntroductionResponse createSingleIntroduction(StoreDetail storeDetail) {
-
-        List<SingleImageUrlResponse> sortedImageUrls = storeDetail.getSortedStoreImages().stream()
-                .map(SingleImageUrlResponse::createImageUrlResponse)
-                .collect(Collectors.toList());
-
-        String thumbnail = storeImageService.createThumbnail(sortedImageUrls);
-        StoreMeta storeMeta = storeDetail.getStoreMeta();
-        return SingleStoreIntroductionResponse.of(storeDetail.getId(), thumbnail, storeMeta.getName(), storeMeta.getCategory());
     }
 }

@@ -15,11 +15,15 @@ public class StoreFindByIdResponse {
 
     private long id;
     private String name;
-    private String businessHours;
-    private String contactNumber;
-    private String address;
+    private String category;
     private long availableUmbrellaCount;
     private boolean openStatus;
+    private String businessHours;
+    private String contactNumber;
+    private String instaUrl;
+    private String address;
+    private String umbrellaLocation;
+    private String description;
     private double latitude;
     private double longitude;
     private List<String> imageUrls;
@@ -32,6 +36,10 @@ public class StoreFindByIdResponse {
                 .businessHours(storeDetail.getWorkingHour())
                 .contactNumber(storeDetail.getContactInfo())
                 .address(storeDetail.getAddress())
+                .instaUrl(storeDetail.getInstaUrl())
+                .description(storeDetail.getContent())
+                .category(storeDetail.getStoreMeta().getCategory())
+                .umbrellaLocation(storeDetail.getUmbrellaLocation())
                 .availableUmbrellaCount(availableUmbrellaCount)
                 .openStatus(storeDetail.getStoreMeta().isOpenStore(LocalDateTime.now())) // 의사 결정 전까지 임시로 True 고정
                 .latitude(storeDetail.getStoreMeta().getLatitude())
