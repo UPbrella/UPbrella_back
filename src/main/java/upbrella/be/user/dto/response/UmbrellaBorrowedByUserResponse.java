@@ -8,11 +8,13 @@ import lombok.Getter;
 public class UmbrellaBorrowedByUserResponse {
 
     private long uuid;
+    private int elapsedDay;
 
-    public static UmbrellaBorrowedByUserResponse of(long uuid) {
+    public static UmbrellaBorrowedByUserResponse of(long uuid, int elapsedDay) {
 
         return UmbrellaBorrowedByUserResponse.builder()
                 .uuid(uuid)
+                .elapsedDay(elapsedDay)
                 .build();
     }
 }

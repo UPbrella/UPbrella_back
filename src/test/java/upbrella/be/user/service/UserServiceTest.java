@@ -13,6 +13,7 @@ import upbrella.be.config.FixtureFactory;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.KakaoAccount;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.*;
 import upbrella.be.user.entity.BlackList;
@@ -118,15 +119,21 @@ class UserServiceTest {
         @Test
         @DisplayName("회원 가입할 수 있다.")
         void success() {
-
             // given
+            KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                    .id(notExistingSocialId)
+                    .kakaoAccount(
+                            KakaoAccount.builder()
+                                    .email("email@email.com")
+                                    .build())
+                    .build();
             given(userRepository.existsBySocialId(notExistingSocialId))
                     .willReturn(false);
             given(userRepository.save(any(User.class)))
                     .willReturn(user);
 
             // when
-            SessionUser joinedUserId = userService.join(notExistingSocialId, joinRequest);
+            SessionUser joinedUserId = userService.join(kakaoUser, joinRequest);
 
             // then
             assertAll(
@@ -141,12 +148,20 @@ class UserServiceTest {
         @DisplayName("이미 회원 가입된 사용자는 예외가 발생된다.")
         void existingUser() {
             // given
+            KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                    .id(existingSocialId)
+                    .kakaoAccount(
+                            KakaoAccount.builder()
+                                    .email("email@email.com")
+                                    .build())
+                    .build();
+
             given(userRepository.existsBySocialId(existingSocialId))
                     .willReturn(true);
 
             // when & then
             assertAll(
-                    () -> assertThatThrownBy(() -> userService.join(existingSocialId, joinRequest))
+                    () -> assertThatThrownBy(() -> userService.join(kakaoUser, joinRequest))
                             .isInstanceOf(ExistingMemberException.class),
                     () -> then(userRepository).should(times(1))
                             .existsBySocialId(existingSocialId),
@@ -341,6 +356,15 @@ class UserServiceTest {
     @DisplayName("블랙리스트에 들어간 회원은 회원가입이 불가능하다.")
     void blackListMemberJoinTest() {
         // given
+
+        KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                .id(0L)
+                .kakaoAccount(
+                        KakaoAccount.builder()
+                                .email("email@email.com")
+                                .build())
+                .build();
+
         long blackList = 0L;
         given(blackListRepository.existsBySocialId(blackList)).willReturn(true);
         given(userRepository.existsBySocialId(blackList)).willReturn(false);
@@ -350,7 +374,7 @@ class UserServiceTest {
 
 
         // then
-        assertThatThrownBy(() -> userService.join(blackList, joinRequest))
+        assertThatThrownBy(() -> userService.join(kakaoUser, joinRequest))
                 .isInstanceOf(BlackListUserException.class);
     }
 
@@ -404,5 +428,22 @@ class UserServiceTest {
 
         // then
         verify(blackListRepository, times(1)).deleteById(blackListId);
+    }
+
+    @Test
+    @DisplayName("사용자는 관리자 권한을 변경할 수 있다.")
+    void updateAdminStatusTest() {
+        // given
+        User user = FixtureBuilderFactory.builderUser()
+                .set("adminStatus", false)
+                .sample();
+
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+
+        // when
+        userService.updateAdminStatus(1L);
+
+        // then
+        assertThat(user.isAdminStatus()).isTrue();
     }
 }
