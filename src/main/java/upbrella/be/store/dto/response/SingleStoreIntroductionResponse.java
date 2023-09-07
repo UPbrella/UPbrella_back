@@ -1,9 +1,7 @@
 package upbrella.be.store.dto.response;
 
-import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
-import upbrella.be.store.entity.StoreDetail;
 
 @Getter
 @Builder

@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
+//1hour
 @ExtendWith(MockitoExtension.class)
 class StoreControllerTest extends RestDocsSupport {
     @Mock
@@ -60,9 +61,13 @@ class StoreControllerTest extends RestDocsSupport {
         StoreFindByIdResponse storeFindByIdResponse = StoreFindByIdResponse.builder()
                 .id(1)
                 .name("업브렐라")
+                .category("카페")
+                .umbrellaLocation("가게 앞")
+                .instaUrl("인스타 ID 예시")
                 .businessHours("09:00 ~ 18:00")
                 .contactNumber("010-0000-0000")
                 .address("서울특별시 강남구 테헤란로 427")
+                .description("우리 카페는 맛있고 뷰가 좋습니다.")
                 .availableUmbrellaCount(10)
                 .openStatus(true)
                 .latitude(37.503716)
@@ -93,16 +98,24 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("협업 지점 고유번호"),
                                 fieldWithPath("name").type(JsonFieldType.STRING)
                                         .description("이름"),
-                                fieldWithPath("businessHours").type(JsonFieldType.STRING)
-                                        .description("영업 시간"),
-                                fieldWithPath("contactNumber").type(JsonFieldType.STRING)
-                                        .description("연락처"),
-                                fieldWithPath("address").type(JsonFieldType.STRING)
-                                        .description("주소"),
+                                fieldWithPath("category").type(JsonFieldType.STRING)
+                                        .description("카테고리"),
                                 fieldWithPath("availableUmbrellaCount").type(JsonFieldType.NUMBER)
                                         .description("사용가능한 우산 개수"),
                                 fieldWithPath("openStatus").type(JsonFieldType.BOOLEAN)
                                         .description("오픈 여부"),
+                                fieldWithPath("businessHours").type(JsonFieldType.STRING)
+                                        .description("영업 시간"),
+                                fieldWithPath("contactNumber").type(JsonFieldType.STRING)
+                                        .description("연락처"),
+                                fieldWithPath("instaUrl").type(JsonFieldType.STRING)
+                                        .description("인스타그램 URL"),
+                                fieldWithPath("address").type(JsonFieldType.STRING)
+                                        .description("주소"),
+                                fieldWithPath("umbrellaLocation").type(JsonFieldType.STRING)
+                                        .description("우산 위치"),
+                                fieldWithPath("description").type(JsonFieldType.STRING)
+                                        .description("소개 글"),
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER)
