@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
-import upbrella.be.rent.dto.response.ConditionReportPageResponse;
-import upbrella.be.rent.dto.response.ImprovementReportPageResponse;
-import upbrella.be.rent.dto.response.RentFormResponse;
-import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
+import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
@@ -45,6 +42,18 @@ public class RentController {
                         200,
                         "대여 폼 조회 성공",
                         rentForm
+                ));
+    }
+
+    @GetMapping("/rent/return/form/{storeId}")
+    public ResponseEntity<CustomResponse<ReturnFormResponse>> findReturnForm(@PathVariable long storeId, HttpSession httpSession) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "대여 폼 조회 성공"
                 ));
     }
 
