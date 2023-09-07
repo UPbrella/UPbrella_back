@@ -24,15 +24,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+
+    private final UserRepository userRepository;
+    private final BlackListRepository blackListRepository;
+    private final RentService rentService;
+
     public UserService(UserRepository userRepository, BlackListRepository blackListRepository, @Lazy RentService rentService) {
         this.userRepository = userRepository;
         this.blackListRepository = blackListRepository;
         this.rentService = rentService;
     }
-
-    private final UserRepository userRepository;
-    private final BlackListRepository blackListRepository;
-    private final RentService rentService;
 
     public SessionUser login(Long socialId) {
 
