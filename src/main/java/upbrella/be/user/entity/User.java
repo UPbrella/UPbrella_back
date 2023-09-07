@@ -2,6 +2,7 @@ package upbrella.be.user.entity;
 
 import lombok.*;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.util.AesEncryptor;
 
 import javax.persistence.Entity;
@@ -24,16 +25,18 @@ public class User {
     private Long socialId;
     private String name;
     private String phoneNumber;
+    private String email;
     private boolean adminStatus;
     private String bank;
     private String accountNumber;
 
-    public static User createNewUser(Long socialId, JoinRequest joinRequest) {
+    public static User createNewUser(KakaoLoginResponse kakaoUser, JoinRequest joinRequest) {
 
         return User.builder()
-                .socialId((long) socialId.hashCode())
+                .socialId((long) kakaoUser.getId().hashCode())
                 .name(joinRequest.getName())
                 .phoneNumber(joinRequest.getPhoneNumber())
+                .email(kakaoUser.getKakaoAccount().getEmail())
                 .adminStatus(false)
                 .bank(AesEncryptor.encrypt(joinRequest.getBank()))
                 .accountNumber(AesEncryptor.encrypt(joinRequest.getAccountNumber()))
@@ -61,6 +64,7 @@ public class User {
         this.socialId = 0L;
         this.name = "정지된 회원";
         this.phoneNumber = "deleted";
+        this.email = "deleted";
         this.adminStatus = false;
         this.bank = null;
         this.accountNumber = null;
@@ -74,6 +78,7 @@ public class User {
                 .name(this.name)
                 .phoneNumber(this.phoneNumber)
                 .adminStatus(this.adminStatus)
+                .email(this.email)
                 .bank(AesEncryptor.decrypt(this.bank))
                 .accountNumber(AesEncryptor.decrypt(this.accountNumber))
                 .build();
@@ -85,4 +90,8 @@ public class User {
         this.accountNumber = null;
     }
 
+    public void updateAdminStatus() {
+
+        this.adminStatus = !this.adminStatus;
+    }
 }

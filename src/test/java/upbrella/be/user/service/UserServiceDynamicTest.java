@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.KakaoAccount;
+import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
@@ -39,6 +41,7 @@ class UserServiceDynamicTest {
                 .socialId(23132L)
                 .accountNumber(AesEncryptor.encrypt("110-421-674103"))
                 .bank(AesEncryptor.encrypt("신한"))
+                .email("email@email.com")
                 .name("홍길동")
                 .phoneNumber("010-2084-3478")
                 .adminStatus(false)
@@ -51,9 +54,17 @@ class UserServiceDynamicTest {
                 .phoneNumber("010-2084-3478")
                 .build();
 
+        KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                .id(23132L)
+                .kakaoAccount(
+                        KakaoAccount.builder()
+                                .email("email@email.com")
+                                .build())
+                .build();
+
         return List.of(
                 DynamicTest.dynamicTest("새로 가입한 유저는 DB에 저장된다.", () -> {
-                    SessionUser joined = userService.join((long) user.getSocialId().hashCode(), joinRequest);
+                    SessionUser joined = userService.join(kakaoUser, joinRequest);
                     Optional<User> foundUser = userRepository.findById(joined.getId());
 
                     assertAll(() -> assertTrue(foundUser.isPresent()),
@@ -66,7 +77,7 @@ class UserServiceDynamicTest {
                     );
                 }),
                 DynamicTest.dynamicTest("이미 가입된 유저는 예외가 발생된다.", () -> {
-                    assertThatThrownBy(() -> userService.join(user.getSocialId(), joinRequest))
+                    assertThatThrownBy(() -> userService.join(kakaoUser, joinRequest))
                             .isInstanceOf(ExistingMemberException.class);
                 }),
                 DynamicTest.dynamicTest("존재하지 않는 아이디로 로그인하면 예외가 발생한다.", () -> {

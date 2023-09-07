@@ -631,6 +631,7 @@ public class StoreDetailServiceTest {
                 .activated(true)
                 .deleted(false)
                 .category("카페, 디저트")
+                .subClassification(Classification.builder().id(1L).name("카페, 디저").type(ClassificationType.SUB_CLASSIFICATION).build())
                 .build();
 
         StoreDetail storeDetail = StoreDetail.builder()
@@ -642,19 +643,29 @@ public class StoreDetailServiceTest {
                 .instaUrl("모티브 인서타")
                 .workingHour("매일 7시 ~ 12시")
                 .umbrellaLocation("문 앞")
-                .storeImages(Set.of())
+                .storeImages(Set.of(StoreImage.builder().imageUrl("가게 썸네일").build()))
+                .build();
+
+        StoreIntroductionsResponseByClassification storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification
+                .builder()
+                .subClassificationId(1)
+                .stores(List.of(SingleStoreIntroductionResponse.of(2L, "가게 썸네일", "스타벅스", "카페, 디저트")))
+                .build();
+
+        AllStoreIntroductionResponse expected = AllStoreIntroductionResponse.builder()
+                .storesByClassification(List.of(storeIntroductionsResponseByClassification))
                 .build();
 
         given(storeDetailRepository.findAllStores()).willReturn(List.of(storeDetail));
 
         // when
         AllStoreIntroductionResponse response = storeDetailService.findAllStoreIntroductions();
-        SingleStoreIntroductionResponse stores = response.getStores().get(0);
+
         // then
         assertAll(
-                () -> assertThat(stores.getId()).isEqualTo(storeDetail.getId()),
-                () -> assertThat(stores.getName()).isEqualTo(storeDetail.getStoreMeta().getName()),
-                () -> assertThat(stores.getCategory()).isEqualTo(storeDetail.getStoreMeta().getCategory())
+                () -> assertThat(response)
+                        .usingRecursiveComparison()
+                        .isEqualTo(expected)
         );
     }
 }
