@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.LoginCodeRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
@@ -62,13 +63,13 @@ public class UserController {
                 ));
     }
 
-    @GetMapping("/users/oauth/login")
-    public ResponseEntity<CustomResponse> kakaoLogin(HttpSession session, String code) {
+    @PostMapping("/users/oauth/login")
+    public ResponseEntity<CustomResponse> kakaoLogin(HttpSession session, @RequestBody LoginCodeRequest code) {
 
         OauthToken kakaoAccessToken;
 
         try {
-            kakaoAccessToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo);
+            kakaoAccessToken = oauthLoginService.getOauthToken(code.getCode(), kakaoOauthInfo);
         } catch (HttpClientErrorException e) {
             throw new InvalidLoginCodeException("[ERROR] 로그인 코드가 유효하지 않습니다.");
         }
@@ -85,7 +86,7 @@ public class UserController {
                         null));
     }
 
-    @GetMapping("/users/login")
+    @PostMapping("/users/login")
     public ResponseEntity<CustomResponse> upbrellaLogin(HttpSession session) {
 
         if (session.getAttribute("kakaoId") == null) {
@@ -104,6 +105,20 @@ public class UserController {
                         "success",
                         200,
                         "업브렐라 로그인 성공",
+                        null));
+    }
+
+    @PostMapping("/users/logout")
+    public ResponseEntity<CustomResponse> upbrellaLogout(HttpSession session) {
+
+        session.invalidate();
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "업브렐라 로그아웃 성공",
                         null));
     }
 
@@ -194,7 +209,6 @@ public class UserController {
                 ));
     }
 
-    // TODO: 관리자 권한 어디서 처리할것인지
     @DeleteMapping("/admin/users/{userId}")
     public ResponseEntity<CustomResponse> withdrawUser(HttpSession session, @PathVariable long userId) {
 
@@ -252,6 +266,20 @@ public class UserController {
                         "success",
                         200,
                         "블랙리스트 삭제 성공"
+                ));
+    }
+
+    @PatchMapping("/admin/users/{userId}")
+    public ResponseEntity<CustomResponse> updateAdminStatus(@PathVariable long userId) {
+
+        userService.updateAdminStatus(userId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "관리자 권한 변경 성공"
                 ));
     }
 }

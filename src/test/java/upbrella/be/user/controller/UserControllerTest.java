@@ -1,9 +1,6 @@
 package upbrella.be.user.controller;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,6 +16,7 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
+import upbrella.be.user.dto.request.LoginCodeRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
 import upbrella.be.user.dto.response.*;
 import upbrella.be.user.dto.token.KakaoOauthInfo;
@@ -135,17 +133,17 @@ public class UserControllerTest extends RestDocsSupport {
     }
 
     @Nested
-    @DisplayName("사용자는 인증 코드로 GET 요청을 보내면")
+    @DisplayName("사용자는 인증 코드로 POST 요청을 보내면")
     class LoginTest {
 
-        private String code;
+        private LoginCodeRequest code;
         private OauthToken oauthToken;
         private KakaoLoginResponse kakaoLoginResponse;
         private MockHttpSession mockHttpSession = new MockHttpSession();
 
         @BeforeEach
         void setUp() {
-            code = "1kdfjq0243f";
+            code = LoginCodeRequest.builder().code("1kdfjq0243f").build();
             oauthToken = FixtureFactory.buildOauthToken();
             kakaoLoginResponse = FixtureFactory.buildKakaoLoginResponse();
         }
@@ -155,7 +153,7 @@ public class UserControllerTest extends RestDocsSupport {
         void loginSuccess() throws Exception {
 
             // given
-            given(oauthLoginService.getOauthToken(eq(code), any()))
+            given(oauthLoginService.getOauthToken(eq(code.getCode()), any()))
                     .willReturn(oauthToken);
             given(oauthLoginService.processKakaoLogin(eq(oauthToken.getAccessToken()), any()))
                     .willReturn(kakaoLoginResponse);
@@ -164,8 +162,9 @@ public class UserControllerTest extends RestDocsSupport {
 
             // when
             mockMvc.perform(
-                            get("/users/oauth/login")
-                                    .param("code", code)
+                            post("/users/oauth/login")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(code))
                                     .session(mockHttpSession)
                     ).andDo(print())
                     .andExpect(status().isOk())
@@ -187,8 +186,8 @@ public class UserControllerTest extends RestDocsSupport {
             mockHttpSession.setAttribute("kakaoId", 1L);
             // when
             mockMvc.perform(
-                            get("/users/login")
-                                    .param("code", code)
+                            post("/users/login")
+                                    .content(objectMapper.writeValueAsString(code))
                                     .session(mockHttpSession))
                     .andExpect(status().isBadRequest())
                     .andExpect(result ->
@@ -209,8 +208,9 @@ public class UserControllerTest extends RestDocsSupport {
 
             // when
             mockMvc.perform(
-                            get("/users/oauth/login")
-                                    .param("code", code)
+                            post("/users/oauth/login")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsBytes(code))
                                     .session(mockHttpSession))
                     .andExpect(status().isBadRequest())
                     .andExpect(result ->
@@ -232,7 +232,7 @@ public class UserControllerTest extends RestDocsSupport {
 
             // then
             mockMvc.perform(
-                            get("/users/login")
+                            post("/users/login")
                                     .session(session)
                     ).andDo(print())
                     .andExpect(status().isOk())
@@ -243,19 +243,40 @@ public class UserControllerTest extends RestDocsSupport {
         }
     }
 
+    @Test
+    @DisplayName("사용자는 로그아웃을 할 수 있다.")
+    void loginSuccess() throws Exception {
+
+        // given
+        MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute("user", FixtureBuilderFactory.builderSessionUser().sample());
+
+        // when
+        mockMvc.perform(
+                        post("/users/logout")
+                                .session(mockHttpSession)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-logout-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse()
+                ));
+
+        // then
+        assertThat(mockHttpSession.isInvalid()).isEqualTo(true);
+    }
+
     @Nested
     @DisplayName("사용자는 소셜 로그인된 상태에서 회원가입 정보를 담아 POST 요청을 보내면")
     class JoinTest {
 
         private JoinRequest joinRequest;
-        private OauthToken oauthToken;
         private MockHttpSession mockHttpSession;
 
         @BeforeEach
         void setUp() {
 
             joinRequest = FixtureBuilderFactory.builderJoinRequest().sample();
-            oauthToken = FixtureFactory.buildOauthToken();
             mockHttpSession = new MockHttpSession();
         }
 
@@ -289,6 +310,8 @@ public class UserControllerTest extends RestDocsSupport {
                                             .description("이름"),
                                     fieldWithPath("phoneNumber")
                                             .description("연락처"),
+                                    fieldWithPath("email")
+                                            .description("이메일"),
                                     fieldWithPath("bank")
                                             .optional()
                                             .description("은행"),
@@ -402,6 +425,8 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("사용자 이름"),
                                 fieldWithPath("users[].phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
+                                fieldWithPath("users[].email").type(JsonFieldType.STRING)
+                                        .description("사용자 이메일"),
                                 fieldWithPath("users[].bank").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("은행 이름"),
@@ -580,8 +605,8 @@ public class UserControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                get("/users/blackList")
-        ).andDo(print())
+                        get("/users/blackList")
+                ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("find-all-black-list-doc",
                         getDocumentRequest(),
@@ -610,8 +635,8 @@ public class UserControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                delete("/users/blackList/{blackListId}", blackListId)
-        ).andDo(print())
+                        delete("/users/blackList/{blackListId}", blackListId)
+                ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("delete-black-list-doc",
                         getDocumentRequest(),
@@ -620,5 +645,27 @@ public class UserControllerTest extends RestDocsSupport {
                                 parameterWithName("blackListId").description("블랙리스트 고유번호")
                         )));
 
+    }
+
+    @Test
+    @DisplayName("관리자가 회원의 관리자 상태를 변경할 수 있다.")
+    void updateAdminStatusTest() throws Exception {
+        // given
+        long userId = 1L;
+        doNothing().when(userService).updateAdminStatus(userId);
+
+        // when
+
+        // then
+        mockMvc.perform(
+                        patch("/admin/users/{userId}", userId)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("update-admin-status-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("userId").description("회원 고유번호")
+                        )));
     }
 }

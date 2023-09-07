@@ -25,15 +25,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+
+    private final UserRepository userRepository;
+    private final BlackListRepository blackListRepository;
+    private final RentService rentService;
+
     public UserService(UserRepository userRepository, BlackListRepository blackListRepository, @Lazy RentService rentService) {
         this.userRepository = userRepository;
         this.blackListRepository = blackListRepository;
         this.rentService = rentService;
     }
-
-    private final UserRepository userRepository;
-    private final BlackListRepository blackListRepository;
-    private final RentService rentService;
 
     public SessionUser login(Long socialId) {
 
@@ -95,7 +96,7 @@ public class UserService {
     public void withdrawUser(Long id) {
 
         User foundUser = findUserById(id);
-        long socialId = foundUser.getSocialId();
+        Long socialId = foundUser.getSocialId();
         BlackList newBlackList = BlackList.createNewBlackList(socialId);
         blackListRepository.save(newBlackList);
 
@@ -137,5 +138,13 @@ public class UserService {
     public void deleteBlackList(long blackListId) {
 
         blackListRepository.deleteById(blackListId);
+    }
+
+    @Transactional
+    public void updateAdminStatus(Long id) {
+
+        User foundUser = findUserById(id);
+
+        foundUser.updateAdminStatus();
     }
 }

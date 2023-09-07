@@ -21,10 +21,10 @@ public class BlackList {
     private long socialId;
     private LocalDateTime blockedAt;
 
-    public static BlackList createNewBlackList(long socialId) {
+    public static BlackList createNewBlackList(Long socialId) {
 
         return BlackList.builder()
-                .socialId(socialId)
+                .socialId(socialId.hashCode())
                 .blockedAt(LocalDateTime.now())
                 .build();
     }
