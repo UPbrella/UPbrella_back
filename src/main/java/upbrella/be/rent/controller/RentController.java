@@ -45,15 +45,20 @@ public class RentController {
                 ));
     }
 
-    @GetMapping("/rent/return/form/{storeId}")
+    @GetMapping("/return/form/{storeId}")
     public ResponseEntity<CustomResponse<ReturnFormResponse>> findReturnForm(@PathVariable long storeId, HttpSession httpSession) {
+
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        User userToReturn = userService.findUserById(user.getId());
+
+        ReturnFormResponse returnForm = rentService.findReturnForm(storeId, userToReturn);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "대여 폼 조회 성공"
+                        "반납 폼 조회 성공"
                 ));
     }
 
