@@ -15,10 +15,12 @@ import upbrella.be.docs.utils.RestDocsSupport;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
+import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.slack.service.SlackAlarmService;
+import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.service.UserService;
@@ -96,6 +98,62 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("대여 지점 이름"),
                                 fieldWithPath("umbrellaUuid").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 반납 폼 자동 완성에 필요한 데이터를 조회할 수 있다.")
+    void findReturnFormTest() throws Exception {
+
+        SessionUser sessionUser = SessionUser.builder()
+                .id(1L)
+                .socialId(1L)
+                .adminStatus(false)
+                .build();
+
+        User userToReturn = User.builder()
+                .id(1L)
+                .name("테스터1")
+                .phoneNumber("010-1111-1111")
+                .adminStatus(false)
+                .build();
+
+        StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta().sample();
+        History history = History.builder()
+                .id(1L)
+                .rentStoreMeta(storeMeta)
+                .build();
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("user", sessionUser);
+
+        ReturnFormResponse returnFormResponse = ReturnFormResponse.of(storeMeta, history);
+
+        given(userService.findUserById(1L)).willReturn(userToReturn);
+        given(rentService.findReturnForm(storeMeta.getId(), userToReturn))
+                .willReturn(returnFormResponse);
+
+        // when & then
+        mockMvc.perform(
+                        get("/return/form/{storeId}", storeMeta.getId())
+                                .session(session)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("find-return-form-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId")
+                                        .description("반납 지점 고유번호")
+                        ),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("classificationName").type(JsonFieldType.STRING)
+                                        .description("지역"),
+                                fieldWithPath("rentStoreName").type(JsonFieldType.STRING)
+                                        .description("대여 지점"),
+                                fieldWithPath("storeId").type(JsonFieldType.NUMBER)
+                                        .description("대여 지점 번호")
                         )));
     }
 
