@@ -17,9 +17,9 @@ public class ErrorController {
         return ResponseEntity
                 .badRequest()
                 .body(new CustomResponse<>(
-                        "fail",
-                        HttpStatus.BAD_REQUEST.value(),
-                        "권한이 없는 접근입니다.",
+                        "unauthorized",
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "세션이 만료되었거나, 권한이 없는 접근입니다.",
                         null));
     }
 }
