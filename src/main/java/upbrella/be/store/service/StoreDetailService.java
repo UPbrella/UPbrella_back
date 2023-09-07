@@ -90,16 +90,11 @@ public class StoreDetailService {
         List<StoreDetail> storeDetails = storeDetailRepository.findAllStores();
 
         Map<Long, List<StoreDetail>> collected = storeDetails.stream()
-                .sorted(new Comparator<StoreDetail>() {
-                    @Override
-                    public int compare(StoreDetail o1, StoreDetail o2) {
-                        return (int) (o1.getStoreMeta().getSubClassification().getId() - o2.getStoreMeta().getSubClassification().getId());
-                    }
-                })
                 .collect(Collectors.groupingBy(storeDetail -> storeDetail.getStoreMeta().getSubClassification().getId()));
 
         //같은 ID끼리 리스트로 모은 것을 StoreIntroductionsResponseByClassification으로 변환
         List<StoreIntroductionsResponseByClassification> storeDetailsByClassification = collected.entrySet().stream()
+                .sorted(Comparator.comparingLong(Map.Entry::getKey))
                 .map(entry -> StoreIntroductionsResponseByClassification.of(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
 
