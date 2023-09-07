@@ -19,6 +19,7 @@ import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,8 +71,9 @@ public class UserService {
         History rentalHistory = rentService.findRentalHistoryByUser(sessionUser);
 
         long borrowedUmbrellaUuid = rentalHistory.getUmbrella().getUuid();
+        int elapsedDay = LocalDateTime.now().getDayOfYear() - rentalHistory.getRentedAt().getDayOfYear();
 
-        return UmbrellaBorrowedByUserResponse.of(borrowedUmbrellaUuid);
+        return UmbrellaBorrowedByUserResponse.of(borrowedUmbrellaUuid, elapsedDay);
     }
 
     @Transactional
