@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
@@ -550,5 +551,21 @@ class StoreMetaServiceTest {
                     .isInstanceOf(NonExistingStoreMetaException.class)
                     .hasMessage("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.");
         }
+    }
+
+    @Test
+    @DisplayName("사용자는 협업지점의 활성화 여부를 수정할 수 있다.")
+    void updateStoreStatusTest() {
+        // given
+        StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta()
+                .set("activated", true)
+                .sample();
+        given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta));
+
+        // when
+        storeMetaService.updateStoreActivateStatus(1L);
+
+        // then
+        assertThat(storeMeta.isActivated()).isFalse();
     }
 }

@@ -895,4 +895,27 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("가게 썸네일")
                         )));
     }
+
+    @Test
+    @DisplayName("사용자는 협업지점의 활성화 여부 상태를 변경할 수 있다.")
+    void updateActivateStatusTest() throws Exception {
+        // given
+        long storeId = 1L;
+        doNothing().when(storeMetaService).updateStoreActivateStatus(storeId);
+
+        // when
+        storeMetaService.updateStoreActivateStatus(storeId);
+
+        // then
+        mockMvc.perform(
+                patch("/admin/stores/{storeId}/activateStatus", storeId)
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-update-activate-status-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업 지점 고유번호")
+                        )));
+    }
 }
