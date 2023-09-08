@@ -901,17 +901,40 @@ class StoreControllerTest extends RestDocsSupport {
     void updateActivateStatusTest() throws Exception {
         // given
         long storeId = 1L;
-        doNothing().when(storeMetaService).updateStoreActivateStatus(storeId);
+        doNothing().when(storeMetaService).activateStoreStatus(storeId);
 
         // when
-        storeMetaService.updateStoreActivateStatus(storeId);
+        storeMetaService.activateStoreStatus(storeId);
 
         // then
         mockMvc.perform(
-                patch("/admin/stores/{storeId}/activateStatus", storeId)
+                patch("/admin/stores/{storeId}/activate", storeId)
         ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-update-activate-status-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업 지점 고유번호")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 협업지점의 활성화 여부 상태를 변경할 수 있다.")
+    void inactivateStoreStatus() throws Exception {
+        // given
+        long storeId = 1L;
+        doNothing().when(storeMetaService).inactivateStoreStatus(storeId);
+
+        // when
+        storeMetaService.inactivateStoreStatus(storeId);
+
+        // then
+        mockMvc.perform(
+                        patch("/admin/stores/{storeId}/inactivate", storeId)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-update-inactivate-status-doc",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pathParameters(

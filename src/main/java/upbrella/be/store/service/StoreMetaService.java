@@ -138,7 +138,7 @@ public class StoreMetaService {
     }
 
     @Transactional
-    public void updateStoreActivateStatus(long storeId) {
+    public void activateStoreStatus(long storeId) {
 
         StoreDetail storeDetail = storeDetailService.findStoreDetailById(storeId);
 
@@ -147,6 +147,14 @@ public class StoreMetaService {
             throw new EssentialImageException("[ERROR] 가게 이미지가 존재하지 않으면 영업지점을 활성화할 수 없습니다.");
         }
 
-        storeDetail.getStoreMeta().updateStoreActivateStatus();
+        storeDetail.getStoreMeta().activateStoreStatus();
+    }
+
+    @Transactional
+    public void inactivateStoreStatus(long storeId) {
+
+        StoreDetail storeDetail = storeDetailService.findStoreDetailById(storeId);
+
+        storeDetail.getStoreMeta().inactivateStoreStatus();
     }
 }

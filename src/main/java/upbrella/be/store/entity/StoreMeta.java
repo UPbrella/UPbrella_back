@@ -98,8 +98,13 @@ public class StoreMeta {
                                 && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));
     }
 
-    public void updateStoreActivateStatus() {
+    public void activateStoreStatus() {
 
-        this.activated = !this.activated;
+        this.activated = true;
+    }
+
+    public void inactivateStoreStatus() {
+
+        this.activated = false;
     }
 }

@@ -555,8 +555,59 @@ class StoreMetaServiceTest {
     }
 
     @Test
-    @DisplayName("사용자는 협업지점의 활성화 여부를 수정할 수 있다.")
+    @DisplayName("사용자는 협업지점을 활성화 할 수 있다.")
     void updateStoreStatusTest() {
+        // given
+        StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta()
+                .set("activated", false)
+                .sample();
+
+        StoreDetail storeDetail = StoreDetail.builder()
+                .id(1L)
+                .storeMeta(storeMeta)
+                .storeImages(Set.of(StoreImage.builder()
+                        .id(1L)
+                        .imageUrl("https://image.com")
+                        .build()))
+                .build();
+
+
+        given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
+
+        // when
+        storeMetaService.activateStoreStatus(1L);
+
+        // then
+        assertThat(storeMeta.isActivated()).isTrue();
+    }
+
+    @Test
+    @DisplayName("협업지점의 이미지가 없을 경우 활성화할 수 없다.")
+    void activateStoreStatusErrorTest() {
+        // given
+        StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta()
+                .set("activated", true)
+                .sample();
+
+        StoreDetail storeDetail = StoreDetail.builder()
+                .id(1L)
+                .storeMeta(storeMeta)
+                .storeImages(Set.of())
+                .build();
+
+        given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> storeMetaService.activateStoreStatus(1L))
+                .isInstanceOf(EssentialImageException.class)
+                .hasMessage("[ERROR] 가게 이미지가 존재하지 않으면 영업지점을 활성화할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("사용자는 협업지점을 비활성화 할 수 있다.")
+    void inactivateStoreTest() {
         // given
         StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta()
                 .set("activated", true)
@@ -575,33 +626,9 @@ class StoreMetaServiceTest {
         given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
 
         // when
-        storeMetaService.updateStoreActivateStatus(1L);
+        storeMetaService.inactivateStoreStatus(1L);
 
         // then
         assertThat(storeMeta.isActivated()).isFalse();
-    }
-
-    @Test
-    @DisplayName("협업지점의 이미지가 없을 경우 활성화할 수 없다.")
-    void test() {
-        // given
-        StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta()
-                .set("activated", true)
-                .sample();
-
-        StoreDetail storeDetail = StoreDetail.builder()
-                .id(1L)
-                .storeMeta(storeMeta)
-                .storeImages(Set.of())
-                .build();
-
-        given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
-
-        // when
-
-        // then
-        assertThatThrownBy(() -> storeMetaService.updateStoreActivateStatus(1L))
-                .isInstanceOf(EssentialImageException.class)
-                .hasMessage("[ERROR] 가게 이미지가 존재하지 않으면 영업지점을 활성화할 수 없습니다.");
     }
 }

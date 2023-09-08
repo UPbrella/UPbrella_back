@@ -245,17 +245,31 @@ public class StoreController {
                         storeDetailService.findAllStoreIntroductions()));
     }
 
-    @PatchMapping("/admin/stores/{storeId}/activateStatus")
-    public ResponseEntity<CustomResponse> updateStoreActivateStatus(@PathVariable long storeId) {
+    @PatchMapping("/admin/stores/{storeId}/activate")
+    public ResponseEntity<CustomResponse> activateStoreStatus(@PathVariable long storeId) {
 
-        storeMetaService.updateStoreActivateStatus(storeId);
+        storeMetaService.activateStoreStatus(storeId);
 
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "협업지점 활성화 상태 변경 성공"
+                        "협업지점 활성화 성공"
+                ));
+    }
+
+    @PatchMapping("/admin/stores/{storeId}/inactivate")
+    public ResponseEntity<CustomResponse> inActivateStoreStatus(@PathVariable long storeId) {
+
+        storeMetaService.inactivateStoreStatus(storeId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 비활성화 성공"
                 ));
     }
 }
