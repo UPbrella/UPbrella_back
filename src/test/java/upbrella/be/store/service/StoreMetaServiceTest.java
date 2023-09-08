@@ -18,6 +18,7 @@ import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount;
 import upbrella.be.store.entity.*;
 import upbrella.be.store.exception.DeletedStoreDetailException;
+import upbrella.be.store.exception.EssentialImageException;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -560,12 +561,47 @@ class StoreMetaServiceTest {
         StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta()
                 .set("activated", true)
                 .sample();
-        given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta));
+
+        StoreDetail storeDetail = StoreDetail.builder()
+                .id(1L)
+                .storeMeta(storeMeta)
+                .storeImages(Set.of(StoreImage.builder()
+                        .id(1L)
+                        .imageUrl("https://image.com")
+                        .build()))
+                .build();
+
+
+        given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
 
         // when
         storeMetaService.updateStoreActivateStatus(1L);
 
         // then
         assertThat(storeMeta.isActivated()).isFalse();
+    }
+
+    @Test
+    @DisplayName("협업지점의 이미지가 없을 경우 활성화할 수 없다.")
+    void test() {
+        // given
+        StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta()
+                .set("activated", true)
+                .sample();
+
+        StoreDetail storeDetail = StoreDetail.builder()
+                .id(1L)
+                .storeMeta(storeMeta)
+                .storeImages(Set.of())
+                .build();
+
+        given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> storeMetaService.updateStoreActivateStatus(1L))
+                .isInstanceOf(EssentialImageException.class)
+                .hasMessage("[ERROR] 가게 이미지가 존재하지 않으면 영업지점을 활성화할 수 없습니다.");
     }
 }

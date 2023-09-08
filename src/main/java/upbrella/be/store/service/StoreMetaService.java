@@ -9,11 +9,9 @@ import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount;
-import upbrella.be.store.entity.BusinessHour;
-import upbrella.be.store.entity.Classification;
-import upbrella.be.store.entity.StoreDetail;
-import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.entity.*;
 import upbrella.be.store.exception.DeletedStoreDetailException;
+import upbrella.be.store.exception.EssentialImageException;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
@@ -142,7 +140,13 @@ public class StoreMetaService {
     @Transactional
     public void updateStoreActivateStatus(long storeId) {
 
-        StoreMeta storeMeta = findStoreMetaById(storeId);
-        storeMeta.updateStoreActivateStatus();
+        StoreDetail storeDetail = storeDetailService.findStoreDetailById(storeId);
+
+        Set<StoreImage> storeImages = storeDetail.getStoreImages();
+        if (storeImages == null || storeImages.isEmpty()) {
+            throw new EssentialImageException("[ERROR] 가게 이미지가 존재하지 않으면 영업지점을 활성화할 수 없습니다.");
+        }
+
+        storeDetail.getStoreMeta().updateStoreActivateStatus();
     }
 }
