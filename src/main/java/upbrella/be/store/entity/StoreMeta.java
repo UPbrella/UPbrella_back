@@ -56,7 +56,6 @@ public class StoreMeta {
 
         return StoreMeta.builder()
                 .name(request.getName())
-                .activated(request.isActivateStatus())
                 .deleted(false)
                 .classification(classification)
                 .subClassification(subClassification)
@@ -97,5 +96,10 @@ public class StoreMeta {
                 .anyMatch(businessHour ->
                         currentTime.toLocalTime().isAfter(businessHour.getOpenAt())
                                 && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));
+    }
+
+    public void updateStoreActivateStatus() {
+
+        this.activated = !this.activated;
     }
 }

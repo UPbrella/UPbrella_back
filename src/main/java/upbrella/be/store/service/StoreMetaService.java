@@ -138,4 +138,11 @@ public class StoreMetaService {
 
         return storeMetaRepository.existsByClassificationId(classificationId);
     }
+
+    @Transactional
+    public void updateStoreActivateStatus(long storeId) {
+
+        StoreMeta storeMeta = findStoreMetaById(storeId);
+        storeMeta.updateStoreActivateStatus();
+    }
 }

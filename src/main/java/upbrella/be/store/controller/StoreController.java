@@ -244,4 +244,18 @@ public class StoreController {
                         "협업지점 메타 전체 조회 성공",
                         storeDetailService.findAllStoreIntroductions()));
     }
+
+    @PatchMapping("/admin/stores/{storeId}/activateStatus")
+    public ResponseEntity<CustomResponse> updateStoreActivateStatus(@PathVariable long storeId) {
+
+        storeMetaService.updateStoreActivateStatus(storeId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 활성화 상태 변경 성공"
+                ));
+    }
 }

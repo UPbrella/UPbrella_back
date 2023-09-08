@@ -492,7 +492,6 @@ class StoreControllerTest extends RestDocsSupport {
                 .category("카테고리")
                 .classificationId(1L)
                 .subClassificationId(2L)
-                .activateStatus(true)
                 .address("주소")
                 .addressDetail("상세주소")
                 .umbrellaLocation("우산 위치")
@@ -569,8 +568,6 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("대분류 아이디"),
                                 fieldWithPath("subClassificationId").type(JsonFieldType.NUMBER)
                                         .description("소분류"),
-                                fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
-                                        .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
                                         .description("주소"),
                                 fieldWithPath("addressDetail").type(JsonFieldType.STRING)
