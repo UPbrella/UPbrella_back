@@ -87,3 +87,13 @@ include::{snippets}/store-find-all-sub-classification-doc/response-fields-data.a
 ==== HTTP Request
 include::{snippets}/store-delete-sub-classification-doc/http-request.adoc[]
 include::{snippets}/store-delete-sub-classification-doc/path-parameters.adoc[]
+
+=== 협업지점 활성화
+
+==== HTTP Request
+include::{snippets}/store-update-activate-status-doc/http-request.adoc[]
+include::{snippets}/store-update-activate-status-doc/path-parameters.adoc[]
+
+=== 협업지점 비활성화
+include::{snippets}/store-update-inactivate-status-doc/http-request.adoc[]
+include::{snippets}/store-update-inactivate-status-doc/path-parameters.adoc[]

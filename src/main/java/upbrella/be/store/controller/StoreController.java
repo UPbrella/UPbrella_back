@@ -244,4 +244,32 @@ public class StoreController {
                         "협업지점 메타 전체 조회 성공",
                         storeDetailService.findAllStoreIntroductions()));
     }
+
+    @PatchMapping("/admin/stores/{storeId}/activate")
+    public ResponseEntity<CustomResponse> activateStoreStatus(@PathVariable long storeId) {
+
+        storeMetaService.activateStoreStatus(storeId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 활성화 성공"
+                ));
+    }
+
+    @PatchMapping("/admin/stores/{storeId}/inactivate")
+    public ResponseEntity<CustomResponse> inActivateStoreStatus(@PathVariable long storeId) {
+
+        storeMetaService.inactivateStoreStatus(storeId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 비활성화 성공"
+                ));
+    }
 }
