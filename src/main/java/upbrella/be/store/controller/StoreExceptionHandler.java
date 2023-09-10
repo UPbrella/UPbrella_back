@@ -85,4 +85,15 @@ public class StoreExceptionHandler {
                         404,
                         ex.getMessage()));
     }
+
+    @ExceptionHandler(EssentialImageException.class)
+    public ResponseEntity<CustomErrorResponse> essentialImage(EssentialImageException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "bad request",
+                        400,
+                        ex.getMessage()));
+    }
 }

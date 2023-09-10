@@ -18,7 +18,6 @@ public class UpdateStoreRequest {
     private String category;
     private long classificationId;
     private long subClassificationId;
-    private boolean activateStatus;
     @NotBlank
     private String address;
     @NotBlank

@@ -492,7 +492,6 @@ class StoreControllerTest extends RestDocsSupport {
                 .category("카테고리")
                 .classificationId(1L)
                 .subClassificationId(2L)
-                .activateStatus(true)
                 .address("주소")
                 .addressDetail("상세주소")
                 .umbrellaLocation("우산 위치")
@@ -569,8 +568,6 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("대분류 아이디"),
                                 fieldWithPath("subClassificationId").type(JsonFieldType.NUMBER)
                                         .description("소분류"),
-                                fieldWithPath("activateStatus").type(JsonFieldType.BOOLEAN)
-                                        .description("활성화 여부"),
                                 fieldWithPath("address").type(JsonFieldType.STRING)
                                         .description("주소"),
                                 fieldWithPath("addressDetail").type(JsonFieldType.STRING)
@@ -896,6 +893,52 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("가게 카테고리"),
                                 fieldWithPath("storesByClassification[].stores[].thumbnail").type(JsonFieldType.STRING)
                                         .description("가게 썸네일")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 협업지점의 활성화 여부 상태를 변경할 수 있다.")
+    void updateActivateStatusTest() throws Exception {
+        // given
+        long storeId = 1L;
+        doNothing().when(storeMetaService).activateStoreStatus(storeId);
+
+        // when
+        storeMetaService.activateStoreStatus(storeId);
+
+        // then
+        mockMvc.perform(
+                patch("/admin/stores/{storeId}/activate", storeId)
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-update-activate-status-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업 지점 고유번호")
+                        )));
+    }
+
+    @Test
+    @DisplayName("사용자는 협업지점의 활성화 여부 상태를 변경할 수 있다.")
+    void inactivateStoreStatus() throws Exception {
+        // given
+        long storeId = 1L;
+        doNothing().when(storeMetaService).inactivateStoreStatus(storeId);
+
+        // when
+        storeMetaService.inactivateStoreStatus(storeId);
+
+        // then
+        mockMvc.perform(
+                        patch("/admin/stores/{storeId}/inactivate", storeId)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-update-inactivate-status-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업 지점 고유번호")
                         )));
     }
 }

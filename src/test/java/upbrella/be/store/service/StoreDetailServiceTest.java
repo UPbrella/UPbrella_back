@@ -567,7 +567,6 @@ public class StoreDetailServiceTest {
                 .category("카테고리 수정")
                 .classificationId(3L)
                 .subClassificationId(4L)
-                .activateStatus(true)
                 .address("주소 수정")
                 .addressDetail("상세 주소 수정")
                 .umbrellaLocation("우산 위치 수정")
