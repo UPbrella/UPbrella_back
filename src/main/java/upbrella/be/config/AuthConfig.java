@@ -11,7 +11,6 @@ import upbrella.be.config.interceptor.LoginInterceptor;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
-@Profile(value = "!dev")
 @Configuration
 @RequiredArgsConstructor
 public class AuthConfig implements WebMvcConfigurer {
