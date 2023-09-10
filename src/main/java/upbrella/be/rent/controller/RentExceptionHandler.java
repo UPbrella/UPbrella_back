@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
+import upbrella.be.rent.exception.NotRefundedException;
 import upbrella.be.store.exception.NonExistingClassificationException;
 import upbrella.be.util.CustomErrorResponse;
 
@@ -45,6 +46,18 @@ public class RentExceptionHandler {
                         "fail",
                         400,
                         "이미 대여 중인 우산이 있습니다."
+                ));
+    }
+
+    @ExceptionHandler(NotRefundedException.class)
+    public ResponseEntity<CustomErrorResponse> notRefundedException(NotRefundedException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
+                        "환불이 완료되지 않았습니다."
                 ));
     }
 }
