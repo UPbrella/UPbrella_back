@@ -191,7 +191,7 @@ public class StoreController {
                 ));
     }
 
-    @GetMapping("/admin/stores/subClassifications")
+    @GetMapping("/stores/subClassifications")
     public ResponseEntity<CustomResponse<AllSubClassificationResponse>> findAllSubClassification(HttpSession session) {
 
         AllSubClassificationResponse subClassifications = classificationService.findAllSubClassification();
