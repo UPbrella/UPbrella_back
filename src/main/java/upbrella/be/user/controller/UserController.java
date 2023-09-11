@@ -149,7 +149,7 @@ public class UserController {
     }
 
     @GetMapping("/admin/users")
-    public ResponseEntity<CustomResponse<AllUsersInfoResponse>> findUsers(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<AllUsersInfoResponse>> findUsers() {
 
         AllUsersInfoResponse allUsersInfoResponse = userService.findUsers();
 
@@ -210,7 +210,7 @@ public class UserController {
     }
 
     @DeleteMapping("/admin/users/{userId}")
-    public ResponseEntity<CustomResponse> withdrawUser(HttpSession session, @PathVariable long userId) {
+    public ResponseEntity<CustomResponse> withdrawUser(@PathVariable long userId) {
 
         userService.withdrawUser(userId);
 

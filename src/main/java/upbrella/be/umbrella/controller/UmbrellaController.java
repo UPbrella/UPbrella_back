@@ -12,7 +12,6 @@ import upbrella.be.umbrella.dto.response.UmbrellaPageResponse;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.util.CustomResponse;
 
-import javax.servlet.http.HttpSession;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +20,7 @@ public class UmbrellaController {
     private final UmbrellaService umbrellaService;
 
     @GetMapping("/admin/umbrellas")
-    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showAllUmbrellas(Pageable pageable, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showAllUmbrellas(Pageable pageable) {
 
         return ResponseEntity
                 .ok()
@@ -36,7 +35,7 @@ public class UmbrellaController {
     }
 
     @GetMapping("/admin/umbrellas/{storeId}")
-    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showUmbrellasByStoreId(@PathVariable long storeId, Pageable pageable, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<UmbrellaPageResponse>> showUmbrellasByStoreId(@PathVariable long storeId, Pageable pageable) {
 
         return ResponseEntity
                 .ok()
@@ -51,7 +50,7 @@ public class UmbrellaController {
     }
 
     @PostMapping("/admin/umbrellas")
-    public ResponseEntity<CustomResponse> addUmbrella(@RequestBody UmbrellaCreateRequest umbrellaCreateRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> addUmbrella(@RequestBody UmbrellaCreateRequest umbrellaCreateRequest) {
 
         umbrellaService.addUmbrella(umbrellaCreateRequest);
         return ResponseEntity
@@ -64,7 +63,7 @@ public class UmbrellaController {
     }
 
     @PatchMapping("/admin/umbrellas/{id}")
-    public ResponseEntity<CustomResponse> modifyUmbrella(@RequestBody UmbrellaModifyRequest umbrellaModifyRequest, @PathVariable long id, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> modifyUmbrella(@RequestBody UmbrellaModifyRequest umbrellaModifyRequest, @PathVariable long id) {
 
         umbrellaService.modifyUmbrella(id, umbrellaModifyRequest);
         return ResponseEntity
@@ -77,7 +76,7 @@ public class UmbrellaController {
     }
 
     @DeleteMapping("/admin/umbrellas/{id}")
-    public ResponseEntity<CustomResponse> deleteUmbrella(@PathVariable long id, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> deleteUmbrella(@PathVariable long id) {
 
         umbrellaService.deleteUmbrella(id);
         return ResponseEntity
@@ -90,7 +89,7 @@ public class UmbrellaController {
     }
 
     @GetMapping("/admin/umbrellas/statistics")
-    public ResponseEntity<CustomResponse<UmbrellaStatisticsResponse>> showAllUmbrellasStatistics(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<UmbrellaStatisticsResponse>> showAllUmbrellasStatistics() {
 
         return ResponseEntity
                 .ok()
@@ -102,7 +101,7 @@ public class UmbrellaController {
     }
 
     @GetMapping("/admin/umbrellas/statistics/{storeId}")
-    public ResponseEntity<CustomResponse<UmbrellaStatisticsResponse>> showUmbrellasStatisticsByStore(@PathVariable long storeId, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<UmbrellaStatisticsResponse>> showUmbrellasStatisticsByStore(@PathVariable long storeId) {
 
         return ResponseEntity
                 .ok()
