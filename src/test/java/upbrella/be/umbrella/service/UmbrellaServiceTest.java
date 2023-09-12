@@ -203,13 +203,11 @@ class UmbrellaServiceTest {
                     .willReturn(umbrella);
 
             // when
-            Umbrella addedUmbrella = umbrellaService.addUmbrella(umbrellaCreateRequest);
+
+            umbrellaService.addUmbrella(umbrellaCreateRequest);
 
             // then
             assertAll(
-                    () -> assertThat(addedUmbrella)
-                            .usingRecursiveComparison()
-                            .isEqualTo(umbrella),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.getUuid()),
                     () -> then(storeMetaService).should(times(1))
@@ -280,7 +278,9 @@ class UmbrellaServiceTest {
 
             foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaModifyRequest.getStoreMetaId());
 
-            umbrella = FixtureFactory.buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(id, umbrellaModifyRequest, foundStoreMeta);
+            umbrella = FixtureBuilderFactory.builderUmbrella()
+                    .set("id", id)
+                    .sample();
         }
 
         @Test
@@ -290,29 +290,22 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.getId()))
                     .willReturn(foundStoreMeta);
-            given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(umbrella.getId()))
                     .willReturn(Optional.ofNullable(umbrella));
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()))
                     .willReturn(false);
-            given(umbrellaRepository.save(any(Umbrella.class)))
-                    .willReturn(umbrella);
 
             // when
-            Umbrella modifiedUmbrella = umbrellaService.modifyUmbrella(umbrella.getId(), umbrellaModifyRequest);
+            umbrellaService.modifyUmbrella(umbrella.getId(), umbrellaModifyRequest);
 
             // then
             assertAll(
-                    () -> assertThat(modifiedUmbrella)
-                            .usingRecursiveComparison()
-                            .isEqualTo(umbrella),
                     () -> then(umbrellaRepository).should(times(1))
                             .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.getUuid()),
                     () -> then(umbrellaRepository).should(times(1))
                             .findByIdAndDeletedIsFalse(id),
                     () -> then(storeMetaService).should(times(1))
-                            .findStoreMetaById(foundStoreMeta.getId()),
-                    () -> then(umbrellaRepository).should(times(1))
-                            .save(any(Umbrella.class))
+                            .findStoreMetaById(foundStoreMeta.getId())
             );
         }
 
