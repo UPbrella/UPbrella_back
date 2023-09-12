@@ -123,7 +123,7 @@ public class UserController {
     }
 
     @PostMapping("/users/join")
-    public ResponseEntity<CustomResponse> kakaoJoin(HttpSession session, @RequestBody JoinRequest joinRequest) {
+    public ResponseEntity<CustomResponse> kakaoJoin(HttpSession session, @RequestBody @Valid JoinRequest joinRequest) {
 
         KakaoLoginResponse kakaoUser = (KakaoLoginResponse) session.getAttribute("kakaoUser");
 
