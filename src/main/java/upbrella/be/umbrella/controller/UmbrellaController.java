@@ -12,6 +12,8 @@ import upbrella.be.umbrella.dto.response.UmbrellaPageResponse;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.util.CustomResponse;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class UmbrellaController {
     }
 
     @PostMapping("/admin/umbrellas")
-    public ResponseEntity<CustomResponse> addUmbrella(@RequestBody UmbrellaCreateRequest umbrellaCreateRequest) {
+    public ResponseEntity<CustomResponse> addUmbrella(@RequestBody @Valid UmbrellaCreateRequest umbrellaCreateRequest) {
 
         umbrellaService.addUmbrella(umbrellaCreateRequest);
         return ResponseEntity
@@ -63,7 +65,7 @@ public class UmbrellaController {
     }
 
     @PatchMapping("/admin/umbrellas/{id}")
-    public ResponseEntity<CustomResponse> modifyUmbrella(@RequestBody UmbrellaModifyRequest umbrellaModifyRequest, @PathVariable long id) {
+    public ResponseEntity<CustomResponse> modifyUmbrella(@RequestBody @Valid UmbrellaModifyRequest umbrellaModifyRequest, @PathVariable long id) {
 
         umbrellaService.modifyUmbrella(id, umbrellaModifyRequest);
         return ResponseEntity
