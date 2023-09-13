@@ -57,4 +57,13 @@ public class Umbrella {
                 .missed(umbrellaModifyRequest.isMissed())
                 .build();
     }
+
+    public void update(UmbrellaModifyRequest request, StoreMeta storeMeta) {
+
+        this.storeMeta = storeMeta;
+        this.uuid = request.getUuid();
+        this.rentable = request.isRentable();
+        this.etc = request.getEtc();
+        this.missed = request.isMissed();
+    }
 }

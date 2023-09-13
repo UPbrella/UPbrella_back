@@ -783,7 +783,7 @@ class StoreControllerTest extends RestDocsSupport {
 
 
         // then
-        mockMvc.perform(get("/admin/stores/subClassifications"))
+        mockMvc.perform(get("/stores/subClassifications"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("store-find-all-sub-classification-doc",
