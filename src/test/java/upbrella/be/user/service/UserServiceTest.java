@@ -47,6 +47,8 @@ class UserServiceTest {
     private BlackListRepository blackListRepository;
     @Mock
     private RentService rentService;
+    @Mock
+    private AesEncryptor aesEncryptor;
     @InjectMocks
     private UserService userService;
 
@@ -60,7 +62,7 @@ class UserServiceTest {
         @BeforeEach
         void setUp() {
 
-            user = FixtureBuilderFactory.builderUser().sample();
+            user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
             notExistingSocialId = FixtureBuilderFactory.buildInteger(10000000);
         }
 
@@ -110,7 +112,7 @@ class UserServiceTest {
         @BeforeEach
         void setUp() {
 
-            user = FixtureBuilderFactory.builderUser().sample();
+            user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
             existingSocialId = FixtureBuilderFactory.buildLong(100000000);
             notExistingSocialId = FixtureBuilderFactory.buildLong(100000000);
             joinRequest = FixtureFactory.buildJoinRequestWithUser(user);
@@ -180,9 +182,9 @@ class UserServiceTest {
         @BeforeEach
         void setUp() {
 
-            User user = FixtureBuilderFactory.builderUser().sample();
+            User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
             sessionUser = SessionUser.fromUser(user);
-            history = FixtureBuilderFactory.builderHistory().sample();
+            history = FixtureBuilderFactory.builderHistory(aesEncryptor).sample();
         }
 
         @Test
@@ -221,8 +223,8 @@ class UserServiceTest {
                         .socialId(1L)
                         .name("사용자")
                         .phoneNumber("010-1234-5678")
-                        .bank(AesEncryptor.encrypt("농협"))
-                        .accountNumber(AesEncryptor.encrypt("123-456-789"))
+                        .bank(aesEncryptor.encrypt("농협"))
+                        .accountNumber(aesEncryptor.encrypt("123-456-789"))
                         .build();
 
                 User expectedSample = User.builder()
@@ -230,8 +232,8 @@ class UserServiceTest {
                         .socialId(1L)
                         .name("사용자")
                         .phoneNumber("010-1234-5678")
-                        .bank(AesEncryptor.encrypt("농협"))
-                        .accountNumber(AesEncryptor.encrypt("123-456-789"))
+                        .bank(aesEncryptor.encrypt("농협"))
+                        .accountNumber(aesEncryptor.encrypt("123-456-789"))
                         .build();
 
                 users.add(sample);
@@ -247,7 +249,7 @@ class UserServiceTest {
             AllUsersInfoResponse expected = AllUsersInfoResponse.builder()
                     .users(
                             expectedUsers.stream()
-                                    .map(user -> user.decryptData())
+                                    .map(user -> user.decryptData(aesEncryptor))
                                     .map(SingleUserInfoResponse::fromUser)
                                     .collect(Collectors.toList())
                     )
@@ -291,7 +293,7 @@ class UserServiceTest {
     @DisplayName("사용자는 자신의 은행 정보를 수정할 수 있다.")
     void updateBankTest() {
         // given
-        User user = FixtureBuilderFactory.builderUser().sample();
+        User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
         UpdateBankAccountRequest updateBankInfoRequest = FixtureBuilderFactory.builderBankAccount().sample();
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
@@ -302,15 +304,15 @@ class UserServiceTest {
         assertAll(
                 () -> then(userRepository).should(times(1))
                         .findById(user.getId()),
-                () -> assertThat(user.getBank()).isEqualTo(AesEncryptor.encrypt(updateBankInfoRequest.getBank())),
-                () -> assertThat(user.getAccountNumber()).isEqualTo(AesEncryptor.encrypt(updateBankInfoRequest.getAccountNumber())));
+                () -> assertThat(user.getBank()).isEqualTo(aesEncryptor.encrypt(updateBankInfoRequest.getBank())),
+                () -> assertThat(user.getAccountNumber()).isEqualTo(aesEncryptor.encrypt(updateBankInfoRequest.getAccountNumber())));
     }
 
     @Test
     @DisplayName("사용자는 자신이 회원탈퇴를 하면 정보가 임의의 값으로 변경되고 탈퇴된다.")
     void deleteUser() {
         // given
-        User user = FixtureBuilderFactory.builderUser().sample();
+        User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
         // when
 
@@ -331,7 +333,7 @@ class UserServiceTest {
     @DisplayName("관리자가 회원탈퇴 시키면 블랙리스트에 들어가고 회원정보는 초기화된다.")
     void withdrawTest() {
         // given
-        User user = FixtureBuilderFactory.builderUser().sample();
+        User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         // when
@@ -382,7 +384,7 @@ class UserServiceTest {
     @DisplayName("사용자는 계좌 정보를 삭제할 수 있다.")
     void deleteUserBankAccountTest() {
         // given
-        User user = FixtureBuilderFactory.builderUser().sample();
+        User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         // when
@@ -434,7 +436,7 @@ class UserServiceTest {
     @DisplayName("사용자는 관리자 권한을 변경할 수 있다.")
     void updateAdminStatusTest() {
         // given
-        User user = FixtureBuilderFactory.builderUser()
+        User user = FixtureBuilderFactory.builderUser(aesEncryptor)
                 .set("adminStatus", false)
                 .sample();
 
