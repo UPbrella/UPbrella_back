@@ -1,6 +1,5 @@
 package upbrella.be.rent.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,7 @@ public class RentController {
     private final SlackAlarmService slackAlarmService;
 
     @GetMapping("/rent/form/{umbrellaId}")
-    public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId) {
 
         RentFormResponse rentForm = rentService.findRentForm(umbrellaId);
 
@@ -81,7 +80,7 @@ public class RentController {
     }
 
     @PatchMapping("/rent")
-    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) throws JsonProcessingException {
+    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());
@@ -100,7 +99,7 @@ public class RentController {
     }
 
     @GetMapping("/admin/rent/histories")
-    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(@ModelAttribute HistoryFilterRequest filter, Pageable pageable, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(@ModelAttribute HistoryFilterRequest filter, Pageable pageable) {
 
         RentalHistoriesPageResponse histories = rentService.findAllHistories(filter, pageable);
 
@@ -115,7 +114,7 @@ public class RentController {
     }
 
     @GetMapping("/admin/rent/histories/status")
-    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> findConditionReports(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ConditionReportPageResponse>> findConditionReports() {
 
         ConditionReportPageResponse conditionReports = conditionReportService.findAll();
 
@@ -130,7 +129,7 @@ public class RentController {
     }
 
     @GetMapping("/admin/rent/histories/improvements")
-    public ResponseEntity<CustomResponse<ImprovementReportPageResponse>> findImprovements(HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ImprovementReportPageResponse>> findImprovements() {
 
         ImprovementReportPageResponse improvementReports = improvementReportService.findAll();
 
