@@ -157,8 +157,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
             // given
             UmbrellaCreateRequest umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest()
                     .sample();
-            given(umbrellaService.addUmbrella(refEq(umbrellaCreateRequest)))
-                    .willReturn(FixtureBuilderFactory.builderUmbrella().sample());
+            doNothing().when(umbrellaService).addUmbrella(refEq(umbrellaCreateRequest));
 
             // when & then
             mockMvc.perform(
@@ -193,8 +192,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
-            given(umbrellaService.addUmbrella(refEq(umbrellaCreateRequest)))
-                    .willThrow(new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다."));
+            doThrow(new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다.")).when(umbrellaService).addUmbrella(refEq(umbrellaCreateRequest));
 
             // when & then
             mockMvc.perform(
@@ -222,9 +220,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
             UmbrellaModifyRequest umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                     .sample();
 
-            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaModifyRequest)))
-                    .willReturn(FixtureBuilderFactory.builderUmbrella().sample());
-
+            doNothing().when(umbrellaService).modifyUmbrella(eq(id), refEq(umbrellaModifyRequest));
             // when & then
             mockMvc.perform(
                             patch("/admin/umbrellas/{umbrellaId}", id)
@@ -264,8 +260,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
-            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaModifyRequest)))
-                    .willThrow(new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다."));
+            doThrow(new ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다.")).when(umbrellaService).modifyUmbrella((eq(id)), refEq(umbrellaModifyRequest));
 
             // when & then
             mockMvc.perform(
@@ -290,9 +285,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), new UmbrellaExceptionHandler());
 
-            given(umbrellaService.modifyUmbrella(eq(id), refEq(umbrellaModifyRequest)))
-                    .willThrow(new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 관리번호입니다."));
-
+            doThrow(new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 관리번호입니다.")).when(umbrellaService).modifyUmbrella((eq(id)), refEq(umbrellaModifyRequest));
             // when & then
             mockMvc.perform(
                             patch("/admin/umbrellas/{umbrellaId}", id)

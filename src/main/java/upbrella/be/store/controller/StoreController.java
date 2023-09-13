@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import upbrella.be.store.dto.request.*;
+import upbrella.be.store.dto.request.CreateClassificationRequest;
+import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.dto.request.CreateSubClassificationRequest;
+import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.service.ClassificationService;
 import upbrella.be.store.service.StoreDetailService;
@@ -26,7 +29,7 @@ public class StoreController {
     private final StoreDetailService storeDetailService;
 
     @GetMapping("/stores/{storeId}")
-    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeId, HttpSession session) {
+    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeId) {
 
         return ResponseEntity
                 .ok()
@@ -38,7 +41,7 @@ public class StoreController {
     }
 
     @GetMapping("/stores/classification/{classificationId}")
-    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(@PathVariable long classificationId, HttpSession session) {
+    public ResponseEntity<CustomResponse<AllCurrentLocationStoreResponse>> findCurrentLocationStore(@PathVariable long classificationId) {
 
         return ResponseEntity
                 .ok()
@@ -50,7 +53,7 @@ public class StoreController {
     }
 
     @GetMapping("/stores/location/{umbrellaId}")
-    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(@PathVariable long umbrellaId, HttpSession session) {
+    public ResponseEntity<CustomResponse<CurrentUmbrellaStoreResponse>> findCurrentUmbrellaStore(@PathVariable long umbrellaId) {
 
         return ResponseEntity
                 .ok()
@@ -63,7 +66,7 @@ public class StoreController {
 
 
     @GetMapping("/admin/stores")
-    public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores(HttpSession session) {
+    public ResponseEntity<CustomResponse<AllStoreResponse>> findAllStores() {
 
         List<SingleStoreResponse> allStores = storeDetailService.findAllStores();
 
@@ -80,7 +83,7 @@ public class StoreController {
     }
 
     @PostMapping("/admin/stores")
-    public ResponseEntity<CustomResponse> createStore(HttpSession session, @RequestBody CreateStoreRequest newStore) {
+    public ResponseEntity<CustomResponse> createStore(@RequestBody CreateStoreRequest newStore) {
 
         storeMetaService.createStore(newStore);
 
@@ -94,7 +97,7 @@ public class StoreController {
     }
 
     @PatchMapping("/admin/stores/{storeId}")
-    public ResponseEntity<CustomResponse> updateStore(HttpSession session, @PathVariable long storeId, @RequestBody UpdateStoreRequest updateStore) {
+    public ResponseEntity<CustomResponse> updateStore(@PathVariable long storeId, @RequestBody UpdateStoreRequest updateStore) {
 
         storeDetailService.updateStore(storeId, updateStore);
 
@@ -108,7 +111,7 @@ public class StoreController {
     }
 
     @PostMapping(value = "/admin/stores/{storeId}/images", consumes = {"multipart/form-data"})
-    public ResponseEntity<CustomResponse> uploadStoreImage(HttpSession session, @RequestPart MultipartFile image, @PathVariable long storeId) {
+    public ResponseEntity<CustomResponse> uploadStoreImage(@RequestPart MultipartFile image, @PathVariable long storeId) {
 
         storeImageService.uploadFile(image, storeId, storeImageService.makeRandomId());
 
@@ -122,7 +125,7 @@ public class StoreController {
     }
 
     @DeleteMapping("/admin/stores/images/{imageId}")
-    public ResponseEntity<CustomResponse> deleteStoreImage(HttpSession session, @PathVariable long imageId) {
+    public ResponseEntity<CustomResponse> deleteStoreImage(@PathVariable long imageId) {
 
         storeImageService.deleteFile(imageId);
 
@@ -136,7 +139,7 @@ public class StoreController {
     }
 
     @DeleteMapping("/admin/stores/{storeId}")
-    public ResponseEntity<CustomResponse> deleteStore(HttpSession session, @PathVariable long storeId) {
+    public ResponseEntity<CustomResponse> deleteStore(@PathVariable long storeId) {
 
         storeMetaService.deleteStoreMeta(storeId);
 
@@ -150,7 +153,7 @@ public class StoreController {
     }
 
     @GetMapping("/stores/classifications")
-    public ResponseEntity<CustomResponse<AllClassificationResponse>> findAllClassification(HttpSession session) {
+    public ResponseEntity<CustomResponse<AllClassificationResponse>> findAllClassification() {
 
         AllClassificationResponse classifications = classificationService.findAllClassification();
 
@@ -164,7 +167,7 @@ public class StoreController {
     }
 
     @PostMapping("/admin/stores/classifications")
-    public ResponseEntity<CustomResponse> createClassification(HttpSession session, @RequestBody CreateClassificationRequest newClassification) {
+    public ResponseEntity<CustomResponse> createClassification(@RequestBody CreateClassificationRequest newClassification) {
 
         classificationService.createClassification(newClassification);
 
@@ -178,7 +181,7 @@ public class StoreController {
     }
 
     @DeleteMapping("/admin/stores/classifications/{classificationId}")
-    public ResponseEntity<CustomResponse> deleteClassification(HttpSession session, @PathVariable long classificationId) {
+    public ResponseEntity<CustomResponse> deleteClassification(@PathVariable long classificationId) {
 
         classificationService.deleteClassification(classificationId);
 
@@ -191,8 +194,8 @@ public class StoreController {
                 ));
     }
 
-    @GetMapping("/admin/stores/subClassifications")
-    public ResponseEntity<CustomResponse<AllSubClassificationResponse>> findAllSubClassification(HttpSession session) {
+    @GetMapping("/stores/subClassifications")
+    public ResponseEntity<CustomResponse<AllSubClassificationResponse>> findAllSubClassification() {
 
         AllSubClassificationResponse subClassifications = classificationService.findAllSubClassification();
 
@@ -206,7 +209,7 @@ public class StoreController {
     }
 
     @PostMapping("/admin/stores/subClassifications")
-    public ResponseEntity<CustomResponse> createSubClassification(@RequestBody CreateSubClassificationRequest newSubClassification, HttpSession session) {
+    public ResponseEntity<CustomResponse> createSubClassification(@RequestBody CreateSubClassificationRequest newSubClassification) {
 
         classificationService.createSubClassification(newSubClassification);
 
@@ -220,7 +223,7 @@ public class StoreController {
     }
 
     @DeleteMapping("/admin/stores/subClassifications/{subClassificationId}")
-    public ResponseEntity<CustomResponse> deleteSubClassification(@PathVariable long subClassificationId, HttpSession session) {
+    public ResponseEntity<CustomResponse> deleteSubClassification(@PathVariable long subClassificationId) {
 
         classificationService.deleteSubClassification(subClassificationId);
 
@@ -234,7 +237,7 @@ public class StoreController {
     }
 
     @GetMapping("/stores/introductions")
-    public ResponseEntity<CustomResponse<AllStoreIntroductionResponse>> findAllStoreMeta(HttpSession session) {
+    public ResponseEntity<CustomResponse<AllStoreIntroductionResponse>> findAllStoreMeta() {
 
         return ResponseEntity
                 .ok()
