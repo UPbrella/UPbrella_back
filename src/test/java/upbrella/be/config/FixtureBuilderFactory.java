@@ -83,6 +83,7 @@ public class FixtureBuilderFactory {
     public static ArbitraryBuilder<StoreMeta> builderStoreMeta() {
 
         return fixtureMonkey.giveMeBuilder(StoreMeta.class)
+                .set("classification", builderClassification().sample())
                 .set("deleted", false)
                 .set("id", buildLong(100))
                 .set("name", pickRandomString(cafeList))
