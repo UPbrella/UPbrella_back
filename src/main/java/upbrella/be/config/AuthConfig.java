@@ -27,6 +27,7 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/users/login/**",
                         "/users/oauth/login/**",
                         "/users/join/**",
+                        "/stores/**",
                         "/index.html",
                         "/error/**",
                         "/api/error/**",

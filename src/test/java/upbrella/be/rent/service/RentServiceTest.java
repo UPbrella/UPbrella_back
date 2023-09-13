@@ -31,6 +31,7 @@ import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.service.UserService;
+import upbrella.be.util.AesEncryptor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ class RentServiceTest {
     private RentRepository rentRepository;
     @Mock
     private UserService userService;
+    @Mock
+    private AesEncryptor aesEncryptor;
     @InjectMocks
     private RentService rentService;
     private RentUmbrellaByUserRequest rentUmbrellaByUserRequest;
@@ -202,7 +205,7 @@ class RentServiceTest {
             Pageable pageable = PageRequest.of(0, 5);
 
             for (int i = 0; i < 5; i++) {
-                generatedHistories.add(FixtureBuilderFactory.builderHistory()
+                generatedHistories.add(FixtureBuilderFactory.builderHistory(aesEncryptor)
                         .sample());
             }
 
@@ -464,7 +467,7 @@ class RentServiceTest {
 
             // given
             SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
-            History history = FixtureBuilderFactory.builderHistory().sample();
+            History history = FixtureBuilderFactory.builderHistory(aesEncryptor).sample();
             given(rentRepository.findByUserIdAndReturnedAtIsNull(sessionUser.getId()))
                     .willReturn(Optional.of(history));
 
@@ -503,7 +506,7 @@ class RentServiceTest {
     @DisplayName("대여 기록의 계좌 삭제 성공")
     void deleteRentAccount() {
         // given
-        History history = FixtureBuilderFactory.builderHistory().sample();
+        History history = FixtureBuilderFactory.builderHistory(aesEncryptor).sample();
 
         // when
         history.deleteBankAccount();
@@ -519,7 +522,7 @@ class RentServiceTest {
     @DisplayName("반납되지 않은 대여 기록의 계좌 삭제 실패")
     void deleteRentAccountThrowTest() {
         // given
-        History history = FixtureBuilderFactory.builderHistory()
+        History history = FixtureBuilderFactory.builderHistory(aesEncryptor)
                 .set("refundedAt", null)
                 .sample();
         // when

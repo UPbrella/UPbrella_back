@@ -1,15 +1,30 @@
 package upbrella.be.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+@Component
 public class AesEncryptor {
-    private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
-    private static final byte[] KEY = "1234567890123456".getBytes(StandardCharsets.UTF_8);
 
-    public static String encrypt(String data) {
+    private String ALGORITHM;
+    private String KEY_STR;
+    private byte[] KEY;
+
+    @Autowired
+    public AesEncryptor(@Value("${ALGORITHM}") String algorithm,
+                        @Value("${SECRET_KEY}") String keyStr) {
+        this.ALGORITHM = algorithm;
+        this.KEY_STR = keyStr;
+        this.KEY = KEY_STR.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public String encrypt(String data) {
 
         if (data == null) {
             return null;
@@ -27,7 +42,7 @@ public class AesEncryptor {
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
 
-    public static String decrypt(String encryptedData) {
+    public String decrypt(String encryptedData) {
 
         if (encryptedData == null) {
             return null;

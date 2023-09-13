@@ -30,6 +30,8 @@ class UserServiceDynamicTest {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AesEncryptor aesEncryptor;
 
     @Transactional
     @TestFactory
@@ -39,8 +41,8 @@ class UserServiceDynamicTest {
         User user = User.builder()
                 .id(1L)
                 .socialId(23132L)
-                .accountNumber(AesEncryptor.encrypt("110-421-674103"))
-                .bank(AesEncryptor.encrypt("신한"))
+                .accountNumber(aesEncryptor.encrypt("110-421-674103"))
+                .bank(aesEncryptor.encrypt("신한"))
                 .email("email@email.com")
                 .name("홍길동")
                 .phoneNumber("010-2084-3478")
