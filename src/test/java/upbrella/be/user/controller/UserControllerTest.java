@@ -26,6 +26,7 @@ import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.*;
 import upbrella.be.user.service.OauthLoginService;
 import upbrella.be.user.service.UserService;
+import upbrella.be.util.AesEncryptor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class UserControllerTest extends RestDocsSupport {
     private KakaoOauthInfo kakaoOauthInfo;
     @Mock
     private RentService rentService;
+    @Mock
+    private AesEncryptor aesEncryptor;
 
     @Override
     protected Object initController() {
@@ -69,11 +72,12 @@ public class UserControllerTest extends RestDocsSupport {
         // given
         MockHttpSession session = new MockHttpSession();
         SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
-        User user = FixtureBuilderFactory.builderUser().sample();
+        User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
 
         session.setAttribute("user", sessionUser);
+        User decryptedUser = user.decryptData(aesEncryptor);
         given(userService.findDecryptedUserById(anyLong()))
-                .willReturn(user.decryptData());
+                .willReturn(decryptedUser);
 
         // when & then
         mockMvc.perform(
@@ -93,9 +97,11 @@ public class UserControllerTest extends RestDocsSupport {
                                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
                                         .description("사용자 전화번호"),
                                 fieldWithPath("bank").type(JsonFieldType.STRING)
-                                        .description("사용자 은행"),
+                                        .description("사용자 은행")
+                                        .optional(),
                                 fieldWithPath("accountNumber").type(JsonFieldType.STRING)
                                         .description("사용자 계좌번호")
+                                        .optional()
                         )));
     }
 
@@ -109,7 +115,7 @@ public class UserControllerTest extends RestDocsSupport {
         httpSession.setAttribute("user", user);
 
         Umbrella borrowedUmbrella = FixtureBuilderFactory.builderUmbrella().sample();
-        History history = FixtureBuilderFactory.builderHistory().sample();
+        History history = FixtureBuilderFactory.builderHistory(aesEncryptor).sample();
         int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentedAt().getDayOfYear();
 
         given(userService.findUmbrellaBorrowedByUser(user))
@@ -425,12 +431,12 @@ public class UserControllerTest extends RestDocsSupport {
         // given
         List<User> users = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
-            users.add(FixtureBuilderFactory.builderUser().sample());
+            users.add(FixtureBuilderFactory.builderUser(aesEncryptor).sample());
         }
 
         AllUsersInfoResponse allUsersInfoResponse = AllUsersInfoResponse.builder()
                 .users(users.stream()
-                        .map(User::decryptData)
+                        .map(user -> user.decryptData(aesEncryptor))
                         .map(SingleUserInfoResponse::fromUser)
                         .collect(Collectors.toList()))
                 .build();

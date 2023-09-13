@@ -30,7 +30,7 @@ public class User {
     private String bank;
     private String accountNumber;
 
-    public static User createNewUser(KakaoLoginResponse kakaoUser, JoinRequest joinRequest) {
+    public static User createNewUser(KakaoLoginResponse kakaoUser, JoinRequest joinRequest, AesEncryptor aesEncryptor) {
 
         return User.builder()
                 .socialId((long) kakaoUser.getId().hashCode())
@@ -38,15 +38,15 @@ public class User {
                 .phoneNumber(joinRequest.getPhoneNumber())
                 .email(kakaoUser.getKakaoAccount().getEmail())
                 .adminStatus(false)
-                .bank(AesEncryptor.encrypt(joinRequest.getBank()))
-                .accountNumber(AesEncryptor.encrypt(joinRequest.getAccountNumber()))
+                .bank(aesEncryptor.encrypt(joinRequest.getBank()))
+                .accountNumber(aesEncryptor.encrypt(joinRequest.getAccountNumber()))
                 .build();
     }
 
-    public void updateBankAccount(String bank, String accountNumber) {
+    public void updateBankAccount(String bank, String accountNumber, AesEncryptor aesEncryptor) {
 
-        this.bank = AesEncryptor.encrypt(bank);
-        this.accountNumber = AesEncryptor.encrypt(accountNumber);
+        this.bank = aesEncryptor.encrypt(bank);
+        this.accountNumber = aesEncryptor.encrypt(accountNumber);
     }
 
     public void deleteUser() {
@@ -70,7 +70,7 @@ public class User {
         this.accountNumber = null;
     }
 
-    public User decryptData() {
+    public User decryptData(AesEncryptor aesEncryptor) {
 
         return User.builder()
                 .id(this.id)
@@ -79,8 +79,8 @@ public class User {
                 .phoneNumber(this.phoneNumber)
                 .adminStatus(this.adminStatus)
                 .email(this.email)
-                .bank(AesEncryptor.decrypt(this.bank))
-                .accountNumber(AesEncryptor.decrypt(this.accountNumber))
+                .bank(aesEncryptor.decrypt(this.bank))
+                .accountNumber(aesEncryptor.decrypt(this.accountNumber))
                 .build();
     }
 

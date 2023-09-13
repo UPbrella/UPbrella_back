@@ -15,6 +15,7 @@ import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
+import upbrella.be.util.AesEncryptor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,11 +27,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final BlackListRepository blackListRepository;
     private final RentService rentService;
+    private final AesEncryptor aesEncryptor;
 
-    public UserService(UserRepository userRepository, BlackListRepository blackListRepository, @Lazy RentService rentService) {
+    public UserService(UserRepository userRepository, BlackListRepository blackListRepository, @Lazy RentService rentService, AesEncryptor aesEncryptor) {
         this.userRepository = userRepository;
         this.blackListRepository = blackListRepository;
         this.rentService = rentService;
+        this.aesEncryptor = aesEncryptor;
     }
 
     public SessionUser login(Long socialId) {
@@ -50,7 +53,7 @@ public class UserService {
             throw new BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.");
         }
 
-        User joinedUser = userRepository.save(User.createNewUser(kakaoUser, joinRequest));
+        User joinedUser = userRepository.save(User.createNewUser(kakaoUser, joinRequest, aesEncryptor));
 
         return SessionUser.fromUser(joinedUser);
     }
@@ -58,7 +61,7 @@ public class UserService {
     public AllUsersInfoResponse findUsers() {
 
         List<User> users = userRepository.findAll().stream()
-                .map(user -> user.decryptData())
+                .map(user -> user.decryptData(aesEncryptor))
                 .collect(Collectors.toList());
         return AllUsersInfoResponse.fromUsers(users);
     }
@@ -78,7 +81,7 @@ public class UserService {
 
         User foundUser = findUserById(id);
 
-        foundUser.updateBankAccount(request.getBank(), request.getAccountNumber());
+        foundUser.updateBankAccount(request.getBank(), request.getAccountNumber(), aesEncryptor);
     }
 
     @Transactional
@@ -112,7 +115,7 @@ public class UserService {
         // Deep copy 객체를 반환함에 유의
         return userRepository.findById(id)
                 .orElseThrow(() -> new NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다."))
-                .decryptData();
+                .decryptData(aesEncryptor);
     }
 
     @Transactional

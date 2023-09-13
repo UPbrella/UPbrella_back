@@ -129,7 +129,7 @@ public class FixtureBuilderFactory {
                 .set("etc", pickRandomString(nameList));
     }
 
-    public static ArbitraryBuilder<User> builderUser() {
+    public static ArbitraryBuilder<User> builderUser(AesEncryptor aesEncryptor) {
 
         return fixtureMonkey.giveMeBuilder(User.class)
                 .set("id", buildLong(100))
@@ -137,8 +137,8 @@ public class FixtureBuilderFactory {
                 .set("name", pickRandomString(nameList))
                 .set("phoneNumber", pickPhoneNumberString())
                 .set("email", "email@email.com")
-                .set("bank", AesEncryptor.encrypt(pickRandomString(bankList)))
-                .set("accountNumber", AesEncryptor.encrypt(pickAccountNumberString()));
+                .set("bank", aesEncryptor.encrypt(pickRandomString(bankList)))
+                .set("accountNumber", aesEncryptor.encrypt(pickAccountNumberString()));
     }
 
 
@@ -206,11 +206,11 @@ public class FixtureBuilderFactory {
                 .set("phoneNumber", pickPhoneNumberString());
     }
 
-    public static ArbitraryBuilder<History> builderHistory() {
+    public static ArbitraryBuilder<History> builderHistory(AesEncryptor aesEncryptor) {
 
         return fixtureMonkey.giveMeBuilder(History.class)
                 .set("id", buildLong(100))
-                .set("user", builderUser().sample())
+                .set("user", builderUser(aesEncryptor).sample())
                 .set("umbrella", builderUmbrella().sample())
                 .set("rentStoreMeta", builderStoreMeta().sample())
                 .set("rentedAt", LocalDateTime.of(2021, 1, 1, 0, 0, 0))
@@ -218,8 +218,8 @@ public class FixtureBuilderFactory {
                 .set("returnStoreMeta", builderStoreMeta().sample())
                 .set("paidAt", LocalDateTime.of(2021, 1, 2, 0, 0, 0))
                 .set("refundedAt", LocalDateTime.of(2021, 1, 15, 0, 0, 0))
-                .set("refundedBy", builderUser().sample())
-                .set("paidBy", builderUser().sample())
+                .set("refundedBy", builderUser(aesEncryptor).sample())
+                .set("paidBy", builderUser(aesEncryptor).sample())
                 .set("bank", pickRandomString(bankList))
                 .set("accountNumber", pickAccountNumberString())
                 .set("etc", pickRandomString(etcList));
