@@ -1,13 +1,20 @@
 package upbrella.be.util;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class AesEncryptor {
-    private static final String ALGORITHM = "AES/ECB/PKCS5Padding";
-    private static final byte[] KEY = "1234567890123456".getBytes(StandardCharsets.UTF_8);
+
+    @Value("${ALGORITHM}")
+    private static String ALGORITHM;
+
+    @Value("${SECRET_KEY}")
+    private static String KEY_STR;
+    private static final byte[] KEY = KEY_STR.getBytes(StandardCharsets.UTF_8);
 
     public static String encrypt(String data) {
 
