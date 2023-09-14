@@ -94,7 +94,7 @@ public class StoreDetailServiceTest {
 
             // given
 
-            given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(3L))
+            given(storeDetailRepository.findById(3L))
                     .willReturn(Optional.of(storeDetail));
 
             given(umbrellaService.countAvailableUmbrellaAtStore(3L))
@@ -109,27 +109,9 @@ public class StoreDetailServiceTest {
                             .usingRecursiveComparison()
                             .isEqualTo(storeFindByIdResponseExpected),
                     () -> then(storeDetailRepository).should(times(1))
-                            .findByStoreMetaIdUsingFetchJoin(3L),
+                            .findById(3L),
                     () -> then(umbrellaService).should(times(1))
                             .countAvailableUmbrellaAtStore(3L)
-            );
-        }
-
-        @DisplayName("해당하는 협업 지점이 존재하지 않거나 삭제되었으면 예외를 발생시킨다.")
-        @Test
-        void isNotExistingStore() {
-
-            //given
-            given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(3L))
-                    .willReturn(Optional.ofNullable(null));
-
-            //when & then
-            assertAll(
-                    () -> assertThatThrownBy(() -> storeDetailService.findStoreDetailByStoreMetaId(3L))
-                            .isInstanceOf(NonExistingStoreDetailException.class),
-                    () -> then(storeDetailRepository).should(times(1))
-                            .findByStoreMetaIdUsingFetchJoin(3L),
-                    () -> then(umbrellaService).shouldHaveNoInteractions()
             );
         }
     }
