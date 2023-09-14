@@ -448,4 +448,17 @@ class UserServiceTest {
         // then
         assertThat(user.isAdminStatus()).isTrue();
     }
+
+    @Test
+    @DisplayName("정상적으로 로그인하지 않은 경우 개인정보 조회를 할 수 없다.")
+    void notLoginException() {
+        // given
+        SessionUser user = SessionUser.builder().build();
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> userService.findDecryptedUserById(user))
+                .isInstanceOf(NonExistingMemberException.class);
+    }
 }

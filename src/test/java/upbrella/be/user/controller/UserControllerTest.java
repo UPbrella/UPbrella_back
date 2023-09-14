@@ -76,7 +76,7 @@ public class UserControllerTest extends RestDocsSupport {
 
         session.setAttribute("user", sessionUser);
         User decryptedUser = user.decryptData(aesEncryptor);
-        given(userService.findDecryptedUserById(anyLong()))
+        given(userService.findDecryptedUserById(sessionUser))
                 .willReturn(decryptedUser);
 
         // when & then
