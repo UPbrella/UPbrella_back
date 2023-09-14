@@ -64,4 +64,15 @@ public class UserExceptionHandler {
                         400,
                         "소셜 로그인을 먼저 진행해주세요."));
     }
+
+    @ExceptionHandler(NotLoginException.class)
+    public ResponseEntity<CustomErrorResponse> notLogin(NotLoginException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
+                        "로그인이 필요합니다."));
+    }
 }

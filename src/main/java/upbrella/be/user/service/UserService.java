@@ -13,6 +13,7 @@ import upbrella.be.user.entity.User;
 import upbrella.be.user.exception.BlackListUserException;
 import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
+import upbrella.be.user.exception.NotLoginException;
 import upbrella.be.user.repository.BlackListRepository;
 import upbrella.be.user.repository.UserRepository;
 import upbrella.be.util.AesEncryptor;
@@ -110,7 +111,14 @@ public class UserService {
     }
 
 
-    public User findDecryptedUserById(Long id) {
+    public User findDecryptedUserById(SessionUser sessionUser) {
+
+        Long id;
+        try {
+            id = sessionUser.getId();
+        } catch (NullPointerException e) {
+            throw new NotLoginException("[ERROR] 로그인이 필요합니다.");
+        }
 
         // Deep copy 객체를 반환함에 유의
         return userRepository.findById(id)
