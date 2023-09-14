@@ -2,7 +2,7 @@
 name: Feature request
 about: '신기능 개발 '
 title: ''
-labels: ''
+labels: request
 assignees: ''
 
 ---
