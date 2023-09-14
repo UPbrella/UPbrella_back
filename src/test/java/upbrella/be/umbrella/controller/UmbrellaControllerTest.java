@@ -18,8 +18,8 @@ import upbrella.be.store.controller.StoreExceptionHandler;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
-import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.service.UmbrellaService;
@@ -254,7 +254,7 @@ public class UmbrellaControllerTest extends RestDocsSupport {
         void existingUmbrellaUuid() throws Exception {
 
             // given
-            long id = FixtureBuilderFactory.buildLong(1000);
+            long id = FixtureBuilderFactory.buildLong( 1000);
             UmbrellaModifyRequest umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                     .sample();
 
