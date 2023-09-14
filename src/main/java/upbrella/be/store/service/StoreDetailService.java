@@ -53,10 +53,10 @@ public class StoreDetailService {
     }
 
     @Transactional
-    public StoreFindByIdResponse findStoreDetailByStoreMetaId(long storeMetaId) {
+    public StoreFindByIdResponse findStoreDetailByStoreMetaId(long storeDetailId) {
 
-        StoreDetail storeDetail = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId)
-                .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 해당하는 협업 지점이 존재하지 않습니다."));
+        StoreDetail storeDetail = findStoreDetailById(storeDetailId);
+        long storeMetaId = storeDetail.getStoreMeta().getId();
 
         long availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeMetaId);
 
