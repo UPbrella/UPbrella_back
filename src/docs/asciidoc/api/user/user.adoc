@@ -40,6 +40,11 @@ include::{snippets}/find-user-info-doc/http-response.adoc[]
 
 include::{snippets}/find-user-info-doc/response-fields-data.adoc[]
 
+=== 로그아웃
+==== HTTP Request
+include::{snippets}/user-logout-doc/http-request.adoc[]
+
+
 === 사용자가 빌린 우산 조회
 
 ==== HTTP Request
