@@ -15,7 +15,6 @@ import upbrella.be.store.service.StoreImageService;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.CustomResponse;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,8 +27,8 @@ public class StoreController {
     private final ClassificationService classificationService;
     private final StoreDetailService storeDetailService;
 
-    @GetMapping("/stores/{storeId}")
-    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeId) {
+    @GetMapping("/stores/{storeDetailId}")
+    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeDetailId) {
 
         return ResponseEntity
                 .ok()
@@ -37,7 +36,7 @@ public class StoreController {
                         "success",
                         200,
                         "가게 조회 성공",
-                        storeDetailService.findStoreDetailByStoreMetaId(storeId)));
+                        storeDetailService.findStoreDetailByStoreMetaId(storeDetailId)));
     }
 
     @GetMapping("/stores/classification/{classificationId}")
