@@ -13,6 +13,7 @@ import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
 @Configuration
 @RequiredArgsConstructor
+@Profile("!test")
 public class AuthConfig implements WebMvcConfigurer {
 
     private final LoginInterceptor loginInterceptor;
