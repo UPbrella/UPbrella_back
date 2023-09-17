@@ -458,8 +458,6 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("회원 정보 목록"),
                                 fieldWithPath("users[].id").type(JsonFieldType.NUMBER)
                                         .description("사용자 고유번호"),
-                                fieldWithPath("users[].socialId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("users[].name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("users[].phoneNumber").type(JsonFieldType.STRING)
@@ -633,7 +631,6 @@ public class UserControllerTest extends RestDocsSupport {
         AllBlackListResponse blackLists = AllBlackListResponse.builder()
                 .blackList(List.of(SingleBlackListResponse.builder()
                         .id(1L)
-                        .socialId(1L)
                         .blockedAt(LocalDateTime.now())
                         .build()))
                 .build();
@@ -656,8 +653,6 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("블랙리스트 목록"),
                                 fieldWithPath("blackList[].id").type(JsonFieldType.NUMBER)
                                         .description("블랙리스트 고유번호"),
-                                fieldWithPath("blackList[].socialId").type(JsonFieldType.NUMBER)
-                                        .description("블랙리스트 소셜 고유번호"),
                                 fieldWithPath("blackList[].blockedAt")
                                         .description("블랙리스트 등록 날짜")
                         )));
