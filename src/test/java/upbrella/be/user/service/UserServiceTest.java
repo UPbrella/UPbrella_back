@@ -329,29 +329,52 @@ class UserServiceTest {
         );
     }
 
-    @Test
-    @DisplayName("관리자가 회원탈퇴 시키면 블랙리스트에 들어가고 회원정보는 초기화된다.")
-    void withdrawTest() {
-        // given
-        User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
-        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+    @Nested
+    @DisplayName("관리자는")
+    class withdrawTest {
+        @Test
+        @DisplayName("사용자를 강제 탈퇴시키고 블랙리스트에 등록할 수 있다.")
+        void withdrawTest() {
+            // given
+            User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
+            given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
-        // when
-        userService.withdrawUser(user.getId());
+            // when
+            userService.withdrawUser(user.getId());
 
-        // then
-        assertAll(
-                () -> then(userRepository).should(times(1))
-                        .findById(user.getId()),
-                () -> assertThat(user.getSocialId()).isEqualTo(0L),
-                () -> assertThat(user.getName()).isEqualTo("정지된 회원"),
-                () -> assertThat(user.getPhoneNumber()).isEqualTo("deleted"),
-                () -> assertThat(user.isAdminStatus()).isEqualTo(false),
-                () -> assertThat(user.getBank()).isEqualTo(null),
-                () -> assertThat(user.getAccountNumber()).isEqualTo(null),
-                () -> then(blackListRepository).should(times(1))
-                        .save(any(BlackList.class))
-        );
+            // then
+            assertAll(
+                    () -> then(userRepository).should(times(1))
+                            .findById(user.getId()),
+                    () -> assertThat(user.getSocialId()).isEqualTo(0L),
+                    () -> assertThat(user.getName()).isEqualTo("정지된 회원"),
+                    () -> assertThat(user.getPhoneNumber()).isEqualTo("deleted"),
+                    () -> assertThat(user.isAdminStatus()).isEqualTo(false),
+                    () -> assertThat(user.getBank()).isEqualTo(null),
+                    () -> assertThat(user.getAccountNumber()).isEqualTo(null),
+                    () -> then(blackListRepository).should(times(1))
+                            .save(any(BlackList.class))
+            );
+        }
+
+        @Test
+        @DisplayName("이미 탈퇴했거나 블랙리스트에 등록한 회원일 경우 예외가 발생한다.")
+        void blockedUserTest() {
+            // given
+            User blockedUser = FixtureBuilderFactory.builderUser(aesEncryptor).set("id", 0L).sample();
+            given(userRepository.findById(blockedUser.getId())).willReturn(Optional.of(blockedUser));
+
+            // when
+            userService.withdrawUser(blockedUser.getId());
+
+            // then
+            assertAll(
+                    () -> then(userRepository).should(times(1))
+                            .findById(blockedUser.getId()),
+                    () -> assertThatThrownBy(() -> userService.withdrawUser(blockedUser.getId()))
+                            .isInstanceOf(NonExistingMemberException.class)
+            );
+        }
     }
 
     @Test
@@ -419,7 +442,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("블랙리스트 삭제 테스트")
+    @DisplayName("사용자는 블랙리스트의 유저를 삭제할 수 있다.")
     void deleteBlackListTest() {
         // given
         long blackListId = 1L;
