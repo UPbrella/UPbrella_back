@@ -188,6 +188,7 @@ public class UmbrellaIntegrationTest extends RestDocsSupport {
     void modifyUmbrellaTest() throws Exception {
 
         // given
+        // TODO : UUID 중복 오류 수정
         long id = umbrellaList.get(0).getId();
         UmbrellaModifyRequest umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                 .set("storeMetaId", storeMeta.getId())

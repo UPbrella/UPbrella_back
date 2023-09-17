@@ -630,7 +630,7 @@ public class StoreDetailServiceTest {
         StoreIntroductionsResponseByClassification storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification
                 .builder()
                 .subClassificationId(1)
-                .stores(List.of(SingleStoreIntroductionResponse.of(2L, "가게 썸네일", "스타벅스", "카페, 디저트")))
+                .stores(List.of(SingleStoreIntroductionResponse.of(3L, "가게 썸네일", "스타벅스", "카페, 디저트")))
                 .build();
 
         AllStoreIntroductionResponse expected = AllStoreIntroductionResponse.builder()
