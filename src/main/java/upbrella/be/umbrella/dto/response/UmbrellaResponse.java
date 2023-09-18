@@ -12,6 +12,7 @@ public class UmbrellaResponse {
     private long storeMetaId;
     private long uuid;
     private boolean rentable;
+    private String etc;
 
     public static UmbrellaResponse fromUmbrella(Umbrella umbrella) {
         return UmbrellaResponse.builder()
@@ -19,6 +20,7 @@ public class UmbrellaResponse {
                 .rentable(umbrella.isRentable())
                 .storeMetaId(umbrella.getStoreMeta().getId())
                 .uuid(umbrella.getUuid())
+                .etc(umbrella.getEtc())
                 .build();
     }
 }
