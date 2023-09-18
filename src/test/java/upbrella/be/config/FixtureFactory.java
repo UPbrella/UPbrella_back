@@ -8,6 +8,7 @@ import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaWithHistory;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
@@ -53,7 +54,7 @@ public class FixtureFactory {
                 .sample();
     }
 
-    public static UmbrellaResponse buildUmbrellaResponseWithUmbrellaAndStoreMeta(Umbrella umbrella, StoreMeta storeMeta) {
+    public static UmbrellaResponse buildUmbrellaResponseWithUmbrellaAndStoreMeta(UmbrellaWithHistory umbrella, StoreMeta storeMeta) {
 
         return fixtureMonkey.giveMeBuilder(UmbrellaResponse.class)
                 .set("id", umbrella.getId())
@@ -61,6 +62,7 @@ public class FixtureFactory {
                 .set("uuid", umbrella.getUuid())
                 .set("rentable", umbrella.isRentable())
                 .set("storeName", storeMeta.getName())
+                .set("historyId", umbrella.getHistoryId())
                 .sample();
     }
 

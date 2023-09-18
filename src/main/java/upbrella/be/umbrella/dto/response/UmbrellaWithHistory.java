@@ -1,14 +1,15 @@
 package upbrella.be.umbrella.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import upbrella.be.store.entity.StoreMeta;
 
 import java.time.LocalDateTime;
 
-
 @Getter
+@Builder
 @NoArgsConstructor
 public class UmbrellaWithHistory {
 
@@ -36,3 +37,4 @@ public class UmbrellaWithHistory {
         this.historyId = historyId;
     }
 }
+

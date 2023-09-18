@@ -88,6 +88,9 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                         .description("우산 목록"),
                                 fieldWithPath("umbrellaResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
+                                fieldWithPath("umbrellaResponsePage[].historyId").type(JsonFieldType.NUMBER)
+                                        .description("현재 대여 내역 고유번호")
+                                        .optional(),
                                 fieldWithPath("umbrellaResponsePage[].storeMetaId").type(JsonFieldType.NUMBER)
                                         .description("보관 지점 고유번호"),
                                 fieldWithPath("umbrellaResponsePage[].storeName").type(JsonFieldType.STRING)
@@ -139,6 +142,9 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                         .description("우산 목록"),
                                 fieldWithPath("umbrellaResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
+                                fieldWithPath("umbrellaResponsePage[].historyId").type(JsonFieldType.NUMBER)
+                                        .description("현재 대여 내역 고유번호")
+                                        .optional(),
                                 fieldWithPath("umbrellaResponsePage[].storeMetaId").type(JsonFieldType.NUMBER)
                                         .description("보관 지점 고유 번호"),
                                 fieldWithPath("umbrellaResponsePage[].storeName").type(JsonFieldType.STRING)
