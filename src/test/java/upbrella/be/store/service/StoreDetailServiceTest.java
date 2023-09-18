@@ -37,10 +37,6 @@ public class StoreDetailServiceTest {
     private UmbrellaService umbrellaService;
     @Mock
     private StoreDetailRepository storeDetailRepository;
-    @Mock
-    private BusinessHourService businessHourService;
-    @Mock
-    private StoreImageService storeImageService;
     @InjectMocks
     private StoreDetailService storeDetailService;
 
@@ -94,14 +90,14 @@ public class StoreDetailServiceTest {
 
             // given
 
-            given(storeDetailRepository.findById(3L))
+            given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(3L))
                     .willReturn(Optional.of(storeDetail));
 
             given(umbrellaService.countAvailableUmbrellaAtStore(3L))
                     .willReturn(10L);
 
             //when
-            StoreFindByIdResponse storeFindByIdResponse = storeDetailService.findStoreDetailByStoreMetaId(3L);
+            StoreFindByIdResponse storeFindByIdResponse = storeDetailService.findStoreDetailByStoreId(3L);
 
             //then
             assertAll(
@@ -109,7 +105,7 @@ public class StoreDetailServiceTest {
                             .usingRecursiveComparison()
                             .isEqualTo(storeFindByIdResponseExpected),
                     () -> then(storeDetailRepository).should(times(1))
-                            .findById(3L),
+                            .findByStoreMetaIdUsingFetchJoin(3L),
                     () -> then(umbrellaService).should(times(1))
                             .countAvailableUmbrellaAtStore(3L)
             );
@@ -361,11 +357,11 @@ public class StoreDetailServiceTest {
         @DisplayName("id로 조회할 수 있다.")
         void findByIdTest() {
             // given
-            long storeDetailId = 1L;
-            given(storeDetailRepository.findById(storeDetailId)).willReturn(Optional.of(storeDetail));
+            long storeMetaId = 1L;
+            given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId)).willReturn(Optional.of(storeDetail));
 
             // when
-            StoreDetail storeDetailById = storeDetailService.findStoreDetailById(storeDetailId);
+            StoreDetail storeDetailById = storeDetailService.findStoreDetailByStoreMetaId(storeMetaId);
 
             // then
             assertAll(
@@ -386,7 +382,7 @@ public class StoreDetailServiceTest {
 
 
             // then
-            assertThatThrownBy(() -> storeDetailService.findStoreDetailById(storeDetailId))
+            assertThatThrownBy(() -> storeDetailService.findStoreDetailByStoreMetaId(storeDetailId))
                     .isInstanceOf(NonExistingStoreDetailException.class)
                     .hasMessageContaining("[ERROR] 존재하지 않는 가게입니다.");
         }
@@ -563,7 +559,7 @@ public class StoreDetailServiceTest {
                 .build();
 
 
-        given(storeDetailRepository.findById(storeId)).willReturn(Optional.of(storedetail));
+        given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId)).willReturn(Optional.of(storedetail));
         given(classificationService.findClassificationById(request.getClassificationId())).willReturn(classificationUpdate);
         given(classificationService.findSubClassificationById(request.getSubClassificationId())).willReturn(subClassificationUpdate);
         given(storeMetaService.findStoreMetaById(storeId)).willReturn(storeMeta);
@@ -576,7 +572,7 @@ public class StoreDetailServiceTest {
         StoreMeta foundStoreMeta = storeMetaService.findStoreMetaById(storeId);
 
 
-        StoreDetail foundStoreDetail = storeDetailService.findStoreDetailById(storeId);
+        StoreDetail foundStoreDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId);
 
         assertAll(
                 () -> assertThat(foundStoreMeta) // 업데이트된 필드에 대한 검증
