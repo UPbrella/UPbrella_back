@@ -436,7 +436,6 @@ class UserServiceTest {
         // then
         assertAll(
                 () -> assertThat(userService.findBlackList().getBlackList().size()).isEqualTo(1),
-                () -> assertThat(userService.findBlackList().getBlackList().get(0).getSocialId()).isEqualTo(1L),
                 () -> assertThat(userService.findBlackList().getBlackList().get(0).getBlockedAt()).isEqualTo(now)
         );
     }

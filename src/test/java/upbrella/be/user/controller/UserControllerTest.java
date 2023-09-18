@@ -232,44 +232,45 @@ public class UserControllerTest extends RestDocsSupport {
                             assertThat(result.getResolvedException())
                                     .isInstanceOf(InvalidLoginCodeException.class));
         }
-
-        @Test
-        @DisplayName("회원인 경우 로그인이 진행된다.")
-        void upbrellaLoginTest() throws Exception {
-            // given
-
-            KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
-                    .id(1L)
-                    .kakaoAccount(
-                            KakaoAccount.builder()
-                                    .email("email@email.com")
-                                    .build())
-                    .build();
-
-            MockHttpSession session = new MockHttpSession();
-
-            SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
-            session.setAttribute("kakaoUser", kakaoUser);
-            given(userService.login(any())).willReturn(sessionUser);
-
-            // when
-
-            // then
-            mockMvc.perform(
-                            post("/users/login")
-                                    .session(session)
-                    ).andDo(print())
-                    .andExpect(status().isOk())
-                    .andDo(document("user-upbrella-login-doc",
-                            getDocumentRequest(),
-                            getDocumentResponse()
-                    ));
-        }
     }
 
     @Test
+    @DisplayName("사용자는 소셜 로그인 상태에서 업브렐라 로그인을 할 수 있다.")
+    void upbrellaLoginTest() throws Exception {
+        // given
+
+        KakaoLoginResponse kakaoUser = KakaoLoginResponse.builder()
+                .id(1L)
+                .kakaoAccount(
+                        KakaoAccount.builder()
+                                .email("email@email.com")
+                                .build())
+                .build();
+
+        MockHttpSession session = new MockHttpSession();
+
+        SessionUser sessionUser = FixtureBuilderFactory.builderSessionUser().sample();
+        session.setAttribute("kakaoUser", kakaoUser);
+        given(userService.login(any())).willReturn(sessionUser);
+
+        // when
+
+        // then
+        mockMvc.perform(
+                        post("/users/login")
+                                .session(session)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-upbrella-login-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse()
+                ));
+    }
+
+
+    @Test
     @DisplayName("사용자는 로그아웃을 할 수 있다.")
-    void loginSuccess() throws Exception {
+    void logoutTest() throws Exception {
 
         // given
         MockHttpSession mockHttpSession = new MockHttpSession();
@@ -458,8 +459,6 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("회원 정보 목록"),
                                 fieldWithPath("users[].id").type(JsonFieldType.NUMBER)
                                         .description("사용자 고유번호"),
-                                fieldWithPath("users[].socialId").type(JsonFieldType.NUMBER)
-                                        .description("사용자 소셜 고유번호"),
                                 fieldWithPath("users[].name").type(JsonFieldType.STRING)
                                         .description("사용자 이름"),
                                 fieldWithPath("users[].phoneNumber").type(JsonFieldType.STRING)
@@ -633,7 +632,6 @@ public class UserControllerTest extends RestDocsSupport {
         AllBlackListResponse blackLists = AllBlackListResponse.builder()
                 .blackList(List.of(SingleBlackListResponse.builder()
                         .id(1L)
-                        .socialId(1L)
                         .blockedAt(LocalDateTime.now())
                         .build()))
                 .build();
@@ -656,8 +654,6 @@ public class UserControllerTest extends RestDocsSupport {
                                         .description("블랙리스트 목록"),
                                 fieldWithPath("blackList[].id").type(JsonFieldType.NUMBER)
                                         .description("블랙리스트 고유번호"),
-                                fieldWithPath("blackList[].socialId").type(JsonFieldType.NUMBER)
-                                        .description("블랙리스트 소셜 고유번호"),
                                 fieldWithPath("blackList[].blockedAt")
                                         .description("블랙리스트 등록 날짜")
                         )));
