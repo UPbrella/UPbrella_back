@@ -31,7 +31,7 @@ public class StoreFindByIdResponse {
     public static StoreFindByIdResponse fromStoreDetail(StoreDetail storeDetail, long availableUmbrellaCount) {
 
         return StoreFindByIdResponse.builder()
-                .id(storeDetail.getId())
+                .id(storeDetail.getStoreMeta().getId())
                 .name(storeDetail.getStoreMeta().getName())
                 .businessHours(storeDetail.getWorkingHour())
                 .contactNumber(storeDetail.getContactInfo())

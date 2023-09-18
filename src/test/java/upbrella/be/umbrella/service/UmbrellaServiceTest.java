@@ -20,6 +20,7 @@ import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaWithHistory;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
@@ -57,6 +58,7 @@ class UmbrellaServiceTest {
         private StoreMeta storeMeta;
         private List<UmbrellaResponse> expectedUmbrellaResponses;
         private List<Umbrella> generatedUmbrellas = new ArrayList<>();
+        private List<UmbrellaWithHistory> generatedUmbrellasWithHistory = new ArrayList<>();
 
         @BeforeEach
         void setUp() {
@@ -67,9 +69,13 @@ class UmbrellaServiceTest {
                 generatedUmbrellas.add(FixtureBuilderFactory.builderUmbrella()
                         .set("storeMeta", storeMeta)
                         .sample());
+
+                generatedUmbrellasWithHistory.add(FixtureBuilderFactory.builderUmbrellaWithHistory()
+                        .set("storeMeta", storeMeta)
+                        .sample());
             }
 
-            expectedUmbrellaResponses = generatedUmbrellas.stream()
+            expectedUmbrellaResponses = generatedUmbrellasWithHistory.stream()
                     .map(umbrella -> FixtureFactory.buildUmbrellaResponseWithUmbrellaAndStoreMeta(umbrella, storeMeta))
                     .collect(Collectors.toList());
         }
@@ -80,8 +86,8 @@ class UmbrellaServiceTest {
 
             //given
             Pageable pageable = PageRequest.of(0, 5);
-            given(umbrellaRepository.findByDeletedIsFalseOrderById(pageable))
-                    .willReturn(generatedUmbrellas);
+            given(umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable))
+                    .willReturn(generatedUmbrellasWithHistory);
 
             //when
             List<UmbrellaResponse> umbrellaResponseList = umbrellaService.findAllUmbrellas(pageable);
@@ -102,7 +108,7 @@ class UmbrellaServiceTest {
 
             //given
             Pageable pageable = PageRequest.of(0, 5);
-            given(umbrellaRepository.findByDeletedIsFalseOrderById(pageable))
+            given(umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable))
                     .willReturn(List.of());
 
             //when
@@ -118,7 +124,8 @@ class UmbrellaServiceTest {
     class findUmbrellasByStoreIdTest {
         private StoreMeta storeMeta;
         private List<UmbrellaResponse> expectedUmbrellaResponses;
-        private List<Umbrella> generatedUmbrellas = new ArrayList<>();
+        private List<UmbrellaWithHistory> generatedUmbrellas = new ArrayList<>();
+        private List<UmbrellaWithHistory> generatedUmbrellasWithHistory = new ArrayList<>();
 
         @BeforeEach
         void setUp() {
@@ -126,12 +133,15 @@ class UmbrellaServiceTest {
             storeMeta = FixtureBuilderFactory.builderStoreMeta().sample();
 
             for (int i = 0; i < 5; i++) {
-                generatedUmbrellas.add(FixtureBuilderFactory.builderUmbrella()
+                generatedUmbrellas.add(FixtureBuilderFactory.builderUmbrellaWithHistory()
+                        .set("storeMeta", storeMeta)
+                        .sample());
+                generatedUmbrellasWithHistory.add(FixtureBuilderFactory.builderUmbrellaWithHistory()
                         .set("storeMeta", storeMeta)
                         .sample());
             }
 
-            expectedUmbrellaResponses = generatedUmbrellas.stream()
+            expectedUmbrellaResponses = generatedUmbrellasWithHistory.stream()
                     .map(umbrella -> FixtureFactory.buildUmbrellaResponseWithUmbrellaAndStoreMeta(umbrella, storeMeta))
                     .collect(Collectors.toList());
         }
@@ -141,8 +151,8 @@ class UmbrellaServiceTest {
         void success() {
             //given
             Pageable pageable = PageRequest.of(0, 5);
-            given(umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(2L, pageable))
-                    .willReturn(generatedUmbrellas);
+            given(umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(2L, pageable))
+                    .willReturn(generatedUmbrellasWithHistory);
 
             //when
             List<UmbrellaResponse> umbrellaResponseList = umbrellaService.findUmbrellasByStoreId(2L, pageable);
@@ -163,7 +173,7 @@ class UmbrellaServiceTest {
 
             //given
             Pageable pageable = PageRequest.of(0, 5);
-            given(umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(2L, pageable))
+            given(umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(2L, pageable))
                     .willReturn(List.of());
 
             //when

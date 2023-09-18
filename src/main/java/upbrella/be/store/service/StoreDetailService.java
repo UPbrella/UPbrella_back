@@ -29,7 +29,7 @@ public class StoreDetailService {
     @Transactional
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 
-        StoreDetail storeDetailById = findStoreDetailById(storeId);
+        StoreDetail storeDetailById = findStoreDetailByStoreMetaId(storeId);
         long storeMetaId = storeDetailById.getStoreMeta().getId();
 
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
@@ -46,19 +46,18 @@ public class StoreDetailService {
     }
 
     @Transactional(readOnly = true)
-    public StoreDetail findStoreDetailById(Long storeId) {
+    public StoreDetail findStoreDetailByStoreMetaId(Long storeId) {
 
-        return storeDetailRepository.findById(storeId)
+        return storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId)
                 .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다."));
     }
 
     @Transactional
-    public StoreFindByIdResponse findStoreDetailByStoreMetaId(long storeDetailId) {
+    public StoreFindByIdResponse findStoreDetailByStoreId(long storeId) {
 
-        StoreDetail storeDetail = findStoreDetailById(storeDetailId);
-        long storeMetaId = storeDetail.getStoreMeta().getId();
+        StoreDetail storeDetail = findStoreDetailByStoreMetaId(storeId);
 
-        long availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeMetaId);
+        long availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeId);
 
         return StoreFindByIdResponse.fromStoreDetail(storeDetail, availableUmbrellaCount);
     }

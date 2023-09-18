@@ -30,9 +30,7 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
                 .join(history.rentStoreMeta, storeMeta).fetchJoin()
                 .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
                 .where(filterRefunded(filter))
-                .orderBy(history.refundedAt.desc().nullsFirst(),
-                        history.returnedAt.desc().nullsFirst(),
-                        history.id.desc())
+                .orderBy(history.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -43,15 +41,7 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
 
         return queryFactory
                 .selectFrom(history)
-                .join(history.user, user).fetchJoin()
-                .leftJoin(history.refundedBy, user).fetchJoin()
-                .join(history.umbrella, umbrella).fetchJoin()
-                .join(history.rentStoreMeta, storeMeta).fetchJoin()
-                .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
                 .where(filterRefunded(filter))
-                .orderBy(history.refundedAt.desc().nullsFirst(),
-                        history.returnedAt.desc().nullsFirst(),
-                        history.id.desc())
                 .fetchCount();
     }
 
@@ -66,9 +56,7 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
                 .join(history.rentStoreMeta, storeMeta).fetchJoin()
                 .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
                 .where(history.user.id.eq(userId))
-                .orderBy(history.refundedAt.desc().nullsFirst(),
-                        history.returnedAt.desc().nullsFirst(),
-                        history.id.desc())
+                .orderBy(history.id.desc())
                 .fetch();
     }
 

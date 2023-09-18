@@ -91,10 +91,9 @@ public class StoreMetaService {
     }
 
     @Transactional
-    public void deleteStoreMeta(long storeDetailId) {
-        StoreDetail storeDetail = storeDetailService.findStoreDetailById(storeDetailId);
+    public void deleteStoreMeta(long storeMetaId) {
 
-        findStoreMetaById(storeDetail.getStoreMeta().getId()).delete();
+        findStoreMetaById(storeMetaId).delete();
     }
 
     @Transactional(readOnly = true)
@@ -140,7 +139,7 @@ public class StoreMetaService {
     @Transactional
     public void activateStoreStatus(long storeId) {
 
-        StoreDetail storeDetail = storeDetailService.findStoreDetailById(storeId);
+        StoreDetail storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId);
 
         Set<StoreImage> storeImages = storeDetail.getStoreImages();
         if (storeImages == null || storeImages.isEmpty()) {
@@ -153,7 +152,7 @@ public class StoreMetaService {
     @Transactional
     public void inactivateStoreStatus(long storeId) {
 
-        StoreDetail storeDetail = storeDetailService.findStoreDetailById(storeId);
+        StoreDetail storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId);
 
         storeDetail.getStoreMeta().inactivateStoreStatus();
     }

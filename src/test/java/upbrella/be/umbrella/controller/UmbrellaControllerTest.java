@@ -88,12 +88,19 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                         .description("우산 목록"),
                                 fieldWithPath("umbrellaResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
+                                fieldWithPath("umbrellaResponsePage[].historyId").type(JsonFieldType.NUMBER)
+                                        .description("현재 대여 내역 고유번호")
+                                        .optional(),
                                 fieldWithPath("umbrellaResponsePage[].storeMetaId").type(JsonFieldType.NUMBER)
                                         .description("보관 지점 고유번호"),
+                                fieldWithPath("umbrellaResponsePage[].storeName").type(JsonFieldType.STRING)
+                                        .description("보관 지점 이름"),
                                 fieldWithPath("umbrellaResponsePage[].uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 관리번호"),
                                 fieldWithPath("umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
-                                        .description("대여 가능 상태")
+                                        .description("대여 가능 상태"),
+                                fieldWithPath("umbrellaResponsePage[].etc").type(JsonFieldType.STRING)
+                                        .description("기타 특이 사항")
                         )));
     }
 
@@ -137,12 +144,19 @@ public class UmbrellaControllerTest extends RestDocsSupport {
                                         .description("우산 목록"),
                                 fieldWithPath("umbrellaResponsePage[].id").type(JsonFieldType.NUMBER)
                                         .description("우산 고유번호"),
+                                fieldWithPath("umbrellaResponsePage[].historyId").type(JsonFieldType.NUMBER)
+                                        .description("현재 대여 내역 고유번호")
+                                        .optional(),
                                 fieldWithPath("umbrellaResponsePage[].storeMetaId").type(JsonFieldType.NUMBER)
-                                        .description("보관 지점번호"),
+                                        .description("보관 지점 고유 번호"),
+                                fieldWithPath("umbrellaResponsePage[].storeName").type(JsonFieldType.STRING)
+                                        .description("보관 지점 이름"),
                                 fieldWithPath("umbrellaResponsePage[].uuid").type(JsonFieldType.NUMBER)
                                         .description("우산 관리번호"),
                                 fieldWithPath("umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
-                                        .description("대여 가능 상태")
+                                        .description("대여 가능 상태"),
+                                fieldWithPath("umbrellaResponsePage[].etc").type(JsonFieldType.STRING)
+                                        .description("기타 특이 사항")
                         )));
     }
 

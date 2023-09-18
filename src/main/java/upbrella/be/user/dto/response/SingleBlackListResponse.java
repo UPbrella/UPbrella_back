@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class SingleBlackListResponse {
 
     private long id;
-    private long socialId;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
     private LocalDateTime blockedAt;
 
@@ -20,7 +19,6 @@ public class SingleBlackListResponse {
 
         return SingleBlackListResponse.builder()
                 .id(blackList.getId())
-                .socialId(blackList.getSocialId())
                 .blockedAt(blackList.getBlockedAt())
                 .build();
     }
