@@ -1,19 +1,23 @@
 package upbrella.be.config.interceptor;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
+@Profile("test")
 @Configuration
-@RequiredArgsConstructor
-public class AuthTestConfig implements WebMvcConfigurer {
+public class AuthTestConfig implements WebMvcConfigurer  {
 
-    private final LoginInterceptor loginInterceptor;
-    private final AdminInterceptor adminInterceptor;
+    @Autowired
+    private LoginInterceptor loginInterceptor;
+    @Autowired
+    private AdminInterceptor adminInterceptor;
+
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

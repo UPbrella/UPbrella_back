@@ -27,8 +27,8 @@ public class StoreController {
     private final ClassificationService classificationService;
     private final StoreDetailService storeDetailService;
 
-    @GetMapping("/stores/{storeDetailId}")
-    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeDetailId) {
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeId) {
 
         return ResponseEntity
                 .ok()
@@ -36,7 +36,7 @@ public class StoreController {
                         "success",
                         200,
                         "가게 조회 성공",
-                        storeDetailService.findStoreDetailByStoreMetaId(storeDetailId)));
+                        storeDetailService.findStoreDetailByStoreId(storeId)));
     }
 
     @GetMapping("/stores/classification/{classificationId}")

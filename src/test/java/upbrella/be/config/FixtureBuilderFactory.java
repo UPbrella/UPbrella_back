@@ -12,6 +12,7 @@ import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest;
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest;
 import upbrella.be.umbrella.dto.response.UmbrellaResponse;
 import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse;
+import upbrella.be.umbrella.dto.response.UmbrellaWithHistory;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.UpdateBankAccountRequest;
@@ -103,12 +104,25 @@ public class FixtureBuilderFactory {
                 .set("etc", pickRandomString(nameList));
     }
 
+    public static ArbitraryBuilder<UmbrellaWithHistory> builderUmbrellaWithHistory() {
+
+        return fixtureMonkey.giveMeBuilder(UmbrellaWithHistory.class)
+                .set("id", buildLong(10000))
+                .set("uuid", buildLong(1000))
+                .set("historyId", buildLong(1000))
+                .set("storeMeta", builderStoreMeta().sample())
+                .set("deleted", false)
+                .set("etc", pickRandomString(nameList));
+    }
+
     public static ArbitraryBuilder<UmbrellaResponse> builderUmbrellaResponses() {
 
         return fixtureMonkey.giveMeBuilder(UmbrellaResponse.class)
                 .set("id", buildLong(10000))
                 .set("storeMetaId", buildLong(100))
+                .set("historyId", buildLong(100))
                 .set("uuid", buildLong(100))
+                .set("storeName", pickRandomString(cafeList))
                 .set("etc", "etc");
     }
 

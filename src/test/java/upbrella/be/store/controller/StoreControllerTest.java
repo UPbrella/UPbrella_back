@@ -77,7 +77,7 @@ class StoreControllerTest extends RestDocsSupport {
                         "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/3.jpg"))
                 .build();
 
-        given(storeDetailService.findStoreDetailByStoreMetaId(2L))
+        given(storeDetailService.findStoreDetailByStoreId(2L))
                 .willReturn(storeFindByIdResponse);
 
         // when & then

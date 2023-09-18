@@ -2,7 +2,13 @@ package upbrella.be.umbrella.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import upbrella.be.umbrella.dto.response.QUmbrellaWithHistory;
+import upbrella.be.umbrella.dto.response.UmbrellaWithHistory;
 
+import java.util.List;
+
+import static upbrella.be.rent.entity.QHistory.history;
 import static upbrella.be.umbrella.entity.QUmbrella.umbrella;
 
 @RequiredArgsConstructor
@@ -86,5 +92,60 @@ public class UmbrellaRepositoryImpl implements UmbrellaRepositoryCustom {
                         .and(umbrella.missed.eq(true))
                         .and(umbrella.deleted.eq(false)))
                 .fetchCount();
+    }
+
+    @Override
+    public List<UmbrellaWithHistory> findUmbrellaAndHistoryOrderedByUmbrellaId(Pageable pageable) {
+
+        QUmbrellaWithHistory umbrellaWithHistory = new QUmbrellaWithHistory(
+                umbrella.id,
+                umbrella.storeMeta,
+                umbrella.uuid,
+                umbrella.rentable,
+                umbrella.deleted,
+                umbrella.createdAt,
+                umbrella.etc,
+                umbrella.missed,
+                history.id
+        );
+
+        return queryFactory.select(umbrellaWithHistory)
+                .from(history)
+                .rightJoin(history.umbrella, umbrella)
+                .join(umbrella.storeMeta)
+                .where(umbrella.deleted.eq(false)
+                        .and(history.returnedAt.isNull()))
+                .orderBy(umbrella.id.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    @Override
+    public List<UmbrellaWithHistory> findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(long storeId, Pageable pageable) {
+
+        QUmbrellaWithHistory umbrellaWithHistory = new QUmbrellaWithHistory(
+                umbrella.id,
+                umbrella.storeMeta,
+                umbrella.uuid,
+                umbrella.rentable,
+                umbrella.deleted,
+                umbrella.createdAt,
+                umbrella.etc,
+                umbrella.missed,
+                history.id
+        );
+
+        return queryFactory.select(umbrellaWithHistory)
+                .from(history)
+                .rightJoin(history.umbrella, umbrella)
+                .join(umbrella.storeMeta)
+                .where(umbrella.deleted.eq(false)
+                        .and(umbrella.storeMeta.id.eq(storeId))
+                        .and(history.returnedAt.isNull()))
+                .orderBy(umbrella.id.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
     }
 }

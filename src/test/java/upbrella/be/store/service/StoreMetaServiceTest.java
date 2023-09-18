@@ -466,7 +466,6 @@ class StoreMetaServiceTest {
                 .id(1L)
                 .storeMeta(storeMeta).build();
 
-        given(storeDetailService.findStoreDetailById(anyLong())).willReturn(storeDetail);
         given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta));
 
         // when
@@ -572,7 +571,7 @@ class StoreMetaServiceTest {
                 .build();
 
 
-        given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
+        given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail);
 
         // when
         storeMetaService.activateStoreStatus(1L);
@@ -595,7 +594,7 @@ class StoreMetaServiceTest {
                 .storeImages(Set.of())
                 .build();
 
-        given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
+        given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail);
 
         // when
 
@@ -623,7 +622,7 @@ class StoreMetaServiceTest {
                 .build();
 
 
-        given(storeDetailService.findStoreDetailById(1L)).willReturn(storeDetail);
+        given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail);
 
         // when
         storeMetaService.inactivateStoreStatus(1L);
