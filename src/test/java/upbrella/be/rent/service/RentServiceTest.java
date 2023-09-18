@@ -16,6 +16,7 @@ import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
+import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.exception.NotRefundedException;
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,6 +62,8 @@ class RentServiceTest {
     private UserService userService;
     @Mock
     private AesEncryptor aesEncryptor;
+    @Mock
+    private ConditionReportService conditionReportService;
     @InjectMocks
     private RentService rentService;
     private RentUmbrellaByUserRequest rentUmbrellaByUserRequest;
@@ -68,6 +72,7 @@ class RentServiceTest {
     private User userToRent;
     private History history;
     private HistoryFilterRequest filter;
+    private ConditionReport conditionReport;
 
     @BeforeEach
     void setUp() {
@@ -111,6 +116,11 @@ class RentServiceTest {
                 .rentStoreMeta(foundStoreMeta)
                 .build();
 
+        conditionReport = ConditionReport.builder()
+                .id(1L)
+                .content("상태 양호")
+                .history(history)
+                .build() ;
 
     }
 
@@ -121,7 +131,6 @@ class RentServiceTest {
         @Test
         @DisplayName("대여 이력에 정상적으로 추가하 수 있다.")
         void success() {
-
             // given
             given(storeMetaService.findStoreMetaById(25L))
                     .willReturn(foundStoreMeta);
@@ -129,14 +138,13 @@ class RentServiceTest {
                     .willReturn(foundUmbrella);
             given(rentRepository.save(any(History.class)))
                     .willReturn(history);
+            doNothing().when(conditionReportService).saveConditionReport(any(ConditionReport.class));
 
             // when
-            History addedRental = rentService.addRental(rentUmbrellaByUserRequest, userToRent);
+            rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
             // then
-            assertAll(() -> assertThat(addedRental)
-                            .usingRecursiveComparison()
-                            .isEqualTo(history),
+            assertAll(
                     () -> then(umbrellaService).should(times(1))
                             .findUmbrellaById(99L),
                     () -> then(storeMetaService).should(times(1))
