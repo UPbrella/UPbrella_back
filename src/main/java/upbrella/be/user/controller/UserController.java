@@ -163,7 +163,7 @@ public class UserController {
     }
 
     @GetMapping("/users/histories")
-    public ResponseEntity<CustomResponse> readUserHistories(HttpSession session) {
+    public ResponseEntity<CustomResponse<AllHistoryResponse>> readUserHistories(HttpSession session) {
 
         SessionUser sessionUser = (SessionUser) session.getAttribute("user");
 
