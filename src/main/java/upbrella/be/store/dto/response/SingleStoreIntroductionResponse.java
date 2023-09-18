@@ -35,7 +35,7 @@ public class SingleStoreIntroductionResponse {
         String thumbnail = createThumbnail(sortedImageUrls);
         StoreMeta storeMeta = storeDetail.getStoreMeta();
 
-        return of(storeDetail.getStoreMeta().getId(), thumbnail, storeMeta.getName(), storeMeta.getCategory());
+        return of(storeMeta.getId(), thumbnail, storeMeta.getName(), storeMeta.getCategory());
     }
 
     private static String createThumbnail(List<SingleImageUrlResponse> imageUrls) {
