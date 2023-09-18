@@ -125,6 +125,7 @@ public class UmbrellaIntegrationTest extends RestDocsSupport {
         UmbrellaCreateRequest umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest()
                 .set("id", 999L)
                 .set("storeMetaId", storeMeta.getId())
+                .set("uuid", 3000L)
                 .sample();
 
         // when & then
