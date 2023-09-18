@@ -123,6 +123,7 @@ public class UmbrellaIntegrationTest extends RestDocsSupport {
 
         // given
         UmbrellaCreateRequest umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest()
+                .set("id", 999L)
                 .set("storeMetaId", storeMeta.getId())
                 .sample();
 
