@@ -11,6 +11,7 @@ import upbrella.be.rent.dto.response.RentFormResponse;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.dto.response.ReturnFormResponse;
+import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
@@ -40,6 +41,7 @@ public class RentService {
     private final ImprovementReportService improvementReportService;
     private final UserService userService;
     private final RentRepository rentRepository;
+    private final ConditionReportService conditionReportService;
 
     public RentFormResponse findRentForm(long umbrellaId) {
 
@@ -59,7 +61,7 @@ public class RentService {
     }
 
     @Transactional
-    public History addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
+    public void addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
 
         rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.getId())
                 .ifPresent(history -> {
@@ -70,12 +72,18 @@ public class RentService {
 
         StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
 
-        return rentRepository.save(
-                History.ofCreatedByNewRent(
-                        willRentUmbrella,
-                        userToRent,
-                        rentalStore)
-        );
+        String conditionReport = rentUmbrellaByUserRequest.getConditionReport();
+
+
+
+        History history = rentRepository.save(History.ofCreatedByNewRent(willRentUmbrella, userToRent, rentalStore));
+
+        ConditionReport conditionReportToSave = ConditionReport.builder()
+                .content(conditionReport)
+                .history(history)
+                .build();
+
+        conditionReportService.saveConditionReport(conditionReportToSave);
     }
 
     @Transactional

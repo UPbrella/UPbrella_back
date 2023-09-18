@@ -13,6 +13,7 @@ public class UmbrellaResponse {
     private String storeName;
     private long uuid;
     private boolean rentable;
+    private String etc;
 
     public static UmbrellaResponse fromUmbrella(UmbrellaWithHistory umbrellaWithHistory) {
 
@@ -23,6 +24,7 @@ public class UmbrellaResponse {
                 .storeMetaId(umbrellaWithHistory.getStoreMeta().getId())
                 .storeName(umbrellaWithHistory.getStoreMeta().getName())
                 .uuid(umbrellaWithHistory.getUuid())
+                .etc(umbrellaWithHistory.getEtc())
                 .build();
     }
 }

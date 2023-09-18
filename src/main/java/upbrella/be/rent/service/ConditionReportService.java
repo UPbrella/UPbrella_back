@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.rent.dto.response.ConditionReportPageResponse;
 import upbrella.be.rent.dto.response.ConditionReportResponse;
+import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.repository.ConditionReportRepository;
 
 import java.util.List;
@@ -19,6 +20,11 @@ public class ConditionReportService {
     public ConditionReportPageResponse findAll() {
 
         return ConditionReportPageResponse.of(findAllConditionReport());
+    }
+
+    public void saveConditionReport(ConditionReport conditionReport) {
+
+        conditionReportRepository.save(conditionReport);
     }
 
     private List<ConditionReportResponse> findAllConditionReport() {

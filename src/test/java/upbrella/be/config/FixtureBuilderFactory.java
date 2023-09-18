@@ -122,7 +122,8 @@ public class FixtureBuilderFactory {
                 .set("storeMetaId", buildLong(100))
                 .set("historyId", buildLong(100))
                 .set("uuid", buildLong(100))
-                .set("storeName", pickRandomString(cafeList));
+                .set("storeName", pickRandomString(cafeList))
+                .set("etc", "etc");
     }
 
     public static ArbitraryBuilder<UmbrellaCreateRequest> builderUmbrellaCreateRequest() {

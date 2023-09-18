@@ -63,6 +63,7 @@ public class FixtureFactory {
                 .set("rentable", umbrella.isRentable())
                 .set("storeName", storeMeta.getName())
                 .set("historyId", umbrella.getHistoryId())
+                .set("etc", umbrella.getEtc())
                 .sample();
     }
 
