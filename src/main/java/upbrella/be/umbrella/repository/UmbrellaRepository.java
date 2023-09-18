@@ -11,13 +11,7 @@ public interface UmbrellaRepository extends JpaRepository<Umbrella, Long>, Umbre
 
     Optional<Umbrella> findByIdAndDeletedIsFalse(long id);
 
-    boolean existsByIdAndDeletedIsFalse(long id);
-
     boolean existsByUuidAndDeletedIsFalse(long uuid);
 
     List<Umbrella> findByDeletedIsFalseOrderById(Pageable pageable);
-
-    List<Umbrella> findByStoreMetaIdAndDeletedIsFalseOrderById(long storeMetaId, Pageable pageable);
-
-
 }
