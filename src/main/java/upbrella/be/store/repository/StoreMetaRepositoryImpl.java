@@ -32,14 +32,13 @@ public class StoreMetaRepositoryImpl implements StoreMetaRepositoryCustom {
                 .rightJoin(umbrella.storeMeta, storeMeta)
                 .leftJoin(storeMeta.businessHours, businessHour).fetchJoin()
                 .leftJoin(storeMeta.classification, classification).fetchJoin()
-                .leftJoin(storeMeta.subClassification, classification).fetchJoin()
                 .where(storeMeta.deleted.eq(false)
                         .and(storeMeta.classification.id.eq(classificationId))
                         .and(umbrella.rentable.eq(true))
                         .and(umbrella.missed.eq(false))
                         .and(umbrella.deleted.eq(false)))
                 .distinct()
-                .groupBy(storeMeta)
+                .groupBy(storeMeta, businessHour.id)
                 .fetch();
     }
 }
