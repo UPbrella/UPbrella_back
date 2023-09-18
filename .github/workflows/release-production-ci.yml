@@ -36,7 +36,7 @@ jobs:
       run: |
         touch src/main/resources/application.properties
         echo "${{ secrets.APPLICATION_PROPERTIES_PRODUCTION }}" > src/main/resources/application.properties
-        echo "${{ secrets.APPLICATION_PROPERTIES_TEST }}" > src/test/resources/application.properties가
+        echo "${{ secrets.APPLICATION_PROPERTIES_TEST }}" > src/test/resources/application.properties
      
     - name: Build with Gradle
       run: |
