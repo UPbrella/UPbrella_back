@@ -108,7 +108,8 @@ public class FixtureBuilderFactory {
         return fixtureMonkey.giveMeBuilder(UmbrellaResponse.class)
                 .set("id", buildLong(10000))
                 .set("storeMetaId", buildLong(100))
-                .set("uuid", buildLong(100));
+                .set("uuid", buildLong(100))
+                .set("storeName", pickRandomString(cafeList));
     }
 
     public static ArbitraryBuilder<UmbrellaCreateRequest> builderUmbrellaCreateRequest() {

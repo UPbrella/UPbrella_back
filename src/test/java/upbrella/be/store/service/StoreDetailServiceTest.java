@@ -37,6 +37,10 @@ public class StoreDetailServiceTest {
     private UmbrellaService umbrellaService;
     @Mock
     private StoreDetailRepository storeDetailRepository;
+    @Mock
+    private BusinessHourService businessHourService;
+    @Mock
+    private StoreImageService storeImageService;
     @InjectMocks
     private StoreDetailService storeDetailService;
 

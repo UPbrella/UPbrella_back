@@ -10,6 +10,7 @@ public class UmbrellaResponse {
 
     private long id;
     private long storeMetaId;
+    private String storeName;
     private long uuid;
     private boolean rentable;
 
@@ -18,6 +19,7 @@ public class UmbrellaResponse {
                 .id(umbrella.getId())
                 .rentable(umbrella.isRentable())
                 .storeMetaId(umbrella.getStoreMeta().getId())
+                .storeName(umbrella.getStoreMeta().getName())
                 .uuid(umbrella.getUuid())
                 .build();
     }
