@@ -34,14 +34,14 @@ public class UmbrellaService {
 
     public List<UmbrellaResponse> findAllUmbrellas(Pageable pageable) {
 
-        return umbrellaRepository.findByDeletedIsFalseOrderById(pageable)
+        return umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable)
                 .stream().map(UmbrellaResponse::fromUmbrella)
                 .collect(Collectors.toList());
     }
 
     public List<UmbrellaResponse> findUmbrellasByStoreId(long storeId, Pageable pageable) {
 
-        return umbrellaRepository.findByStoreMetaIdAndDeletedIsFalseOrderById(storeId, pageable)
+        return umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(storeId, pageable)
                 .stream().map(UmbrellaResponse::fromUmbrella)
                 .collect(Collectors.toList());
     }

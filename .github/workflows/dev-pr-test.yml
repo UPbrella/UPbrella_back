@@ -25,6 +25,7 @@ jobs:
         run: |
           touch src/main/resources/application.properties
           echo "${{ secrets.APPLICATION_PROPERTIES_DEV }}" > src/main/resources/application.properties
+          echo "${{ secrets.APPLICATION_PROPERTIES_TEST }}" > src/test/resources/application.properties
       - name: Test with Gradle
         run: |
           chmod +x gradlew

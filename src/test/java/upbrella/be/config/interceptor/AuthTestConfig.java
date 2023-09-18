@@ -1,23 +1,23 @@
-package upbrella.be.config;
+package upbrella.be.config.interceptor;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import upbrella.be.config.interceptor.AdminInterceptor;
-import upbrella.be.config.interceptor.LoginInterceptor;
 
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 import static org.springframework.core.Ordered.LOWEST_PRECEDENCE;
 
+@Profile("test")
 @Configuration
-@RequiredArgsConstructor
-@Profile("!test")
-public class AuthConfig implements WebMvcConfigurer {
+public class AuthTestConfig implements WebMvcConfigurer  {
 
-    private final LoginInterceptor loginInterceptor;
-    private final AdminInterceptor adminInterceptor;
+    @Autowired
+    private LoginInterceptor loginInterceptor;
+    @Autowired
+    private AdminInterceptor adminInterceptor;
+
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -25,6 +25,8 @@ public class AuthConfig implements WebMvcConfigurer {
                 .order(HIGHEST_PRECEDENCE)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
+                        "/oauth/token",
+                        "/user/me",
                         "/users/login/**",
                         "/users/oauth/login/**",
                         "/users/join/**",
@@ -39,6 +41,8 @@ public class AuthConfig implements WebMvcConfigurer {
                 .order(LOWEST_PRECEDENCE)
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns(
+                        "/oauth/token",
+                        "/user/me",
                         "/users/login/**",
                         "/users/oauth/login/**",
                         "/users/join/**",
