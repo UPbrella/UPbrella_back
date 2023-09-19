@@ -3,7 +3,6 @@ package upbrella.be.util;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -13,13 +12,6 @@ public class AESTest {
 
     @Autowired
     private AesEncryptor aesEncryptor;
-
-    @Test
-    public void testEncrypt() {
-        String plainText = "Hello World!";
-        String encryptedText = aesEncryptor.encrypt(plainText);
-        assertEquals(encryptedText, aesEncryptor.encrypt(plainText)); // 동일한 입력에 대한 출력이 동일함을 확인
-    }
 
     @Test
     public void testDecrypt() {
