@@ -16,6 +16,7 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
+import upbrella.be.rent.exception.NotAvailableUmbrellaException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
@@ -69,6 +70,10 @@ public class RentService {
                 });
 
         Umbrella willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.getUmbrellaId());
+
+        if (!willRentUmbrella.isRentable()){
+            throw new NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.");
+        }
 
         StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
 
