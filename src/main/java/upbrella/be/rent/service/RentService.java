@@ -74,12 +74,10 @@ public class RentService {
         if (!willRentUmbrella.isRentable()){
             throw new NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.");
         }
-
+        willRentUmbrella.rentUmbrella();
         StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
 
         String conditionReport = rentUmbrellaByUserRequest.getConditionReport();
-
-
 
         History history = rentRepository.save(History.ofCreatedByNewRent(willRentUmbrella, userToRent, rentalStore));
 
@@ -100,6 +98,8 @@ public class RentService {
         StoreMeta returnStore = storeMetaService.findStoreMetaById(request.getReturnStoreId());
 
         History updatedHistory = History.updateHistoryForReturn(history, returnStore, request);
+        Umbrella returnedUmbrella = history.getUmbrella();
+        returnedUmbrella.returnUmbrella();
 
         rentRepository.save(updatedHistory);
         addImprovementReportFromReturnByUser(updatedHistory, request);
