@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
+import upbrella.be.rent.dto.HistoryInfoDto;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
@@ -120,7 +121,7 @@ class RentServiceTest {
                 .id(1L)
                 .content("상태 양호")
                 .history(history)
-                .build() ;
+                .build();
 
     }
 
@@ -200,7 +201,7 @@ class RentServiceTest {
     class findAllHistories {
 
         private List<RentalHistoryResponse> expectedRentalHistoryResponses = new ArrayList<>();
-        private List<History> generatedHistories = new ArrayList<>();
+        private List<HistoryInfoDto> generatedHistories = new ArrayList<>();
 
         @Test
         @DisplayName("조건이 없는 경우 전체 대여/반납 현황을 조회할 수 있다.")
@@ -213,8 +214,21 @@ class RentServiceTest {
             Pageable pageable = PageRequest.of(0, 5);
 
             for (int i = 0; i < 5; i++) {
-                generatedHistories.add(FixtureBuilderFactory.builderHistory(aesEncryptor)
-                        .sample());
+                generatedHistories.add(HistoryInfoDto.builder()
+                        .id(i)
+                        .name("테스터")
+                        .phoneNumber("010-1234-5678")
+                        .rentStoreName("motive study cafe")
+                        .rentAt(LocalDateTime.of(1000, 12, 3, 4, 24))
+                        .umbrellaUuid(99L)
+                        .returnStoreName("motive study cafe")
+                        .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
+                        .paidAt(LocalDateTime.of(1000, 12, 3, 4, 26))
+                        .bank("국민은행")
+                        .accountNumber("1234567890")
+                        .etc("etc")
+                        .refundedAt(LocalDateTime.of(1000, 12, 3, 4, 27))
+                        .build());
             }
 
             expectedRentalHistoryResponses = generatedHistories.stream()
@@ -229,7 +243,7 @@ class RentServiceTest {
                     .countOfAllPages(1L)
                     .build();
 
-            given(rentRepository.findAll(filter, pageable))
+            given(rentRepository.findHistoryInfos(filter, pageable))
                     .willReturn(generatedHistories);
             given(rentRepository.countAll(filter, pageable))
                     .willReturn(5L);
@@ -246,7 +260,7 @@ class RentServiceTest {
                     () -> then(rentRepository).should(times(1))
                             .countAll(filter, pageable),
                     () -> then(rentRepository).should(times(1))
-                            .findAll(filter, pageable)
+                            .findHistoryInfos(filter, pageable)
             );
         }
     }

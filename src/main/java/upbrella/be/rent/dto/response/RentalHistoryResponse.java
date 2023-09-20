@@ -2,6 +2,7 @@ package upbrella.be.rent.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import upbrella.be.rent.dto.HistoryInfoDto;
 import upbrella.be.rent.entity.History;
 
 import java.time.LocalDateTime;
@@ -28,47 +29,47 @@ public class RentalHistoryResponse {
     private String accountNumber;
     private String etc;
 
-    public static RentalHistoryResponse createReturnedHistory(History history, int elapsedDay, int totalRentalDay) {
-
-        return RentalHistoryResponse.builder()
-                .id(history.getId())
-                .name(history.getUser().getName())
-                .phoneNumber(history.getUser().getPhoneNumber())
-                .rentStoreName(history.getRentStoreMeta().getName())
-                .rentAt(history.getRentedAt())
-                .elapsedDay(elapsedDay)
-                .paid(history.getPaidAt() != null)
-                .umbrellaUuid(history.getUmbrella().getUuid())
-                .returnStoreName(history.getReturnStoreMeta().getName())
-                .returnAt(history.getReturnedAt())
-                .totalRentalDay(totalRentalDay)
-                .refundCompleted(isRefunded(history))
-                .bank(history.getBank())
-                .accountNumber(history.getAccountNumber())
-                .etc(history.getEtc())
-                .build();
-    }
-
-    public static RentalHistoryResponse createNonReturnedHistory(History history, int elapsedDay) {
-
-        return RentalHistoryResponse.builder()
-                .id(history.getId())
-                .name(history.getUser().getName())
-                .phoneNumber(history.getUser().getPhoneNumber())
-                .rentStoreName(history.getRentStoreMeta().getName())
-                .rentAt(history.getRentedAt())
-                .elapsedDay(elapsedDay)
-                .paid(history.getPaidAt() != null)
-                .umbrellaUuid(history.getUmbrella().getUuid())
-                .refundCompleted(isRefunded(history))
-                .bank(history.getBank())
-                .accountNumber(history.getAccountNumber())
-                .etc(history.getEtc())
-                .build();
-    }
-
     private static boolean isRefunded(History history) {
 
         return history.getRefundedAt() != null;
+    }
+
+    public static RentalHistoryResponse createReturnedHistory(HistoryInfoDto history, int elapsedDay, int totalRentalDay) {
+
+        return RentalHistoryResponse.builder()
+                .id(history.getId())
+                .name(history.getName())
+                .phoneNumber(history.getPhoneNumber())
+                .rentStoreName(history.getRentStoreName())
+                .rentAt(history.getRentAt())
+                .elapsedDay(elapsedDay)
+                .paid(history.getPaidAt() != null)
+                .umbrellaUuid(history.getUmbrellaUuid())
+                .returnStoreName(history.getReturnStoreName())
+                .returnAt(history.getReturnAt())
+                .totalRentalDay(totalRentalDay)
+                .refundCompleted(history.getRefundedAt() != null)
+                .bank(history.getBank())
+                .accountNumber(history.getAccountNumber())
+                .etc(history.getEtc())
+                .build();
+    }
+
+    public static RentalHistoryResponse createNonReturnedHistory(HistoryInfoDto history, int elapsedDay) {
+
+        return RentalHistoryResponse.builder()
+                .id(history.getId())
+                .name(history.getName())
+                .phoneNumber(history.getPhoneNumber())
+                .rentStoreName(history.getRentStoreName())
+                .rentAt(history.getRentAt())
+                .elapsedDay(elapsedDay)
+                .paid(history.getPaidAt() != null)
+                .umbrellaUuid(history.getUmbrellaUuid())
+                .refundCompleted(history.getRefundedAt() != null)
+                .bank(history.getBank())
+                .accountNumber(history.getAccountNumber())
+                .etc(history.getEtc())
+                .build();
     }
 }

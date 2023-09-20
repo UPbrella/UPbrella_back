@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import upbrella.be.rent.dto.HistoryInfoDto;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
@@ -75,7 +76,6 @@ public class RentService {
         String conditionReport = rentUmbrellaByUserRequest.getConditionReport();
 
 
-
         History history = rentRepository.save(History.ofCreatedByNewRent(willRentUmbrella, userToRent, rentalStore));
 
         ConditionReport conditionReportToSave = ConditionReport.builder()
@@ -138,8 +138,7 @@ public class RentService {
 
     private List<RentalHistoryResponse> findAllRentalHistory(HistoryFilterRequest filter, Pageable pageable) {
 
-        return findAll(filter, pageable)
-                .stream()
+        return findHistoryInfos(filter, pageable).stream()
                 .map(this::toRentalHistoryResponse)
                 .collect(Collectors.toList());
     }
@@ -167,15 +166,15 @@ public class RentService {
         return SingleHistoryResponse.ofUserHistory(history, returnAt, isReturned, isRefunded);
     }
 
-    private RentalHistoryResponse toRentalHistoryResponse(History history) {
+    private RentalHistoryResponse toRentalHistoryResponse(HistoryInfoDto history) {
 
-        int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentedAt().getDayOfYear();
+        int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentAt().getDayOfYear();
         int totalRentalDay = 0;
 
-        if (history.getReturnedAt() != null) {
+        if (history.getReturnAt() != null) {
 
-            elapsedDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
-            totalRentalDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
+            elapsedDay = history.getReturnAt().getDayOfYear() - history.getRentAt().getDayOfYear();
+            totalRentalDay = history.getReturnAt().getDayOfYear() - history.getRentAt().getDayOfYear();
 
             return RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay);
         }
@@ -237,5 +236,10 @@ public class RentService {
         History history = findHistoryById(historyId);
 
         history.deleteBankAccount();
+    }
+
+    private List<HistoryInfoDto> findHistoryInfos(HistoryFilterRequest filter, Pageable pageable) {
+
+        return rentRepository.findHistoryInfos(filter, pageable);
     }
 }
