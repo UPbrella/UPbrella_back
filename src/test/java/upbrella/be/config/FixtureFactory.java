@@ -2,6 +2,7 @@ package upbrella.be.config;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
+import upbrella.be.rent.dto.response.HistoryInfoDto;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.History;
 import upbrella.be.store.entity.StoreMeta;
@@ -97,20 +98,20 @@ public class FixtureFactory {
         return fixtureMonkey.giveMeOne(KakaoLoginResponse.class);
     }
 
-    public static RentalHistoryResponse buildRentalHistoryResponseWithHistory(History history) {
+    public static RentalHistoryResponse buildRentalHistoryResponseWithHistory(HistoryInfoDto history) {
 
         return fixtureMonkey.giveMeBuilder(RentalHistoryResponse.class)
                 .set("id", history.getId())
-                .set("name", history.getUser().getName())
-                .set("phoneNumber", history.getUser().getPhoneNumber())
-                .set("rentStoreName", history.getRentStoreMeta().getName())
-                .set("rentAt", history.getRentedAt())
+                .set("name", history.getName())
+                .set("phoneNumber", history.getPhoneNumber())
+                .set("rentStoreName", history.getRentStoreName())
+                .set("rentAt", history.getRentAt())
                 .set("elapsedDay", calElapsedDay(history))
                 .set("paid", history.getPaidAt() != null)
-                .set("umbrellaUuid", history.getUmbrella().getUuid())
-                .set("returnStoreName", history.getReturnStoreMeta().getName())
-                .set("returnAt", history.getReturnedAt())
-                .set("totalRentalDay", history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear())
+                .set("umbrellaUuid", history.getUmbrellaUuid())
+                .set("returnStoreName", history.getReturnStoreName())
+                .set("returnAt", history.getReturnAt())
+                .set("totalRentalDay", history.getReturnAt().getDayOfYear() - history.getRentAt().getDayOfYear())
                 .set("refundCompleted", true)
                 .set("bank", history.getBank())
                 .set("accountNumber", history.getAccountNumber())
@@ -118,12 +119,12 @@ public class FixtureFactory {
                 .sample();
     }
 
-    private static int calElapsedDay(History history) {
+    private static int calElapsedDay(HistoryInfoDto history) {
 
-        int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentedAt().getDayOfYear();
+        int elapsedDay = LocalDateTime.now().getDayOfYear() - history.getRentAt().getDayOfYear();
 
-        if (history.getReturnedAt() != null) {
-            elapsedDay = history.getReturnedAt().getDayOfYear() - history.getRentedAt().getDayOfYear();
+        if (history.getReturnAt() != null) {
+            elapsedDay = history.getReturnAt().getDayOfYear() - history.getRentAt().getDayOfYear();
         }
 
         return elapsedDay;

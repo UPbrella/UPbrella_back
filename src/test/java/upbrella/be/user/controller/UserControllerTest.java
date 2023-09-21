@@ -101,7 +101,11 @@ public class UserControllerTest extends RestDocsSupport {
                                         .optional(),
                                 fieldWithPath("accountNumber").type(JsonFieldType.STRING)
                                         .description("사용자 계좌번호")
-                                        .optional()
+                                        .optional(),
+                                fieldWithPath("email").type(JsonFieldType.STRING)
+                                        .description("사용자 이메일"),
+                                fieldWithPath("adminStatus").type(JsonFieldType.BOOLEAN)
+                                        .description("관리자 여부")
                         )));
     }
 
