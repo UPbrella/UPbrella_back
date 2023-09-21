@@ -78,7 +78,7 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
     @Override
     public List<HistoryInfoDto> findHistoryInfos(HistoryFilterRequest filter, Pageable pageable) {
 
-        List<HistoryInfoDto> fetch = queryFactory
+        return queryFactory
                 .select(new QTestDto(
                         history.id,
                         history.user.name,
@@ -104,7 +104,5 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
-        return fetch;
     }
 }
