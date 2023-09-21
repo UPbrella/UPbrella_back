@@ -1,4 +1,4 @@
-package upbrella.be.rent.dto;
+package upbrella.be.rent.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;

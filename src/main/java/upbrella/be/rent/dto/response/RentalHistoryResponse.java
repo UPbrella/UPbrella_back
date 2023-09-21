@@ -2,7 +2,6 @@ package upbrella.be.rent.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import upbrella.be.rent.dto.HistoryInfoDto;
 import upbrella.be.rent.entity.History;
 
 import java.time.LocalDateTime;

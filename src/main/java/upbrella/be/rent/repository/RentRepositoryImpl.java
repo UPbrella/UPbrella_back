@@ -4,7 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import upbrella.be.rent.dto.HistoryInfoDto;
+import upbrella.be.rent.dto.response.HistoryInfoDto;
 import upbrella.be.rent.dto.QTestDto;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.entity.History;
