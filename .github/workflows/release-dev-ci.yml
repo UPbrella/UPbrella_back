@@ -109,7 +109,7 @@ jobs:
           username: ${{ secrets.NGRINDER_ADMIN_USERNAME }}
           password: ${{ secrets.NGRINDER_ADMIN_PASSWORD }}
           customHeaders: '{"Content-Type": "application/json"}'
-          data: '{"param" : "${{ secrets.AWS_EC2_TEST_SERVER_IP }}", "testName" : "upbrella-test", "tagString" : "upbrella-test", "description" : "upbrella-test", "scheduledTime" : "", "useRampUp": false, "rampUpType" : "PROCESS", "threshold" : "D", "scriptName" : "upbrella-test.groovy", "duration" : 0:4:0, "runCount" : 1, "agentCount" : 1, "vuserPerAgent" : 1, "processes" : 1, "rampUpInitCount" : 0, "rampUpInitSleepTime" : 0, "rampUpStep" : 1, "rampUpIncrementInterval" : 1000, "threads": 1, "testComment" : "upbrella-test", "samplingInterval" : 2, "ignoreSampleCount" : 0, "status" : "READY"}'
+          data: '{"param" : "${{ secrets.AWS_EC2_TEST_SERVER_IP }}", "testName" : "upbrella-test", "tagString" : "upbrella-test", "description" : "upbrella-test", "scheduledTime" : "", "useRampUp": false, "rampUpType" : "PROCESS", "threshold" : "D", "scriptName" : "upbrella-test.groovy", "duration" : 120000, "runCount" : 1, "agentCount" : 1, "vuserPerAgent" : 1, "processes" : 1, "rampUpInitCount" : 0, "rampUpInitSleepTime" : 0, "rampUpStep" : 1, "rampUpIncrementInterval" : 1000, "threads": 1, "testComment" : "upbrella-test", "samplingInterval" : 2, "ignoreSampleCount" : 0, "status" : "READY"}'
           timeout: '60000'
 
       - name: waiting test for 300 seconds
