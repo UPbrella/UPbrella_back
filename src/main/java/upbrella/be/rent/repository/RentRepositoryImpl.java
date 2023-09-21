@@ -4,7 +4,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import upbrella.be.rent.dto.response.HistoryInfoDto;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
+import upbrella.be.rent.dto.response.QHistoryInfoDto;
 import upbrella.be.rent.entity.History;
 
 import java.util.List;
@@ -71,5 +73,36 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
         }
 
         return history.refundedAt.isNull();
+    }
+
+    @Override
+    public List<HistoryInfoDto> findHistoryInfos(HistoryFilterRequest filter, Pageable pageable) {
+
+        return queryFactory
+                .select(new QHistoryInfoDto(
+                        history.id,
+                        history.user.name,
+                        history.user.phoneNumber,
+                        history.rentStoreMeta.name,
+                        history.rentedAt,
+                        history.umbrella.uuid,
+                        history.returnStoreMeta.name,
+                        history.returnedAt,
+                        history.paidAt,
+                        history.bank,
+                        history.accountNumber,
+                        history.etc,
+                        history.refundedAt
+                ))
+                .from(history)
+                .join(history.user, user)
+                .join(history.umbrella, umbrella)
+                .join(history.rentStoreMeta, storeMeta)
+                .leftJoin(history.returnStoreMeta, storeMeta)
+                .where(filterRefunded(filter))
+                .orderBy(history.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
     }
 }

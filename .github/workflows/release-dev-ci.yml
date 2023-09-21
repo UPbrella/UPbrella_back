@@ -64,3 +64,83 @@ jobs:
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
           --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=server-dev-deploy/$GITHUB_SHA.zip
+
+      # test에 필요한 ec2 인스턴스를 aws cli를 통해 실행
+      - name: Start nGrinder EC2 - (Controller, Agent)
+        run: aws ec2 start-instances --instance-ids ${{ secrets.AWS_EC2_NGRINDER_CONTROLLER }} ${{ secrets.AWS_EC2_NGRINDER_AGENT }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      # Dev server 완전히 실행될 때까지 기다림
+      - name: Sleep for 30 seconds - waiting controller,agent run
+        run: sleep 30s
+        shell: bash
+
+      # EC2- Ngrinder Controller를 실행
+      - name: Ngrinder Controller Start
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_CONTROLLER_IP }}
+          username: ubuntu
+          key: ${{ secrets.AWS_SECRET_PEM }}
+          script: |
+            bash ./controller.sh
+
+      - name: Ngrinder Agent Start
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_AGENT_IP }}
+          username: ubuntu
+          key: ${{ secrets.AWS_SECRET_PEM }}
+          script: |
+            bash ./agent.sh
+
+      - name: waiting controller,agent run
+        run: sleep 30s
+        shell: bash
+
+      - name: nGrinder Test
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'http://${{ secrets.AWS_EC2_CONTROLLER_IP }}/perftest/api'
+          method: 'POST'
+          username: ${{ secrets.NGRINDER_ADMIN_USERNAME }}
+          password: ${{ secrets.NGRINDER_ADMIN_PASSWORD }}
+          customHeaders: '{"Content-Type": "application/json"}'
+          data: '{"param" : "${{ secrets.AWS_EC2_TEST_SERVER_IP }}", "testName" : "upbrella-test", "tagString" : "upbrella-test", "description" : "upbrella-test", "scheduledTime" : "", "useRampUp": false, "rampUpType" : "PROCESS", "threshold" : "D", "scriptName" : "upbrella-test.groovy", "duration" : 240000, "runCount" : 1, "agentCount" : 1, "vuserPerAgent" : 30, "processes" : 2, "rampUpInitCount" : 0, "rampUpInitSleepTime" : 0, "rampUpStep" : 1, "rampUpIncrementInterval" : 1000, "threads": 15, "testComment" : "upbrella-test", "samplingInterval" : 2, "ignoreSampleCount" : 0, "status" : "READY"}'
+          timeout: '60000'
+
+      - name: waiting test for 300 seconds
+        run: sleep 300s
+        shell: bash
+
+
+      # Ngrinder Rest Api 를 통해 테스트 결과 조회
+      - name: Get Ngrinder test result ...
+        uses: satak/webrequest-action@master
+        id: NgrinderTestResult
+        with:
+          url: 'http://${{ secrets.AWS_EC2_CONTROLLER_IP }}/perftest/api?page=0'
+          method: GET
+          username: ${{ secrets.NGRINDER_ADMIN_USERNAME }}
+          password: ${{ secrets.NGRINDER_ADMIN_PASSWORD }}
+
+
+      - name: send test result to slack
+        uses: 8398a7/action-slack@v3
+        with:
+          text: '${{ steps.NgrinderTestResult.outputs.output }}'
+          status: ${{ job.status }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always() # Pick up events even if the job fails or is canceled.
+
+
+      - name: Stop Ngrinder EC2 - (Controller, Agent, Test Server)
+        run: aws ec2 stop-instances --instance-ids ${{ secrets.AWS_EC2_NGRINDER_CONTROLLER }} ${{ secrets.AWS_EC2_NGRINDER_AGENT }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}

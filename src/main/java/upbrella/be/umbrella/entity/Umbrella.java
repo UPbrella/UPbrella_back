@@ -66,4 +66,13 @@ public class Umbrella {
         this.etc = request.getEtc();
         this.missed = request.isMissed();
     }
+
+    public void rentUmbrella() {
+
+        this.rentable = false;
+    }
+
+    public void returnUmbrella() {
+        this.rentable = true;
+    }
 }

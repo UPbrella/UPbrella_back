@@ -74,8 +74,8 @@ class UserServiceDynamicTest {
                             () -> assertEquals(user.getPhoneNumber(), foundUser.get().getPhoneNumber()),
                             () -> assertEquals(user.isAdminStatus(), foundUser.get().isAdminStatus()),
                             () -> assertEquals(user.getSocialId(), foundUser.get().getSocialId()),
-                            () -> assertEquals(user.getAccountNumber(), foundUser.get().getAccountNumber()),
-                            () -> assertEquals(user.getBank(), foundUser.get().getBank())
+                            () -> assertEquals(aesEncryptor.decrypt(user.getAccountNumber()), aesEncryptor.decrypt(foundUser.get().getAccountNumber())),
+                            () -> assertEquals(aesEncryptor.decrypt(user.getBank()), aesEncryptor.decrypt(foundUser.get().getBank()))
                     );
                 }),
                 DynamicTest.dynamicTest("이미 가입된 유저는 예외가 발생된다.", () -> {
@@ -95,8 +95,8 @@ class UserServiceDynamicTest {
                             () -> assertEquals(user.getPhoneNumber(), foundUser.get().getPhoneNumber()),
                             () -> assertEquals(user.isAdminStatus(), foundUser.get().isAdminStatus()),
                             () -> assertEquals(user.getSocialId(), foundUser.get().getSocialId()),
-                            () -> assertEquals(user.getAccountNumber(), foundUser.get().getAccountNumber()),
-                            () -> assertEquals(user.getBank(), foundUser.get().getBank())
+                            () -> assertEquals(aesEncryptor.decrypt(user.getAccountNumber()), aesEncryptor.decrypt(foundUser.get().getAccountNumber())),
+                            () -> assertEquals(aesEncryptor.decrypt(user.getBank()), aesEncryptor.decrypt(foundUser.get().getBank()))
                     );
                 })
         );

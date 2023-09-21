@@ -13,6 +13,8 @@ public class UserInfoResponse {
     private String phoneNumber;
     private String bank;
     private String accountNumber;
+    private String email;
+    private boolean adminStatus;
 
     public static UserInfoResponse fromUser(User user) {
 
@@ -22,6 +24,8 @@ public class UserInfoResponse {
                 .phoneNumber(user.getPhoneNumber())
                 .bank(user.getBank())
                 .accountNumber(user.getAccountNumber())
+                .email(user.getEmail())
+                .adminStatus(user.isAdminStatus())
                 .build();
     }
 }
