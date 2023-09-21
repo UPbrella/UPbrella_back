@@ -32,7 +32,8 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/index.html",
                         "/error/**",
                         "/api/error/**",
-                        "/docs/**");
+                        "/docs/**",
+                        "/nGrinder/**");
 
 
         registry.addInterceptor(adminInterceptor)
