@@ -3,10 +3,7 @@ package upbrella.be.rent.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
-import upbrella.be.rent.exception.NonExistingHistoryException;
-import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
-import upbrella.be.rent.exception.NotRefundedException;
+import upbrella.be.rent.exception.*;
 import upbrella.be.store.exception.NonExistingClassificationException;
 import upbrella.be.util.CustomErrorResponse;
 
@@ -58,6 +55,18 @@ public class RentExceptionHandler {
                         "fail",
                         400,
                         "환불이 완료되지 않았습니다."
+                ));
+    }
+
+    @ExceptionHandler(NotAvailableUmbrellaException.class)
+    public ResponseEntity<CustomErrorResponse> notAvailableUmbrellaException(NotAvailableUmbrellaException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
+                        e.getMessage()
                 ));
     }
 }

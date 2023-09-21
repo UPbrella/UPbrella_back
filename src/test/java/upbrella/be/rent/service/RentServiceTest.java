@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
@@ -18,7 +19,9 @@ import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.entity.History;
+import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
+import upbrella.be.rent.exception.NotAvailableUmbrellaException;
 import upbrella.be.rent.exception.NotRefundedException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
@@ -46,8 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RentServiceTest {
@@ -538,5 +540,26 @@ class RentServiceTest {
         // then
         assertThatThrownBy(history::deleteBankAccount)
                 .isInstanceOf(NotRefundedException.class);
+    }
+
+    @Test
+    @DisplayName("우산이 대여중일 경우 예외가 발생한다.")
+    void notAvailableUmbrellaTest() {
+        // given
+        Umbrella umbrella = Umbrella.builder()
+                .id(1L)
+                .rentable(false)
+                .build();
+
+        when(rentRepository.findByUserIdAndReturnedAtIsNull(any()))
+                .thenReturn(Optional.empty());
+        when(umbrellaService.findUmbrellaById(99L))
+                .thenReturn(umbrella);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> rentService.addRental(rentUmbrellaByUserRequest, userToRent))
+                .isInstanceOf(NotAvailableUmbrellaException.class);
     }
 }
