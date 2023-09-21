@@ -5,8 +5,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import upbrella.be.rent.dto.response.HistoryInfoDto;
-import upbrella.be.rent.dto.QTestDto;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
+import upbrella.be.rent.dto.response.QHistoryInfoDto;
 import upbrella.be.rent.entity.History;
 
 import java.util.List;
@@ -79,7 +79,7 @@ public class RentRepositoryImpl implements RentRepositoryCustom {
     public List<HistoryInfoDto> findHistoryInfos(HistoryFilterRequest filter, Pageable pageable) {
 
         return queryFactory
-                .select(new QTestDto(
+                .select(new QHistoryInfoDto(
                         history.id,
                         history.user.name,
                         history.user.phoneNumber,
