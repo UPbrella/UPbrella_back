@@ -17,6 +17,7 @@ import upbrella.be.rent.entity.History;
 import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
+import upbrella.be.rent.exception.NotAvailableUmbrellaException;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
@@ -71,10 +72,13 @@ public class RentService {
 
         Umbrella willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.getUmbrellaId());
 
+        if (!willRentUmbrella.isRentable()){
+            throw new NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.");
+        }
+        willRentUmbrella.rentUmbrella();
         StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
 
         String conditionReport = rentUmbrellaByUserRequest.getConditionReport();
-
 
         History history = rentRepository.save(History.ofCreatedByNewRent(willRentUmbrella, userToRent, rentalStore));
 
@@ -95,6 +99,8 @@ public class RentService {
         StoreMeta returnStore = storeMetaService.findStoreMetaById(request.getReturnStoreId());
 
         History updatedHistory = History.updateHistoryForReturn(history, returnStore, request);
+        Umbrella returnedUmbrella = history.getUmbrella();
+        returnedUmbrella.returnUmbrella();
 
         rentRepository.save(updatedHistory);
         addImprovementReportFromReturnByUser(updatedHistory, request);
