@@ -27,79 +27,79 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
-      - name: Set application properties
-        run: |
-          touch src/main/resources/application.properties
-          echo "${{ secrets.APPLICATION_PROPERTIES_DEV }}" > src/main/resources/application.properties
-          echo "${{ secrets.APPLICATION_PROPERTIES_TEST }}" > src/test/resources/application.properties
+#      - name: Set application properties
+#        run: |
+#          touch src/main/resources/application.properties
+#          echo "${{ secrets.APPLICATION_PROPERTIES_DEV }}" > src/main/resources/application.properties
+#          echo "${{ secrets.APPLICATION_PROPERTIES_TEST }}" > src/test/resources/application.properties
+#
+#      - name: Build with Gradle
+#        run: |
+#          chmod +x gradlew
+#          ./gradlew clean build
+#        env:
+#          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
 
-      - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew clean build
-        env:
-          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-
-      - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
-        shell: bash
-
-
-      - name: Upload to S3
-        run:
-          aws s3 cp $GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/server-dev-deploy/$GITHUB_SHA.zip --region ${{ secrets.AWS_REGION }}
-
-      - name: Code Deploy
-        run: |
-          aws deploy create-deployment \
-          --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-          --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=server-dev-deploy/$GITHUB_SHA.zip
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#
+#
+#      - name: Make zip file
+#        run: zip -r ./$GITHUB_SHA.zip .
+#        shell: bash
+#
+#
+#      - name: Upload to S3
+#        run:
+#          aws s3 cp $GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/server-dev-deploy/$GITHUB_SHA.zip --region ${{ secrets.AWS_REGION }}
+#
+#      - name: Code Deploy
+#        run: |
+#          aws deploy create-deployment \
+#          --deployment-config-name CodeDeployDefault.AllAtOnce \
+#          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+#          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+#          --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=server-dev-deploy/$GITHUB_SHA.zip
 
       # test에 필요한 ec2 인스턴스를 aws cli를 통해 실행
-      - name: Start nGrinder EC2 - (Controller, Agent)
-        run: aws ec2 start-instances --instance-ids ${{ secrets.AWS_EC2_NGRINDER_CONTROLLER }} ${{ secrets.AWS_EC2_NGRINDER_AGENT }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-
-      # Dev server 완전히 실행될 때까지 기다림
-      - name: Sleep for 30 seconds - waiting controller,agent run
-        run: sleep 30s
-        shell: bash
-
-      # EC2- Ngrinder Controller를 실행
-      - name: Ngrinder Controller Start
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_EC2_CONTROLLER_IP }}
-          username: ubuntu
-          key: ${{ secrets.AWS_SECRET_PEM }}
-          script: |
-            bash ./controller.sh
-
-      - name: Ngrinder Agent Start
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_EC2_AGENT_IP }}
-          username: ubuntu
-          key: ${{ secrets.AWS_SECRET_PEM }}
-          script: |
-            bash ./agent.sh
-
-      - name: waiting controller,agent run
-        run: sleep 30s
-        shell: bash
+#      - name: Start nGrinder EC2 - (Controller, Agent)
+#        run: aws ec2 start-instances --instance-ids ${{ secrets.AWS_EC2_NGRINDER_CONTROLLER }} ${{ secrets.AWS_EC2_NGRINDER_AGENT }}
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+#
+#      # Dev server 완전히 실행될 때까지 기다림
+#      - name: Sleep for 30 seconds - waiting controller,agent run
+#        run: sleep 30s
+#        shell: bash
+#
+#      # EC2- Ngrinder Controller를 실행
+#      - name: Ngrinder Controller Start
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.AWS_EC2_CONTROLLER_IP }}
+#          username: ubuntu
+#          key: ${{ secrets.AWS_SECRET_PEM }}
+#          script: |
+#            bash ./controller.sh
+#
+#      - name: Ngrinder Agent Start
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.AWS_EC2_AGENT_IP }}
+#          username: ubuntu
+#          key: ${{ secrets.AWS_SECRET_PEM }}
+#          script: |
+#            bash ./agent.sh
+#
+#      - name: waiting controller,agent run
+#        run: sleep 30s
+#        shell: bash
 
       - name: nGrinder Test
         uses: fjogeleit/http-request-action@v1
