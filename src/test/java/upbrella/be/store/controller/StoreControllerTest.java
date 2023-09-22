@@ -577,9 +577,11 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("businessHour").type(JsonFieldType.STRING)
                                         .description("영업 시간"),
                                 fieldWithPath("contactNumber").type(JsonFieldType.STRING)
-                                        .description("연락처"),
+                                        .description("연락처")
+                                        .optional(),
                                 fieldWithPath("instagramId").type(JsonFieldType.STRING)
-                                        .description("인스타그램 아이디"),
+                                        .description("인스타그램 아이디")
+                                        .optional(),
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER)
                                         .description("위도"),
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER)
@@ -587,7 +589,8 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("content").type(JsonFieldType.STRING)
                                         .description("내용"),
                                 fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호"),
+                                        .description("비밀번호")
+                                        .optional(),
                                 fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
                                         .description("영업 시간"),
                                 fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
