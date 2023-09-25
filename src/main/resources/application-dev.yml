@@ -10,7 +10,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        show-sql: true
+        show-sql: false
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
@@ -20,12 +20,4 @@ spring:
     store-type: redis
     timeout: 3600
 
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql: trace
 
