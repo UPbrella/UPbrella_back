@@ -2,6 +2,7 @@ package upbrella.be.store.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,7 @@ public class StoreImageService {
     private String bucketName;
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public String uploadFile(MultipartFile file, long storeDetailId, String randomId) {
 
         String fileName = file.getOriginalFilename() + randomId;
@@ -58,6 +60,7 @@ public class StoreImageService {
     }
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public void deleteFile(long imageId) {
 
         StoreImage storeImage = storeImageRepository.findById(imageId)
