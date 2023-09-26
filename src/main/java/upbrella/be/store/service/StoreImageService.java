@@ -49,12 +49,11 @@ public class StoreImageService {
                 .contentType(contentType)
                 .build();
 
-        sb.append("https://")
+        String url = sb.append("https://")
                 .append(bucketName)
                 .append(".s3.ap-northeast-2.amazonaws.com/store-image/")
-                .append(fileName);
-
-        String url = sb.toString();
+                .append(fileName)
+                .toString();
 
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
