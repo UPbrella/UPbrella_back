@@ -36,6 +36,7 @@ public class StoreImageService {
     @CacheEvict(value = "stores", key = "'allStores'")
     public String uploadFile(MultipartFile file, long storeDetailId, String randomId) {
 
+        StringBuilder sb = new StringBuilder();
         String fileName = file.getOriginalFilename() + randomId;
         String contentType = file.getContentType();
 
@@ -48,7 +49,12 @@ public class StoreImageService {
                 .contentType(contentType)
                 .build();
 
-        String url = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/store-image/" + fileName;
+        sb.append("https://")
+                .append(bucketName)
+                .append(".s3.ap-northeast-2.amazonaws.com/store-image/")
+                .append(fileName);
+
+        String url = sb.toString();
 
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
