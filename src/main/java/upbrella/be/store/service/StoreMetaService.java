@@ -1,5 +1,6 @@
 package upbrella.be.store.service;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,6 +85,7 @@ public class StoreMetaService {
     }
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public void createStore(CreateStoreRequest store) {
 
         StoreMeta storeMeta = saveStoreMeta(store);
@@ -91,6 +93,7 @@ public class StoreMetaService {
     }
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public void deleteStoreMeta(long storeMetaId) {
 
         findStoreMetaById(storeMetaId).delete();
@@ -137,6 +140,7 @@ public class StoreMetaService {
     }
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public void activateStoreStatus(long storeId) {
 
         StoreDetail storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId);
@@ -150,6 +154,7 @@ public class StoreMetaService {
     }
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public void inactivateStoreStatus(long storeId) {
 
         StoreDetail storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId);

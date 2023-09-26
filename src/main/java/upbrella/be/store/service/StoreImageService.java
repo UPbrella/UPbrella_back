@@ -2,6 +2,7 @@ package upbrella.be.store.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,8 +33,10 @@ public class StoreImageService {
     private String bucketName;
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public String uploadFile(MultipartFile file, long storeDetailId, String randomId) {
 
+        StringBuilder sb = new StringBuilder();
         String fileName = file.getOriginalFilename() + randomId;
         String contentType = file.getContentType();
 
@@ -46,7 +49,11 @@ public class StoreImageService {
                 .contentType(contentType)
                 .build();
 
-        String url = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/store-image/" + fileName;
+        String url = sb.append("https://")
+                .append(bucketName)
+                .append(".s3.ap-northeast-2.amazonaws.com/store-image/")
+                .append(fileName)
+                .toString();
 
         try {
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
@@ -58,6 +65,7 @@ public class StoreImageService {
     }
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public void deleteFile(long imageId) {
 
         StoreImage storeImage = storeImageRepository.findById(imageId)
