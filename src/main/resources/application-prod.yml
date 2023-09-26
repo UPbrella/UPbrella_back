@@ -19,13 +19,3 @@ spring:
   session:
     store-type: redis
     timeout: 3600
-
-    show-sql: true
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql: trace
