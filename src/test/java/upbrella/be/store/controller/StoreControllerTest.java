@@ -14,10 +14,7 @@ import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
-import upbrella.be.store.service.ClassificationService;
-import upbrella.be.store.service.StoreDetailService;
-import upbrella.be.store.service.StoreImageService;
-import upbrella.be.store.service.StoreMetaService;
+import upbrella.be.store.service.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -47,11 +44,13 @@ class StoreControllerTest extends RestDocsSupport {
     private ClassificationService classificationService;
     @Mock
     private StoreDetailService storeDetailService;
+    @Mock
+    private BusinessHourService businessHourService;
 
     @Override
     protected Object initController() {
 
-        return new StoreController(storeImageService, storeMetaService, classificationService, storeDetailService);
+        return new StoreController(storeImageService, storeMetaService, classificationService, storeDetailService, businessHourService);
     }
 
     @Test

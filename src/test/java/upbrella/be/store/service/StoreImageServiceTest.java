@@ -41,7 +41,7 @@ class StoreImageServiceTest {
     @Mock
     private StoreImageRepository storeImageRepository;
     @Mock
-    private StoreDetailRepository storeDetailRepository;
+    private StoreDetailService storeDetailService;
     @InjectMocks
     private StoreImageService storeImageService;
 
@@ -57,7 +57,7 @@ class StoreImageServiceTest {
         String randomId = storeImageService.makeRandomId();
         String expectedUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg" + randomId;
 
-        given(storeDetailRepository.getReferenceById(storeDetailId)).willReturn(storeDetail);
+        given(storeDetailService.findByStoreMetaID(storeDetailId)).willReturn(storeDetail);
         given(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).willReturn(PutObjectResponse.builder().build());
 
         // when
@@ -66,7 +66,6 @@ class StoreImageServiceTest {
 
         // then
         Assertions.assertThat(result).isEqualTo(expectedUrl);
-        verify(storeDetailRepository, times(1)).getReferenceById(storeDetailId);
         verify(s3Client, times(1)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
         verify(storeImageRepository, times(1)).save(any(StoreImage.class));
     }

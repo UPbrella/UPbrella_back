@@ -35,7 +35,7 @@ public class StoreMeta {
     private double longitude;
     private String password;
     @OneToMany(mappedBy = "storeMeta", cascade = CascadeType.ALL)
-    private Set<BusinessHour> businessHours;
+    private List<BusinessHour> businessHours;
 
     public static StoreMeta createStoreMetaForSave(CreateStoreRequest request, Classification classification, Classification subClassification) {
 
@@ -63,7 +63,7 @@ public class StoreMeta {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .password(request.getPassword())
-                .businessHours(new HashSet<>(businessHours))
+                .businessHours(businessHours)
                 .build();
     }
 
@@ -88,7 +88,7 @@ public class StoreMeta {
 
     public boolean isOpenStore(LocalDateTime currentTime) {
 
-        Set<BusinessHour> businessHours = this.getBusinessHours();
+        List<BusinessHour> businessHours = this.getBusinessHours();
 
         return businessHours.stream()
                 .filter(businessHour -> businessHour.getDate().equals(currentTime.getDayOfWeek()))

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
+import upbrella.be.store.dto.response.AllBusinessHourResponse;
 import upbrella.be.store.dto.response.SingleBusinessHourResponse;
 import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.repository.BusinessHourRepository;
@@ -47,5 +48,13 @@ public class BusinessHourService {
                 .map(SingleBusinessHourResponse::createSingleHourResponse)
                 .sorted(Comparator.comparing(SingleBusinessHourResponse::getDate))
                 .collect(Collectors.toList());
+    }
+
+    public AllBusinessHourResponse findAllBusinessHours(Long storeId) {
+
+        List<BusinessHour> businessHours = findBusinessHourByStoreMetaId(storeId);
+        return AllBusinessHourResponse.builder()
+                .businessHours(createBusinessHourResponse(businessHours))
+                .build();
     }
 }

@@ -9,10 +9,7 @@ import upbrella.be.store.dto.request.CreateStoreRequest;
 import upbrella.be.store.dto.request.CreateSubClassificationRequest;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.dto.response.*;
-import upbrella.be.store.service.ClassificationService;
-import upbrella.be.store.service.StoreDetailService;
-import upbrella.be.store.service.StoreImageService;
-import upbrella.be.store.service.StoreMetaService;
+import upbrella.be.store.service.*;
 import upbrella.be.util.CustomResponse;
 
 import java.time.LocalDateTime;
@@ -26,6 +23,7 @@ public class StoreController {
     private final StoreMetaService storeMetaService;
     private final ClassificationService classificationService;
     private final StoreDetailService storeDetailService;
+    private final BusinessHourService businessHourService;
 
     @GetMapping("/stores/{storeId}")
     public ResponseEntity<CustomResponse<StoreFindByIdResponse>> findStoreById(@PathVariable long storeId) {
@@ -286,5 +284,17 @@ public class StoreController {
                         200,
                         "협업지점 비활성화 성공"
                 ));
+    }
+
+    @GetMapping("/admin/stores/{storeId}/businessHours")
+    public ResponseEntity<CustomResponse<AllBusinessHourResponse>> findAllBusinessHours(@PathVariable long storeId) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "협업지점 영업시간 전체 조회 성공",
+                        businessHourService.findAllBusinessHours(storeId)));
     }
 }
