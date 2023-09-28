@@ -105,3 +105,11 @@ include::{snippets}/store-find-all-images-doc/path-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/store-find-all-images-doc/http-response.adoc[]
+
+
+=== 협업지점 영업시간 조회
+==== HTTP Request
+include::{snippets}/store-find-all-business-hours-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/store-find-all-business-hours-doc/http-response.adoc[]

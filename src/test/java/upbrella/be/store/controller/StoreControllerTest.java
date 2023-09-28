@@ -928,14 +928,41 @@ class StoreControllerTest extends RestDocsSupport {
 
     @Test
     @DisplayName("협업지점의 영업시간들을 조회할 수 있다.")
-    void findAllBusinessHours() {
+    void findAllBusinessHours() throws Exception {
         // given
-
+        given(businessHourService.findAllBusinessHours(1L))
+                .willReturn(AllBusinessHourResponse.builder()
+                        .businessHours(List.of(SingleBusinessHourResponse.builder()
+                                .date(DayOfWeek.MONDAY)
+                                .openAt(LocalTime.of(10, 0))
+                                .closeAt(LocalTime.of(20, 0))
+                                .build()))
+                        .build());
 
         // when
-
+        businessHourService.findAllBusinessHours(1L);
 
         // then
-
+        mockMvc.perform(
+                        get("/admin/stores/{storeId}/businessHours", 1L)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-find-all-business-hours-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업 지점 고유번호")
+                        ),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("businessHours[]").type(JsonFieldType.ARRAY)
+                                        .description("협업 지점 영업시간 목록"),
+                                fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
+                                        .description("협업 지점 영업시간 요일"),
+                                fieldWithPath("businessHours[].openAt").type(JsonFieldType.STRING)
+                                        .description("협업 지점 영업시간 오픈시간"),
+                                fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
+                                        .description("협업 지점 영업시간 마감시간")
+                        )));
     }
 }
