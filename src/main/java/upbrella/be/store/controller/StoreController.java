@@ -112,19 +112,15 @@ public class StoreController {
     @GetMapping("/admin/stores/{storeId}/images")
     public ResponseEntity<CustomResponse<AllImageUrlResponse>> findAllImages(@PathVariable Long storeId) {
 
-        AllImageUrlResponse allImages = storeImageService.findAllImages(storeId);
-
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
                         "success",
                         200,
                         "협업지점 이미지 전체 조회 성공",
-                        allImages
+                        storeImageService.findAllImages(storeId)
                 ));
     }
-
-
 
     @PostMapping(value = "/admin/stores/{storeId}/images", consumes = {"multipart/form-data"})
     public ResponseEntity<CustomResponse> uploadStoreImage(@RequestPart MultipartFile image, @PathVariable long storeId) {

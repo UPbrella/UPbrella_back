@@ -1,8 +1,8 @@
 package upbrella.be.store.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,23 +15,29 @@ import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.exception.NonExistingStoreImageException;
-import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class StoreImageService {
 
     private final S3Client s3Client;
     private final StoreImageRepository storeImageRepository;
-    private final StoreDetailRepository storeDetailRepository;
+    private final StoreDetailService storeDetailService;
 
     @Value("${AWS_S3_BUCKET}")
     private String bucketName;
+
+    public StoreImageService(S3Client s3Client, StoreImageRepository storeImageRepository, @Lazy StoreDetailService storeDetailService) {
+
+        this.s3Client = s3Client;
+        this.storeImageRepository = storeImageRepository;
+        this.storeDetailService = storeDetailService;
+    }
 
     @Transactional
     @CacheEvict(value = "stores", key = "'allStores'")
@@ -90,7 +96,11 @@ public class StoreImageService {
 
     public AllImageUrlResponse findAllImages(long storeId) {
 
-        return null;
+        StoreDetail storeDetail = storeDetailService.findByStoreMetaID(storeId);
+
+        return AllImageUrlResponse.of(storeId, storeDetail.getStoreImages().stream()
+                .map(SingleImageUrlResponse::createImageUrlResponse)
+                .collect(Collectors.toList()));
     }
 
     private void deleteFileInS3(String imgUrl) {
@@ -105,9 +115,9 @@ public class StoreImageService {
         s3Client.deleteObject(deleteObjectRequest);
     }
 
-    private void saveStoreImage(String imageUrl, long storeDetailId) {
+    private void saveStoreImage(String imageUrl, long storeId) {
 
-        StoreDetail storeDetail = storeDetailRepository.getReferenceById(storeDetailId);
+        StoreDetail storeDetail = storeDetailService.findByStoreMetaID(storeId);
         storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imageUrl));
     }
 
