@@ -7,7 +7,6 @@ import upbrella.be.store.entity.StoreDetail;
 import java.util.List;
 import java.util.Optional;
 
-import static upbrella.be.store.entity.QBusinessHour.businessHour;
 import static upbrella.be.store.entity.QClassification.classification;
 import static upbrella.be.store.entity.QStoreDetail.storeDetail;
 import static upbrella.be.store.entity.QStoreImage.storeImage;
@@ -26,8 +25,6 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
                 .join(storeDetail.storeMeta, storeMeta).fetchJoin()
                 .join(storeMeta.classification, classification).fetchJoin()
                 .join(storeMeta.subClassification, classification).fetchJoin()
-                .leftJoin(storeMeta.businessHours, businessHour).fetchJoin()
-                .leftJoin(storeDetail.storeImages, storeImage).fetchJoin()
                 .where(storeMeta.deleted.isFalse())
                 .distinct()
                 .fetch();

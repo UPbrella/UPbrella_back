@@ -10,6 +10,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import upbrella.be.store.dto.response.AllImageUrlResponse;
 import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
@@ -85,6 +86,11 @@ public class StoreImageService {
     public String makeRandomId() {
 
         return UUID.randomUUID().toString().substring(0, 10);
+    }
+
+    public AllImageUrlResponse findAllImages(long storeId) {
+
+        return null;
     }
 
     private void deleteFileInS3(String imgUrl) {

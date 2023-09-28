@@ -77,15 +77,7 @@ public class StoreDetailService {
 
     private SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
 
-        List<SingleImageUrlResponse> sortedImageUrls = storeDetail.getSortedStoreImages().stream()
-                .map(SingleImageUrlResponse::createImageUrlResponse)
-                .collect(Collectors.toList());
-
-        String thumbnail = storeImageService.createThumbnail(sortedImageUrls);
-        Set<BusinessHour> businessHourSet = storeDetail.getStoreMeta().getBusinessHours();
-        List<BusinessHour> businessHourList = new ArrayList<>(businessHourSet);
-        List<SingleBusinessHourResponse> businessHours = businessHourService.createBusinessHourResponse(businessHourList);
-        return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail, thumbnail, sortedImageUrls, businessHours);
+        return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail);
     }
 
     @Transactional
