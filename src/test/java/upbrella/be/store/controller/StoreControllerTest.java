@@ -14,6 +14,7 @@ import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
+import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.service.*;
 
 import java.time.DayOfWeek;
@@ -850,8 +851,8 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                patch("/admin/stores/{storeId}/activate", storeId)
-        ).andDo(print())
+                        patch("/admin/stores/{storeId}/activate", storeId)
+                ).andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("store-update-activate-status-doc",
                         getDocumentRequest(),
@@ -882,5 +883,59 @@ class StoreControllerTest extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("storeId").description("협업 지점 고유번호")
                         )));
+    }
+
+    @Test
+    @DisplayName("협업지점의 이미지들을 조회할 수 있다.")
+    void findAllImages() throws Exception {
+        // given
+        given(storeImageService.findAllImages(1L))
+                .willReturn(AllImageUrlResponse
+                        .builder()
+                        .storeId(1L)
+                        .images(List.of(SingleImageUrlResponse.builder()
+                                .id(1L)
+                                .imageUrl("url")
+                                .build()))
+                        .build());
+
+        // when
+        storeImageService.findAllImages(1L);
+
+        // then
+        mockMvc.perform(
+                        get("/admin/stores/{storeId}/images", 1L)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-find-all-images-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업 지점 고유번호")
+                        ),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("storeId").type(JsonFieldType.NUMBER)
+                                        .description("협업 지점 고유번호"),
+                                fieldWithPath("images[]").type(JsonFieldType.ARRAY)
+                                        .description("협업 지점 이미지 목록"),
+                                fieldWithPath("images[].id").type(JsonFieldType.NUMBER)
+                                        .description("협업 지점 이미지 고유번호"),
+                                fieldWithPath("images[].imageUrl").type(JsonFieldType.STRING)
+                                        .description("협업 지점 이미지 URL")
+                        )));
+    }
+
+    @Test
+    @DisplayName("협업지점의 영업시간들을 조회할 수 있다.")
+    void findAllBusinessHours() {
+        // given
+
+
+        // when
+
+
+        // then
+
     }
 }

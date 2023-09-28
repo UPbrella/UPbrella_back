@@ -97,3 +97,11 @@ include::{snippets}/store-update-activate-status-doc/path-parameters.adoc[]
 === 협업지점 비활성화
 include::{snippets}/store-update-inactivate-status-doc/http-request.adoc[]
 include::{snippets}/store-update-inactivate-status-doc/path-parameters.adoc[]
+
+=== 협업지점 이미지 조회
+==== HTTP Request
+include::{snippets}/store-find-all-images-doc/http-request.adoc[]
+include::{snippets}/store-find-all-images-doc/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/store-find-all-images-doc/http-response.adoc[]
