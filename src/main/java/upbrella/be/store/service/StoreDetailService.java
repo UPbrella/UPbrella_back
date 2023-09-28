@@ -1,6 +1,8 @@
 package upbrella.be.store.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
@@ -27,6 +29,7 @@ public class StoreDetailService {
     private final StoreImageService storeImageService;
 
     @Transactional
+    @CacheEvict(value = "stores", key = "'allStores'")
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 
         StoreDetail storeDetailById = findStoreDetailByStoreMetaId(storeId);
@@ -63,6 +66,7 @@ public class StoreDetailService {
     }
 
     @Transactional
+    @Cacheable(value = "stores", key = "'allStores'")
     public List<SingleStoreResponse> findAllStores() {
 
         List<StoreDetail> storeDetails = storeDetailRepository.findAllStores();
@@ -71,7 +75,7 @@ public class StoreDetailService {
                 .collect(Collectors.toList());
     }
 
-    public SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
+    private SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
 
         List<SingleImageUrlResponse> sortedImageUrls = storeDetail.getSortedStoreImages().stream()
                 .map(SingleImageUrlResponse::createImageUrlResponse)
@@ -84,6 +88,7 @@ public class StoreDetailService {
         return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail, thumbnail, sortedImageUrls, businessHours);
     }
 
+    @Transactional
     public AllStoreIntroductionResponse findAllStoreIntroductions() {
 
         List<StoreDetail> storeDetails = storeDetailRepository.findAllStores();
@@ -100,6 +105,7 @@ public class StoreDetailService {
         return AllStoreIntroductionResponse.of(storeDetailsByClassification);
     }
 
+    @Transactional
     public void saveStoreDetail(StoreDetail storeDetail) {
 
         storeDetailRepository.save(storeDetail);
