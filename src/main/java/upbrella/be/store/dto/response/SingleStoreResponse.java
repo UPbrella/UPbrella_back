@@ -3,13 +3,14 @@ package upbrella.be.store.dto.response;
 import lombok.*;
 import upbrella.be.store.entity.StoreDetail;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class SingleStoreResponse {
+public class SingleStoreResponse implements Serializable {
 
     private long id;
     private String name;
