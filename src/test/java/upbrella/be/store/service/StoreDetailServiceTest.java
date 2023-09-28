@@ -238,7 +238,6 @@ public class StoreDetailServiceTest {
                     .latitude(33.33)
                     .longitude(33.33)
                     .password("비밀번호")
-                    .businessHours(List.of())
                     .umbrellaLocation("우산 위치")
                     .businessHour("근무 시간")
                     .instagramId("인스타그램 주소")
@@ -246,7 +245,6 @@ public class StoreDetailServiceTest {
                     .address("주소")
                     .addressDetail("상세 주소")
                     .content("내용")
-                    .imageUrls(List.of(SingleImageUrlResponse.createImageUrlResponse(first), SingleImageUrlResponse.createImageUrlResponse(second)))
                     .build();
 
             // when
