@@ -105,22 +105,26 @@ include::{snippets}/store-find-all-images-doc/path-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/store-find-all-images-doc/http-response.adoc[]
+include::{snippets}/store-find-all-images-doc/response-fields-data.adoc[]
 
 
 === 협업지점 영업시간 조회
 ==== HTTP Request
+include::{snippets}/store-find-all-business-hours-doc/path-parameters.adoc[]
 include::{snippets}/store-find-all-business-hours-doc/http-request.adoc[]
 
 ==== HTTP Response
 include::{snippets}/store-find-all-business-hours-doc/http-response.adoc[]
-
+include::{snippets}/store-find-all-business-hours-doc/response-fields-data.adoc[]
 
 === 협업지점 영업시간 등록
 ==== HTTP Request
 include::{snippets}/store-create-business-hour-doc/http-request.adoc[]
+include::{snippets}/store-create-business-hour-doc/request-fields.adoc[]
+include::{snippets}/store-find-all-business-hours-doc/path-parameters.adoc[]
 
 
-=== 협업지점 삭제
+=== 협업지점 영업시간 삭제
 ==== HTTP Request
 include::{snippets}/store-delete-business-hour-doc/http-request.adoc[]
 include::{snippets}/store-delete-business-hour-doc/path-parameters.adoc[]
