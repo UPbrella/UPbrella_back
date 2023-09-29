@@ -41,4 +41,13 @@ public class BusinessHour {
         this.openAt = businessHour.getOpenAt();
         this.closeAt = businessHour.getCloseAt();
     }
+
+    public static BusinessHour createBusinessHour(Long storeId, SingleBusinessHourRequest businessHour) {
+        return BusinessHour.builder()
+                .storeMeta(StoreMeta.builder().id(storeId).build())
+                .date(businessHour.getDate())
+                .openAt(businessHour.getOpenAt())
+                .closeAt(businessHour.getCloseAt())
+                .build();
+    }
 }

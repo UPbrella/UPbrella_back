@@ -4,7 +4,6 @@ import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Getter
 @Builder
@@ -34,5 +33,4 @@ public class UpdateStoreRequest {
     private double longitude;
     private String content;
     private String password;
-    private List<SingleBusinessHourRequest> businessHours;
 }

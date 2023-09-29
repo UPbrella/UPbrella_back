@@ -33,18 +33,14 @@ public class StoreDetailService {
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 
         StoreDetail storeDetailById = findStoreDetailByStoreMetaId(storeId);
-        long storeMetaId = storeDetailById.getStoreMeta().getId();
 
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(request.getSubClassificationId());
 
-        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeMetaId, request.getBusinessHours());
-
-        StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification, businessHours);
-
+        StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification);
         StoreMeta foundStoreMeta = storeDetailById.getStoreMeta();
-        foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
 
+        foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
         storeDetailById.updateStore(foundStoreMeta, request);
     }
 

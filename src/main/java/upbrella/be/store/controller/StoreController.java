@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import upbrella.be.store.dto.request.CreateClassificationRequest;
-import upbrella.be.store.dto.request.CreateStoreRequest;
-import upbrella.be.store.dto.request.CreateSubClassificationRequest;
-import upbrella.be.store.dto.request.UpdateStoreRequest;
+import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.service.*;
 import upbrella.be.util.CustomResponse;
@@ -296,5 +293,33 @@ public class StoreController {
                         200,
                         "협업지점 영업시간 전체 조회 성공",
                         businessHourService.findAllBusinessHours(storeId)));
+    }
+
+    @PostMapping("/admin/stores/{storeId}/businessHours")
+    public ResponseEntity<CustomResponse> createBusinessHour(@PathVariable long storeId, @RequestBody SingleBusinessHourRequest businessHour) {
+
+        businessHourService.createBusinessHour(storeId, businessHour);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "새로운 영업시간 등록 성공"
+                ));
+    }
+
+    @DeleteMapping("/admin/stores/businessHours/{businessHourId}")
+    public ResponseEntity<CustomResponse> deleteBusinessHour(@PathVariable long businessHourId) {
+
+        businessHourService.deleteBusinessHour(businessHourId);
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "새로운 영업시간 등록 성공"
+                ));
     }
 }

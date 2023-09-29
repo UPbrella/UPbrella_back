@@ -557,7 +557,6 @@ public class StoreDetailServiceTest {
                 .longitude(44.44)
                 .content("내용 수정")
                 .password("비밀번호 수정")
-                .businessHours(businessHoursUpdate)
                 .build();
 
 

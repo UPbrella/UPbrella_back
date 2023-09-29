@@ -50,11 +50,25 @@ public class BusinessHourService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public AllBusinessHourResponse findAllBusinessHours(Long storeId) {
 
         List<BusinessHour> businessHours = findBusinessHourByStoreMetaId(storeId);
         return AllBusinessHourResponse.builder()
                 .businessHours(createBusinessHourResponse(businessHours))
                 .build();
+    }
+
+    @Transactional
+    public void createBusinessHour(Long storeId, SingleBusinessHourRequest businessHour) {
+
+            BusinessHour newBusinessHour = BusinessHour.createBusinessHour(storeId, businessHour);
+            businessHourRepository.save(newBusinessHour);
+    }
+
+    @Transactional
+    public void deleteBusinessHour(Long businessHourId) {
+
+        businessHourRepository.deleteById(businessHourId);
     }
 }

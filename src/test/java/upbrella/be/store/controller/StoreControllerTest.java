@@ -14,7 +14,6 @@ import upbrella.be.store.dto.request.*;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.ClassificationType;
-import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.service.*;
 
 import java.time.DayOfWeek;
@@ -442,43 +441,6 @@ class StoreControllerTest extends RestDocsSupport {
                 .longitude(33.33)
                 .content("내용")
                 .password("비밀번호")
-                .businessHours(
-                        List.of(
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.MONDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.TUESDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.WEDNESDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.THURSDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.FRIDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.SATURDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build(),
-                                SingleBusinessHourRequest.builder()
-                                        .date(DayOfWeek.SUNDAY)
-                                        .openAt(LocalTime.of(10, 0))
-                                        .closeAt(LocalTime.of(20, 0))
-                                        .build()))
                 .build();
         long storeId = 1L;
 
@@ -530,15 +492,7 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("내용"),
                                 fieldWithPath("password").type(JsonFieldType.STRING)
                                         .description("비밀번호")
-                                        .optional(),
-                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
-                                        .description("영업 시간"),
-                                fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
-                                        .description("영업 요일"),
-                                fieldWithPath("businessHours[].openAt").type(JsonFieldType.STRING)
-                                        .description("오픈 시간"),
-                                fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
-                                        .description("마감 시간")
+                                        .optional()
                         )));
     }
 
@@ -933,6 +887,7 @@ class StoreControllerTest extends RestDocsSupport {
         given(businessHourService.findAllBusinessHours(1L))
                 .willReturn(AllBusinessHourResponse.builder()
                         .businessHours(List.of(SingleBusinessHourResponse.builder()
+                                .id(1L)
                                 .date(DayOfWeek.MONDAY)
                                 .openAt(LocalTime.of(10, 0))
                                 .closeAt(LocalTime.of(20, 0))
@@ -955,6 +910,8 @@ class StoreControllerTest extends RestDocsSupport {
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("businessHours[].id").type(JsonFieldType.NUMBER)
+                                        .description("협업 지점 고유번호"),
                                 fieldWithPath("businessHours[]").type(JsonFieldType.ARRAY)
                                         .description("협업 지점 영업시간 목록"),
                                 fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
@@ -964,5 +921,42 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
                                         .description("협업 지점 영업시간 마감시간")
                         )));
+    }
+
+    @Test
+    @DisplayName("협업지점의 영업시간을 추가할 수 있다.")
+    void createBusinessHourTest() throws Exception {
+        // given
+        SingleBusinessHourRequest request = SingleBusinessHourRequest.builder()
+                .date(DayOfWeek.MONDAY)
+                .openAt(LocalTime.of(10, 0))
+                .closeAt(LocalTime.of(20, 0))
+                .build();
+        // when
+
+
+        // then
+        mockMvc.perform(
+                post("/admin/stores/{storeId}/businessHours", 1L)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-create-business-hour-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeId").description("협업 지점 고유번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("date").type(JsonFieldType.STRING)
+                                        .description("협업 지점 영업시간 요일"),
+                                fieldWithPath("openAt").type(JsonFieldType.STRING)
+                                        .description("협업 지점 영업시간 오픈시간"),
+                                fieldWithPath("closeAt").type(JsonFieldType.STRING)
+                                        .description("협업 지점 영업시간 마감시간")
+                        )));
+
     }
 }

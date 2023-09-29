@@ -113,3 +113,8 @@ include::{snippets}/store-find-all-business-hours-doc/http-request.adoc[]
 
 ==== HTTP Response
 include::{snippets}/store-find-all-business-hours-doc/http-response.adoc[]
+
+
+=== 협업지점 영업시간 등록
+==== HTTP Request
+include::{snippets}/store-create-business-hour-doc/http-request.adoc[]

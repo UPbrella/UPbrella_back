@@ -6,9 +6,7 @@ import upbrella.be.store.dto.request.UpdateStoreRequest;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -52,7 +50,7 @@ public class StoreMeta {
                 .build();
     }
 
-    public static StoreMeta createStoreMetaForUpdate(UpdateStoreRequest request, Classification classification, Classification subClassification, List<BusinessHour> businessHours) {
+    public static StoreMeta createStoreMetaForUpdate(UpdateStoreRequest request, Classification classification, Classification subClassification) {
 
         return StoreMeta.builder()
                 .name(request.getName())
@@ -63,7 +61,6 @@ public class StoreMeta {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .password(request.getPassword())
-                .businessHours(businessHours)
                 .build();
     }
 
