@@ -319,7 +319,7 @@ public class StoreController {
                 .body(new CustomResponse<>(
                         "success",
                         200,
-                        "새로운 영업시간 등록 성공"
+                        "영업시간 삭제 성공"
                 ));
     }
 }

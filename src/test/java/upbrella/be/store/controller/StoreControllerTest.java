@@ -937,9 +937,9 @@ class StoreControllerTest extends RestDocsSupport {
 
         // then
         mockMvc.perform(
-                post("/admin/stores/{storeId}/businessHours", 1L)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
+                        post("/admin/stores/{storeId}/businessHours", 1L)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -956,6 +956,29 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("협업 지점 영업시간 오픈시간"),
                                 fieldWithPath("closeAt").type(JsonFieldType.STRING)
                                         .description("협업 지점 영업시간 마감시간")
+                        )));
+
+    }
+
+    @Test
+    @DisplayName("협업지점 영업시간 삭제 테스트")
+    void deleteBusinessHour() throws Exception {
+        // given
+
+
+        // when
+
+
+        // then
+        mockMvc.perform(
+                        delete("/admin/stores/businessHours/{businessHourId}", 1L)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("store-delete-business-hour-doc",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("businessHourId").description("협업 지점 영업시간 고유번호")
                         )));
 
     }

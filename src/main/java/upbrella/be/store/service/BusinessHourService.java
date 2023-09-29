@@ -7,6 +7,7 @@ import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.response.AllBusinessHourResponse;
 import upbrella.be.store.dto.response.SingleBusinessHourResponse;
 import upbrella.be.store.entity.BusinessHour;
+import upbrella.be.store.exception.NotExistBusinessHourException;
 import upbrella.be.store.repository.BusinessHourRepository;
 
 import java.util.Comparator;
@@ -68,6 +69,10 @@ public class BusinessHourService {
 
     @Transactional
     public void deleteBusinessHour(Long businessHourId) {
+
+        if (!businessHourRepository.existsById(businessHourId)) {
+            throw new NotExistBusinessHourException("[ERROR] 해당 시간대가 존재하지 않습니다.");
+        }
 
         businessHourRepository.deleteById(businessHourId);
     }
