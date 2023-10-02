@@ -1,5 +1,34 @@
-=== 유저 정보 조회
-// include::api/product/product.adoc[]
+=== 카카오 소셜 로그인
+
+==== HTTP Request
+
+include::{snippets}/user-login-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-login-doc/http-response.adoc[]
+
+=== 카카오 로그인을 통한 업브렐라 로그인
+
+==== HTTP Request
+include::{snippets}/user-upbrella-login-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-upbrella-login-doc/http-response.adoc[]
+
+=== 회원 가입
+
+==== HTTP Request
+
+include::{snippets}/user-join-doc/http-request.adoc[]
+include::{snippets}/user-join-doc/request-fields.adoc[]
+
+
+==== HTTP Response
+
+include::{snippets}/user-join-doc/http-response.adoc[]
+
+=== 로그인 유저 정보 조회
 
 ==== HTTP Request
 
@@ -8,5 +37,43 @@ include::{snippets}/find-user-info-doc/http-request.adoc[]
 ==== HTTP Response
 
 include::{snippets}/find-user-info-doc/http-response.adoc[]
-include::{snippets}/find-user-info-doc/response-fields.adoc[]
-include::{snippets}/find-user-info-doc/response-fields.adoc[]
+
+include::{snippets}/find-user-info-doc/response-fields-data.adoc[]
+
+=== 로그아웃
+==== HTTP Request
+include::{snippets}/user-logout-doc/http-request.adoc[]
+
+
+=== 사용자가 빌린 우산 조회
+
+==== HTTP Request
+
+include::{snippets}/find-umbrella-borrowed-by-user-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/find-umbrella-borrowed-by-user-doc/http-response.adoc[]
+include::{snippets}/find-umbrella-borrowed-by-user-doc/response-fields-data.adoc[]
+
+=== 사용자 대여 내역 조회
+
+==== HTTP Request
+
+include::{snippets}/user-history-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/user-history-doc/http-response.adoc[]
+include::{snippets}/user-history-doc/response-fields-data.adoc[]
+
+=== 사용자 은행 정보 수정
+
+include::{snippets}/update-user-bank-account-doc/http-request.adoc[]
+include::{snippets}/update-user-bank-account-doc/request-fields.adoc[]
+
+=== 사용자 은행 정보 삭제
+include::{snippets}/delete-user-bank-account-doc/http-request.adoc[]
+
+=== 사용자 회원 탈퇴
+include::{snippets}/delete-user-doc/http-request.adoc[]

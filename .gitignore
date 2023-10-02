@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,java,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,java,gradle
 
+### Secret ###
+**/application.properties
+
 ### Java ###
 # Compiled class file
 *.class
@@ -90,3 +93,8 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,gradle
 .idea
 out
+
+./src/main/resources/application.properties
+daemon
+bin
+.jqwik-database

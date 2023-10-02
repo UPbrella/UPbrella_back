@@ -1,0 +1,45 @@
+=== 협업지점 상세 조회
+
+==== HTTP Request
+
+include::{snippets}/store-find-by-id-doc/http-request.adoc[]
+include::{snippets}/store-find-by-id-doc/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/store-find-by-id-doc/http-response.adoc[]
+include::{snippets}/store-find-by-id-doc/response-fields-data.adoc[]
+
+=== 대분류 태그 별 협업 지점 목록
+
+==== HTTP Request
+
+include::{snippets}/store-find-by-location-doc/http-request.adoc[]
+include::{snippets}/store-find-by-location-doc/path-parameters.adoc[]
+
+
+==== HTTP Response
+
+include::{snippets}/store-find-by-location-doc/http-response.adoc[]
+include::{snippets}/store-find-by-location-doc/response-fields-data.adoc[]
+
+=== 우산의 현 위치 조회
+
+==== HTTP Request
+
+include::{snippets}/store-find-current-umbrella-store-doc/http-request.adoc[]
+include::{snippets}/store-find-current-umbrella-store-doc/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/store-find-current-umbrella-store-doc/http-response.adoc[]
+include::{snippets}/store-find-current-umbrella-store-doc/response-fields-data.adoc[]
+
+
+=== 협업지점 소개 페이지
+==== HTTP Request
+include::{snippets}/store-find-store-introduction-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/store-find-store-introduction-doc/http-response.adoc[]
+include::{snippets}/store-find-store-introduction-doc/response-fields-data.adoc[]

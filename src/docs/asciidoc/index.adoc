@@ -10,6 +10,43 @@ endif::[]
 
 :sectlinks:
 
+[[Common-API]]
+= 공통 API
+include::common.adoc[]
+
 [[User-API]]
-== User API
+= 사용자 API
+
+[[Joined-User-API]]
+== 회원 API
 include::api/user/user.adoc[]
+
+[[Rent-API]]
+== 대여 API
+include::api/rent/rent.adoc[]
+
+[[Store-API]]
+== 협업 지점 API
+include::api/store/store.adoc[]
+
+[[Admin-API]]
+= Admin API
+[[Umbrella-Admin-API]]
+== 우산 관리 Admin API
+include::api/admin/umbrella.adoc[]
+
+
+[[Rent-Admin-API]]
+== 대여 내역 관리 Admin API
+include::api/admin/rent.adoc[]
+
+
+[[Store-Admin-API]]
+== 협업 지점 관리 Admin API
+include::api/admin/store.adoc[]
+
+
+[[User-Admin-API]]
+== 회원 관리 Admin API
+include::api/admin/user.adoc[]
+

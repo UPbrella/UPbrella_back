@@ -1,0 +1,60 @@
+=== 전체 우산 현황 조회
+==== HTTP Request
+
+include::{snippets}/show-all-umbrellas-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/show-all-umbrellas-doc/http-response.adoc[]
+include::{snippets}/show-all-umbrellas-doc/response-fields-data.adoc[]
+=== 지점 우산 현황 조회
+==== HTTP Request
+
+include::{snippets}/show-umbrellas-by-store-id-doc/http-request.adoc[]
+
+include::{snippets}/show-umbrellas-by-store-id-doc/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/show-umbrellas-by-store-id-doc/http-response.adoc[]
+include::{snippets}/show-umbrellas-by-store-id-doc/response-fields-data.adoc[]
+
+=== 우산 추가
+==== HTTP Request
+
+include::{snippets}/add-umbrellas-doc/http-request.adoc[]
+
+include::{snippets}/add-umbrellas-doc/request-fields.adoc[]
+
+=== 우산 정보 수정
+==== HTTP Request
+
+include::{snippets}/modify-umbrella-doc/http-request.adoc[]
+include::{snippets}/modify-umbrella-doc/path-parameters.adoc[]
+
+include::{snippets}/modify-umbrella-doc/request-fields.adoc[]
+
+
+=== 우산 삭제
+==== HTTP Request
+
+include::{snippets}/delete-umbrella-doc/http-request.adoc[]
+
+include::{snippets}/delete-umbrella-doc/path-parameters.adoc[]
+
+=== 우산 전체 통계 조회
+==== HTTP Request
+
+include::{snippets}/show-all-umbrellas-statistics-doc/http-request.adoc[]
+==== HTTP Response
+include::{snippets}/show-all-umbrellas-statistics-doc/http-response.adoc[]
+include::{snippets}/show-all-umbrellas-statistics-doc/response-fields-data.adoc[]
+
+
+=== 우산 지점 통계 조회
+==== HTTP Request
+
+include::{snippets}/show-umbrellas-statistics-by-store-doc/http-request.adoc[]
+==== HTTP Response
+include::{snippets}/show-umbrellas-statistics-by-store-doc/http-response.adoc[]
+include::{snippets}/show-umbrellas-statistics-by-store-doc/response-fields-data.adoc[]
