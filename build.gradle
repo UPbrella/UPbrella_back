@@ -1,79 +1,184 @@
-plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.13'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	id 'org.asciidoctor.jvm.convert' version '3.3.2'
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
 }
 
-group = 'Upbrella_back'
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.13'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'jacoco'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
+
+group = 'upbrella-server-dev'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '11'
+    sourceCompatibility = '11'
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-	asciidoctorExt
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    asciidoctorExt
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 ext {
-	set('snippetsDir', file("build/generated-snippets"))
+    set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.projectlombok:lombok:1.18.26'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
-	//RestDocs
-	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    //RestDocs
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    // aws service
+    implementation 'com.amazonaws:aws-java-sdk-core:1.12.429'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.429'
+    implementation 'software.amazon.awssdk:s3:2.16.83'
+
+    // querydsl 추가
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // validation 추가
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // LocalTime 위한 의존성 추가
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+    // Fixture 생성 라이브러리
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:0.5.3")
+
+    // Test용 H2 In-memory DB
+    testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+
+    // Spring Data Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Spring Session Data Redis
+    implementation 'org.springframework.session:spring-session-data-redis'
 }
 
 ext {
-	snippetsDir = file('build/generated-snippets')
+    snippetsDir = file('../build/generated-snippets')
 }
 
 test {
-	outputs.dir snippetsDir
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
 }
 
 asciidoctor {
-	inputs.dir snippetsDir
-	configurations 'asciidoctorExt'
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
 
-	sources {
-		include("**/index.adoc")
-	}
-	baseDirFollowsSourceFile()
+    sources {
+        include("**/index.adoc")
+    }
+    baseDirFollowsSourceFile()
 
-	dependsOn test
+    dependsOn test
 }
 
 bootJar {
-	dependsOn asciidoctor
-	from("${asciidoctor.outputDir}") {
-		into 'static/docs'
-	}
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }
 
 tasks.named('test') {
-	outputs.dir snippetsDir
-	useJUnitPlatform()
+    outputs.dir snippetsDir
+    useJUnitPlatform()
 }
 
 tasks.named('asciidoctor') {
-	inputs.dir snippetsDir
-	dependsOn test
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+jacocoTestReport {
+    reports {
+        // 원하는 리포트를 켜고 끌 수 있습니다.
+        html.required.set(true)
+        xml.required.set(false)
+        csv.required.set(false)
+    }
+
+    def Qdomains = []
+    for (qPattern in "**/QA".."**/QZ") {
+        Qdomains.add(qPattern + "*")
+    }
+
+    afterEvaluate {
+
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [] + Qdomains)
+        }))
+    }
+
+
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.0
+                // 최소 커버리지 비율 설정 -> 임시로 0% 설정
+            }
+
+            excludes = ["*.Q*"]
+
+        }
+    }
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+sourceSets {
+    main.java.srcDir querydslDir
+}
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
 }

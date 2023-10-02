@@ -1,0 +1,99 @@
+=== 전체 협업 지점 조회
+
+==== HTTP Request
+
+include::{snippets}/store-find-all-doc/http-request.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/store-find-all-doc/http-response.adoc[]
+include::{snippets}/store-find-all-doc/response-fields-data.adoc[]
+
+=== 협업지점의 이미지 업로드
+
+==== HTTP Request
+
+include::{snippets}/upload-file/httpie-request.adoc[]
+include::{snippets}/upload-file/request-parts.adoc[]
+
+=== 협업지점의 이미지 삭제
+
+==== HTTP Request
+
+include::{snippets}/store-delete-images-doc/http-request.adoc[]
+include::{snippets}/store-delete-images-doc/path-parameters.adoc[]
+
+=== 협업 지점 등록
+
+==== HTTP Request
+
+include::{snippets}/store-create-doc/http-request.adoc[]
+include::{snippets}/store-create-doc/request-fields.adoc[]
+
+=== 협업 지점 변경
+
+==== HTTP Request
+
+include::{snippets}/store-update-doc/http-request.adoc[]
+include::{snippets}/store-update-doc/path-parameters.adoc[]
+include::{snippets}/store-update-doc/request-fields.adoc[]
+
+
+=== 협업 지점 삭제
+
+==== HTTP Request
+
+include::{snippets}/store-delete-doc/http-request.adoc[]
+include::{snippets}/store-delete-doc/path-parameters.adoc[]
+
+=== 대분류 추가
+
+==== HTTP Request
+include::{snippets}/store-create-classification-doc/http-request.adoc[]
+include::{snippets}/store-create-classification-doc/request-fields.adoc[]
+
+=== 대분류 조회
+
+==== HTTP Request
+include::{snippets}/store-find-all-classification-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/store-find-all-classification-doc/http-response.adoc[]
+include::{snippets}/store-find-all-classification-doc/response-fields-data.adoc[]
+
+=== 대분류 삭제
+
+==== HTTP Request
+include::{snippets}/store-delete-classification-doc/http-request.adoc[]
+include::{snippets}/store-delete-classification-doc/path-parameters.adoc[]
+
+=== 소분류 추가
+
+==== HTTP Request
+include::{snippets}/store-create-sub-classification-doc/http-request.adoc[]
+include::{snippets}/store-create-sub-classification-doc/request-fields.adoc[]
+
+=== 소분류 조회
+
+==== HTTP Request
+include::{snippets}/store-find-all-sub-classification-doc/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/store-find-all-sub-classification-doc/http-response.adoc[]
+include::{snippets}/store-find-all-sub-classification-doc/response-fields-data.adoc[]
+
+=== 소분류 삭제
+
+==== HTTP Request
+include::{snippets}/store-delete-sub-classification-doc/http-request.adoc[]
+include::{snippets}/store-delete-sub-classification-doc/path-parameters.adoc[]
+
+=== 협업지점 활성화
+
+==== HTTP Request
+include::{snippets}/store-update-activate-status-doc/http-request.adoc[]
+include::{snippets}/store-update-activate-status-doc/path-parameters.adoc[]
+
+=== 협업지점 비활성화
+include::{snippets}/store-update-inactivate-status-doc/http-request.adoc[]
+include::{snippets}/store-update-inactivate-status-doc/path-parameters.adoc[]
