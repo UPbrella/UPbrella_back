@@ -18,6 +18,7 @@ import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,7 +64,7 @@ public class RentController {
     }
 
     @PostMapping("/rent")
-    public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody @Valid RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToRent = userService.findUserById(user.getId());
@@ -80,7 +81,7 @@ public class RentController {
     }
 
     @PatchMapping("/rent")
-    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody @Valid ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());
