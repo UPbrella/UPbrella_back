@@ -96,7 +96,7 @@ public class StoreImageService {
 
     public AllImageUrlResponse findAllImages(long storeId) {
 
-        StoreDetail storeDetail = storeDetailService.findByStoreMetaID(storeId);
+        StoreDetail storeDetail = storeDetailService.findByStoreMetaId(storeId);
 
         return AllImageUrlResponse.of(storeId, storeDetail.getStoreImages().stream()
                 .map(SingleImageUrlResponse::createImageUrlResponse)
@@ -117,7 +117,7 @@ public class StoreImageService {
 
     private void saveStoreImage(String imageUrl, long storeId) {
 
-        StoreDetail storeDetail = storeDetailService.findByStoreMetaID(storeId);
+        StoreDetail storeDetail = storeDetailService.findByStoreMetaId(storeId);
         storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imageUrl));
     }
 

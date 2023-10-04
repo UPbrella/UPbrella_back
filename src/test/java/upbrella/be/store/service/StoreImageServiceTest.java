@@ -18,7 +18,6 @@ import upbrella.be.store.dto.response.SingleImageUrlResponse;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.exception.NonExistingStoreImageException;
-import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.store.repository.StoreImageRepository;
 
 import java.util.List;
@@ -57,7 +56,7 @@ class StoreImageServiceTest {
         String randomId = storeImageService.makeRandomId();
         String expectedUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg" + randomId;
 
-        given(storeDetailService.findByStoreMetaID(storeDetailId)).willReturn(storeDetail);
+        given(storeDetailService.findByStoreMetaId(storeDetailId)).willReturn(storeDetail);
         given(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).willReturn(PutObjectResponse.builder().build());
 
         // when
