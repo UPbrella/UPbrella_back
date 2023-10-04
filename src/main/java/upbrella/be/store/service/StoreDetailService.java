@@ -99,7 +99,7 @@ public class StoreDetailService {
         storeDetailRepository.save(storeDetail);
     }
 
-    public StoreDetail findByStoreMetaID(Long storeId) {
+    public StoreDetail findByStoreMetaId(Long storeId) {
 
         return storeDetailRepository.findStoreDetailByStoreMetaId(storeId)
                 .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다."));
