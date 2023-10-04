@@ -41,6 +41,8 @@ public class StoreDetailService {
 
         foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
         storeDetailById.updateStore(foundStoreMeta, request);
+
+        businessHourService.updateBusinessHours(foundStoreMeta, request.getBusinessHours());
     }
 
     @Transactional(readOnly = true)

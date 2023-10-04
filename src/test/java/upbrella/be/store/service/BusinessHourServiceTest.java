@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import upbrella.be.store.dto.request.SingleBusinessHourRequest;
 import upbrella.be.store.dto.response.SingleBusinessHourResponse;
 import upbrella.be.store.entity.BusinessHour;
+import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.repository.BusinessHourRepository;
 
 import java.time.DayOfWeek;
@@ -228,10 +229,12 @@ class BusinessHourServiceTest {
         List<BusinessHour> businessHours = List.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
         List<SingleBusinessHourRequest> updateBusinessHours = List.of(updateMonday, updateTuesday, updateWednesday, updateThursday, updateFriday, updateSaturday, updateSunday);
 
-        given(businessHourRepository.findByStoreMetaId(1L)).willReturn(businessHours);
-
+        StoreMeta storeMeta = StoreMeta.builder()
+                .id(1L)
+                .businessHours(businessHours)
+                .build();
         // when
-        businessHourService.updateBusinessHour(1L, updateBusinessHours);
+        businessHourService.updateBusinessHours(storeMeta, updateBusinessHours);
 
         // then
         assertAll(

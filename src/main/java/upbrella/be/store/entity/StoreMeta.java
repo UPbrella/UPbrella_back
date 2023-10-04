@@ -32,7 +32,7 @@ public class StoreMeta {
     private double latitude;
     private double longitude;
     private String password;
-    @OneToMany(mappedBy = "storeMeta", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "storeMeta")
     private List<BusinessHour> businessHours;
 
     public static StoreMeta createStoreMetaForSave(CreateStoreRequest request, Classification classification, Classification subClassification) {
@@ -75,7 +75,6 @@ public class StoreMeta {
         this.latitude = storeMeta.getLatitude();
         this.longitude = storeMeta.getLongitude();
         this.password = storeMeta.getPassword();
-        this.businessHours = storeMeta.getBusinessHours();
     }
 
     public void delete() {

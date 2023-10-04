@@ -441,6 +441,13 @@ class StoreControllerTest extends RestDocsSupport {
                 .longitude(33.33)
                 .content("내용")
                 .password("비밀번호")
+                .businessHours(List.of(
+                        SingleBusinessHourRequest.builder()
+                                .date(DayOfWeek.MONDAY)
+                                .openAt(LocalTime.of(10, 0))
+                                .closeAt(LocalTime.of(20, 0))
+                                .build()
+                ))
                 .build();
         long storeId = 1L;
 
@@ -492,7 +499,16 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("내용"),
                                 fieldWithPath("password").type(JsonFieldType.STRING)
                                         .description("비밀번호")
-                                        .optional()
+                                        .optional(),
+                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
+                                        .description("영업 시간")
+                                        .optional(),
+                                fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
+                                        .description("영업 요일"),
+                                fieldWithPath("businessHours[].openAt").type(JsonFieldType.STRING)
+                                        .description("오픈 시간"),
+                                fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
+                                        .description("마감 시간")
                         )));
     }
 
@@ -921,65 +937,5 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("businessHours[].closeAt").type(JsonFieldType.STRING)
                                         .description("협업 지점 영업시간 마감시간")
                         )));
-    }
-
-    @Test
-    @DisplayName("협업지점의 영업시간을 추가할 수 있다.")
-    void createBusinessHourTest() throws Exception {
-        // given
-        SingleBusinessHourRequest request = SingleBusinessHourRequest.builder()
-                .date(DayOfWeek.MONDAY)
-                .openAt(LocalTime.of(10, 0))
-                .closeAt(LocalTime.of(20, 0))
-                .build();
-        // when
-
-
-        // then
-        mockMvc.perform(
-                        post("/admin/stores/{storeId}/businessHours", 1L)
-                                .content(objectMapper.writeValueAsString(request))
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("store-create-business-hour-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("storeId").description("협업 지점 고유번호")
-                        ),
-                        requestFields(
-                                fieldWithPath("date").type(JsonFieldType.STRING)
-                                        .description("협업 지점 영업시간 요일"),
-                                fieldWithPath("openAt").type(JsonFieldType.STRING)
-                                        .description("협업 지점 영업시간 오픈시간"),
-                                fieldWithPath("closeAt").type(JsonFieldType.STRING)
-                                        .description("협업 지점 영업시간 마감시간")
-                        )));
-
-    }
-
-    @Test
-    @DisplayName("협업지점 영업시간 삭제 테스트")
-    void deleteBusinessHour() throws Exception {
-        // given
-
-
-        // when
-
-
-        // then
-        mockMvc.perform(
-                        delete("/admin/stores/businessHours/{businessHourId}", 1L)
-                ).andDo(print())
-                .andExpect(status().isOk())
-                .andDo(document("store-delete-business-hour-doc",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("businessHourId").description("협업 지점 영업시간 고유번호")
-                        )));
-
     }
 }

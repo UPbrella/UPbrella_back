@@ -294,32 +294,4 @@ public class StoreController {
                         "협업지점 영업시간 전체 조회 성공",
                         businessHourService.findAllBusinessHours(storeId)));
     }
-
-    @PostMapping("/admin/stores/{storeId}/businessHours")
-    public ResponseEntity<CustomResponse> createBusinessHour(@PathVariable long storeId, @RequestBody SingleBusinessHourRequest businessHour) {
-
-        businessHourService.createBusinessHour(storeId, businessHour);
-
-        return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "새로운 영업시간 등록 성공"
-                ));
-    }
-
-    @DeleteMapping("/admin/stores/businessHours/{businessHourId}")
-    public ResponseEntity<CustomResponse> deleteBusinessHour(@PathVariable long businessHourId) {
-
-        businessHourService.deleteBusinessHour(businessHourId);
-
-        return ResponseEntity
-                .ok()
-                .body(new CustomResponse<>(
-                        "success",
-                        200,
-                        "영업시간 삭제 성공"
-                ));
-    }
 }
