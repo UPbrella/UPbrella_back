@@ -106,7 +106,7 @@ public class StoreMetaService {
 
         StoreDetail storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId);
 
-        Set<StoreImage> storeImages = storeDetail.getStoreImages();
+        List<StoreImage> storeImages = storeDetail.getStoreImages();
         if (storeImages == null || storeImages.isEmpty()) {
             throw new EssentialImageException("[ERROR] 가게 이미지가 존재하지 않으면 영업지점을 활성화할 수 없습니다.");
         }

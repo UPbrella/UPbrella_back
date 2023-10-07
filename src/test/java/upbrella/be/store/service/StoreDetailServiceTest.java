@@ -81,7 +81,7 @@ public class StoreDetailServiceTest {
                 .instaUrl("모티브 인서타")
                 .workingHour("매일 7시 ~ 12시")
                 .umbrellaLocation("문 앞")
-                .storeImages(Set.of())
+                .storeImages(List.of())
                 .build();
 
         StoreFindByIdResponse storeFindByIdResponseExpected = StoreFindByIdResponse.fromStoreDetail(storeDetail, 10L);
@@ -356,7 +356,7 @@ public class StoreDetailServiceTest {
                 .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
                 .build();
 
-        Set<StoreImage> images = Set.of(first, second);
+        List<StoreImage> images = List.of(first, second);
 
         StoreDetail storeDetail = StoreDetail.builder()
                 .id(1L)
@@ -495,7 +495,7 @@ public class StoreDetailServiceTest {
                 .address("주소")
                 .addressDetail("상세 주소")
                 .content("내용")
-                .storeImages(Set.of())
+                .storeImages(List.of())
                 .build();
 
         // 수정 후
@@ -637,7 +637,7 @@ public class StoreDetailServiceTest {
                 .instaUrl("모티브 인서타")
                 .workingHour("매일 7시 ~ 12시")
                 .umbrellaLocation("문 앞")
-                .storeImages(Set.of(StoreImage.builder().imageUrl("가게 썸네일").build()))
+                .storeImages(List.of(StoreImage.builder().imageUrl("가게 썸네일").build()))
                 .build();
 
         StoreIntroductionsResponseByClassification storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification
