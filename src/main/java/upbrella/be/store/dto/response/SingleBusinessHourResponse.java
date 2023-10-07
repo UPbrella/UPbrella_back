@@ -20,6 +20,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class SingleBusinessHourResponse {
 
+    private long id;
     private DayOfWeek date;
     @JsonSerialize(using = LocalTimeSerializer.class)
     @JsonDeserialize(using = LocalTimeDeserializer.class)
@@ -33,6 +34,7 @@ public class SingleBusinessHourResponse {
     public static SingleBusinessHourResponse createSingleHourResponse(BusinessHour businessHour) {
 
             return SingleBusinessHourResponse.builder()
+                    .id(businessHour.getId())
                     .date(businessHour.getDate())
                     .openAt(businessHour.getOpenAt())
                     .closeAt(businessHour.getCloseAt())

@@ -96,4 +96,15 @@ public class StoreExceptionHandler {
                         400,
                         ex.getMessage()));
     }
+
+    @ExceptionHandler(NotExistBusinessHourException.class)
+    public ResponseEntity<CustomErrorResponse> notExistBusinessHour(NotExistBusinessHourException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "not found",
+                        404,
+                        ex.getMessage()));
+    }
 }

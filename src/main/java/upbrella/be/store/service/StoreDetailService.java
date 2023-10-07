@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.dto.response.*;
-import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
@@ -33,19 +32,17 @@ public class StoreDetailService {
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 
         StoreDetail storeDetailById = findStoreDetailByStoreMetaId(storeId);
-        long storeMetaId = storeDetailById.getStoreMeta().getId();
 
         Classification classification = classificationService.findClassificationById(request.getClassificationId());
         Classification subClassification = classificationService.findSubClassificationById(request.getSubClassificationId());
 
-        List<BusinessHour> businessHours = businessHourService.updateBusinessHour(storeMetaId, request.getBusinessHours());
-
-        StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification, businessHours);
-
+        StoreMeta storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification);
         StoreMeta foundStoreMeta = storeDetailById.getStoreMeta();
-        foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
 
+        foundStoreMeta.updateStoreMeta(storeMetaForUpdate);
         storeDetailById.updateStore(foundStoreMeta, request);
+
+        businessHourService.updateBusinessHours(foundStoreMeta, request.getBusinessHours());
     }
 
     @Transactional(readOnly = true)
@@ -77,15 +74,7 @@ public class StoreDetailService {
 
     private SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
 
-        List<SingleImageUrlResponse> sortedImageUrls = storeDetail.getSortedStoreImages().stream()
-                .map(SingleImageUrlResponse::createImageUrlResponse)
-                .collect(Collectors.toList());
-
-        String thumbnail = storeImageService.createThumbnail(sortedImageUrls);
-        Set<BusinessHour> businessHourSet = storeDetail.getStoreMeta().getBusinessHours();
-        List<BusinessHour> businessHourList = new ArrayList<>(businessHourSet);
-        List<SingleBusinessHourResponse> businessHours = businessHourService.createBusinessHourResponse(businessHourList);
-        return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail, thumbnail, sortedImageUrls, businessHours);
+        return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail);
     }
 
     @Transactional
@@ -109,5 +98,11 @@ public class StoreDetailService {
     public void saveStoreDetail(StoreDetail storeDetail) {
 
         storeDetailRepository.save(storeDetail);
+    }
+
+    public StoreDetail findByStoreMetaId(Long storeId) {
+
+        return storeDetailRepository.findStoreDetailByStoreMetaId(storeId)
+                .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다."));
     }
 }

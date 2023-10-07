@@ -1,6 +1,7 @@
 package upbrella.be.user.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -22,6 +23,7 @@ import upbrella.be.util.CustomResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -99,6 +101,7 @@ public class UserController {
         session.removeAttribute("kakaoUser");
         session.setAttribute("user", loggedInUser);
 
+        log.info("UUL 로그인 성공");
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -135,10 +138,10 @@ public class UserController {
         }
 
         SessionUser loggedInUser = userService.join(kakaoUser, joinRequest);
-
         session.removeAttribute("kakaoId");
         session.setAttribute("user", loggedInUser);
 
+        log.info("UNU 회원가입 성공");
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(

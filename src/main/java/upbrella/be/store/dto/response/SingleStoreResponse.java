@@ -1,5 +1,6 @@
 package upbrella.be.store.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import upbrella.be.store.entity.StoreDetail;
 
@@ -20,7 +21,6 @@ public class SingleStoreResponse implements Serializable {
     private boolean activateStatus;
     private String address;
     private String addressDetail;
-    private String thumbnail;
     private String umbrellaLocation;
     private String businessHour;
     private String contactNumber;
@@ -28,11 +28,9 @@ public class SingleStoreResponse implements Serializable {
     private double latitude;
     private double longitude;
     private String content;
-    private List<SingleImageUrlResponse> imageUrls;
     private String password;
-    private List<SingleBusinessHourResponse> businessHours;
 
-    public static SingleStoreResponse ofCreateSingleStoreResponse(StoreDetail storeDetail, String thumbnail, List<SingleImageUrlResponse> images, List<SingleBusinessHourResponse> businessHours) {
+    public static SingleStoreResponse ofCreateSingleStoreResponse(StoreDetail storeDetail) {
 
         return SingleStoreResponse.builder()
                 .id(storeDetail.getStoreMeta().getId())
@@ -51,9 +49,6 @@ public class SingleStoreResponse implements Serializable {
                 .longitude(storeDetail.getStoreMeta().getLongitude())
                 .content(storeDetail.getContent())
                 .password(storeDetail.getStoreMeta().getPassword())
-                .imageUrls(images)
-                .thumbnail(thumbnail)
-                .businessHours(businessHours)
                 .build();
     }
 }

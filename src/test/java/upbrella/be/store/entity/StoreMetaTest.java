@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +49,7 @@ class StoreMetaTest {
                 .latitude(33.33)
                 .longitude(33.33)
                 .password("비밀번호")
-                .businessHours(Set.of(businessHour))
+                .businessHours(List.of(businessHour))
                 .build();
 
         // when
