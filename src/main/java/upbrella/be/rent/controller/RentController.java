@@ -1,6 +1,7 @@
 package upbrella.be.rent.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import upbrella.be.util.CustomResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class RentController {
@@ -71,6 +73,7 @@ public class RentController {
 
         rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
+        log.info("UBU 우산 대여 성공");
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
