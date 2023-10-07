@@ -1,11 +1,9 @@
 package upbrella.be.store.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import upbrella.be.store.entity.StoreDetail;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Builder
