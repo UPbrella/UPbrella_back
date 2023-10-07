@@ -14,7 +14,9 @@ import upbrella.be.store.repository.BusinessHourRepository;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -148,117 +150,51 @@ class BusinessHourServiceTest {
     @DisplayName("협업지점의 영업시간을 id 를 기준으로 수정할 수 있다.")
     void updateBusinessHourTest() {
         // given
-        BusinessHour monday = BusinessHour.builder()
-                .date(DayOfWeek.MONDAY)
-                .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(18, 0))
-                .build();
-        BusinessHour tuesday = BusinessHour.builder()
-                .date(DayOfWeek.TUESDAY)
-                .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(18, 0))
-                .build();
-        BusinessHour wednesday = BusinessHour.builder()
-                .date(DayOfWeek.WEDNESDAY)
-                .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(18, 0))
-                .build();
-        BusinessHour thursday = BusinessHour.builder()
-                .date(DayOfWeek.THURSDAY)
-                .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(18, 0))
-                .build();
-        BusinessHour friday = BusinessHour.builder()
-                .date(DayOfWeek.FRIDAY)
-                .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(18, 0))
-                .build();
-        BusinessHour saturday = BusinessHour.builder()
-                .date(DayOfWeek.SATURDAY)
-                .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(18, 0))
-                .build();
-        BusinessHour sunday = BusinessHour.builder()
-                .date(DayOfWeek.SUNDAY)
-                .openAt(LocalTime.of(9, 0))
-                .closeAt(LocalTime.of(18, 0))
-                .build();
+        List<BusinessHour> businessHours = new ArrayList<>();
+        List<SingleBusinessHourRequest> updateBusinessHours = new ArrayList<>();
 
-        SingleBusinessHourRequest updateMonday = SingleBusinessHourRequest.builder()
-                .date(DayOfWeek.MONDAY)
-                .openAt(LocalTime.of(9, 10))
-                .closeAt(LocalTime.of(18, 10))
-                .build();
+        // 이전 데이터와 업데이트 데이터를 생성
+        for (DayOfWeek day : DayOfWeek.values()) {
+            businessHours.add(BusinessHour.builder()
+                    .date(day)
+                    .openAt(LocalTime.of(9, 0))
+                    .closeAt(LocalTime.of(18, 0))
+                    .build());
+            updateBusinessHours.add(SingleBusinessHourRequest.builder()
+                    .date(day)
+                    .openAt(LocalTime.of(10, 10))
+                    .closeAt(LocalTime.of(19, 10))
+                    .build());
+        }
 
-        SingleBusinessHourRequest updateTuesday = SingleBusinessHourRequest.builder()
-                .date(DayOfWeek.TUESDAY)
-                .openAt(LocalTime.of(9, 10))
-                .closeAt(LocalTime.of(18, 10))
-                .build();
-
-        SingleBusinessHourRequest updateWednesday = SingleBusinessHourRequest.builder()
-                .date(DayOfWeek.WEDNESDAY)
-                .openAt(LocalTime.of(9, 10))
-                .closeAt(LocalTime.of(18, 10))
-                .build();
-
-        SingleBusinessHourRequest updateThursday = SingleBusinessHourRequest.builder()
-                .date(DayOfWeek.THURSDAY)
-                .openAt(LocalTime.of(9, 10))
-                .closeAt(LocalTime.of(18, 10))
-                .build();
-
-        SingleBusinessHourRequest updateFriday = SingleBusinessHourRequest.builder()
-                .date(DayOfWeek.FRIDAY)
-                .openAt(LocalTime.of(9, 10))
-                .closeAt(LocalTime.of(18, 10))
-                .build();
-
-        SingleBusinessHourRequest updateSaturday = SingleBusinessHourRequest.builder()
-                .date(DayOfWeek.SATURDAY)
-                .openAt(LocalTime.of(9, 10))
-                .closeAt(LocalTime.of(18, 10))
-                .build();
-
-        SingleBusinessHourRequest updateSunday = SingleBusinessHourRequest.builder()
-                .date(DayOfWeek.SUNDAY)
-                .openAt(LocalTime.of(9, 10))
-                .closeAt(LocalTime.of(18, 10))
-                .build();
-
-        List<BusinessHour> businessHours = List.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
-        List<SingleBusinessHourRequest> updateBusinessHours = List.of(updateMonday, updateTuesday, updateWednesday, updateThursday, updateFriday, updateSaturday, updateSunday);
 
         StoreMeta storeMeta = StoreMeta.builder()
                 .id(1L)
                 .businessHours(businessHours)
                 .build();
+
+        given(businessHourRepository.findByStoreMetaId(1L)).willReturn(updateBusinessHours.stream()
+                .map(businessHourRequest -> BusinessHour.ofCreateBusinessHour(businessHourRequest, storeMeta))
+                .collect(Collectors.toList()));
+
         // when
         businessHourService.updateBusinessHours(storeMeta, updateBusinessHours);
-
+        List<BusinessHour> foundStore = businessHourRepository.findByStoreMetaId(1L);
         // then
-        assertAll(
-                () -> assertThat(monday.getOpenAt()).isEqualTo(updateMonday.getOpenAt()),
-                () -> assertThat(monday.getCloseAt()).isEqualTo(updateMonday.getCloseAt()),
-                () -> assertThat(tuesday.getOpenAt()).isEqualTo(updateTuesday.getOpenAt()),
-                () -> assertThat(tuesday.getCloseAt()).isEqualTo(updateTuesday.getCloseAt()),
-                () -> assertThat(wednesday.getOpenAt()).isEqualTo(updateWednesday.getOpenAt()),
-                () -> assertThat(wednesday.getCloseAt()).isEqualTo(updateWednesday.getCloseAt()),
-                () -> assertThat(thursday.getOpenAt()).isEqualTo(updateThursday.getOpenAt()),
-                () -> assertThat(thursday.getCloseAt()).isEqualTo(updateThursday.getCloseAt()),
-                () -> assertThat(friday.getOpenAt()).isEqualTo(updateFriday.getOpenAt()),
-                () -> assertThat(friday.getCloseAt()).isEqualTo(updateFriday.getCloseAt()),
-                () -> assertThat(saturday.getOpenAt()).isEqualTo(updateSaturday.getOpenAt()),
-                () -> assertThat(saturday.getCloseAt()).isEqualTo(updateSaturday.getCloseAt()),
-                () -> assertThat(sunday.getOpenAt()).isEqualTo(updateSunday.getOpenAt()),
-                () -> assertThat(sunday.getCloseAt()).isEqualTo(updateSunday.getCloseAt())
-        );
+        for (int i = 0; i < businessHours.size(); i++) {
+            BusinessHour original = foundStore.get(i);
+            SingleBusinessHourRequest updated = updateBusinessHours.get(i);
+
+            assertAll(
+                    () -> assertThat(original.getOpenAt()).isEqualTo(updated.getOpenAt()),
+                    () -> assertThat(original.getCloseAt()).isEqualTo(updated.getCloseAt())
+            );
+        }
     }
 
     @Test
     @DisplayName("협업지점 응답을 위해 entity를 dto로 변경할 수 있다.")
     void test() {
-        // given
         // given
         BusinessHour monday = BusinessHour.builder()
                 .date(DayOfWeek.MONDAY)

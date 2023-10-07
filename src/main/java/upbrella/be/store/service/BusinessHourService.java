@@ -10,10 +10,8 @@ import upbrella.be.store.entity.BusinessHour;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.repository.BusinessHourRepository;
 
-import java.time.DayOfWeek;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,34 +51,13 @@ public class BusinessHourService {
 
     @Transactional
     public void updateBusinessHours(StoreMeta storeMeta, List<SingleBusinessHourRequest> businessHoursRequest) {
-        // 요일별로 BusinessHour와 SingleBusinessHourRequest 인덱싱
-        List<BusinessHour> businessHours = storeMeta.getBusinessHours();
-        Map<DayOfWeek, BusinessHour> businessHourMap = businessHours.stream()
-                .collect(Collectors.toMap(BusinessHour::getDate, businessHour -> businessHour));
 
-        Map<DayOfWeek, SingleBusinessHourRequest> requestMap = businessHoursRequest.stream()
-                .collect(Collectors.toMap(SingleBusinessHourRequest::getDate, request -> request));
+        businessHourRepository.deleteAllByStoreMetaId(storeMeta.getId());
 
-        for (DayOfWeek day : DayOfWeek.values()) {
+        List<BusinessHour> businessHours = businessHoursRequest.stream()
+                .map(businessHourRequest -> BusinessHour.ofCreateBusinessHour(businessHourRequest, storeMeta))
+                .collect(Collectors.toList());
 
-            // 해당하는 요일에 BusinessHour가 둘 다 존재하는 경우
-            if (businessHourMap.get(day) != null && requestMap.get(day) != null) {
-
-                BusinessHour businessHour = businessHourMap.get(day);
-                SingleBusinessHourRequest singleBusinessHourRequest = requestMap.get(day);
-                businessHour.updateBusinessHour(singleBusinessHourRequest);
-            } else if (businessHourMap.get(day) == null && requestMap.get(day) != null) {
-                // 기존 영업시간은 없는데 새로운 영업시간이 추가되는 경우 새로운 영업시간 추가
-
-                SingleBusinessHourRequest singleBusinessHourRequest = requestMap.get(day);
-                BusinessHour businessHour = BusinessHour.ofCreateBusinessHour(singleBusinessHourRequest, storeMeta);
-                businessHourRepository.save(businessHour);
-            } else if (businessHourMap.get(day) != null && requestMap.get(day) == null) {
-                // 기존 영업시간은 있는데, 업데이트 영업시간에는 없는 경우 기존 영업시간 삭제
-
-                BusinessHour businessHour = businessHourMap.get(day);
-                businessHourRepository.deleteById(businessHour.getId());
-            }
-        }
+        businessHourRepository.saveAll(businessHours);
     }
 }
