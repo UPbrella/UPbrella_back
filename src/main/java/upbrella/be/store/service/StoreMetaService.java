@@ -66,7 +66,7 @@ public class StoreMetaService {
 
     private boolean isOpenStore(StoreMetaWithUmbrellaCount storeMetaWithUmbrellaCount, LocalDateTime currentTime) {
 
-        Set<BusinessHour> businessHours = storeMetaWithUmbrellaCount.getStoreMeta().getBusinessHours();
+        List<BusinessHour> businessHours = storeMetaWithUmbrellaCount.getStoreMeta().getBusinessHours();
 
         return businessHours.stream()
                 .filter(businessHour -> businessHour.getDate().equals(currentTime.getDayOfWeek()))

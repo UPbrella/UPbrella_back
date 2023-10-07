@@ -1,6 +1,7 @@
 package upbrella.be.rent.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,9 @@ import upbrella.be.user.service.UserService;
 import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class RentController {
@@ -63,13 +66,14 @@ public class RentController {
     }
 
     @PostMapping("/rent")
-    public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody @Valid RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToRent = userService.findUserById(user.getId());
 
         rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
+        log.info("UBU 우산 대여 성공");
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
@@ -80,7 +84,7 @@ public class RentController {
     }
 
     @PatchMapping("/rent")
-    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody @Valid ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());

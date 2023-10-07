@@ -37,7 +37,6 @@ public class BusinessHour {
 
     public void updateBusinessHour(SingleBusinessHourRequest businessHour) {
 
-        this.date = businessHour.getDate();
         this.openAt = businessHour.getOpenAt();
         this.closeAt = businessHour.getCloseAt();
     }

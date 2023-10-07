@@ -58,7 +58,7 @@ public class StoreDetailServiceTest {
                 .openAt(LocalTime.of(9, 0))
                 .closeAt(LocalTime.of(18, 0))
                 .build();
-        Set<BusinessHour> businessHours = Set.of(monday, tuesday);
+        List<BusinessHour> businessHours = List.of(monday, tuesday);
 
         StoreMeta storeMeta = StoreMeta.builder()
                 .id(3L)
@@ -170,7 +170,7 @@ public class StoreDetailServiceTest {
                 .name("소분류")
                 .build();
 
-        Set<BusinessHour> businessHours = Set.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+        List<BusinessHour> businessHours = List.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
 
 
         StoreMeta storeMeta = StoreMeta.builder()
@@ -238,7 +238,6 @@ public class StoreDetailServiceTest {
                     .latitude(33.33)
                     .longitude(33.33)
                     .password("비밀번호")
-                    .businessHours(List.of())
                     .umbrellaLocation("우산 위치")
                     .businessHour("근무 시간")
                     .instagramId("인스타그램 주소")
@@ -246,7 +245,6 @@ public class StoreDetailServiceTest {
                     .address("주소")
                     .addressDetail("상세 주소")
                     .content("내용")
-                    .imageUrls(List.of(SingleImageUrlResponse.createImageUrlResponse(first), SingleImageUrlResponse.createImageUrlResponse(second)))
                     .build();
 
             // when
@@ -315,7 +313,7 @@ public class StoreDetailServiceTest {
                 .name("소분류")
                 .build();
 
-        Set<BusinessHour> businessHours = Set.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+        List<BusinessHour> businessHours = List.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
 
 
         StoreMeta storeMeta = StoreMeta.builder()
@@ -441,7 +439,7 @@ public class StoreDetailServiceTest {
                 .closeAt(LocalTime.of(18, 0))
                 .build();
 
-        Set<BusinessHour> businessHours = Set.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+        List<BusinessHour> businessHours = List.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
 
         Classification classification = Classification.builder()
                 .id(1L)
@@ -559,7 +557,6 @@ public class StoreDetailServiceTest {
                 .longitude(44.44)
                 .content("내용 수정")
                 .password("비밀번호 수정")
-                .businessHours(businessHoursUpdate)
                 .build();
 
 
