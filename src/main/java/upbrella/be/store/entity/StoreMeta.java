@@ -67,7 +67,6 @@ public class StoreMeta {
     public void updateStoreMeta(StoreMeta storeMeta) {
 
         this.name = storeMeta.getName();
-        this.activated = storeMeta.isActivated();
         this.deleted = storeMeta.isDeleted();
         this.classification = storeMeta.getClassification();
         this.subClassification = storeMeta.getSubClassification();
