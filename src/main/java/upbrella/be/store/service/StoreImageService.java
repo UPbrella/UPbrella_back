@@ -94,6 +94,7 @@ public class StoreImageService {
         return UUID.randomUUID().toString().substring(0, 10);
     }
 
+    @Transactional(readOnly = true)
     public AllImageUrlResponse findAllImages(long storeId) {
 
         StoreDetail storeDetail = storeDetailService.findByStoreMetaId(storeId);

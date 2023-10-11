@@ -30,7 +30,7 @@ public class StoreDetail {
     private String addressDetail;
     private String content;
     @OneToMany(mappedBy = "storeDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<StoreImage> storeImages;
+    private List<StoreImage> storeImages;
 
 
     public static StoreDetail createForSave(CreateStoreRequest request, StoreMeta storeMeta) {

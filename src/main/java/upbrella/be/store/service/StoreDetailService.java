@@ -25,7 +25,6 @@ public class StoreDetailService {
     private final UmbrellaService umbrellaService;
     private final StoreDetailRepository storeDetailRepository;
     private final BusinessHourService businessHourService;
-    private final StoreImageService storeImageService;
 
     @Transactional
     @CacheEvict(value = "stores", key = "'allStores'")
@@ -52,7 +51,7 @@ public class StoreDetailService {
                 .orElseThrow(() -> new NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다."));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public StoreFindByIdResponse findStoreDetailByStoreId(long storeId) {
 
         StoreDetail storeDetail = findStoreDetailByStoreMetaId(storeId);
@@ -62,22 +61,14 @@ public class StoreDetailService {
         return StoreFindByIdResponse.fromStoreDetail(storeDetail, availableUmbrellaCount);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Cacheable(value = "stores", key = "'allStores'")
     public List<SingleStoreResponse> findAllStores() {
 
-        List<StoreDetail> storeDetails = storeDetailRepository.findAllStores();
-        return storeDetails.stream()
-                .map(this::createSingleStoreResponse)
-                .collect(Collectors.toList());
+        return storeDetailRepository.findAllStoresForAdmin();
     }
 
-    private SingleStoreResponse createSingleStoreResponse(StoreDetail storeDetail) {
-
-        return SingleStoreResponse.ofCreateSingleStoreResponse(storeDetail);
-    }
-
-    @Transactional
+    @Transactional(readOnly = true)
     public AllStoreIntroductionResponse findAllStoreIntroductions() {
 
         List<StoreDetail> storeDetails = storeDetailRepository.findAllStores();
@@ -100,6 +91,7 @@ public class StoreDetailService {
         storeDetailRepository.save(storeDetail);
     }
 
+    @Transactional(readOnly = true)
     public StoreDetail findByStoreMetaId(Long storeId) {
 
         return storeDetailRepository.findStoreDetailByStoreMetaId(storeId)
