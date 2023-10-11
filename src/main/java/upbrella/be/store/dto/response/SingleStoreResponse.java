@@ -1,16 +1,14 @@
 package upbrella.be.store.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 import upbrella.be.store.entity.StoreDetail;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class SingleStoreResponse implements Serializable {
 
     private long id;
@@ -30,25 +28,23 @@ public class SingleStoreResponse implements Serializable {
     private String content;
     private String password;
 
-    public static SingleStoreResponse ofCreateSingleStoreResponse(StoreDetail storeDetail) {
-
-        return SingleStoreResponse.builder()
-                .id(storeDetail.getStoreMeta().getId())
-                .name(storeDetail.getStoreMeta().getName())
-                .category(storeDetail.getStoreMeta().getCategory())
-                .classification(SingleClassificationResponse.ofCreateClassification(storeDetail.getStoreMeta().getClassification()))
-                .subClassification(SingleSubClassificationResponse.ofCreateSubClassification(storeDetail.getStoreMeta().getSubClassification()))
-                .activateStatus(storeDetail.getStoreMeta().isActivated())
-                .address(storeDetail.getAddress())
-                .addressDetail(storeDetail.getAddressDetail())
-                .umbrellaLocation(storeDetail.getUmbrellaLocation())
-                .businessHour(storeDetail.getWorkingHour())
-                .contactNumber(storeDetail.getContactInfo())
-                .instagramId(storeDetail.getInstaUrl())
-                .latitude(storeDetail.getStoreMeta().getLatitude())
-                .longitude(storeDetail.getStoreMeta().getLongitude())
-                .content(storeDetail.getContent())
-                .password(storeDetail.getStoreMeta().getPassword())
-                .build();
+    @QueryProjection
+    public SingleStoreResponse(long id, String name, String category, SingleClassificationResponse classification, SingleSubClassificationResponse subClassification, boolean activateStatus, String address, String addressDetail, String umbrellaLocation, String businessHour, String contactNumber, String instagramId, double latitude, double longitude, String content, String password) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.classification = classification;
+        this.subClassification = subClassification;
+        this.activateStatus = activateStatus;
+        this.address = address;
+        this.addressDetail = addressDetail;
+        this.umbrellaLocation = umbrellaLocation;
+        this.businessHour = businessHour;
+        this.contactNumber = contactNumber;
+        this.instagramId = instagramId;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.content = content;
+        this.password = password;
     }
 }

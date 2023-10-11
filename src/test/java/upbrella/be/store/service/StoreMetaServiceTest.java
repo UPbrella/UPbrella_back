@@ -564,7 +564,7 @@ class StoreMetaServiceTest {
         StoreDetail storeDetail = StoreDetail.builder()
                 .id(1L)
                 .storeMeta(storeMeta)
-                .storeImages(Set.of(StoreImage.builder()
+                .storeImages(List.of(StoreImage.builder()
                         .id(1L)
                         .imageUrl("https://image.com")
                         .build()))
@@ -591,7 +591,7 @@ class StoreMetaServiceTest {
         StoreDetail storeDetail = StoreDetail.builder()
                 .id(1L)
                 .storeMeta(storeMeta)
-                .storeImages(Set.of())
+                .storeImages(List.of())
                 .build();
 
         given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail);
@@ -615,7 +615,7 @@ class StoreMetaServiceTest {
         StoreDetail storeDetail = StoreDetail.builder()
                 .id(1L)
                 .storeMeta(storeMeta)
-                .storeImages(Set.of(StoreImage.builder()
+                .storeImages(List.of(StoreImage.builder()
                         .id(1L)
                         .imageUrl("https://image.com")
                         .build()))
