@@ -11,26 +11,26 @@ import upbrella.be.util.CustomErrorResponse;
 public class RentExceptionHandler {
 
     @ExceptionHandler(NonExistingUmbrellaForRentException.class)
-    public ResponseEntity<CustomErrorResponse> nonExistingUmbrellaForRent(NonExistingClassificationException e) {
+    public ResponseEntity<CustomErrorResponse> nonExistingUmbrellaForRent(NonExistingUmbrellaForRentException e) {
 
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
                         "fail",
                         400,
-                        "대여 중인 우산이 없습니다."
+                        e.getMessage()
                 ));
     }
 
     @ExceptionHandler(NonExistingHistoryException.class)
-    public ResponseEntity<CustomErrorResponse> nonExistingHistory(NonExistingClassificationException e) {
+    public ResponseEntity<CustomErrorResponse> nonExistingHistory(NonExistingHistoryException e) {
 
         return ResponseEntity
                 .badRequest()
                 .body(new CustomErrorResponse(
                         "fail",
                         400,
-                        "해당 대여 기록이 없습니다."
+                        e.getMessage()
                 ));
     }
 
@@ -42,7 +42,7 @@ public class RentExceptionHandler {
                 .body(new CustomErrorResponse(
                         "fail",
                         400,
-                        "이미 대여 중인 우산이 있습니다."
+                        e.getMessage()
                 ));
     }
 
@@ -54,7 +54,7 @@ public class RentExceptionHandler {
                 .body(new CustomErrorResponse(
                         "fail",
                         400,
-                        "환불이 완료되지 않았습니다."
+                        e.getMessage()
                 ));
     }
 
