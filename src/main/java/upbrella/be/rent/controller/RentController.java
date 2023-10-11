@@ -69,7 +69,9 @@ public class RentController {
     public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody @Valid RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
-        User userToRent = userService.findUserById(user.getId());
+        long userId = user.getId();
+        userService.checkBlackList(userId);
+        User userToRent = userService.findUserById(userId);
 
         rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
@@ -87,7 +89,9 @@ public class RentController {
     public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody @Valid ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
-        User userToReturn = userService.findUserById(user.getId());
+        long userId = user.getId();
+        userService.checkBlackList(userId);
+        User userToReturn = userService.findUserById(userId);
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest);
         long unrefundedRentCount = rentService.countUnrefundedRent();
