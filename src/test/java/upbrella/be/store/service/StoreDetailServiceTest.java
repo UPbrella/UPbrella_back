@@ -58,7 +58,7 @@ public class StoreDetailServiceTest {
                 .openAt(LocalTime.of(9, 0))
                 .closeAt(LocalTime.of(18, 0))
                 .build();
-        Set<BusinessHour> businessHours = Set.of(monday, tuesday);
+        List<BusinessHour> businessHours = List.of(monday, tuesday);
 
         StoreMeta storeMeta = StoreMeta.builder()
                 .id(3L)
@@ -81,7 +81,7 @@ public class StoreDetailServiceTest {
                 .instaUrl("모티브 인서타")
                 .workingHour("매일 7시 ~ 12시")
                 .umbrellaLocation("문 앞")
-                .storeImages(Set.of())
+                .storeImages(List.of())
                 .build();
 
         StoreFindByIdResponse storeFindByIdResponseExpected = StoreFindByIdResponse.fromStoreDetail(storeDetail, 10L);
@@ -170,8 +170,7 @@ public class StoreDetailServiceTest {
                 .name("소분류")
                 .build();
 
-        Set<BusinessHour> businessHours = Set.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
-
+        List<BusinessHour> businessHours = List.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
 
         StoreMeta storeMeta = StoreMeta.builder()
                 .id(1L)
@@ -199,24 +198,41 @@ public class StoreDetailServiceTest {
 
         Set<StoreImage> images = Set.of(first, second);
 
-        StoreDetail storeDetail = StoreDetail.builder()
+        SingleStoreResponse singleStoreResponse = SingleStoreResponse.builder()
                 .id(1L)
-                .storeMeta(storeMeta)
+                .name("협업 지점명")
+                .activateStatus(true)
+                .classification(SingleClassificationResponse.builder()
+                        .id(1L)
+                        .name("대분류")
+                        .type(ClassificationType.CLASSIFICATION)
+                        .latitude(33.33)
+                        .longitude(33.33)
+                        .build())
+                .subClassification(SingleSubClassificationResponse.builder()
+                        .id(2L)
+                        .type(ClassificationType.SUB_CLASSIFICATION)
+                        .name("소분류")
+                        .build())
+                .category("카테고리")
+                .latitude(33.33)
+                .longitude(33.33)
+                .password("비밀번호")
                 .umbrellaLocation("우산 위치")
-                .workingHour("근무 시간")
-                .instaUrl("인스타그램 주소")
-                .contactInfo("연락처")
+                .businessHour("근무 시간")
+                .instagramId("인스타그램 주소")
+                .contactNumber("연락처")
                 .address("주소")
                 .addressDetail("상세 주소")
                 .content("내용")
-                .storeImages(images)
                 .build();
+
 
         @Test
         @DisplayName("모든 협업 지점의 정보를 조회할 수 있다.")
         void findAllTest() {
             // given
-            given(storeDetailRepository.findAllStores()).willReturn(List.of(storeDetail));
+            given(storeDetailRepository.findAllStoresForAdmin()).willReturn(List.of(singleStoreResponse));
 
             SingleStoreResponse expected = SingleStoreResponse.builder()
                     .id(1L)
@@ -238,7 +254,6 @@ public class StoreDetailServiceTest {
                     .latitude(33.33)
                     .longitude(33.33)
                     .password("비밀번호")
-                    .businessHours(List.of())
                     .umbrellaLocation("우산 위치")
                     .businessHour("근무 시간")
                     .instagramId("인스타그램 주소")
@@ -246,7 +261,6 @@ public class StoreDetailServiceTest {
                     .address("주소")
                     .addressDetail("상세 주소")
                     .content("내용")
-                    .imageUrls(List.of(SingleImageUrlResponse.createImageUrlResponse(first), SingleImageUrlResponse.createImageUrlResponse(second)))
                     .build();
 
             // when
@@ -315,7 +329,7 @@ public class StoreDetailServiceTest {
                 .name("소분류")
                 .build();
 
-        Set<BusinessHour> businessHours = Set.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+        List<BusinessHour> businessHours = List.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
 
 
         StoreMeta storeMeta = StoreMeta.builder()
@@ -342,7 +356,7 @@ public class StoreDetailServiceTest {
                 .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
                 .build();
 
-        Set<StoreImage> images = Set.of(first, second);
+        List<StoreImage> images = List.of(first, second);
 
         StoreDetail storeDetail = StoreDetail.builder()
                 .id(1L)
@@ -441,7 +455,7 @@ public class StoreDetailServiceTest {
                 .closeAt(LocalTime.of(18, 0))
                 .build();
 
-        Set<BusinessHour> businessHours = Set.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
+        List<BusinessHour> businessHours = List.of(monday, tuesday, wednesday, thursday, friday, saturday, sunday);
 
         Classification classification = Classification.builder()
                 .id(1L)
@@ -481,7 +495,7 @@ public class StoreDetailServiceTest {
                 .address("주소")
                 .addressDetail("상세 주소")
                 .content("내용")
-                .storeImages(Set.of())
+                .storeImages(List.of())
                 .build();
 
         // 수정 후
@@ -559,7 +573,6 @@ public class StoreDetailServiceTest {
                 .longitude(44.44)
                 .content("내용 수정")
                 .password("비밀번호 수정")
-                .businessHours(businessHoursUpdate)
                 .build();
 
 
@@ -624,7 +637,7 @@ public class StoreDetailServiceTest {
                 .instaUrl("모티브 인서타")
                 .workingHour("매일 7시 ~ 12시")
                 .umbrellaLocation("문 앞")
-                .storeImages(Set.of(StoreImage.builder().imageUrl("가게 썸네일").build()))
+                .storeImages(List.of(StoreImage.builder().imageUrl("가게 썸네일").build()))
                 .build();
 
         StoreIntroductionsResponseByClassification storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification

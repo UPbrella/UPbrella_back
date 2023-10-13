@@ -159,4 +159,13 @@ public class UserService {
 
         foundUser.updateAdminStatus();
     }
+
+    @Transactional(readOnly = true)
+    public void checkBlackList(Long userId) {
+
+        blackListRepository.findById(userId)
+                .ifPresent(blackList -> {
+                    throw new BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 이용이 불가능합니다.");
+                });
+    }
 }

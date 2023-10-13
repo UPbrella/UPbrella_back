@@ -34,6 +34,7 @@ import upbrella.be.user.dto.response.AllHistoryResponse;
 import upbrella.be.user.dto.response.SessionUser;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.BlackListUserException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.AesEncryptor;
@@ -575,5 +576,20 @@ class RentServiceTest {
         // then
         assertThatThrownBy(() -> rentService.addRental(rentUmbrellaByUserRequest, userToRent))
                 .isInstanceOf(NotAvailableUmbrellaException.class);
+    }
+
+    @Test
+    @DisplayName("블랙리스트에 등록된 유저가 우산을 대여할 경우 예외가 발생한다.")
+    void test() {
+        // given
+        User user = FixtureBuilderFactory.builderUser(aesEncryptor).sample();
+        RentUmbrellaByUserRequest request = RentUmbrellaByUserRequest.builder().build();
+
+        doThrow(BlackListUserException.class).when(userService).checkBlackList(user.getId());
+        // when
+
+        // then
+        assertThatThrownBy(() -> rentService.addRental(request, user))
+                .isInstanceOf(BlackListUserException.class);
     }
 }

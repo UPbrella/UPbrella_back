@@ -19,3 +19,8 @@ spring:
   session:
     store-type: redis
     timeout: 3600
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
