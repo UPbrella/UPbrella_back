@@ -2,6 +2,7 @@ package upbrella.be.user.dto.request;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
+import upbrella.be.user.validation.OnlyNumbers;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -17,5 +18,6 @@ public class UpdateBankAccountRequest {
     private String bank;
     @Size(min = 1, max = 45)
     @NotBlank
+    @OnlyNumbers
     private String accountNumber;
 }
