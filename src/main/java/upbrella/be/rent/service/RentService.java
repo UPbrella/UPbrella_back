@@ -64,6 +64,7 @@ public class RentService {
 
     @Transactional
     public void addRental(RentUmbrellaByUserRequest rentUmbrellaByUserRequest, User userToRent) {
+        userService.checkBlackList(userToRent.getId());
 
         rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.getId())
                 .ifPresent(history -> {
@@ -93,6 +94,7 @@ public class RentService {
     @Transactional
     public void returnUmbrellaByUser(User userToReturn, ReturnUmbrellaByUserRequest request) {
 
+        userService.checkBlackList(userToReturn.getId());
         History history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.getId())
                 .orElseThrow(() -> new NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다."));
 

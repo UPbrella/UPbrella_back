@@ -6,9 +6,7 @@ import upbrella.be.store.dto.request.UpdateStoreRequest;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -34,8 +32,8 @@ public class StoreMeta {
     private double latitude;
     private double longitude;
     private String password;
-    @OneToMany(mappedBy = "storeMeta", cascade = CascadeType.ALL)
-    private Set<BusinessHour> businessHours;
+    @OneToMany(mappedBy = "storeMeta")
+    private List<BusinessHour> businessHours;
 
     public static StoreMeta createStoreMetaForSave(CreateStoreRequest request, Classification classification, Classification subClassification) {
 
@@ -52,7 +50,7 @@ public class StoreMeta {
                 .build();
     }
 
-    public static StoreMeta createStoreMetaForUpdate(UpdateStoreRequest request, Classification classification, Classification subClassification, List<BusinessHour> businessHours) {
+    public static StoreMeta createStoreMetaForUpdate(UpdateStoreRequest request, Classification classification, Classification subClassification) {
 
         return StoreMeta.builder()
                 .name(request.getName())
@@ -63,14 +61,12 @@ public class StoreMeta {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .password(request.getPassword())
-                .businessHours(new HashSet<>(businessHours))
                 .build();
     }
 
     public void updateStoreMeta(StoreMeta storeMeta) {
 
         this.name = storeMeta.getName();
-        this.activated = storeMeta.isActivated();
         this.deleted = storeMeta.isDeleted();
         this.classification = storeMeta.getClassification();
         this.subClassification = storeMeta.getSubClassification();
@@ -78,7 +74,6 @@ public class StoreMeta {
         this.latitude = storeMeta.getLatitude();
         this.longitude = storeMeta.getLongitude();
         this.password = storeMeta.getPassword();
-        this.businessHours = storeMeta.getBusinessHours();
     }
 
     public void delete() {
@@ -88,7 +83,7 @@ public class StoreMeta {
 
     public boolean isOpenStore(LocalDateTime currentTime) {
 
-        Set<BusinessHour> businessHours = this.getBusinessHours();
+        List<BusinessHour> businessHours = this.getBusinessHours();
 
         return businessHours.stream()
                 .filter(businessHour -> businessHour.getDate().equals(currentTime.getDayOfWeek()))

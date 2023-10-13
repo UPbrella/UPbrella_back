@@ -153,12 +153,12 @@ class StoreMetaServiceTest {
         private List<StoreMetaWithUmbrellaCount> storeMetaList = new ArrayList<>();
 
         private SingleCurrentLocationStoreResponse expected;
-        private Set<BusinessHour> businessHours;
+        private List<BusinessHour> businessHours;
 
         @BeforeEach
         void setUp() {
 
-            businessHours = Set.of(
+            businessHours = List.of(
                     BusinessHour.builder()
                             .id(1L)
                             .date(DayOfWeek.MONDAY)
@@ -459,7 +459,7 @@ class StoreMetaServiceTest {
                 .latitude(33.33)
                 .longitude(33.33)
                 .password("비밀번호")
-                .businessHours(Set.of(businessHour))
+                .businessHours(List.of(businessHour))
                 .build();
 
         StoreDetail storeDetail = StoreDetail.builder()
@@ -521,7 +521,7 @@ class StoreMetaServiceTest {
                     .latitude(33.33)
                     .longitude(33.33)
                     .password("비밀번호")
-                    .businessHours(Set.of(businessHour))
+                    .businessHours(List.of(businessHour))
                     .build();
 
             given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta));
@@ -564,7 +564,7 @@ class StoreMetaServiceTest {
         StoreDetail storeDetail = StoreDetail.builder()
                 .id(1L)
                 .storeMeta(storeMeta)
-                .storeImages(Set.of(StoreImage.builder()
+                .storeImages(List.of(StoreImage.builder()
                         .id(1L)
                         .imageUrl("https://image.com")
                         .build()))
@@ -591,7 +591,7 @@ class StoreMetaServiceTest {
         StoreDetail storeDetail = StoreDetail.builder()
                 .id(1L)
                 .storeMeta(storeMeta)
-                .storeImages(Set.of())
+                .storeImages(List.of())
                 .build();
 
         given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail);
@@ -615,7 +615,7 @@ class StoreMetaServiceTest {
         StoreDetail storeDetail = StoreDetail.builder()
                 .id(1L)
                 .storeMeta(storeMeta)
-                .storeImages(Set.of(StoreImage.builder()
+                .storeImages(List.of(StoreImage.builder()
                         .id(1L)
                         .imageUrl("https://image.com")
                         .build()))

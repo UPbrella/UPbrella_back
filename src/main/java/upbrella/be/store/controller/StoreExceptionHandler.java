@@ -1,5 +1,6 @@
 package upbrella.be.store.controller;
 
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -88,6 +89,28 @@ public class StoreExceptionHandler {
 
     @ExceptionHandler(EssentialImageException.class)
     public ResponseEntity<CustomErrorResponse> essentialImage(EssentialImageException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "bad request",
+                        400,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(NotExistBusinessHourException.class)
+    public ResponseEntity<CustomErrorResponse> notExistBusinessHour(NotExistBusinessHourException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "not found",
+                        404,
+                        ex.getMessage()));
+    }
+
+    @ExceptionHandler(FileSizeLimitExceededException.class)
+    public ResponseEntity<CustomErrorResponse> fileSize(FileSizeLimitExceededException ex) {
 
         return ResponseEntity
                 .badRequest()

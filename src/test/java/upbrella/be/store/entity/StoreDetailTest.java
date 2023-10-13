@@ -25,7 +25,7 @@ class StoreDetailTest {
                 .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
                 .build();
 
-        Set<StoreImage> images = Set.of(second, first);
+        List<StoreImage> images = List.of(second, first);
         StoreDetail storeDetail = StoreDetail.builder()
                 .storeImages(images)
                 .build();

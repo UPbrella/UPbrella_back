@@ -1,6 +1,7 @@
 package upbrella.be.user.dto.request;
 
 import lombok.*;
+import upbrella.be.user.validation.OnlyNumbers;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -22,5 +23,6 @@ public class JoinRequest {
     @Size(max = 40)
     private String bank;
     @Size(max = 40)
+    @OnlyNumbers
     private String accountNumber;
 }
