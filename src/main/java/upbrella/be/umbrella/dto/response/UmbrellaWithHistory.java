@@ -36,5 +36,17 @@ public class UmbrellaWithHistory {
         this.missed = missed;
         this.historyId = historyId;
     }
+
+    @QueryProjection
+    public UmbrellaWithHistory(long id, StoreMeta storeMeta, long uuid, boolean rentable, boolean deleted, LocalDateTime createdAt, String etc, boolean missed) {
+        this.id = id;
+        this.storeMeta = storeMeta;
+        this.uuid = uuid;
+        this.rentable = rentable;
+        this.deleted = deleted;
+        this.createdAt = createdAt;
+        this.etc = etc;
+        this.missed = missed;
+    }
 }
 
