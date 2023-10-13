@@ -94,6 +94,7 @@ public class UmbrellaRepositoryImpl implements UmbrellaRepositoryCustom {
                 .fetchCount();
     }
 
+    // TODO : history와 연동
     @Override
     public List<UmbrellaWithHistory> findUmbrellaAndHistoryOrderedByUmbrellaId(Pageable pageable) {
 
@@ -105,16 +106,13 @@ public class UmbrellaRepositoryImpl implements UmbrellaRepositoryCustom {
                 umbrella.deleted,
                 umbrella.createdAt,
                 umbrella.etc,
-                umbrella.missed,
-                history.id
+                umbrella.missed
         );
 
         return queryFactory.select(umbrellaWithHistory)
-                .from(history)
-                .rightJoin(history.umbrella, umbrella)
+                .from(umbrella)
                 .join(umbrella.storeMeta)
-                .where(umbrella.deleted.eq(false)
-                        .and(history.returnedAt.isNull()))
+                .where(umbrella.deleted.eq(false))
                 .orderBy(umbrella.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
