@@ -57,9 +57,7 @@ public class FixtureBuilderFactory {
 
         StringBuilder sb = new StringBuilder();
         sb.append(Arbitraries.integers().between(100, 999).sample())
-                .append("-")
                 .append(Arbitraries.integers().between(100, 999).sample())
-                .append("-")
                 .append(Arbitraries.integers().between(100000, 999999).sample());
 
         return sb.toString();
