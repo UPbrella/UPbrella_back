@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -482,5 +483,38 @@ class UserServiceTest {
         // then
         assertThatThrownBy(() -> userService.findDecryptedUserById(user))
                 .isInstanceOf(NonExistingMemberException.class);
+    }
+
+    @Test
+    @DisplayName("사용자가 블랙리스트에 등록되어 있으면 예외가 발생한다.")
+    void checkBlackListThrowTest() {
+        // given
+        BlackList blackList = BlackList.builder()
+                .id(1L)
+                .socialId(1L)
+                .blockedAt(LocalDateTime.now())
+                .build();
+
+        given(blackListRepository.findById(1L)).willReturn(Optional.of(blackList));
+        // when
+
+        // then
+        assertThatThrownBy(() -> userService.checkBlackList(1L))
+                .isInstanceOf(BlackListUserException.class);
+    }
+
+    @Test
+    @DisplayName("사용자가 블랙리스트에 없으면 예외가 발생하지 않는다.")
+    void checkBlackListNotThrowTest() {
+        // given
+
+        given(blackListRepository.findById(1L)).willReturn(Optional.empty());
+
+        // when
+
+
+        // then
+        assertThatCode(() -> userService.checkBlackList(1L))
+                .doesNotThrowAnyException();
     }
 }
