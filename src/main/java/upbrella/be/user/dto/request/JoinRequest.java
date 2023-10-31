@@ -23,6 +23,5 @@ public class JoinRequest {
     @Size(max = 40)
     private String bank;
     @Size(max = 40)
-    @OnlyNumbers
     private String accountNumber;
 }
