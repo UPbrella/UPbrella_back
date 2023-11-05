@@ -113,7 +113,7 @@ public class UmbrellaRepositoryImpl implements UmbrellaRepositoryCustom {
                 .from(umbrella)
                 .join(umbrella.storeMeta)
                 .where(umbrella.deleted.eq(false))
-                .orderBy(umbrella.id.asc())
+                .orderBy(umbrella.uuid.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -141,7 +141,7 @@ public class UmbrellaRepositoryImpl implements UmbrellaRepositoryCustom {
                 .where(umbrella.deleted.eq(false)
                         .and(umbrella.storeMeta.id.eq(storeId))
                         .and(history.returnedAt.isNull()))
-                .orderBy(umbrella.id.asc())
+                .orderBy(umbrella.uuid.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
