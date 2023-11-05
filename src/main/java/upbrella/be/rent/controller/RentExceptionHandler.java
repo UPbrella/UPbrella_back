@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import upbrella.be.rent.exception.*;
-import upbrella.be.store.exception.NonExistingClassificationException;
 import upbrella.be.util.CustomErrorResponse;
 
 @RestControllerAdvice
@@ -66,6 +65,18 @@ public class RentExceptionHandler {
                 .body(new CustomErrorResponse(
                         "fail",
                         400,
+                        e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(LockerCodeAlreadyIssuedException.class)
+    public ResponseEntity<CustomErrorResponse> lockerCodeAlreadyIssuedException(LockerCodeAlreadyIssuedException e) {
+
+        return ResponseEntity
+                .status(429)
+                .body(new CustomErrorResponse(
+                        "Too Many Requests",
+                        429,
                         e.getMessage()
                 ));
     }
