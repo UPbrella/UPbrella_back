@@ -1,11 +1,13 @@
 package upbrella.be.rent.dto.response;
 
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class LockerPasswordResponse {
 
     private String password;
+
+    public LockerPasswordResponse(String password) {
+        this.password = password.substring(0, 4);
+    }
 }
