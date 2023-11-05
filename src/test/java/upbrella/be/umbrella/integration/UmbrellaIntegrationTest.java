@@ -79,7 +79,7 @@ class UmbrellaIntegrationTest extends RestDocsSupport {
                     .set("rentable", true)
                     .set("deleted", false)
                     .set("missed", false)
-                    .set("uuid", 100 + i)
+                    .set("uuid", 1 + i)
                     .sample();
 
             umbrellaList.add(umbrella);
@@ -154,6 +154,9 @@ class UmbrellaIntegrationTest extends RestDocsSupport {
     @Test
     @DisplayName("사용자는 전체 우산 현황을 조회할 수 있다.")
     void showAllUmbrellasTest() throws Exception {
+
+        umbrellaList.stream()
+                        .forEach(umbrella -> System.out.println(umbrella.getUuid()));
 
         // when & then
         mockMvc.perform(
