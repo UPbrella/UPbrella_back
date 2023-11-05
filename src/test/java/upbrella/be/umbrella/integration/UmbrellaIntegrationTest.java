@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-public class UmbrellaIntegrationTest extends RestDocsSupport {
+class UmbrellaIntegrationTest extends RestDocsSupport {
 
     @Autowired
     private UmbrellaService umbrellaService;
@@ -79,6 +79,7 @@ public class UmbrellaIntegrationTest extends RestDocsSupport {
                     .set("rentable", true)
                     .set("deleted", false)
                     .set("missed", false)
+                    .set("uuid", 100 + i)
                     .sample();
 
             umbrellaList.add(umbrella);
@@ -193,7 +194,7 @@ public class UmbrellaIntegrationTest extends RestDocsSupport {
         long id = umbrellaList.get(0).getId();
         UmbrellaModifyRequest umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                 .set("storeMetaId", storeMeta.getId())
-                .set("uuid", 2000L)
+                .set("uuid", 1)
                 .sample();
 
         // when & then
