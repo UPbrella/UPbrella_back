@@ -176,6 +176,8 @@ public class RentControllerTest extends RestDocsSupport {
                 .storeId(1L)
                 .umbrellaId(1L)
                 .conditionReport("필요하다면 상태 신고를 해주세요.")
+                .salt("salt")
+                .signature("signature")
                 .build();
 
         User newUser = User.builder()
@@ -211,8 +213,14 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("우산 고유번호"),
                                 fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("상태 신고"))
-                ));
+                                        .description("상태 신고"),
+                                fieldWithPath("salt").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("salt"),
+                                fieldWithPath("signature").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("signature")
+                        )));
     }
 
     @Test
