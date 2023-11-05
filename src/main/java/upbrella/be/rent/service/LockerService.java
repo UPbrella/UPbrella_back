@@ -72,38 +72,6 @@ public class LockerService {
         }
         return null;
     }
-
-    public static void main(String[] args) {
-
-        String lockerSecretKey = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
-
-        String salt = "abc".toUpperCase();
-
-        try {
-            // SHA-256 해시 생성
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] encodedhash = digest.digest((lockerSecretKey + salt).getBytes(StandardCharsets.UTF_8));
-
-            // 바이트 배열을 16진수 문자열로 변환
-            StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
-            for (byte b : encodedhash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-
-            String lockerSignature = hexString.toString();
-
-
-            System.out.println(lockerSignature);
-
-
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
 
 
