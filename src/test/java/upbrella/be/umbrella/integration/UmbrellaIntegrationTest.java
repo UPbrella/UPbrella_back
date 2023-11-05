@@ -155,9 +155,6 @@ class UmbrellaIntegrationTest extends RestDocsSupport {
     @DisplayName("사용자는 전체 우산 현황을 조회할 수 있다.")
     void showAllUmbrellasTest() throws Exception {
 
-        umbrellaList.stream()
-                        .forEach(umbrella -> System.out.println(umbrella.getUuid()));
-
         // when & then
         mockMvc.perform(
                         get("/admin/umbrellas")
