@@ -16,7 +16,4 @@ public class RentUmbrellaByUserRequest {
 
     @Size(max = 400, message = "conditionReport는 최대 400자여야 합니다.")
     private String conditionReport;
-
-    private String salt;
-    private String signature;
 }
