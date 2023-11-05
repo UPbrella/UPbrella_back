@@ -80,4 +80,28 @@ public class RentExceptionHandler {
                         e.getMessage()
                 ));
     }
+
+    @ExceptionHandler(NoSignatureException.class)
+    public ResponseEntity<CustomErrorResponse> noSignatureException(NoSignatureException e) {
+
+        return ResponseEntity
+                .status(400)
+                .body(new CustomErrorResponse(
+                        "Bad Request",
+                        400,
+                        e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(LockerSignatureErrorException.class)
+    public ResponseEntity<CustomErrorResponse> lockerSignatureException(LockerSignatureErrorException e) {
+
+        return ResponseEntity
+                .status(403)
+                .body(new CustomErrorResponse(
+                        "Forbidden",
+                        403,
+                        e.getMessage()
+                ));
+    }
 }
