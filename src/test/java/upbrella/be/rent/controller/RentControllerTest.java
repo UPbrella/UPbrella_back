@@ -18,6 +18,7 @@ import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
+import upbrella.be.rent.service.LockerService;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.slack.service.SlackAlarmService;
 import upbrella.be.store.entity.StoreMeta;
@@ -56,9 +57,12 @@ public class RentControllerTest extends RestDocsSupport {
     @Mock
     private SlackAlarmService slackAlarmService;
 
+    @Mock
+    private LockerService lockerService;
+
     @Override
     protected Object initController() {
-        return new RentController(conditionReportService, improvementReportService, rentService, userService, slackAlarmService);
+        return new RentController(conditionReportService, improvementReportService, rentService, userService, slackAlarmService, lockerService);
     }
 
     @Test
