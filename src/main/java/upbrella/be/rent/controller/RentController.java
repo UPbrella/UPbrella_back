@@ -51,12 +51,16 @@ public class RentController {
     }
 
     @GetMapping("/return/form/{storeId}")
-    public ResponseEntity<CustomResponse<ReturnFormResponse>> findReturnForm(@PathVariable long storeId, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ReturnFormResponse>> findReturnForm(
+            @PathVariable long storeId,
+            HttpSession httpSession,
+            @RequestParam(required = false) String salt,
+            @RequestParam(required = false) String signature) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());
 
-        ReturnFormResponse returnForm = rentService.findReturnForm(storeId, userToReturn);
+        ReturnFormResponse returnForm = rentService.findReturnForm(storeId, userToReturn, salt, signature);
 
         return ResponseEntity
                 .ok()
@@ -69,12 +73,12 @@ public class RentController {
     }
 
     @PostMapping("/rent")
-    public ResponseEntity<CustomResponse<LockerPasswordResponse>> rentUmbrellaByUser(@RequestBody @Valid RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) throws NoSuchAlgorithmException {
+    public ResponseEntity<CustomResponse<LockerPasswordResponse>> rentUmbrellaByUser(@RequestBody @Valid RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToRent = userService.findUserById(user.getId());
 
-        LockerPasswordResponse lockerPasswordResponse = lockerService.checkSignature(rentUmbrellaByUserRequest);
+        LockerPasswordResponse lockerPasswordResponse = lockerService.findLockerPassword(rentUmbrellaByUserRequest);
 
         rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
@@ -92,8 +96,10 @@ public class RentController {
 
 
     @PatchMapping("/rent")
-    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody @Valid ReturnUmbrellaByUserRequest
-                                                                       returnUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> returnUmbrellaByUser(
+            @RequestBody @Valid
+            ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest,
+            HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());
