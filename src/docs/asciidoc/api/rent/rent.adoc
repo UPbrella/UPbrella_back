@@ -13,6 +13,7 @@ include::{snippets}/find-rental-form-doc/response-fields-data.adoc[]
 
 include::{snippets}/find-return-form-doc/http-request.adoc[]
 include::{snippets}/find-return-form-doc/path-parameters.adoc[]
+include::{snippets}/find-return-form-doc/request-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/find-return-form-doc/http-response.adoc[]
