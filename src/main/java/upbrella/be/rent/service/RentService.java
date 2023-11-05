@@ -22,6 +22,7 @@ import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.MissingUmbrellaException;
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
@@ -76,9 +77,13 @@ public class RentService {
 
         Umbrella willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.getUmbrellaId());
 
+        if (willRentUmbrella.isMissed()) {
+            throw new MissingUmbrellaException("[ERROR] 해당 우산은 분실되었습니다.");
+        }
         if (!willRentUmbrella.isRentable()){
             throw new NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.");
         }
+
         willRentUmbrella.rentUmbrella();
         StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
 
