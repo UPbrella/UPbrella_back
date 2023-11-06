@@ -175,6 +175,8 @@ class RentControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
     void rentUmbrellaTest() throws Exception {
 
+        LockerPasswordResponse lockerPassword = new LockerPasswordResponse("password");
+
         SessionUser sessionUser = SessionUser.builder()
                 .id(1L)
                 .socialId(1L)
@@ -200,6 +202,7 @@ class RentControllerTest extends RestDocsSupport {
 
 
         given(userService.findUserById(1L)).willReturn(newUser);
+        given(lockerService.findLockerPassword(any())).willReturn(lockerPassword);
 
         mockMvc.perform(
                         post("/rent")
@@ -222,6 +225,12 @@ class RentControllerTest extends RestDocsSupport {
                                 fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                                         .optional()
                                         .description("상태 신고")
+                        ),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("보관함 비밀번호")
                         )));
     }
 
