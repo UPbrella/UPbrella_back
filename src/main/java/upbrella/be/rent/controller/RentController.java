@@ -78,10 +78,9 @@ public class RentController {
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToRent = userService.findUserById(user.getId());
 
-        LockerPasswordResponse lockerPasswordResponse = lockerService.findLockerPassword(rentUmbrellaByUserRequest);
-
         rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
+        LockerPasswordResponse lockerPasswordResponse = lockerService.findLockerPassword(rentUmbrellaByUserRequest);
         log.info("UBU 우산 대여 성공");
 
         return ResponseEntity
