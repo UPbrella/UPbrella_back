@@ -563,6 +563,7 @@ class RentServiceTest {
         // given
         Umbrella umbrella = Umbrella.builder()
                 .id(1L)
+                .storeMeta(foundStoreMeta)
                 .rentable(false)
                 .build();
 
