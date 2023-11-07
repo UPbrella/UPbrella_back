@@ -14,10 +14,7 @@ import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.dto.response.ReturnFormResponse;
 import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.entity.History;
-import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
-import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
-import upbrella.be.rent.exception.NonExistingHistoryException;
-import upbrella.be.rent.exception.NotAvailableUmbrellaException;
+import upbrella.be.rent.exception.*;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
@@ -76,7 +73,9 @@ public class RentService {
                 });
 
         Umbrella willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.getUmbrellaId());
-
+        if(willRentUmbrella.getStoreMeta().getId() != rentUmbrellaByUserRequest.getStoreId()){
+            throw new UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.");
+        }
         if (willRentUmbrella.isMissed()) {
             throw new MissingUmbrellaException("[ERROR] 해당 우산은 분실되었습니다.");
         }

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import upbrella.be.rent.exception.*;
+import upbrella.be.umbrella.exception.MissingUmbrellaException;
 import upbrella.be.util.CustomErrorResponse;
 
 @RestControllerAdvice
@@ -101,6 +102,30 @@ public class RentExceptionHandler {
                 .body(new CustomErrorResponse(
                         "Forbidden",
                         403,
+                        e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(UmbrellaStoreMissMatchException.class)
+    public ResponseEntity<CustomErrorResponse> umbrellaStoreMissMatchException(UmbrellaStoreMissMatchException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
+                        e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(MissingUmbrellaException.class)
+    public ResponseEntity<CustomErrorResponse> missingUmbrellaException(MissingUmbrellaException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
                         e.getMessage()
                 ));
     }
