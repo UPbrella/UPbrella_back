@@ -41,6 +41,9 @@ public class LockerService {
         }
 
         if (lockerOptional.isPresent()) {
+            if (salt == null || signature == null) {
+                throw new NoSignatureException("허위 반납을 위해 디지털 서명이 필요합니다. 관리자에게 문의주시기 바랍니다");
+            }
             Locker locker = lockerOptional.get();
             String lockerSecretKey = locker.getSecretKey().toUpperCase();
             salt = salt.toUpperCase();
