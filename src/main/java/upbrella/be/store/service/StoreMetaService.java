@@ -21,6 +21,7 @@ import upbrella.be.umbrella.repository.UmbrellaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -97,7 +98,9 @@ public class StoreMetaService {
     @Transactional(readOnly = true)
     public boolean existByClassificationId(long classificationId) {
 
-        return storeMetaRepository.existsByClassificationId(classificationId);
+        Optional<StoreMeta> store = storeMetaRepository.findByClassificationIdAndDeletedIsFalse(classificationId);
+
+        return store.isPresent();
     }
 
     @Transactional
