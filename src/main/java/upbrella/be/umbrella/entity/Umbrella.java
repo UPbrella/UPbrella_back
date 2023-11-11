@@ -29,6 +29,7 @@ public class Umbrella {
     private boolean missed;
 
     public void delete() {
+
         this.deleted = true;
     }
 
@@ -73,6 +74,12 @@ public class Umbrella {
     }
 
     public void returnUmbrella() {
+
         this.rentable = true;
+    }
+
+    public boolean validateCannotBeRented() {
+
+        return missed || deleted || !rentable;
     }
 }
