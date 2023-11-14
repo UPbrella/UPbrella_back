@@ -11,6 +11,7 @@ import upbrella.be.rent.exception.LockerSignatureErrorException;
 import upbrella.be.rent.exception.NoSignatureException;
 import upbrella.be.rent.repository.LockerRepository;
 import upbrella.be.store.dto.request.CreateLockerRequest;
+import upbrella.be.store.dto.request.UpdateLockerRequest;
 import upbrella.be.store.dto.response.AllLockerResponse;
 import upbrella.be.store.dto.response.SingleLockerResponse;
 import upbrella.be.store.entity.StoreMeta;
@@ -53,6 +54,16 @@ public class LockerService {
                 .build();
 
         lockerRepository.save(locker);
+    }
+
+    @Transactional
+    public void updateLocker(Long lockerId, UpdateLockerRequest request) {
+        isMultipleLockers(request.getStoreId());
+
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(request.getStoreId());
+
+        lockerRepository.findById(lockerId)
+                .ifPresent(locker -> locker.updateLocker(storeMeta, request.getSecretKey()));
     }
 
     @Transactional

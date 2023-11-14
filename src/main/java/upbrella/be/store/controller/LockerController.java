@@ -43,8 +43,10 @@ public class LockerController {
                         null));
     }
 
-    @PatchMapping("/admin/lockers/{storeId}")
-    public ResponseEntity<CustomResponse<Void>> updateLocker(@PathVariable Long storeId, @RequestBody UpdateLockerRequest request) {
+    @PatchMapping("/admin/lockers/{lockerId}")
+    public ResponseEntity<CustomResponse<Void>> updateLocker(@PathVariable Long lockerId, @RequestBody UpdateLockerRequest request) {
+
+        lockerService.updateLocker(lockerId, request);
 
         return ResponseEntity
                 .ok()
