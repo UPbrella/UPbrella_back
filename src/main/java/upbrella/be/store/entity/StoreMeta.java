@@ -78,6 +78,8 @@ public class StoreMeta {
 
     public void delete() {
 
+        this.classification = null;
+        this.subClassification = null;
         this.deleted = true;
     }
 

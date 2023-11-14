@@ -13,6 +13,7 @@ include::{snippets}/find-rental-form-doc/response-fields-data.adoc[]
 
 include::{snippets}/find-return-form-doc/http-request.adoc[]
 include::{snippets}/find-return-form-doc/path-parameters.adoc[]
+include::{snippets}/find-return-form-doc/request-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/find-return-form-doc/http-response.adoc[]
@@ -23,6 +24,9 @@ include::{snippets}/find-return-form-doc/response-fields-data.adoc[]
 
 include::{snippets}/rent-umbrella-doc/http-request.adoc[]
 include::{snippets}/rent-umbrella-doc/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/rent-umbrella-doc/response-fields-data.adoc[]
 
 === 우산 반납 신청
 ==== HTTP Request

@@ -75,6 +75,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // Spring Session Data Redis
     implementation 'org.springframework.session:spring-session-data-redis'
+
+    // HOTP
+    implementation 'com.github.bastiaanjansen:otp-java:2.0.3'
 }
 
 ext {
