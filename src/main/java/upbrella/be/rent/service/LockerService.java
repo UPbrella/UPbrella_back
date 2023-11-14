@@ -10,19 +10,32 @@ import upbrella.be.rent.exception.LockerCodeAlreadyIssuedException;
 import upbrella.be.rent.exception.LockerSignatureErrorException;
 import upbrella.be.rent.exception.NoSignatureException;
 import upbrella.be.rent.repository.LockerRepository;
+import upbrella.be.store.dto.response.AllLockerResponse;
+import upbrella.be.store.dto.response.SingleLockerResponse;
 import upbrella.be.util.HotpGenerator;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class LockerService {
 
     private final LockerRepository lockerRepository;
+
+    public AllLockerResponse findAll() {
+        List<Locker> all = lockerRepository.findAll();
+
+        return new AllLockerResponse(all.stream()
+                .map(SingleLockerResponse::fromLocker)
+                .collect(Collectors.toList()));
+
+    }
 
     @Transactional
     public LockerPasswordResponse findLockerPassword(RentUmbrellaByUserRequest rentUmbrellaByUserRequest) {
