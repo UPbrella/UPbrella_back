@@ -132,7 +132,7 @@ public class LockerService {
             throw new RuntimeException(e);
         }
 
-        byte[] encodedhash = digest.digest((lockerSecretKey + "." + salt).getBytes(StandardCharsets.UTF_8));
+        byte[] encodedhash = digest.digest((lockerSecretKey.toUpperCase() + "." + salt.toUpperCase()).getBytes(StandardCharsets.UTF_8));
 
         // 바이트 배열을 16진수 문자열로 변환
         StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
@@ -144,7 +144,7 @@ public class LockerService {
             }
             hexString.append(hex);
         }
-        return hexString.toString();
+        return hexString.toString().toUpperCase();
     }
 
     private void isMultipleLockers(Long storeId) {
