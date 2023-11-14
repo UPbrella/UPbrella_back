@@ -31,4 +31,9 @@ public class Locker {
     public void updateLastAccess(LocalDateTime now) {
         this.lastAccess = now;
     }
+
+    public void updateLocker(StoreMeta storeMeta, String secretKey) {
+        this.storeMeta = storeMeta;
+        this.secretKey = secretKey;
+    }
 }
