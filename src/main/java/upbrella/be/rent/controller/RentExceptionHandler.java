@@ -129,4 +129,16 @@ public class RentExceptionHandler {
                         e.getMessage()
                 ));
     }
+
+    @ExceptionHandler(CannotBeRentedException.class)
+    public ResponseEntity<CustomErrorResponse> cannotBeRentedException(CannotBeRentedException e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
+                        e.getMessage()
+                ));
+    }
 }
