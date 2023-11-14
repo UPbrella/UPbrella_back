@@ -32,6 +32,8 @@ public class LockerController {
     @PostMapping("/admin/lockers/{storeId}")
     public ResponseEntity<CustomResponse<Void>> createLocker(@PathVariable Long storeId, @RequestBody CreateLockerRequest request) {
 
+        lockerService.createLocker(storeId, request);
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse<>(
@@ -51,7 +53,6 @@ public class LockerController {
                         200,
                         "보관함 업데이트 성공",
                         null));
-
     }
 
     @DeleteMapping("/admin/lockers/{storeId}")

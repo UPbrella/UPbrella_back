@@ -10,8 +10,11 @@ import upbrella.be.rent.exception.LockerCodeAlreadyIssuedException;
 import upbrella.be.rent.exception.LockerSignatureErrorException;
 import upbrella.be.rent.exception.NoSignatureException;
 import upbrella.be.rent.repository.LockerRepository;
+import upbrella.be.store.dto.request.CreateLockerRequest;
 import upbrella.be.store.dto.response.AllLockerResponse;
 import upbrella.be.store.dto.response.SingleLockerResponse;
+import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.HotpGenerator;
 
 import java.nio.charset.StandardCharsets;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 public class LockerService {
 
     private final LockerRepository lockerRepository;
+    private final StoreMetaService storeMetaService;
 
     public AllLockerResponse findAll() {
         List<Locker> all = lockerRepository.findAll();
@@ -35,6 +39,20 @@ public class LockerService {
                 .map(SingleLockerResponse::fromLocker)
                 .collect(Collectors.toList()));
 
+    }
+
+    @Transactional
+    public void createLocker(Long storeId, CreateLockerRequest request) {
+
+        isMultipleLockers(storeId);
+
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(storeId);
+        Locker locker = Locker.builder()
+                .storeMeta(storeMeta)
+                .secretKey(request.getSecretKey())
+                .build();
+
+        lockerRepository.save(locker);
     }
 
     @Transactional
@@ -108,6 +126,13 @@ public class LockerService {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    private void isMultipleLockers(Long storeId) {
+        Optional<Locker> byStoreMetaId = lockerRepository.findByStoreMetaId(storeId);
+        if(byStoreMetaId.isPresent()) {
+            throw new IllegalArgumentException("이미 보관함이 존재합니다.");
+        }
     }
 }
 
