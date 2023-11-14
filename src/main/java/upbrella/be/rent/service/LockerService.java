@@ -43,11 +43,11 @@ public class LockerService {
     }
 
     @Transactional
-    public void createLocker(Long storeId, CreateLockerRequest request) {
+    public void createLocker(CreateLockerRequest request) {
 
-        isMultipleLockers(storeId);
+        isMultipleLockers(request.getStoreId());
 
-        StoreMeta storeMeta = storeMetaService.findStoreMetaById(storeId);
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(request.getStoreId());
         Locker locker = Locker.builder()
                 .storeMeta(storeMeta)
                 .secretKey(request.getSecretKey())
@@ -64,6 +64,14 @@ public class LockerService {
 
         lockerRepository.findById(lockerId)
                 .ifPresent(locker -> locker.updateLocker(storeMeta, request.getSecretKey()));
+    }
+
+    public void deleteLocker(Long lockerId) {
+
+        if(!lockerRepository.existsById(lockerId)) {
+            throw new IllegalArgumentException("해당 보관함이 존재하지 않습니다.");
+        }
+        lockerRepository.deleteById(lockerId);
     }
 
     @Transactional

@@ -29,10 +29,10 @@ public class LockerController {
                         lockers));
     }
 
-    @PostMapping("/admin/lockers/{storeId}")
-    public ResponseEntity<CustomResponse<Void>> createLocker(@PathVariable Long storeId, @RequestBody CreateLockerRequest request) {
+    @PostMapping("/admin/lockers")
+    public ResponseEntity<CustomResponse<Void>> createLocker(@RequestBody CreateLockerRequest request) {
 
-        lockerService.createLocker(storeId, request);
+        lockerService.createLocker(request);
 
         return ResponseEntity
                 .ok()
@@ -57,8 +57,10 @@ public class LockerController {
                         null));
     }
 
-    @DeleteMapping("/admin/lockers/{storeId}")
-    public ResponseEntity<CustomResponse<Void>> deleteLocker(@PathVariable Long storeId) {
+    @DeleteMapping("/admin/lockers/{lockerId}")
+    public ResponseEntity<CustomResponse<Void>> deleteLocker(@PathVariable Long lockerId) {
+
+        lockerService.deleteLocker(lockerId);
 
         return ResponseEntity
                 .ok()

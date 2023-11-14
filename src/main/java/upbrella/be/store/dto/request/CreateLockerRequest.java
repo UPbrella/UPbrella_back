@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateLockerRequest {
 
+    private long storeId;
     private String secretKey;
 }
