@@ -14,14 +14,12 @@ import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.dto.response.ReturnFormResponse;
 import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.entity.History;
-import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
-import upbrella.be.rent.exception.NonExistingUmbrellaForRentException;
-import upbrella.be.rent.exception.NonExistingHistoryException;
-import upbrella.be.rent.exception.NotAvailableUmbrellaException;
+import upbrella.be.rent.exception.*;
 import upbrella.be.rent.repository.RentRepository;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.umbrella.entity.Umbrella;
+import upbrella.be.umbrella.exception.MissingUmbrellaException;
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
 import upbrella.be.umbrella.service.UmbrellaService;
 import upbrella.be.user.dto.response.AllHistoryResponse;
@@ -44,17 +42,24 @@ public class RentService {
     private final UserService userService;
     private final RentRepository rentRepository;
     private final ConditionReportService conditionReportService;
+    private final LockerService lockerService;
 
     public RentFormResponse findRentForm(long umbrellaId) {
 
         Umbrella umbrella = umbrellaService.findUmbrellaById(umbrellaId);
 
+        if (umbrella.validateCannotBeRented()) {
+            throw new CannotBeRentedException("[ERROR] 해당 우산은 대여 불가능한 우산입니다.");
+        }
+
         return RentFormResponse.of(umbrella);
     }
 
-    public ReturnFormResponse findReturnForm(long storeId, User userToReturn) {
+    public ReturnFormResponse findReturnForm(long storeId, User userToReturn, String salt, String signature) {
 
         StoreMeta storeMeta = storeMetaService.findStoreMetaById(storeId);
+
+        lockerService.validateLockerSignature(storeMeta.getId(), salt, signature);
 
         History history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.getId())
                 .orElseThrow(() -> new NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다."));
@@ -72,10 +77,16 @@ public class RentService {
                 });
 
         Umbrella willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.getUmbrellaId());
-
+        if(willRentUmbrella.getStoreMeta().getId() != rentUmbrellaByUserRequest.getStoreId()){
+            throw new UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.");
+        }
+        if (willRentUmbrella.isMissed()) {
+            throw new MissingUmbrellaException("[ERROR] 해당 우산은 분실되었습니다.");
+        }
         if (!willRentUmbrella.isRentable()){
             throw new NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.");
         }
+
         willRentUmbrella.rentUmbrella();
         StoreMeta rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.getStoreId());
 
@@ -93,6 +104,9 @@ public class RentService {
 
     @Transactional
     public void returnUmbrellaByUser(User userToReturn, ReturnUmbrellaByUserRequest request) {
+
+        // 반납일 때 secretKey.salt 대문자 후 SHA256 해싱 -> signature와 검증 후, 검증 실패 시 예외 발생
+        // 보관함이 없는 store일때 salt와 signature 입력 시 예외발생
 
         userService.checkBlackList(userToReturn.getId());
         History history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.getId())

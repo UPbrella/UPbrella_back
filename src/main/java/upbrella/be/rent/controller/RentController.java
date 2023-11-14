@@ -11,6 +11,7 @@ import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest;
 import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
+import upbrella.be.rent.service.LockerService;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.slack.service.SlackAlarmService;
 import upbrella.be.user.dto.response.SessionUser;
@@ -20,6 +21,7 @@ import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 @RestController
@@ -31,6 +33,7 @@ public class RentController {
     private final RentService rentService;
     private final UserService userService;
     private final SlackAlarmService slackAlarmService;
+    private final LockerService lockerService;
 
     @GetMapping("/rent/form/{umbrellaId}")
     public ResponseEntity<CustomResponse<RentFormResponse>> findRentForm(@PathVariable long umbrellaId) {
@@ -48,12 +51,16 @@ public class RentController {
     }
 
     @GetMapping("/return/form/{storeId}")
-    public ResponseEntity<CustomResponse<ReturnFormResponse>> findReturnForm(@PathVariable long storeId, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<ReturnFormResponse>> findReturnForm(
+            @PathVariable long storeId,
+            HttpSession httpSession,
+            @RequestParam(required = false) String salt,
+            @RequestParam(required = false) String signature) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());
 
-        ReturnFormResponse returnForm = rentService.findReturnForm(storeId, userToReturn);
+        ReturnFormResponse returnForm = rentService.findReturnForm(storeId, userToReturn, salt, signature);
 
         return ResponseEntity
                 .ok()
@@ -66,25 +73,33 @@ public class RentController {
     }
 
     @PostMapping("/rent")
-    public ResponseEntity<CustomResponse> rentUmbrellaByUser(@RequestBody @Valid RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse<LockerPasswordResponse>> rentUmbrellaByUser(@RequestBody @Valid RentUmbrellaByUserRequest rentUmbrellaByUserRequest, HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToRent = userService.findUserById(user.getId());
 
+        LockerPasswordResponse lockerPasswordResponse = lockerService.findLockerPassword(rentUmbrellaByUserRequest);
+
         rentService.addRental(rentUmbrellaByUserRequest, userToRent);
 
         log.info("UBU 우산 대여 성공");
+
         return ResponseEntity
                 .ok()
                 .body(new CustomResponse(
                         "success",
                         200,
-                        "우산 대여 성공"
+                        "우산 대여 성공",
+                        lockerPasswordResponse
                 ));
     }
 
+
     @PatchMapping("/rent")
-    public ResponseEntity<CustomResponse> returnUmbrellaByUser(@RequestBody @Valid ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest, HttpSession httpSession) {
+    public ResponseEntity<CustomResponse> returnUmbrellaByUser(
+            @RequestBody @Valid
+            ReturnUmbrellaByUserRequest returnUmbrellaByUserRequest,
+            HttpSession httpSession) {
 
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         User userToReturn = userService.findUserById(user.getId());
@@ -103,7 +118,8 @@ public class RentController {
     }
 
     @GetMapping("/admin/rent/histories")
-    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory(@ModelAttribute HistoryFilterRequest filter, Pageable pageable) {
+    public ResponseEntity<CustomResponse<RentalHistoriesPageResponse>> findRentalHistory
+            (@ModelAttribute HistoryFilterRequest filter, Pageable pageable) {
 
         RentalHistoriesPageResponse histories = rentService.findAllHistories(filter, pageable);
 

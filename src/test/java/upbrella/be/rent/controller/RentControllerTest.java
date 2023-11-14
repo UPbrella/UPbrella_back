@@ -18,6 +18,7 @@ import upbrella.be.rent.dto.response.*;
 import upbrella.be.rent.entity.History;
 import upbrella.be.rent.service.ConditionReportService;
 import upbrella.be.rent.service.ImprovementReportService;
+import upbrella.be.rent.service.LockerService;
 import upbrella.be.rent.service.RentService;
 import upbrella.be.slack.service.SlackAlarmService;
 import upbrella.be.store.entity.StoreMeta;
@@ -34,15 +35,14 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest;
 import static upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse;
 
 @ExtendWith(MockitoExtension.class)
-public class RentControllerTest extends RestDocsSupport {
+class RentControllerTest extends RestDocsSupport {
 
     @Mock
     private ConditionReportService conditionReportService;
@@ -56,9 +56,12 @@ public class RentControllerTest extends RestDocsSupport {
     @Mock
     private SlackAlarmService slackAlarmService;
 
+    @Mock
+    private LockerService lockerService;
+
     @Override
     protected Object initController() {
-        return new RentController(conditionReportService, improvementReportService, rentService, userService, slackAlarmService);
+        return new RentController(conditionReportService, improvementReportService, rentService, userService, slackAlarmService, lockerService);
     }
 
     @Test
@@ -105,6 +108,9 @@ public class RentControllerTest extends RestDocsSupport {
     @DisplayName("사용자는 반납 폼 자동 완성에 필요한 데이터를 조회할 수 있다.")
     void findReturnFormTest() throws Exception {
 
+        String salt = "salt";
+        String signature = "signature";
+
         SessionUser sessionUser = SessionUser.builder()
                 .id(1L)
                 .socialId(1L)
@@ -130,12 +136,14 @@ public class RentControllerTest extends RestDocsSupport {
         ReturnFormResponse returnFormResponse = ReturnFormResponse.of(storeMeta, history);
 
         given(userService.findUserById(1L)).willReturn(userToReturn);
-        given(rentService.findReturnForm(storeMeta.getId(), userToReturn))
+        given(rentService.findReturnForm(storeMeta.getId(), userToReturn, salt, signature))
                 .willReturn(returnFormResponse);
 
         // when & then
         mockMvc.perform(
                         get("/return/form/{storeId}", storeMeta.getId())
+                                .param("salt", salt)
+                                .param("signature", signature)
                                 .session(session)
                 ).andDo(print())
                 .andExpect(status().isOk())
@@ -145,6 +153,12 @@ public class RentControllerTest extends RestDocsSupport {
                         pathParameters(
                                 parameterWithName("storeId")
                                         .description("반납 지점 고유번호")
+                        ),
+                        requestParameters(
+                                parameterWithName("salt").optional()
+                                        .description("보관함 비밀번호"),
+                                parameterWithName("signature").optional()
+                                        .description("보관함 비밀번호 서명")
                         ),
                         responseFields(
                                 beneathPath("data").withSubsectionId("data"),
@@ -160,6 +174,8 @@ public class RentControllerTest extends RestDocsSupport {
     @Test
     @DisplayName("사용자는 우산 대여 요청을 할 수 있다.")
     void rentUmbrellaTest() throws Exception {
+
+        LockerPasswordResponse lockerPassword = new LockerPasswordResponse("password");
 
         SessionUser sessionUser = SessionUser.builder()
                 .id(1L)
@@ -186,6 +202,7 @@ public class RentControllerTest extends RestDocsSupport {
 
 
         given(userService.findUserById(1L)).willReturn(newUser);
+        given(lockerService.findLockerPassword(any())).willReturn(lockerPassword);
 
         mockMvc.perform(
                         post("/rent")
@@ -207,8 +224,14 @@ public class RentControllerTest extends RestDocsSupport {
                                         .description("우산 고유번호"),
                                 fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                                         .optional()
-                                        .description("상태 신고"))
-                ));
+                                        .description("상태 신고")
+                        ),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .optional()
+                                        .description("보관함 비밀번호")
+                        )));
     }
 
     @Test

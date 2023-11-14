@@ -43,3 +43,27 @@ include::{snippets}/store-find-store-introduction-doc/http-request.adoc[]
 ==== HTTP Response
 include::{snippets}/store-find-store-introduction-doc/http-response.adoc[]
 include::{snippets}/store-find-store-introduction-doc/response-fields-data.adoc[]
+
+=== 보관함 전체 조회
+==== HTTP Request
+include::{snippets}/find-all-lockers/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/find-all-lockers/http-response.adoc[]
+include::{snippets}/find-all-lockers/response-fields-data.adoc[]
+
+=== 보관함 생성
+==== HTTP Request
+include::{snippets}/create-locker/http-request.adoc[]
+include::{snippets}/create-locker/request-fields.adoc[]
+
+=== 보관함 수정
+==== HTTP Request
+include::{snippets}/update-locker/http-request.adoc[]
+include::{snippets}/update-locker/path-parameters.adoc[]
+include::{snippets}/update-locker/request-fields.adoc[]
+
+=== 보관함 삭제
+==== HTTP Request
+include::{snippets}/delete-locker/http-request.adoc[]
+include::{snippets}/delete-locker/path-parameters.adoc[]
