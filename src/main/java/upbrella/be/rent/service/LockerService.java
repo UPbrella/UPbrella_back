@@ -10,19 +10,69 @@ import upbrella.be.rent.exception.LockerCodeAlreadyIssuedException;
 import upbrella.be.rent.exception.LockerSignatureErrorException;
 import upbrella.be.rent.exception.NoSignatureException;
 import upbrella.be.rent.repository.LockerRepository;
+import upbrella.be.store.dto.request.CreateLockerRequest;
+import upbrella.be.store.dto.request.UpdateLockerRequest;
+import upbrella.be.store.dto.response.AllLockerResponse;
+import upbrella.be.store.dto.response.SingleLockerResponse;
+import upbrella.be.store.entity.StoreMeta;
+import upbrella.be.store.service.StoreMetaService;
 import upbrella.be.util.HotpGenerator;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class LockerService {
 
     private final LockerRepository lockerRepository;
+    private final StoreMetaService storeMetaService;
+
+    public AllLockerResponse findAll() {
+        List<Locker> all = lockerRepository.findAll();
+
+        return new AllLockerResponse(all.stream()
+                .map(SingleLockerResponse::fromLocker)
+                .collect(Collectors.toList()));
+
+    }
+
+    @Transactional
+    public void createLocker(CreateLockerRequest request) {
+
+        isMultipleLockers(request.getStoreId());
+
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(request.getStoreId());
+        Locker locker = Locker.builder()
+                .storeMeta(storeMeta)
+                .secretKey(request.getSecretKey())
+                .build();
+
+        lockerRepository.save(locker);
+    }
+
+    @Transactional
+    public void updateLocker(Long lockerId, UpdateLockerRequest request) {
+        isMultipleLockers(request.getStoreId());
+
+        StoreMeta storeMeta = storeMetaService.findStoreMetaById(request.getStoreId());
+
+        lockerRepository.findById(lockerId)
+                .ifPresent(locker -> locker.updateLocker(storeMeta, request.getSecretKey()));
+    }
+
+    public void deleteLocker(Long lockerId) {
+
+        if(!lockerRepository.existsById(lockerId)) {
+            throw new IllegalArgumentException("해당 보관함이 존재하지 않습니다.");
+        }
+        lockerRepository.deleteById(lockerId);
+    }
 
     @Transactional
     public LockerPasswordResponse findLockerPassword(RentUmbrellaByUserRequest rentUmbrellaByUserRequest) {
@@ -82,7 +132,7 @@ public class LockerService {
             throw new RuntimeException(e);
         }
 
-        byte[] encodedhash = digest.digest((lockerSecretKey + "." + salt).getBytes(StandardCharsets.UTF_8));
+        byte[] encodedhash = digest.digest((lockerSecretKey.toUpperCase() + "." + salt.toUpperCase()).getBytes(StandardCharsets.UTF_8));
 
         // 바이트 배열을 16진수 문자열로 변환
         StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
@@ -94,7 +144,14 @@ public class LockerService {
             }
             hexString.append(hex);
         }
-        return hexString.toString();
+        return hexString.toString().toUpperCase();
+    }
+
+    private void isMultipleLockers(Long storeId) {
+        Optional<Locker> byStoreMetaId = lockerRepository.findByStoreMetaId(storeId);
+        if(byStoreMetaId.isPresent()) {
+            throw new IllegalArgumentException("이미 보관함이 존재합니다.");
+        }
     }
 }
 
