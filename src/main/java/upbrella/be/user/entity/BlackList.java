@@ -24,7 +24,7 @@ public class BlackList {
     public static BlackList createNewBlackList(Long socialId) {
 
         return BlackList.builder()
-                .socialId(socialId.hashCode())
+                .socialId(socialId)
                 .blockedAt(LocalDateTime.now())
                 .build();
     }
