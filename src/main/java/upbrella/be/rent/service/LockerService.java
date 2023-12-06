@@ -58,7 +58,12 @@ public class LockerService {
 
     @Transactional
     public void updateLocker(Long lockerId, UpdateLockerRequest request) {
-        isMultipleLockers(request.getStoreId());
+
+        Optional<Locker> byStoreMetaId = lockerRepository.findByStoreMetaId(request.getStoreId());
+
+        if (byStoreMetaId.isPresent() && (byStoreMetaId.get().getId() != lockerId)) {
+            throw new IllegalArgumentException("이미 보관함이 존재합니다.");
+        }
 
         StoreMeta storeMeta = storeMetaService.findStoreMetaById(request.getStoreId());
 
@@ -68,7 +73,7 @@ public class LockerService {
 
     public void deleteLocker(Long lockerId) {
 
-        if(!lockerRepository.existsById(lockerId)) {
+        if (!lockerRepository.existsById(lockerId)) {
             throw new IllegalArgumentException("해당 보관함이 존재하지 않습니다.");
         }
         lockerRepository.deleteById(lockerId);
@@ -149,7 +154,7 @@ public class LockerService {
 
     private void isMultipleLockers(Long storeId) {
         Optional<Locker> byStoreMetaId = lockerRepository.findByStoreMetaId(storeId);
-        if(byStoreMetaId.isPresent()) {
+        if (byStoreMetaId.isPresent()) {
             throw new IllegalArgumentException("이미 보관함이 존재합니다.");
         }
     }
