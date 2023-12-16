@@ -75,4 +75,15 @@ public class UserExceptionHandler {
                         400,
                         "로그인이 필요합니다."));
     }
+
+    @ExceptionHandler(BlackListUserException.class)
+    public ResponseEntity<CustomErrorResponse> blackListUser(BlackListUserException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(new CustomErrorResponse(
+                        "fail",
+                        400,
+                        "정지된 회원입니다. 정지된 회원은 이용이 불가능합니다."));
+    }
 }
