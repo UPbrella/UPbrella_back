@@ -57,12 +57,23 @@ public class History {
 
     public void refund(User user, LocalDateTime refundedAt) {
 
+        if (this.refundedAt != null || this.refundedBy != null) {
+            this.refundedAt = null;
+            this.refundedBy = null;
+            return;
+        }
+
         this.refundedAt = refundedAt;
         this.refundedBy = user;
     }
 
     public void paid(User user, LocalDateTime paidAt) {
 
+        if (this.paidAt != null || this.paidBy != null) {
+            this.paidAt = null;
+            this.paidBy = null;
+            return;
+        }
         this.paidBy = user;
         this.paidAt = paidAt;
     }
