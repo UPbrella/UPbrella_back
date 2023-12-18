@@ -116,7 +116,7 @@ public class RentService {
 
         History updatedHistory = History.updateHistoryForReturn(history, returnStore, request);
         Umbrella returnedUmbrella = history.getUmbrella();
-        returnedUmbrella.returnUmbrella();
+        returnedUmbrella.returnUmbrella(returnStore);
 
         rentRepository.save(updatedHistory);
         addImprovementReportFromReturnByUser(updatedHistory, request);
