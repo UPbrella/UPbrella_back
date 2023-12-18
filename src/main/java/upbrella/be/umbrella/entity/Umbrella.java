@@ -73,8 +73,9 @@ public class Umbrella {
         this.rentable = false;
     }
 
-    public void returnUmbrella() {
+    public void returnUmbrella(StoreMeta storeMeta) {
 
+        this.storeMeta = storeMeta;
         this.rentable = true;
     }
 
