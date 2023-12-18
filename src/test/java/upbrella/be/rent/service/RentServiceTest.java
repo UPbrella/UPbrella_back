@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
 import upbrella.be.rent.dto.response.HistoryInfoDto;
@@ -20,7 +19,6 @@ import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.ConditionReport;
 import upbrella.be.rent.entity.History;
-import upbrella.be.rent.exception.ExistingUmbrellaForRentException;
 import upbrella.be.rent.exception.NonExistingHistoryException;
 import upbrella.be.rent.exception.NotAvailableUmbrellaException;
 import upbrella.be.rent.exception.NotRefundedException;
@@ -342,28 +340,35 @@ class RentServiceTest {
         void success() {
 
             // given
+            History historyForRefund = History.builder()
+                    .id(33L)
+                    .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
+                    .umbrella(foundUmbrella)
+                    .user(userToRent)
+                    .rentStoreMeta(foundStoreMeta)
+                    .build();
+
             long loginedUserId = 7L;
             given(userService.findUserById(loginedUserId))
                     .willReturn(userToRent);
             given(rentRepository.findById(33L))
-                    .willReturn(Optional.of(history));
-            given(rentRepository.save(history))
-                    .willReturn(history);
+                    .willReturn(Optional.of(historyForRefund));
+
 
             // when
             rentService.checkRefund(33L, loginedUserId);
 
             //then
-            assertAll(() -> assertThat(history.getRefundedBy())
+            assertAll(() -> assertThat(historyForRefund.getRefundedBy())
                             .isEqualTo(userToRent),
-                    () -> assertThat(history.getRefundedAt())
+                    () -> assertThat(historyForRefund.getRefundedAt())
                             .isBeforeOrEqualTo(LocalDateTime.now()),
                     () -> then(userService).should(times(1))
                             .findUserById(loginedUserId),
                     () -> then(rentRepository).should(times(1))
                             .findById(33L),
                     () -> then(rentRepository).should(times(1))
-                            .save(history)
+                            .save(historyForRefund)
             );
         }
 
