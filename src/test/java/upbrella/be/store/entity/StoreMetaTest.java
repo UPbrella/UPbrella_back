@@ -48,7 +48,6 @@ class StoreMetaTest {
                 .category("카테고리")
                 .latitude(33.33)
                 .longitude(33.33)
-                .password("비밀번호")
                 .businessHours(List.of(businessHour))
                 .build();
 
