@@ -76,7 +76,7 @@ class LockerControllerTest extends RestDocsSupport {
         // given
         CreateLockerRequest request = CreateLockerRequest.builder()
                 .storeId(1L)
-                .secretKey("secretKey")
+                .secretKey("12345678901234567890123456789012")
                 .build();
 
         // then
@@ -102,7 +102,7 @@ class LockerControllerTest extends RestDocsSupport {
         // given
         UpdateLockerRequest request = UpdateLockerRequest.builder()
                 .storeId(1L)
-                .secretKey("secretKey")
+                .secretKey("12345678901234567890123456789012")
                 .build();
         Long lockerId = 1L;
 
