@@ -182,7 +182,6 @@ public class StoreDetailServiceTest {
                 .category("카테고리")
                 .latitude(33.33)
                 .longitude(33.33)
-                .password("비밀번호")
                 .businessHours(businessHours)
                 .build();
 
@@ -217,7 +216,6 @@ public class StoreDetailServiceTest {
                 .category("카테고리")
                 .latitude(33.33)
                 .longitude(33.33)
-                .password("비밀번호")
                 .umbrellaLocation("우산 위치")
                 .businessHour("근무 시간")
                 .instagramId("인스타그램 주소")
@@ -253,7 +251,6 @@ public class StoreDetailServiceTest {
                     .category("카테고리")
                     .latitude(33.33)
                     .longitude(33.33)
-                    .password("비밀번호")
                     .umbrellaLocation("우산 위치")
                     .businessHour("근무 시간")
                     .instagramId("인스타그램 주소")
@@ -342,7 +339,6 @@ public class StoreDetailServiceTest {
                 .category("카테고리")
                 .latitude(33.33)
                 .longitude(33.33)
-                .password("비밀번호")
                 .businessHours(businessHours)
                 .build();
 
@@ -481,7 +477,6 @@ public class StoreDetailServiceTest {
                 .category("카테고리")
                 .latitude(33.33)
                 .longitude(33.33)
-                .password("비밀번호")
                 .businessHours(businessHours)
                 .build();
 
@@ -572,7 +567,6 @@ public class StoreDetailServiceTest {
                 .latitude(44.44)
                 .longitude(44.44)
                 .content("내용 수정")
-                .password("비밀번호 수정")
                 .build();
 
 
@@ -598,8 +592,7 @@ public class StoreDetailServiceTest {
                         .hasFieldOrPropertyWithValue("category", request.getCategory())
                         .hasFieldOrPropertyWithValue("latitude", request.getLatitude())
                         .hasFieldOrPropertyWithValue("longitude", request.getLongitude())
-                        .hasFieldOrPropertyWithValue("category", request.getCategory())
-                        .hasFieldOrPropertyWithValue("password", request.getPassword()),
+                        .hasFieldOrPropertyWithValue("category", request.getCategory()),
 
                 () -> assertThat(foundStoreDetail)
                         .hasFieldOrPropertyWithValue("umbrellaLocation", request.getUmbrellaLocation())
