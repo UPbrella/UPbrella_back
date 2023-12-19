@@ -329,7 +329,6 @@ class StoreMetaServiceTest {
                 .latitude(33.33)
                 .longitude(33.33)
                 .content("내용")
-                .password("비밀번호")
                 .businessHours(
                         List.of(
                                 SingleBusinessHourRequest.builder()
@@ -398,7 +397,6 @@ class StoreMetaServiceTest {
                     .category(store.getCategory())
                     .latitude(store.getLatitude())
                     .longitude(store.getLongitude())
-                    .password(store.getPassword())
                     .build();
 
             StoreDetail storeDetail = StoreDetail.createForSave(store, storeMeta);
@@ -458,7 +456,6 @@ class StoreMetaServiceTest {
                 .category("카테고리")
                 .latitude(33.33)
                 .longitude(33.33)
-                .password("비밀번호")
                 .businessHours(List.of(businessHour))
                 .build();
 
@@ -520,7 +517,6 @@ class StoreMetaServiceTest {
                     .category("카테고리")
                     .latitude(33.33)
                     .longitude(33.33)
-                    .password("비밀번호")
                     .businessHours(List.of(businessHour))
                     .build();
 
