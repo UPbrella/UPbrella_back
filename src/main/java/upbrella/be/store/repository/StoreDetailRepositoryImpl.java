@@ -75,8 +75,7 @@ public class StoreDetailRepositoryImpl implements StoreDetailRepositoryCustom {
                         storeDetail.instaUrl,
                         storeDetail.storeMeta.latitude,
                         storeDetail.storeMeta.longitude,
-                        storeDetail.content,
-                        storeDetail.storeMeta.password
+                        storeDetail.content
                 ))
                 .from(storeDetail)
                 .join(storeDetail.storeMeta, storeMeta)
