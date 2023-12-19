@@ -9,6 +9,8 @@ import upbrella.be.store.dto.request.UpdateLockerRequest;
 import upbrella.be.store.dto.response.AllLockerResponse;
 import upbrella.be.util.CustomResponse;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class LockerController {
@@ -30,7 +32,7 @@ public class LockerController {
     }
 
     @PostMapping("/admin/lockers")
-    public ResponseEntity<CustomResponse<Void>> createLocker(@RequestBody CreateLockerRequest request) {
+    public ResponseEntity<CustomResponse<Void>> createLocker(@RequestBody @Valid CreateLockerRequest request) {
 
         lockerService.createLocker(request);
 
@@ -44,7 +46,7 @@ public class LockerController {
     }
 
     @PatchMapping("/admin/lockers/{lockerId}")
-    public ResponseEntity<CustomResponse<Void>> updateLocker(@PathVariable Long lockerId, @RequestBody UpdateLockerRequest request) {
+    public ResponseEntity<CustomResponse<Void>> updateLocker(@PathVariable Long lockerId, @RequestBody @Valid UpdateLockerRequest request) {
 
         lockerService.updateLocker(lockerId, request);
 

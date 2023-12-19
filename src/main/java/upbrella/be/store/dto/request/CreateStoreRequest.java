@@ -35,6 +35,5 @@ public class CreateStoreRequest {
     @Range(min = -180, max = 180)
     private double longitude;
     private String content;
-    private String password;
     private List<SingleBusinessHourRequest> businessHours;
 }

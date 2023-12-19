@@ -2,7 +2,6 @@ package upbrella.be.store.dto.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
-import upbrella.be.store.entity.StoreDetail;
 
 import java.io.Serializable;
 
@@ -26,10 +25,9 @@ public class SingleStoreResponse implements Serializable {
     private double latitude;
     private double longitude;
     private String content;
-    private String password;
 
     @QueryProjection
-    public SingleStoreResponse(long id, String name, String category, SingleClassificationResponse classification, SingleSubClassificationResponse subClassification, boolean activateStatus, String address, String addressDetail, String umbrellaLocation, String businessHour, String contactNumber, String instagramId, double latitude, double longitude, String content, String password) {
+    public SingleStoreResponse(long id, String name, String category, SingleClassificationResponse classification, SingleSubClassificationResponse subClassification, boolean activateStatus, String address, String addressDetail, String umbrellaLocation, String businessHour, String contactNumber, String instagramId, double latitude, double longitude, String content) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -45,6 +43,5 @@ public class SingleStoreResponse implements Serializable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.content = content;
-        this.password = password;
     }
 }

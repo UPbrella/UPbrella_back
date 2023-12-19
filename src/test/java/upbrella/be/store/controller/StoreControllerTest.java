@@ -238,7 +238,6 @@ class StoreControllerTest extends RestDocsSupport {
                         .instagramId("instagramId")
                         .latitude(33.33)
                         .longitude(33.33)
-                        .password("비밀번호")
                         .build()));
 
         // when
@@ -302,9 +301,7 @@ class StoreControllerTest extends RestDocsSupport {
                                 fieldWithPath("stores[].longitude").type(JsonFieldType.NUMBER)
                                         .description("경도"),
                                 fieldWithPath("stores[].content").type(JsonFieldType.STRING)
-                                        .description("내용"),
-                                fieldWithPath("stores[].password").type(JsonFieldType.STRING)
-                                        .description("비밀번호")
+                                        .description("내용")
                         )));
     }
 
@@ -327,7 +324,6 @@ class StoreControllerTest extends RestDocsSupport {
                 .latitude(33.33)
                 .longitude(33.33)
                 .content("내용")
-                .password("비밀번호")
                 .businessHours(
                         List.of(
                                 SingleBusinessHourRequest.builder()
@@ -409,8 +405,6 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("경도"),
                                 fieldWithPath("content").type(JsonFieldType.STRING)
                                         .description("내용"),
-                                fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호"),
                                 fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
                                         .description("영업 시간"),
                                 fieldWithPath("businessHours[].date").type(JsonFieldType.STRING)
@@ -440,7 +434,6 @@ class StoreControllerTest extends RestDocsSupport {
                 .latitude(33.33)
                 .longitude(33.33)
                 .content("내용")
-                .password("비밀번호")
                 .businessHours(List.of(
                         SingleBusinessHourRequest.builder()
                                 .date(DayOfWeek.MONDAY)
@@ -497,9 +490,6 @@ class StoreControllerTest extends RestDocsSupport {
                                         .description("경도"),
                                 fieldWithPath("content").type(JsonFieldType.STRING)
                                         .description("내용"),
-                                fieldWithPath("password").type(JsonFieldType.STRING)
-                                        .description("비밀번호")
-                                        .optional(),
                                 fieldWithPath("businessHours").type(JsonFieldType.ARRAY)
                                         .description("영업 시간")
                                         .optional(),
