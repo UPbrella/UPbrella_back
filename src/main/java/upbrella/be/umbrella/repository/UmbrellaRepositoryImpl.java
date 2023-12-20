@@ -1,14 +1,17 @@
 package upbrella.be.umbrella.repository;
 
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import upbrella.be.rent.entity.QHistory;
 import upbrella.be.umbrella.dto.response.QUmbrellaWithHistory;
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory;
 
 import java.util.List;
 
-import static upbrella.be.rent.entity.QHistory.history;
 import static upbrella.be.umbrella.entity.QUmbrella.umbrella;
 
 @RequiredArgsConstructor
@@ -94,24 +97,36 @@ public class UmbrellaRepositoryImpl implements UmbrellaRepositoryCustom {
                 .fetchCount();
     }
 
-    // TODO : history와 연동
     @Override
     public List<UmbrellaWithHistory> findUmbrellaAndHistoryOrderedByUmbrellaId(Pageable pageable) {
 
-        QUmbrellaWithHistory umbrellaWithHistory = new QUmbrellaWithHistory(
-                umbrella.id,
-                umbrella.storeMeta,
-                umbrella.uuid,
-                umbrella.rentable,
-                umbrella.deleted,
-                umbrella.createdAt,
-                umbrella.etc,
-                umbrella.missed
-        );
+        QHistory subHistory = new QHistory("subHistory");
 
-        return queryFactory.select(umbrellaWithHistory)
+        JPAQuery<Long> subQuery = new JPAQuery<>();
+        subQuery.select(new CaseBuilder()
+                        .when(subHistory.returnedAt.isNull())
+                        .then(subHistory.id)
+                        .otherwise((Long) null))
+                .from(subHistory)
+                .where(subHistory.umbrella.id.eq(umbrella.id)
+                        .and(subHistory.id.eq(
+                                JPAExpressions.select(subHistory.id.max())
+                                        .from(subHistory)
+                                        .where(subHistory.umbrella.id.eq(umbrella.id)))))
+                .orderBy(subHistory.id.desc())
+                .limit(1);
+
+        return queryFactory.select(new QUmbrellaWithHistory(
+                        umbrella.id,
+                        umbrella.storeMeta,
+                        umbrella.uuid,
+                        umbrella.rentable,
+                        umbrella.deleted,
+                        umbrella.createdAt,
+                        umbrella.etc,
+                        umbrella.missed,
+                        subQuery))
                 .from(umbrella)
-                .join(umbrella.storeMeta)
                 .where(umbrella.deleted.eq(false))
                 .orderBy(umbrella.uuid.asc())
                 .offset(pageable.getOffset())
@@ -122,25 +137,35 @@ public class UmbrellaRepositoryImpl implements UmbrellaRepositoryCustom {
     @Override
     public List<UmbrellaWithHistory> findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(long storeId, Pageable pageable) {
 
-        QUmbrellaWithHistory umbrellaWithHistory = new QUmbrellaWithHistory(
-                umbrella.id,
-                umbrella.storeMeta,
-                umbrella.uuid,
-                umbrella.rentable,
-                umbrella.deleted,
-                umbrella.createdAt,
-                umbrella.etc,
-                umbrella.missed,
-                history.id
-        );
+        QHistory subHistory = new QHistory("subHistory");
 
-        return queryFactory.select(umbrellaWithHistory)
-                .from(history)
-                .rightJoin(history.umbrella, umbrella)
-                .join(umbrella.storeMeta)
+        JPAQuery<Long> subQuery = new JPAQuery<>();
+        subQuery.select(new CaseBuilder()
+                        .when(subHistory.returnedAt.isNull())
+                        .then(subHistory.id)
+                        .otherwise((Long) null))
+                .from(subHistory)
+                .where(subHistory.umbrella.id.eq(umbrella.id)
+                        .and(subHistory.id.eq(
+                                JPAExpressions.select(subHistory.id.max())
+                                        .from(subHistory)
+                                        .where(subHistory.umbrella.id.eq(umbrella.id)))))
+                .orderBy(subHistory.id.desc())
+                .limit(1);
+
+        return queryFactory.select(new QUmbrellaWithHistory(
+                        umbrella.id,
+                        umbrella.storeMeta,
+                        umbrella.uuid,
+                        umbrella.rentable,
+                        umbrella.deleted,
+                        umbrella.createdAt,
+                        umbrella.etc,
+                        umbrella.missed,
+                        subQuery))
+                .from(umbrella)
                 .where(umbrella.deleted.eq(false)
-                        .and(umbrella.storeMeta.id.eq(storeId))
-                        .and(history.returnedAt.isNull()))
+                        .and(umbrella.storeMeta.id.eq(storeId)))
                 .orderBy(umbrella.uuid.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
