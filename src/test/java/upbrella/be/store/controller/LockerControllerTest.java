@@ -7,14 +7,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
 import upbrella.be.docs.utils.RestDocsSupport;
+import upbrella.be.rent.dto.response.LockerPasswordResponse;
 import upbrella.be.rent.service.LockerService;
 import upbrella.be.store.dto.request.CreateLockerRequest;
+import upbrella.be.store.dto.request.UpdateLockerCountRequest;
 import upbrella.be.store.dto.request.UpdateLockerRequest;
 import upbrella.be.store.dto.response.AllLockerResponse;
 import upbrella.be.store.dto.response.SingleLockerResponse;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -145,6 +149,42 @@ class LockerControllerTest extends RestDocsSupport {
                                 parameterWithName("lockerId").description("보관함 ID")
                         )));
     }
+
+    @Test
+    @DisplayName("보관함의 카운트를 동기화할 수 있다.")
+    void updateLockerCount() throws Exception {
+        // given
+        Long storeId = 1L;
+        UpdateLockerCountRequest request = UpdateLockerCountRequest.builder()
+                .count(1L)
+                .build();
+
+        LockerPasswordResponse response = new LockerPasswordResponse("1234");
+        given(lockerService.updateCount(anyLong(), any())).willReturn(response);
+
+        // when & then
+        mockMvc.perform(patch("/lockers/{storeMetaId}", storeId)
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType("application/json"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("update-locker-count",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("storeMetaId").description("협업지점 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("count").type(JsonFieldType.NUMBER)
+                                        .description("보관함 카운트")
+                        ),
+                        responseFields(
+                                beneathPath("data").withSubsectionId("data"),
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .description("보관함 비밀번호")
+                        )));
+    }
+
 
     @Override
     protected Object initController() {

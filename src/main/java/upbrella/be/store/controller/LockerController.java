@@ -3,8 +3,10 @@ package upbrella.be.store.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import upbrella.be.rent.dto.response.LockerPasswordResponse;
 import upbrella.be.rent.service.LockerService;
 import upbrella.be.store.dto.request.CreateLockerRequest;
+import upbrella.be.store.dto.request.UpdateLockerCountRequest;
 import upbrella.be.store.dto.request.UpdateLockerRequest;
 import upbrella.be.store.dto.response.AllLockerResponse;
 import upbrella.be.util.CustomResponse;
@@ -71,5 +73,17 @@ public class LockerController {
                         200,
                         "보관함 삭제 성공",
                         null));
+    }
+
+    @PatchMapping("/lockers/{storeMetaId}")
+    public ResponseEntity<CustomResponse<LockerPasswordResponse>> updateCounter(@PathVariable Long storeMetaId, @RequestBody UpdateLockerCountRequest count) {
+
+        return ResponseEntity
+                .ok()
+                .body(new CustomResponse<>(
+                        "success",
+                        200,
+                        "보관함 카운터 업데이트 성공",
+                        lockerService.updateCount(storeMetaId, count)));
     }
 }

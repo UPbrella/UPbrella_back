@@ -67,3 +67,12 @@ include::{snippets}/update-locker/request-fields.adoc[]
 ==== HTTP Request
 include::{snippets}/delete-locker/http-request.adoc[]
 include::{snippets}/delete-locker/path-parameters.adoc[]
+
+=== 보관함 카운트 동기화
+==== HTTP Request
+include::{snippets}/update-locker-count/http-request.adoc[]
+include::{snippets}/update-locker-count/path-parameters.adoc[]
+include::{snippets}/update-locker-count/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/update-locker-count/response-fields-data.adoc[]
