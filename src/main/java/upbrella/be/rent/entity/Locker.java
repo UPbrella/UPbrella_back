@@ -36,4 +36,8 @@ public class Locker {
         this.storeMeta = storeMeta;
         this.secretKey = secretKey;
     }
+
+    public void updateCount(long count) {
+        this.count = count;
+    }
 }
