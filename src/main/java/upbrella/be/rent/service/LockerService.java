@@ -11,6 +11,7 @@ import upbrella.be.rent.exception.LockerSignatureErrorException;
 import upbrella.be.rent.exception.NoSignatureException;
 import upbrella.be.rent.repository.LockerRepository;
 import upbrella.be.store.dto.request.CreateLockerRequest;
+import upbrella.be.store.dto.request.UpdateLockerCountRequest;
 import upbrella.be.store.dto.request.UpdateLockerRequest;
 import upbrella.be.store.dto.response.AllLockerResponse;
 import upbrella.be.store.dto.response.SingleLockerResponse;
@@ -157,6 +158,23 @@ public class LockerService {
         if (byStoreMetaId.isPresent()) {
             throw new IllegalArgumentException("이미 보관함이 존재합니다.");
         }
+    }
+
+    @Transactional
+    public LockerPasswordResponse updateCount(Long storeId, UpdateLockerCountRequest request) {
+
+        Optional<Locker> lockerOptional = lockerRepository.findByStoreMetaId(storeId);
+        if (lockerOptional.isEmpty()) {
+            throw new IllegalArgumentException("해당 보관함이 존재하지 않습니다.");
+        }
+        Locker locker = lockerOptional.get();
+        locker.updateCount(request.getCount());
+
+        String password = HotpGenerator.generate((int) locker.getCount(), locker.getSecretKey());
+        locker.updateCount();
+        locker.updateLastAccess(LocalDateTime.now());
+
+        return new LockerPasswordResponse(password);
     }
 }
 
