@@ -1,7 +1,10 @@
 package upbrella.be.store.service;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +19,6 @@ import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreImage;
 import upbrella.be.store.exception.NonExistingStoreImageException;
 import upbrella.be.store.repository.StoreImageRepository;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class StoreImageService {
@@ -40,7 +38,6 @@ public class StoreImageService {
     }
 
     @Transactional
-    @CacheEvict(value = "stores", key = "'allStores'")
     public String uploadFile(MultipartFile file, long storeDetailId, String randomId) {
 
         String fileName = file.getOriginalFilename() + randomId;
@@ -66,7 +63,6 @@ public class StoreImageService {
     }
 
     @Transactional
-    @CacheEvict(value = "stores", key = "'allStores'")
     public void deleteFile(long imageId) {
 
         StoreImage storeImage = storeImageRepository.findById(imageId)
