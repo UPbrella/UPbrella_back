@@ -464,6 +464,6 @@ public class UserIntegrationTest extends RestDocsSupport {
                 .andExpect(status().isOk());
 
         // then
-        assertThat(em.find(User.class, user.getId()).isAdminStatus()).isTrue();
+        assertThat(em.find(User.class, user.getId()).getAdminStatus()).isTrue();
     }
 }

@@ -15,6 +15,10 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.spring' version '1.9.21'    // Kotlin Spring 플러그인 추가
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.21'       // Kotlin JPA 플러그인 추가
     id 'org.jetbrains.kotlin.kapt' version '1.9.21'             // Kotlin Annotation Processing 플러그인
+
+    // java lombok을 읽기 위한 용도 todo: 마이그레이션후 삭제 필요
+    id 'org.jetbrains.kotlin.plugin.lombok' version '2.1.20'
+    id 'io.freefair.lombok' version '8.13'
 }
 
 group = 'upbrella-server-dev'

@@ -219,23 +219,9 @@ class UserServiceTest {
         void setUp() {
 
             for (int i = 0; i < 1; i++) {
-                User sample = User.builder()
-                        .id(1L)
-                        .socialId(1L)
-                        .name("사용자")
-                        .phoneNumber("010-1234-5678")
-                        .bank(aesEncryptor.encrypt("농협"))
-                        .accountNumber(aesEncryptor.encrypt("123-456-789"))
-                        .build();
+                User sample = new User(1L, "사용자", "010-1234-5678", "", false, aesEncryptor.encrypt("농협"), aesEncryptor.encrypt("123-456-789"), 1L);
 
-                User expectedSample = User.builder()
-                        .id(1L)
-                        .socialId(1L)
-                        .name("사용자")
-                        .phoneNumber("010-1234-5678")
-                        .bank(aesEncryptor.encrypt("농협"))
-                        .accountNumber(aesEncryptor.encrypt("123-456-789"))
-                        .build();
+                User expectedSample = new User(1L, "사용자", "010-1234-5678", "", false, aesEncryptor.encrypt("농협"), aesEncryptor.encrypt("123-456-789"), 1L);
 
                 users.add(sample);
                 expectedUsers.add(expectedSample);
@@ -324,7 +310,7 @@ class UserServiceTest {
                 () -> assertThat(user.getSocialId()).isEqualTo(0L),
                 () -> assertThat(user.getName()).isEqualTo("탈퇴한 회원"),
                 () -> assertThat(user.getPhoneNumber()).isEqualTo("deleted"),
-                () -> assertThat(user.isAdminStatus()).isEqualTo(false),
+                () -> assertThat(user.getAdminStatus()).isEqualTo(false),
                 () -> assertThat(user.getBank()).isEqualTo(null),
                 () -> assertThat(user.getAccountNumber()).isEqualTo(null)
         );
@@ -350,7 +336,7 @@ class UserServiceTest {
                     () -> assertThat(user.getSocialId()).isEqualTo(0L),
                     () -> assertThat(user.getName()).isEqualTo("정지된 회원"),
                     () -> assertThat(user.getPhoneNumber()).isEqualTo("deleted"),
-                    () -> assertThat(user.isAdminStatus()).isEqualTo(false),
+                    () -> assertThat(user.getAdminStatus()).isEqualTo(false),
                     () -> assertThat(user.getBank()).isEqualTo(null),
                     () -> assertThat(user.getAccountNumber()).isEqualTo(null),
                     () -> then(blackListRepository).should(times(1))
@@ -469,7 +455,7 @@ class UserServiceTest {
         userService.updateAdminStatus(1L);
 
         // then
-        assertThat(user.isAdminStatus()).isTrue();
+        assertThat(user.getAdminStatus()).isTrue();
     }
 
     @Test

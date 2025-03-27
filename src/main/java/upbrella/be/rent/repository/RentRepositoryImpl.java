@@ -1,20 +1,19 @@
 package upbrella.be.rent.repository;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import upbrella.be.rent.dto.response.HistoryInfoDto;
-import upbrella.be.rent.dto.request.HistoryFilterRequest;
-import upbrella.be.rent.dto.response.QHistoryInfoDto;
-import upbrella.be.rent.entity.History;
-
-import java.util.List;
-
 import static upbrella.be.rent.entity.QHistory.history;
 import static upbrella.be.store.entity.QStoreMeta.storeMeta;
 import static upbrella.be.umbrella.entity.QUmbrella.umbrella;
 import static upbrella.be.user.entity.QUser.user;
+
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import upbrella.be.rent.dto.request.HistoryFilterRequest;
+import upbrella.be.rent.dto.response.HistoryInfoDto;
+import upbrella.be.rent.dto.response.QHistoryInfoDto;
+import upbrella.be.rent.entity.History;
 
 @RequiredArgsConstructor
 public class RentRepositoryImpl implements RentRepositoryCustom {

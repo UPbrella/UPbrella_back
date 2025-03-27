@@ -6,10 +6,10 @@ import upbrella.be.rent.exception.NotRefundedException;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
-import upbrella.be.user.entity.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import upbrella.be.user.entity.User;
 
 @Entity
 @Getter

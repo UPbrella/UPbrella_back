@@ -10,8 +10,8 @@ import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.request.KakaoAccount;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.response.SessionUser;
-import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.entity.User;
+import upbrella.be.user.exception.ExistingMemberException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.repository.UserRepository;
 import upbrella.be.util.AesEncryptor;
@@ -38,16 +38,8 @@ class UserServiceDynamicTest {
     @DisplayName("사용자는 회원 가입과 로그인을 할 수 있다.")
     Collection<DynamicTest> joinTest() {
         // given
-        User user = User.builder()
-                .id(1L)
-                .socialId(23132L)
-                .accountNumber(aesEncryptor.encrypt("110-421-674103"))
-                .bank(aesEncryptor.encrypt("신한"))
-                .email("email@email.com")
-                .name("홍길동")
-                .phoneNumber("010-2084-3478")
-                .adminStatus(false)
-                .build();
+        User user = new User(23132L, "홍길동", "010-2084-3478", "email@email.com", false,
+            aesEncryptor.encrypt("신한"), aesEncryptor.encrypt("110-421-674103"), 1L);
 
         JoinRequest joinRequest = JoinRequest.builder()
                 .name("홍길동")
@@ -72,7 +64,7 @@ class UserServiceDynamicTest {
                     assertAll(() -> assertTrue(foundUser.isPresent()),
                             () -> assertEquals(user.getName(), foundUser.get().getName()),
                             () -> assertEquals(user.getPhoneNumber(), foundUser.get().getPhoneNumber()),
-                            () -> assertEquals(user.isAdminStatus(), foundUser.get().isAdminStatus()),
+                            () -> assertEquals(user.getAdminStatus(), foundUser.get().getAdminStatus()),
                             () -> assertEquals(user.getSocialId(), foundUser.get().getSocialId()),
                             () -> assertEquals(aesEncryptor.decrypt(user.getAccountNumber()), aesEncryptor.decrypt(foundUser.get().getAccountNumber())),
                             () -> assertEquals(aesEncryptor.decrypt(user.getBank()), aesEncryptor.decrypt(foundUser.get().getBank()))
@@ -93,7 +85,7 @@ class UserServiceDynamicTest {
                     assertAll(() -> assertTrue(foundUser.isPresent()),
                             () -> assertEquals(user.getName(), foundUser.get().getName()),
                             () -> assertEquals(user.getPhoneNumber(), foundUser.get().getPhoneNumber()),
-                            () -> assertEquals(user.isAdminStatus(), foundUser.get().isAdminStatus()),
+                            () -> assertEquals(user.getAdminStatus(), foundUser.get().getAdminStatus()),
                             () -> assertEquals(user.getSocialId(), foundUser.get().getSocialId()),
                             () -> assertEquals(aesEncryptor.decrypt(user.getAccountNumber()), aesEncryptor.decrypt(foundUser.get().getAccountNumber())),
                             () -> assertEquals(aesEncryptor.decrypt(user.getBank()), aesEncryptor.decrypt(foundUser.get().getBank()))
