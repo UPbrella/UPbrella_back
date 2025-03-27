@@ -14,9 +14,9 @@ import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.request.JoinRequest;
 import upbrella.be.user.dto.response.KakaoLoginResponse;
 import upbrella.be.user.dto.token.OauthToken;
-import upbrella.be.user.entity.User;
 
 import java.time.LocalDateTime;
+import upbrella.be.user.entity.User;
 
 import static upbrella.be.config.FixtureBuilderFactory.builderStoreMeta;
 import static upbrella.be.config.FixtureBuilderFactory.builderUmbrella;

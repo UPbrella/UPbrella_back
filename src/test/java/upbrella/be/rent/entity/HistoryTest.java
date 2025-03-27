@@ -7,9 +7,9 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.user.dto.response.SingleHistoryResponse;
-import upbrella.be.user.entity.User;
 
 import java.time.LocalDateTime;
+import upbrella.be.user.entity.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -45,12 +45,13 @@ class HistoryTest {
                 .rentable(true)
                 .build();
 
-        userToRent = User.builder()
-                .id(11L)
-                .name("테스터")
-                .phoneNumber("010-1234-5678")
-                .adminStatus(false)
-                .build();
+        userToRent = new User(1L, "테스터", "010-1234-5678", "email", false, null, null, 11L);
+//            User.builder()
+//                .id(11L)
+//                .name("테스터")
+//                .phoneNumber("010-1234-5678")
+//                .adminStatus(false)
+//                .build();
 
 
     }

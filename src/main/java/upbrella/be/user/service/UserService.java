@@ -54,7 +54,7 @@ public class UserService {
             throw new BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.");
         }
 
-        User joinedUser = userRepository.save(User.createNewUser(kakaoUser, joinRequest, aesEncryptor));
+        User joinedUser = userRepository.save(User.Companion.createNewUser(kakaoUser, joinRequest, aesEncryptor));
 
         return SessionUser.fromUser(joinedUser);
     }

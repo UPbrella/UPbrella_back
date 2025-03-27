@@ -1,21 +1,23 @@
 package upbrella.be.store.service;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.store.dto.request.UpdateStoreRequest;
-import upbrella.be.store.dto.response.*;
+import upbrella.be.store.dto.response.AllStoreIntroductionResponse;
+import upbrella.be.store.dto.response.SingleStoreResponse;
+import upbrella.be.store.dto.response.StoreFindByIdResponse;
+import upbrella.be.store.dto.response.StoreIntroductionsResponseByClassification;
 import upbrella.be.store.entity.Classification;
 import upbrella.be.store.entity.StoreDetail;
 import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.NonExistingStoreDetailException;
 import upbrella.be.store.repository.StoreDetailRepository;
 import upbrella.be.umbrella.service.UmbrellaService;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,6 @@ public class StoreDetailService {
     private final BusinessHourService businessHourService;
 
     @Transactional
-    @CacheEvict(value = "stores", key = "'allStores'")
     public void updateStore(Long storeId, UpdateStoreRequest request) {
 
         StoreDetail storeDetailById = findStoreDetailByStoreMetaId(storeId);
@@ -62,7 +63,6 @@ public class StoreDetailService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "stores", key = "'allStores'")
     public List<SingleStoreResponse> findAllStores() {
 
         return storeDetailRepository.findAllStoresForAdmin();

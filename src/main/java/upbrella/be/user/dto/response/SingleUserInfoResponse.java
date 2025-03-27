@@ -25,7 +25,7 @@ public class SingleUserInfoResponse {
                 .email(user.getEmail())
                 .bank(user.getBank())
                 .accountNumber(user.getAccountNumber())
-                .adminStatus(user.isAdminStatus())
+                .adminStatus(user.getAdminStatus())
                 .build();
     }
 }

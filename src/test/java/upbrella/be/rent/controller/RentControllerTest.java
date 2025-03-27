@@ -117,12 +117,7 @@ class RentControllerTest extends RestDocsSupport {
                 .adminStatus(false)
                 .build();
 
-        User userToReturn = User.builder()
-                .id(1L)
-                .name("테스터1")
-                .phoneNumber("010-1111-1111")
-                .adminStatus(false)
-                .build();
+        User userToReturn = new User(1L, "테스터1", "010-1111-1111", "email", false, null, null, 11L);
 
         StoreMeta storeMeta = FixtureBuilderFactory.builderStoreMeta().sample();
         History history = History.builder()
@@ -190,12 +185,7 @@ class RentControllerTest extends RestDocsSupport {
                 .conditionReport("필요하다면 상태 신고를 해주세요.")
                 .build();
 
-        User newUser = User.builder()
-                .id(1L)
-                .name("테스터1")
-                .phoneNumber("010-1111-1111")
-                .adminStatus(false)
-                .build();
+        User newUser = new User(1L, "테스터1", "010-1111-1111", "email", false, null, null, 11L);
 
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("user", sessionUser);
