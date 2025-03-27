@@ -21,7 +21,6 @@ import upbrella.be.util.CustomResponse;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 @RestController
