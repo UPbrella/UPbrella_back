@@ -2,9 +2,9 @@ package upbrella.be.user.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import upbrella.be.user.entity.User;
 
 import java.io.Serializable;
+import upbrella.be.user.entity.User;
 
 @Getter
 @Builder
@@ -18,7 +18,7 @@ public class SessionUser implements Serializable {
 
         return SessionUser.builder()
                 .id(user.getId())
-                .adminStatus(user.isAdminStatus())
+                .adminStatus(user.getAdminStatus())
                 .build();
     }
 }

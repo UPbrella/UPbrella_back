@@ -1,5 +1,21 @@
 package upbrella.be.rent.service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,9 +28,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.FixtureFactory;
-import upbrella.be.rent.dto.response.HistoryInfoDto;
 import upbrella.be.rent.dto.request.HistoryFilterRequest;
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest;
+import upbrella.be.rent.dto.response.HistoryInfoDto;
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse;
 import upbrella.be.rent.dto.response.RentalHistoryResponse;
 import upbrella.be.rent.entity.ConditionReport;
@@ -36,20 +52,6 @@ import upbrella.be.user.exception.BlackListUserException;
 import upbrella.be.user.exception.NonExistingMemberException;
 import upbrella.be.user.service.UserService;
 import upbrella.be.util.AesEncryptor;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RentServiceTest {
@@ -99,12 +101,14 @@ class RentServiceTest {
                 .rentable(true)
                 .build();
 
-        userToRent = User.builder()
-                .id(11L)
-                .name("테스터")
-                .phoneNumber("010-1234-5678")
-                .adminStatus(false)
-                .build();
+//        userToRent = User.builder()
+//                .id(11L)
+//                .name("테스터")
+//                .phoneNumber("010-1234-5678")
+//                .adminStatus(false)
+//                .build();
+        userToRent = new User(0L, "테스터", "010-1234-5678", "email",
+            false, null, null, 11L);
 
         history = History.builder()
                 .id(33L)

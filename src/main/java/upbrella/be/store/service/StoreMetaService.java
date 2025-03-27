@@ -1,6 +1,9 @@
 package upbrella.be.store.service;
 
-import org.springframework.cache.annotation.CacheEvict;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +13,11 @@ import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse;
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse;
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount;
-import upbrella.be.store.entity.*;
+import upbrella.be.store.entity.BusinessHour;
+import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.StoreDetail;
+import upbrella.be.store.entity.StoreImage;
+import upbrella.be.store.entity.StoreMeta;
 import upbrella.be.store.exception.DeletedStoreDetailException;
 import upbrella.be.store.exception.EssentialImageException;
 import upbrella.be.store.exception.NonExistingStoreMetaException;
@@ -18,12 +25,6 @@ import upbrella.be.store.repository.StoreMetaRepository;
 import upbrella.be.umbrella.entity.Umbrella;
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.umbrella.repository.UmbrellaRepository;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class StoreMetaService {
@@ -68,7 +69,6 @@ public class StoreMetaService {
     }
 
     @Transactional
-    @CacheEvict(value = "stores", key = "'allStores'")
     public void createStore(CreateStoreRequest store) {
 
         StoreMeta storeMeta = saveStoreMeta(store);
@@ -76,7 +76,6 @@ public class StoreMetaService {
     }
 
     @Transactional
-    @CacheEvict(value = "stores", key = "'allStores'")
     public void deleteStoreMeta(long storeMetaId) {
 
         findStoreMetaById(storeMetaId).delete();
@@ -104,7 +103,6 @@ public class StoreMetaService {
     }
 
     @Transactional
-    @CacheEvict(value = "stores", key = "'allStores'")
     public void activateStoreStatus(long storeId) {
 
         StoreDetail storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId);
@@ -118,7 +116,6 @@ public class StoreMetaService {
     }
 
     @Transactional
-    @CacheEvict(value = "stores", key = "'allStores'")
     public void inactivateStoreStatus(long storeId) {
 
         StoreDetail storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId);
