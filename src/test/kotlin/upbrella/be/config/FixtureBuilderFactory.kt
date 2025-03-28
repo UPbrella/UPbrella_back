@@ -154,7 +154,7 @@ object FixtureBuilderFactory {
     fun builderUser(aesEncryptor: AesEncryptor): ArbitraryBuilder<User> {
         return fixtureMonkey.giveMeBuilder(User::class.java)
             .set("id", buildLong(100))
-            .set("socialId", buildLong(100000000))
+            .set("socialId", buildLong(100000000).hashCode().toLong())
             .set("name", pickRandomString(nameList))
             .set("phoneNumber", pickPhoneNumberString())
             .set("email", "email@email.com")
@@ -182,7 +182,7 @@ object FixtureBuilderFactory {
     fun builderBankAccount(): ArbitraryBuilder<UpdateBankAccountRequest> {
         return fixtureMonkey.giveMeBuilder(UpdateBankAccountRequest::class.java)
             .set("bank", pickRandomString(bankList))
-            .set("accountNumber", pickRandomString(bankList))
+            .set("accountNumber", "123456789")
     }
 
     @JvmStatic
