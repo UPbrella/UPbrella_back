@@ -117,7 +117,7 @@ object FixtureFactory {
             .set("umbrellaUuid", history.umbrellaUuid)
             .set("returnStoreName", history.returnStoreName)
             .set("returnAt", history.returnAt)
-            .set("totalRentalDay", history.returnAt.dayOfYear - history.rentAt.dayOfYear)
+            .set("totalRentalDay", history.returnAt?.let { it.dayOfYear - history.rentAt.dayOfYear } ?: 0)
             .set("refundCompleted", true)
             .set("bank", history.bank)
             .set("accountNumber", history.accountNumber)
