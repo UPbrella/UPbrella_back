@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CustomResponse<T> {
-
+    //
     private String status;
     private int code;
     private String message;
