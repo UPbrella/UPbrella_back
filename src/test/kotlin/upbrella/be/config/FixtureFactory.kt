@@ -16,6 +16,7 @@ import upbrella.be.user.dto.response.KakaoLoginResponse
 import upbrella.be.user.dto.token.OauthToken
 import upbrella.be.user.entity.User
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 object FixtureFactory {
 
@@ -125,9 +126,15 @@ object FixtureFactory {
     }
 
     private fun calElapsedDay(history: HistoryInfoDto): Int {
-        var elapsedDay = LocalDateTime.now().dayOfYear - history.rentAt.dayOfYear
+        var elapsedDay : Int = ChronoUnit.DAYS.between(
+            history.rentAt.toLocalDate(),
+            LocalDateTime.now().toLocalDate()
+        ).toInt()
         if (history.returnAt != null) {
-            elapsedDay = history.returnAt.dayOfYear - history.rentAt.dayOfYear
+            elapsedDay = ChronoUnit.DAYS.between(
+                history.rentAt.toLocalDate(),
+                history.returnAt.toLocalDate()
+            ).toInt()
         }
         return elapsedDay
     }
