@@ -1,5 +1,6 @@
 package upbrella.be.user.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,6 +9,7 @@ import upbrella.be.user.entity.User;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class SessionUser implements Serializable {
 
     private long id;
