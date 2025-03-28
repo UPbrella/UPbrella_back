@@ -242,7 +242,7 @@ object FixtureBuilderFactory {
             .set("refundedBy", builderUser(aesEncryptor).sample())
             .set("paidBy", builderUser(aesEncryptor).sample())
             .set("bank", pickRandomString(bankList))
-            .set("accountNumber", pickRandomString(bankList))
+            .set("accountNumber", pickAccountNumberString())
             .set("etc", pickRandomString(etcList))
     }
 }
