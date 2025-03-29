@@ -1,5 +1,10 @@
 package upbrella.be.store.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,13 +15,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import upbrella.be.config.FixtureBuilderFactory;
 import upbrella.be.config.QueryDslTestConfig;
-import upbrella.be.store.entity.*;
-
-import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import upbrella.be.store.entity.BusinessHour;
+import upbrella.be.store.entity.Classification;
+import upbrella.be.store.entity.ClassificationType;
+import upbrella.be.store.entity.StoreDetail;
+import upbrella.be.store.entity.StoreMeta;
 
 @Import(QueryDslTestConfig.class)
 @DataJpaTest
