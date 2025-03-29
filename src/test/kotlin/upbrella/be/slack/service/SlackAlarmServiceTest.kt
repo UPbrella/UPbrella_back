@@ -44,9 +44,7 @@ class SlackAlarmServiceTest {
         // when
         slackAlarmService.notifyReturn(1)
 
-        val requestEntityCaptor =
-            ArgumentCaptor.forClass(HttpEntity::class.java as Class<HttpEntity<Any>>)
-        val requestBody = requestEntityCaptor.value.body.toString()
+        val requestEntityCaptor = ArgumentCaptor.forClass(HttpEntity::class.java as Class<HttpEntity<Any>>)
         // then
 
         assertAll(
@@ -59,7 +57,12 @@ class SlackAlarmServiceTest {
                         any(Class::class.java)
                     )
             },
-            { assertTrue(requestBody.contains("1")) }// "1"이 포함되었는지 확인 (우산 반납 수)
+            {
+                assertTrue(
+                    requestEntityCaptor.value.body.toString().contains("1")
+                )
+            }// "1"이 포함되었는지 확인 (우산 반납 수)
+
         )
     }
 }
