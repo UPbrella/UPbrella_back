@@ -199,8 +199,8 @@ class HistoryTest {
 
         // then
         assertAll(
-            { history.refundedBy == userToRent },
-            { history.refundedAt == LocalDateTime.of(1000, 1, 2, 3, 4, 5) }
+            { assertThat(history.refundedBy).isEqualTo(userToRent) },
+            { assertThat(history.refundedAt).isEqualTo(LocalDateTime.of(1000, 1, 2, 3, 4, 5)) },
         )
     }
 
@@ -223,8 +223,8 @@ class HistoryTest {
 
         // then
         assertAll(
-            { history.paidBy == userToRent },
-            { history.paidAt == LocalDateTime.of(1000, 1, 2, 3, 4, 5) }
+            { assertThat(history.paidBy).isEqualTo(userToRent) },
+            { assertThat(history.paidAt).isEqualTo(LocalDateTime.of(1000, 1, 2, 3, 4, 5)) },
         )
     }
 }
