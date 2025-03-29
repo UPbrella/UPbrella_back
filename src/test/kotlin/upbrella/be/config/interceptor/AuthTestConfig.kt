@@ -19,34 +19,28 @@ class AuthTestConfig : WebMvcConfigurer {
     @Autowired
     private lateinit var adminInterceptor: AdminInterceptor
 
+    private val excludedPaths = listOf(
+        "/oauth/token",
+        "/user/me",
+        "/users/login/**",
+        "/users/oauth/login/**",
+        "/users/join/**",
+        "/stores/**",
+        "/index.html",
+        "/error/**",
+        "/api/error/**",
+        "/docs/**"
+    )
+
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(loginInterceptor)
             .order(HIGHEST_PRECEDENCE)
             .addPathPatterns("/**")
-            .excludePathPatterns(
-                "/oauth/token",
-                "/user/me",
-                "/users/login/**",
-                "/users/oauth/login/**",
-                "/users/join/**",
-                "/stores/**",
-                "/index.html",
-                "/error/**",
-                "/api/error/**",
-                "/docs/**")
+            .excludePathPatterns(excludedPaths)
 
         registry.addInterceptor(adminInterceptor)
             .order(LOWEST_PRECEDENCE)
             .addPathPatterns("/admin/**")
-            .excludePathPatterns(
-                "/oauth/token",
-                "/user/me",
-                "/users/login/**",
-                "/users/oauth/login/**",
-                "/users/join/**",
-                "/index.html",
-                "/error/**",
-                "/api/error/**",
-                "/docs/**")
+            .excludePathPatterns(excludedPaths)
     }
 }

@@ -87,7 +87,7 @@ class StoreImageServiceTest {
         assertAll(
             { assertEquals(testId, testImage.id) },
             { assertEquals(testUrl, testImage.imageUrl) },
-            { verify(storeImageRepository, times(1)).delete(testImage) },
+            { verify(storeImageRepository, times(1)).deleteById(testImage.id) },
             { verify(s3Client, times(1)).deleteObject(any(DeleteObjectRequest::class.java)) },
         )
     }
