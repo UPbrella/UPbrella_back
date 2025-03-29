@@ -24,6 +24,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 
 @Transactional
 @ExtendWith(MockitoExtension::class)
@@ -85,7 +86,9 @@ class StoreImageServiceTest {
         // then
         assertAll(
             { assertEquals(testId, testImage.id) },
-            { assertEquals(testUrl, testImage.imageUrl) }
+            { assertEquals(testUrl, testImage.imageUrl) },
+            { verify(storeImageRepository, times(1)).delete(testImage) },
+            { verify(s3Client, times(1)).deleteObject(any(DeleteObjectRequest::class.java)) },
         )
     }
 
