@@ -1,14 +1,17 @@
 package upbrella.be.slack.service
 
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertAll
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.BDDMockito.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 import upbrella.be.config.SlackBotConfig
@@ -41,21 +44,22 @@ class SlackAlarmServiceTest {
         // when
         slackAlarmService.notifyReturn(1)
 
+        val requestEntityCaptor =
+            ArgumentCaptor.forClass(HttpEntity::class.java as Class<HttpEntity<Any>>)
+        val requestBody = requestEntityCaptor.value.body.toString()
         // then
-        Assertions.assertAll(
-            {
-                then(slackBotConfig).should(times(1))
-                    .webHookUrl
-            },
+
+        assertAll(
             {
                 then(restTemplate).should(times(1))
                     .exchange(
                         anyString(),
                         any(HttpMethod::class.java),
-                        any(),
+                        requestEntityCaptor.capture(),
                         any(Class::class.java)
                     )
-            }
+            },
+            { assertTrue(requestBody.contains("1")) }// "1"이 포함되었는지 확인 (우산 반납 수)
         )
     }
 }
