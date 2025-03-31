@@ -58,7 +58,7 @@ class Umbrella(
         this.rentable = true
     }
 
-    fun validateCannotBeRented(): Boolean {
+    fun cannotBeRented(): Boolean {
         return missed || deleted || !rentable
     }
 }
