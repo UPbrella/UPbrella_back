@@ -107,13 +107,19 @@ class History(
     }
 
     fun refund(user: User, refundedAt: LocalDateTime) {
+        // 이미 환불된 경우, 환불 취소 처리
         if (this.refundedAt != null || this.refundedBy != null) {
-            this.refundedAt = null
-            this.refundedBy = null
+            cancelRefund()
             return
         }
+        // 환불 처리
         this.refundedAt = refundedAt
         this.refundedBy = user
+    }
+
+    private fun cancelRefund() {
+        this.refundedAt = null
+        this.refundedBy = null
     }
 
     fun paid(user: User, paidAt: LocalDateTime) {

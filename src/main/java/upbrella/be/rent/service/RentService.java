@@ -200,9 +200,11 @@ public class RentService {
 
         if (history.getReturnAt() != null) {
 
-            elapsedDay = history.getReturnAt().getDayOfYear() - history.getRentAt().getDayOfYear();
-            totalRentalDay =
-                history.getReturnAt().getDayOfYear() - history.getRentAt().getDayOfYear();
+            elapsedDay = (int) ChronoUnit.DAYS
+                .between(history.getRentAt().toLocalDate(), history.getReturnAt().toLocalDate());
+
+            totalRentalDay = (int) ChronoUnit.DAYS
+                .between(history.getRentAt().toLocalDate(), history.getReturnAt().toLocalDate());
 
             return RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay);
         }
