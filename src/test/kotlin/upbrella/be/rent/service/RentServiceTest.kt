@@ -122,11 +122,12 @@ class RentServiceTest {
             rentStoreMeta = foundStoreMeta,
         )
 
-        conditionReport = ConditionReport.builder()
-            .id(1L)
-            .content("상태 양호")
-            .history(history)
-            .build()
+        conditionReport = ConditionReport(
+            id = 1L,
+            content = "상태 양호",
+            history = history,
+            etc = "etc",
+        )
     }
 
     @Nested

@@ -24,7 +24,7 @@ import upbrella.be.user.entity.User
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
-class ConditionReportServiceTest {
+class JavaConditionReportServiceTest {
 
     @Mock
     private lateinit var conditionReportRepository: ConditionReportRepository
@@ -71,17 +71,17 @@ class ConditionReportServiceTest {
             rentStoreMeta = foundStoreMeta,
         )
 
-        conditionReport = ConditionReport.builder()
-            .id(1L)
-            .content("content")
-            .history(history)
-            .etc("etc")
-            .build()
+        conditionReport = ConditionReport(
+            id = 1L,
+            content = "content",
+            history = history,
+            etc = "etc",
+        )
     }
 
     @Nested
     @DisplayName("사용자(관리자)는 상태 신고 내역을 조회할 수 있다.")
-    inner class FindConditionReportsTest {
+    inner class FindJavaConditionReportsTest {
 
         @Test
         @DisplayName("사용자(관리자)는 상태 신고 내역 조회를 할 수 있다.")
