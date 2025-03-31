@@ -15,7 +15,7 @@ import javax.persistence.EntityManager
 @Import(QueryDslTestConfig::class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class UmbrellaRepositoryImplTest {
+class JavaUmbrellaRepositoryImplTest {
 
     @Autowired
     private lateinit var umbrellaRepository: UmbrellaRepository
