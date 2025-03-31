@@ -49,7 +49,7 @@ public class RentService {
 
         Umbrella umbrella = umbrellaService.findUmbrellaById(umbrellaId);
 
-        if (umbrella.validateCannotBeRented()) {
+        if (umbrella.cannotBeRented()) {
             throw new CannotBeRentedException("[ERROR] 해당 우산은 대여 불가능한 우산입니다.");
         }
 
@@ -81,10 +81,10 @@ public class RentService {
         if(willRentUmbrella.getStoreMeta().getId() != rentUmbrellaByUserRequest.getStoreId()){
             throw new UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.");
         }
-        if (willRentUmbrella.isMissed()) {
+        if (willRentUmbrella.getMissed()) {
             throw new MissingUmbrellaException("[ERROR] 해당 우산은 분실되었습니다.");
         }
-        if (!willRentUmbrella.isRentable()){
+        if (!willRentUmbrella.getRentable()){
             throw new NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.");
         }
 

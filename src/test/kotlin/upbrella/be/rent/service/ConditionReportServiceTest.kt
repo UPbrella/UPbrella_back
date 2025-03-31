@@ -46,13 +46,16 @@ class ConditionReportServiceTest {
             .deleted(false)
             .build()
 
-        foundUmbrella = Umbrella.builder()
-            .id(99L)
-            .uuid(99L)
-            .deleted(false)
-            .storeMeta(foundStoreMeta)
-            .rentable(true)
-            .build()
+        foundUmbrella = Umbrella(
+            id = 99L,
+            uuid = 99L,
+            deleted = false,
+            storeMeta = foundStoreMeta,
+            rentable = true,
+            createdAt = LocalDateTime.now(),
+            etc = "etc",
+            missed = false,
+        )
 
         userToRent = User(1L, "테스터", "010-1234-5678", "email", false, null, null, 11L)
 
