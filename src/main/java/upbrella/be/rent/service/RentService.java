@@ -49,7 +49,7 @@ public class RentService {
 
         Umbrella umbrella = umbrellaService.findUmbrellaById(umbrellaId);
 
-        if (umbrella.validateCannotBeRented()) {
+        if (umbrella.cannotBeRented()) {
             throw new CannotBeRentedException("[ERROR] 해당 우산은 대여 불가능한 우산입니다.");
         }
 
