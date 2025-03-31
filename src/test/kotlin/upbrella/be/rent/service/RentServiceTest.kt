@@ -82,11 +82,13 @@ class RentServiceTest {
             .conditionReport("상태 양호")
             .build()
 
-        foundStoreMeta = StoreMeta.builder()
-            .id(25L)
-            .name("motive study cafe")
-            .deleted(false)
-            .build()
+        foundStoreMeta = StoreMeta(
+            id = 25L,
+            name = "motive study cafe",
+            deleted = false,
+            category = "category",
+            activated = false
+        )
 
         foundUmbrella = Umbrella(
             id = 99L,

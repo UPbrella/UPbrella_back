@@ -92,7 +92,7 @@ class StoreDetailRepositoryImplTest {
     @DisplayName("협업지점의 메타 정보 고유번호에 해당하는 상세 정보를 조회한다.")
     fun findByStoreMetaIdUsingFetchJoin() {
         // when
-        val storeDetail: Optional<StoreDetail> = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(expectedStoreMeta.id)
+        val storeDetail: Optional<StoreDetail> = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(expectedStoreMeta.id!!)
 
         // then
         Assertions.assertAll(

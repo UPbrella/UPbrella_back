@@ -90,7 +90,7 @@ class JavaUmbrellaRepositoryImplTest {
             em.flush()
         }
 
-        storeMetaId = storeMeta.id
+        storeMetaId = storeMeta.id!!
     }
 
     @Test

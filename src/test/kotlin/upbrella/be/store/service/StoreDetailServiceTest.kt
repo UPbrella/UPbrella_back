@@ -60,17 +60,16 @@ class StoreDetailServiceTest {
             .build()
         private val businessHours = listOf(monday, tuesday)
 
-        private val storeMeta = StoreMeta.builder()
-            .id(3L)
-            .name("스타벅스")
-            .deleted(false)
-            .latitude(37.503716)
-            .longitude(127.053718)
-            .activated(true)
-            .deleted(false)
-            .category("카페, 디저트")
-            .businessHours(businessHours)
-            .build()
+        private val storeMeta = StoreMeta(
+            id = 3L,
+            name = "스타벅스",
+            deleted = false,
+            latitude = 37.503716,
+            longitude = 127.053718,
+            activated = true,
+            category = "카페, 디저트",
+            businessHours = businessHours,
+        )
 
         private val storeDetail = StoreDetail.builder()
             .id(2L)
@@ -84,7 +83,8 @@ class StoreDetailServiceTest {
             .storeImages(listOf())
             .build()
 
-        private val storeFindByIdResponseExpected = StoreFindByIdResponse.fromStoreDetail(storeDetail, 10L)
+        private val storeFindByIdResponseExpected =
+            StoreFindByIdResponse.fromStoreDetail(storeDetail, 10L)
 
         @Test
         @DisplayName("해당하는 협업 지점의 정보를 성공적으로 반환한다.")
@@ -171,20 +171,21 @@ class StoreDetailServiceTest {
             .name("소분류")
             .build()
 
-        private val businessHours = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+        private val businessHours =
+            listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-        private val storeMeta = StoreMeta.builder()
-            .id(1L)
-            .name("협업 지점명")
-            .activated(true)
-            .deleted(false)
-            .classification(classification)
-            .subClassification(subClassification)
-            .category("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .businessHours(businessHours)
-            .build()
+        private val storeMeta = StoreMeta(
+            id = 1L,
+            name = "협업 지점명",
+            activated = true,
+            deleted = false,
+            classification = classification,
+            subClassification = subClassification,
+            category = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33,
+            businessHours = businessHours
+        )
 
         private val first = StoreImage.builder()
             .id(1L)
@@ -337,20 +338,21 @@ class StoreDetailServiceTest {
             .name("소분류")
             .build()
 
-        private val businessHours = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+        private val businessHours =
+            listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-        private val storeMeta = StoreMeta.builder()
-            .id(1L)
-            .name("협업 지점명")
-            .activated(true)
-            .deleted(false)
-            .classification(classification)
-            .subClassification(subClassification)
-            .category("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .businessHours(businessHours)
-            .build()
+        private val storeMeta = StoreMeta(
+            id = 1L,
+            name = "협업 지점명",
+            activated = true,
+            deleted = false,
+            classification = classification,
+            subClassification = subClassification,
+            category = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33,
+            businessHours = businessHours
+        )
 
         private val first = StoreImage.builder()
             .id(1L)
@@ -472,18 +474,18 @@ class StoreDetailServiceTest {
             .name("소분류")
             .build()
 
-        val storeMeta = StoreMeta.builder()
-            .id(1L)
-            .name("협업 지점명")
-            .activated(true)
-            .deleted(false)
-            .classification(classification)
-            .subClassification(subClassification)
-            .category("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .businessHours(businessHours)
-            .build()
+        val storeMeta = StoreMeta(
+            id = 1L,
+            name = "협업 지점명",
+            activated = true,
+            deleted = false,
+            classification = classification,
+            subClassification = subClassification,
+            category = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33,
+            businessHours = businessHours
+        )
 
         val storedetail = StoreDetail.builder()
             .id(storeId)
@@ -617,23 +619,20 @@ class StoreDetailServiceTest {
     @DisplayName("사용자는 협업지점 소개 페이지를 조회할 수 있다.")
     fun findStoreIntroductionTest() {
         // given
-        val storeMeta = StoreMeta.builder()
-            .id(3L)
-            .name("스타벅스")
-            .deleted(false)
-            .latitude(37.503716)
-            .longitude(127.053718)
-            .activated(true)
-            .deleted(false)
-            .category("카페, 디저트")
-            .subClassification(
-                Classification.builder()
-                    .id(1L)
-                    .name("카페, 디저")
-                    .type(ClassificationType.SUB_CLASSIFICATION)
-                    .build()
-            )
-            .build()
+        val storeMeta = StoreMeta(
+            id = 3L,
+            name = "스타벅스",
+            deleted = false,
+            latitude = 37.503716,
+            longitude = 127.053718,
+            activated = true,
+            category = "카페, 디저트",
+            subClassification = Classification.builder()
+                .id(1L)
+                .name("카페, 디저트")
+                .type(ClassificationType.SUB_CLASSIFICATION)
+                .build()
+        )
 
         val storeDetail = StoreDetail.builder()
             .id(2L)
