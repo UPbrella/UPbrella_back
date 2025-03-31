@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.*
 import org.assertj.core.api.AssertionsForClassTypes.assertThatCode
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
@@ -26,7 +27,6 @@ import upbrella.be.util.AesEncryptor
 import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Collectors
-import org.mockito.BDDMockito.*
 
 @ExtendWith(MockitoExtension::class)
 class UserServiceTest {
@@ -466,11 +466,7 @@ class UserServiceTest {
 
         given(blackListRepository.findAll()).willReturn(
             listOf(
-                BlackList.builder()
-                    .id(1L)
-                    .socialId(1L)
-                    .blockedAt(now)
-                    .build()
+                BlackList(1L, now, 1L)
             )
         )
 
@@ -527,11 +523,7 @@ class UserServiceTest {
     @DisplayName("사용자가 블랙리스트에 등록되어 있으면 예외가 발생한다.")
     fun checkBlackListThrowTest() {
         // given
-        val blackList = BlackList.builder()
-            .id(1L)
-            .socialId(1L)
-            .blockedAt(LocalDateTime.now())
-            .build()
+        val blackList = BlackList.createNewBlackList(1L)
 
         given(blackListRepository.findById(1L))
             .willReturn(Optional.of(blackList))

@@ -448,10 +448,7 @@ class UserIntegrationTest : RestDocsSupport() {
     fun findAllBlackListTest() {
         // given
         val now = LocalDateTime.now()
-        val blackList = BlackList.builder()
-            .blockedAt(now)
-            .socialId(123L)
-            .build()
+        val blackList = BlackList.createNewBlackList(123L, now)
 
         em.persist(blackList)
         em.flush()
@@ -473,10 +470,7 @@ class UserIntegrationTest : RestDocsSupport() {
     fun deleteBlackListTest() {
         // given
         val now = LocalDateTime.now()
-        val blackList = BlackList.builder()
-            .blockedAt(now)
-            .socialId(123L)
-            .build()
+        val blackList = BlackList.createNewBlackList(123L, now)
 
         em.persist(blackList)
         em.flush()
