@@ -169,10 +169,13 @@ class BusinessHourServiceTest {
             )
         }
 
-        val storeMeta = StoreMeta.builder()
-            .id(1L)
-            .businessHours(businessHours)
-            .build()
+        val storeMeta = StoreMeta(
+            id = 1L,
+            activated = false,
+            category = "category",
+            businessHours = businessHours,
+            name = "협업지점명",
+        )
 
         given(businessHourRepository.findByStoreMetaId(1L))
             .willReturn(

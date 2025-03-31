@@ -215,7 +215,7 @@ class UmbrellaServiceTest {
         @DisplayName("우산을 정상적으로 추가할 수 있다.")
         fun success() {
             // given
-            given(storeMetaService.findStoreMetaById(foundStoreMeta.id))
+            given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.uuid))
                 .willReturn(false)
@@ -233,7 +233,7 @@ class UmbrellaServiceTest {
                 },
                 {
                     then(storeMetaService).should(times(1))
-                        .findStoreMetaById(foundStoreMeta.id)
+                        .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
                     then(umbrellaRepository).should(times(1))
@@ -246,7 +246,7 @@ class UmbrellaServiceTest {
         @DisplayName("우산 고유번호가 이미 존재하는 경우 예외를 발생시킨다.")
         fun withSameId() {
             // given
-            given(storeMetaService.findStoreMetaById(foundStoreMeta.id))
+            given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrella.uuid))
                 .willReturn(true)
@@ -259,7 +259,7 @@ class UmbrellaServiceTest {
             assertAll(
                 {
                     then(storeMetaService).should(times(1))
-                        .findStoreMetaById(foundStoreMeta.id)
+                        .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
                     then(umbrellaRepository).should(times(1))
@@ -276,7 +276,7 @@ class UmbrellaServiceTest {
         @DisplayName("추가하려고 하는 가게 고유번호가 존재하지 않는 경우 예외를 발생시킨다.")
         fun atNonExistingStore() {
             // given
-            given(storeMetaService.findStoreMetaById(foundStoreMeta.id))
+            given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willThrow(NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업지점 ID입니다."))
 
             // when & then
@@ -287,7 +287,7 @@ class UmbrellaServiceTest {
                 },
                 {
                     then(storeMetaService).should(times(1))
-                        .findStoreMetaById(foundStoreMeta.id)
+                        .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
                     then(umbrellaRepository).shouldHaveNoInteractions()
@@ -319,7 +319,7 @@ class UmbrellaServiceTest {
         @DisplayName("우산을 정상적으로 수정한다.")
         fun success() {
             // given
-            given(storeMetaService.findStoreMetaById(foundStoreMeta.id))
+            given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
             given(umbrellaRepository.findByIdAndDeletedIsFalse(umbrella.id!!))
                 .willReturn(Optional.of(umbrella))
@@ -341,7 +341,7 @@ class UmbrellaServiceTest {
                 },
                 {
                     then(storeMetaService).should(times(1))
-                        .findStoreMetaById(foundStoreMeta.id)
+                        .findStoreMetaById(foundStoreMeta.id!!)
                 }
             )
         }
@@ -350,7 +350,7 @@ class UmbrellaServiceTest {
         @DisplayName("수정하려는 우산 고유번호가 존재하지 않는 경우 예외를 발생시킨다.")
         fun withNonExistingId() {
             // given
-            given(storeMetaService.findStoreMetaById(foundStoreMeta.id))
+            given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
             given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
                 .willReturn(Optional.ofNullable(null))
@@ -373,7 +373,7 @@ class UmbrellaServiceTest {
                 },
                 {
                     then(storeMetaService).should(times(1))
-                        .findStoreMetaById(foundStoreMeta.id)
+                        .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
                     then(umbrellaRepository).should(never())
@@ -386,7 +386,7 @@ class UmbrellaServiceTest {
         @DisplayName("수정하려는 우산 관리번호가 이미 존재하는 경우 예외를 발생시킨다.")
         fun withAlreadyExistingUuid() {
             // given
-            given(storeMetaService.findStoreMetaById(foundStoreMeta.id))
+            given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
             given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
                 .willReturn(Optional.of(umbrella))
@@ -410,7 +410,7 @@ class UmbrellaServiceTest {
                 },
                 {
                     then(storeMetaService).should(times(1))
-                        .findStoreMetaById(foundStoreMeta.id)
+                        .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
                     then(umbrellaRepository).should(never())
@@ -423,7 +423,7 @@ class UmbrellaServiceTest {
         @DisplayName("추가하려고 하는 가게 고유번호가 존재하지 않는 경우 예외를 발생시킨다.")
         fun atNonExistingStore() {
             // given
-            given(storeMetaService.findStoreMetaById(foundStoreMeta.id))
+            given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willThrow(NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업 지점 ID입니다."))
 
             // when & then
@@ -435,7 +435,7 @@ class UmbrellaServiceTest {
                 },
                 {
                     then(storeMetaService).should(times(1))
-                        .findStoreMetaById(foundStoreMeta.id)
+                        .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
                     then(umbrellaRepository).shouldHaveNoInteractions()

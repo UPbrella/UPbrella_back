@@ -35,23 +35,23 @@ class StoreMetaTest {
             .closeAt(LocalTime.of(20, 0))
             .build()
 
-        val storeMeta = StoreMeta.builder()
-            .id(1L)
-            .name("협업 지점명")
-            .activated(true)
-            .deleted(false)
-            .classification(classification)
-            .subClassification(subClassification)
-            .category("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .businessHours(listOf(businessHour))
-            .build()
+        val storeMeta = StoreMeta(
+            id = 1L,
+            name = "협업 지점명",
+            activated = true,
+            deleted = false,
+            classification = classification,
+            subClassification = subClassification,
+            category = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33,
+            businessHours = listOf(businessHour)
+        )
 
         // when
         storeMeta.delete()
 
         // then
-        assertThat(storeMeta.isDeleted()).isTrue()
+        assertThat(storeMeta.deleted).isTrue()
     }
 }

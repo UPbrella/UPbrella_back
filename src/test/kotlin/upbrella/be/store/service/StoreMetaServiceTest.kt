@@ -62,11 +62,13 @@ class StoreMetaServiceTest {
         @DisplayName("해당하는 우산이 보관된 협업 지점의 고유번호, 가게 이름 정보를 성공적으로 반환한다.")
         fun success() {
             // given
-            val storeMeta = StoreMeta.builder()
-                .id(3L)
-                .name("스타벅스")
-                .deleted(false)
-                .build()
+            val storeMeta = StoreMeta(
+                id = 3L,
+                name = "스타벅스",
+                activated = false,
+                deleted = false,
+                category = "카테고리",
+            )
 
             val umbrella = Umbrella(
                 id = 2L,
@@ -100,11 +102,13 @@ class StoreMetaServiceTest {
         @DisplayName("해당하는 우산이 보관된 협업 지점이 삭제된 상태면 예외를 반환한다.")
         fun isAtDeletedStore() {
             // given
-            val storeMeta = StoreMeta.builder()
-                .id(3L)
-                .name("스타벅스")
-                .deleted(true)
-                .build()
+            val storeMeta = StoreMeta(
+                id = 3L,
+                name = "스타벅스",
+                activated = false,
+                deleted = true,
+                category = "카테고리",
+            )
 
             val umbrella = Umbrella(
                 id = 2L,
@@ -201,25 +205,27 @@ class StoreMetaServiceTest {
                     .build()
             )
 
-            val storeIn = StoreMeta.builder()
-                .id(1L)
-                .name("모티브 카페 신촌 지점")
-                .activated(true)
-                .deleted(false)
-                .latitude(4.0)
-                .longitude(3.0)
-                .businessHours(businessHours)
-                .build()
+            val storeIn = StoreMeta(
+                id = 1L,
+                name = "모티브 카페 신촌 지점",
+                activated = true,
+                deleted = false,
+                category = "카테고리",
+                businessHours = businessHours,
+                latitude = 4.0,
+                longitude = 3.0
+            )
 
-            val storeOff = StoreMeta.builder()
-                .id(1L)
-                .name("모티브 카페 공사 중")
-                .activated(false)
-                .deleted(false)
-                .latitude(4.0)
-                .longitude(3.0)
-                .businessHours(businessHours)
-                .build()
+            val storeOff = StoreMeta(
+                id = 1L,
+                name = "모티브 카페 공사 중",
+                activated = false,
+                deleted = false,
+                category = "카테고리",
+                businessHours = businessHours,
+                latitude = 4.0,
+                longitude = 3.0
+            )
 
             val storeMetaWithUmbrellaCount = StoreMetaWithUmbrellaCount(storeIn, 3L)
             val storeMetaWithUmbrellaCount2 = StoreMetaWithUmbrellaCount(storeOff, 3L)
@@ -410,16 +416,16 @@ class StoreMetaServiceTest {
                 .name("카테고리")
                 .build()
 
-            val storeMeta = StoreMeta.builder()
-                .name(store.name)
-                .activated(store.isActivateStatus)
-                .deleted(false)
-                .classification(classification)
-                .subClassification(subClassification)
-                .category(store.category)
-                .latitude(store.latitude)
-                .longitude(store.longitude)
-                .build()
+            val storeMeta = StoreMeta(
+                name = store.name,
+                activated = store.isActivateStatus,
+                deleted = false,
+                classification = classification,
+                subClassification = subClassification,
+                category = store.category,
+                latitude = store.latitude,
+                longitude = store.longitude,
+            )
 
             given(classificationService.findClassificationById(classificationId)).willReturn(
                 classification
@@ -474,18 +480,18 @@ class StoreMetaServiceTest {
             .closeAt(LocalTime.of(20, 0))
             .build()
 
-        val storeMeta = StoreMeta.builder()
-            .id(1L)
-            .name("협업 지점명")
-            .activated(true)
-            .deleted(false)
-            .classification(classification)
-            .subClassification(subClassification)
-            .category("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .businessHours(listOf(businessHour))
-            .build()
+        val storeMeta = StoreMeta(
+            id = 1L,
+            name = "협업 지점명",
+            activated = true,
+            deleted = false,
+            classification = classification,
+            subClassification = subClassification,
+            category = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33,
+            businessHours = listOf(businessHour)
+        )
 
         val storeDetail = StoreDetail.builder()
             .id(1L)
@@ -503,7 +509,7 @@ class StoreMetaServiceTest {
                 verify(storeMetaRepository, times(1)).findById(1L)
             },
             {
-                assertThat(storeMeta.isDeleted).isTrue
+                assertThat(storeMeta.deleted).isTrue
             }
         )
     }
@@ -537,18 +543,18 @@ class StoreMetaServiceTest {
                 .closeAt(LocalTime.of(20, 0))
                 .build()
 
-            val storeMeta = StoreMeta.builder()
-                .id(1L)
-                .name("협업 지점명")
-                .activated(true)
-                .deleted(false)
-                .classification(classification)
-                .subClassification(subClassification)
-                .category("카테고리")
-                .latitude(33.33)
-                .longitude(33.33)
-                .businessHours(listOf(businessHour))
-                .build()
+            val storeMeta = StoreMeta(
+                id = 1L,
+                name = "협업 지점명",
+                activated = true,
+                deleted = false,
+                classification = classification,
+                subClassification = subClassification,
+                category = "카테고리",
+                latitude = 33.33,
+                longitude = 33.33,
+                businessHours = listOf(businessHour)
+            )
 
             given(storeMetaRepository.findById(1L))
                 .willReturn(Optional.of(storeMeta))
@@ -609,7 +615,7 @@ class StoreMetaServiceTest {
         storeMetaService.activateStoreStatus(1L)
 
         // then
-        assertThat(storeMeta.isActivated).isTrue
+        assertThat(storeMeta.activated).isTrue
     }
 
     @Test
@@ -665,6 +671,6 @@ class StoreMetaServiceTest {
         storeMetaService.inactivateStoreStatus(1L)
 
         // then
-        assertThat(storeMeta.isActivated).isFalse
+        assertThat(storeMeta.activated).isFalse
     }
 }
