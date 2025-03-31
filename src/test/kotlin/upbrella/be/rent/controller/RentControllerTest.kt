@@ -138,10 +138,14 @@ class RentControllerTest : RestDocsSupport() {
         )
 
         val storeMeta = FixtureBuilderFactory.builderStoreMeta().sample()
-        val history = History.builder()
-            .id(1L)
-            .rentStoreMeta(storeMeta)
-            .build()
+        val umbrella = FixtureBuilderFactory.builderUmbrella().sample()
+
+        val history = History(
+            id = 1L,
+            rentStoreMeta = storeMeta,
+            umbrella =  umbrella,
+            user = userToReturn
+        )
 
         val session = MockHttpSession()
         session.setAttribute("user", sessionUser)

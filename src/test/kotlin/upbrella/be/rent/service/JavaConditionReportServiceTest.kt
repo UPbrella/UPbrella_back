@@ -24,7 +24,7 @@ import upbrella.be.user.entity.User
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
-class ConditionReportServiceTest {
+class JavaConditionReportServiceTest {
 
     @Mock
     private lateinit var conditionReportRepository: ConditionReportRepository
@@ -59,29 +59,29 @@ class ConditionReportServiceTest {
 
         userToRent = User(1L, "테스터", "010-1234-5678", "email", false, null, null, 11L)
 
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .refundedAt(LocalDateTime.of(1000, 12, 3, 4, 26))
-            .refundedBy(userToRent)
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnedAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            refundedAt = LocalDateTime.of(1000, 12, 3, 4, 26),
+            refundedBy = userToRent,
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
-        conditionReport = ConditionReport.builder()
-            .id(1L)
-            .content("content")
-            .history(history)
-            .etc("etc")
-            .build()
+        conditionReport = ConditionReport(
+            id = 1L,
+            content = "content",
+            history = history,
+            etc = "etc",
+        )
     }
 
     @Nested
     @DisplayName("사용자(관리자)는 상태 신고 내역을 조회할 수 있다.")
-    inner class FindConditionReportsTest {
+    inner class FindJavaConditionReportsTest {
 
         @Test
         @DisplayName("사용자(관리자)는 상태 신고 내역 조회를 할 수 있다.")

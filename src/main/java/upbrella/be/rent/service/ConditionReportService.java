@@ -2,7 +2,6 @@ package upbrella.be.rent.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import upbrella.be.rent.dto.response.ConditionReportPageResponse;
 import upbrella.be.rent.dto.response.ConditionReportResponse;
 import upbrella.be.rent.entity.ConditionReport;
