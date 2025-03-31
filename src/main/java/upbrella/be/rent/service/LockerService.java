@@ -49,10 +49,7 @@ public class LockerService {
         isMultipleLockers(request.getStoreId());
 
         StoreMeta storeMeta = storeMetaService.findStoreMetaById(request.getStoreId());
-        Locker locker = Locker.builder()
-                .storeMeta(storeMeta)
-                .secretKey(request.getSecretKey())
-                .build();
+        Locker locker = new Locker(storeMeta, 0L, request.getSecretKey(), null, null);
 
         lockerRepository.save(locker);
     }
