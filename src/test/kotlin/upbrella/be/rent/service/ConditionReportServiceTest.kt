@@ -59,17 +59,17 @@ class ConditionReportServiceTest {
 
         userToRent = User(1L, "테스터", "010-1234-5678", "email", false, null, null, 11L)
 
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .refundedAt(LocalDateTime.of(1000, 12, 3, 4, 26))
-            .refundedBy(userToRent)
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnedAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            refundedAt = LocalDateTime.of(1000, 12, 3, 4, 26),
+            refundedBy = userToRent,
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
         conditionReport = ConditionReport.builder()
             .id(1L)

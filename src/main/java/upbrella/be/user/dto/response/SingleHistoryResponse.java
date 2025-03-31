@@ -3,9 +3,9 @@ package upbrella.be.user.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
-import upbrella.be.rent.entity.History;
 
 import java.time.LocalDateTime;
+import upbrella.be.rent.entity.History;
 
 @Getter
 @Builder
