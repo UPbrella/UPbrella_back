@@ -102,7 +102,7 @@ public class UserService {
         if (socialId == 0L) {
             throw new NonExistingMemberException("[ERROR] 탈퇴하였거나 이미 블랙리스트 처리된 회원입니다.");
         }
-        BlackList newBlackList = BlackList.createNewBlackList(socialId);
+        BlackList newBlackList = BlackList.createNewBlackList(socialId, LocalDateTime.now());
         blackListRepository.save(newBlackList);
 
         foundUser.withdrawUser();
