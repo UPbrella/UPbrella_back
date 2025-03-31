@@ -37,7 +37,7 @@ import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.service.UmbrellaService
 
 @ExtendWith(MockitoExtension::class)
-class UmbrellaControllerTest : RestDocsSupport() {
+class JavaUmbrellaControllerTest : RestDocsSupport() {
 
     @Mock
     private lateinit var umbrellaService: UmbrellaService
@@ -165,7 +165,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
 
     @Nested
     @DisplayName("사용자는 우산의 정보로 POST 요청을 보내")
-    inner class AddUmbrella {
+    inner class AddJavaUmbrella {
 
         @DisplayName("새로운 우산을 추가할 수 있다.")
         @Test
@@ -236,7 +236,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
 
     @Nested
     @DisplayName("사용자는 우산의 정보로 PATCH 요청을 보내")
-    inner class ModifyUmbrella {
+    inner class ModifyJavaUmbrella {
 
         @DisplayName("우산 정보를 수정할 수 있다.")
         @Test
@@ -342,7 +342,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
 
     @Nested
     @DisplayName("사용자는 우산의 고유번호로 DELETE 요청을 보내")
-    inner class DeleteUmbrella {
+    inner class DeleteJavaUmbrella {
 
         @DisplayName("우산 정보를 삭제할 수 있다.")
         @Test

@@ -56,7 +56,7 @@ class StoreMetaServiceTest {
 
     @Nested
     @DisplayName("우산의 고유번호를 입력받아")
-    inner class FindCurrentStoreIdByUmbrellaTest {
+    inner class FindCurrentStoreIdByJavaUmbrellaTest {
 
         @Test
         @DisplayName("해당하는 우산이 보관된 협업 지점의 고유번호, 가게 이름 정보를 성공적으로 반환한다.")
@@ -68,13 +68,16 @@ class StoreMetaServiceTest {
                 .deleted(false)
                 .build()
 
-            val umbrella = Umbrella.builder()
-                .id(2L)
-                .uuid(45L)
-                .deleted(false)
-                .rentable(true)
-                .storeMeta(storeMeta)
-                .build()
+            val umbrella = Umbrella(
+                id = 2L,
+                uuid = 45L,
+                deleted = false,
+                storeMeta = storeMeta,
+                rentable = true,
+                createdAt = LocalDateTime.now(),
+                etc = "etc",
+                missed = false,
+            )
 
             given(umbrellaRepository.findByIdAndDeletedIsFalse(2L))
                 .willReturn(Optional.of(umbrella))
@@ -103,13 +106,16 @@ class StoreMetaServiceTest {
                 .deleted(true)
                 .build()
 
-            val umbrella = Umbrella.builder()
-                .id(2L)
-                .uuid(45L)
-                .deleted(false)
-                .rentable(true)
-                .storeMeta(storeMeta)
-                .build()
+            val umbrella = Umbrella(
+                id = 2L,
+                uuid = 45L,
+                deleted = false,
+                storeMeta = storeMeta,
+                rentable = true,
+                createdAt = LocalDateTime.now(),
+                etc = "etc",
+                missed = false,
+            )
 
             given(umbrellaRepository.findByIdAndDeletedIsFalse(2L))
                 .willReturn(Optional.of(umbrella))
@@ -415,10 +421,12 @@ class StoreMetaServiceTest {
                 .longitude(store.longitude)
                 .build()
 
-            val storeDetail = StoreDetail.createForSave(store, storeMeta)
-
-            given(classificationService.findClassificationById(classificationId)).willReturn(classification)
-            given(classificationService.findSubClassificationById(subClassificationId)).willReturn(subClassification)
+            given(classificationService.findClassificationById(classificationId)).willReturn(
+                classification
+            )
+            given(classificationService.findSubClassificationById(subClassificationId)).willReturn(
+                subClassification
+            )
             given(storeMetaRepository.save(any(StoreMeta::class.java))).willReturn(storeMeta)
             doNothing().`when`(storeDetailService).saveStoreDetail(any())
             doNothing().`when`(businessHourService).saveAllBusinessHour(any())

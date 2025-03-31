@@ -198,7 +198,7 @@ class UmbrellaServiceTest {
 
     @Nested
     @DisplayName("우산의 고유번호, 협력 지점 고유번호, 대여 여부를 입력받아")
-    inner class AddUmbrellaTest {
+    inner class AddJavaUmbrellaTest {
 
         private lateinit var umbrellaCreateRequest: UmbrellaCreateRequest
         private lateinit var foundStoreMeta: StoreMeta
@@ -298,7 +298,7 @@ class UmbrellaServiceTest {
 
     @Nested
     @DisplayName("우산의 고유번호, 협력 지점 고유번호, 대여 여부를 입력받아")
-    inner class ModifyUmbrellaTest {
+    inner class ModifyJavaUmbrellaTest {
 
         private lateinit var umbrellaModifyRequest: UmbrellaModifyRequest
         private lateinit var foundStoreMeta: StoreMeta
@@ -321,13 +321,13 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.id))
                 .willReturn(foundStoreMeta)
-            given(umbrellaRepository.findByIdAndDeletedIsFalse(umbrella.id))
+            given(umbrellaRepository.findByIdAndDeletedIsFalse(umbrella.id!!))
                 .willReturn(Optional.of(umbrella))
             given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.uuid))
                 .willReturn(false)
 
             // when
-            umbrellaService.modifyUmbrella(umbrella.id, umbrellaModifyRequest)
+            umbrellaService.modifyUmbrella(umbrella.id!!, umbrellaModifyRequest)
 
             // then
             assertAll(
@@ -446,7 +446,7 @@ class UmbrellaServiceTest {
 
     @Nested
     @DisplayName("우산의 고유번호를 입력받아")
-    inner class DeleteUmbrellaTest {
+    inner class DeleteJavaUmbrellaTest {
 
         private var id: Long = 0
         private lateinit var umbrella: Umbrella
@@ -470,7 +470,7 @@ class UmbrellaServiceTest {
             // then
             assertAll(
                 {
-                    assertThat(umbrella.isDeleted).isTrue
+                    assertThat(umbrella.deleted).isTrue
                 },
                 {
                     then(umbrellaRepository).should(times(1))
@@ -502,7 +502,7 @@ class UmbrellaServiceTest {
 
     @Nested
     @DisplayName("협업 지점의 고유 번호를 입력받아")
-    inner class CountAvailableUmbrellaAtStoreTest {
+    inner class CountAvailableJavaUmbrellaAtStoreTest {
 
         @Test
         @DisplayName("해당 협업 지점에서 현재 이용 가능한 우산의 개수를 반환한다.")
@@ -582,7 +582,7 @@ class UmbrellaServiceTest {
 
     @Nested
     @DisplayName("협업 지점의 고유 번호를 입력받아")
-    inner class GetUmbrellaStatisticsByStoreTest {
+    inner class GetJavaUmbrellaStatisticsByStoreTest {
 
         @Test
         @DisplayName("지점 우산의 통계를 조회할 수 있다.")
