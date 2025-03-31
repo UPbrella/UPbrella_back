@@ -123,6 +123,7 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
         val umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest()
             .set("id", 999L)
             .set("storeMetaId", storeMeta.id)
+            .set("rentable", true)
             .set("uuid", 3000L)
             .sample()
 
@@ -161,7 +162,7 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             .andExpect(jsonPath("\$.data.umbrellaResponsePage.length()").value(6))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].storeMetaId").value(storeMeta.id))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].uuid").value(umbrellaList[0].uuid))
-            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(umbrellaList[0].isRentable))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(umbrellaList[0].rentable))
     }
 
     @Test
@@ -177,7 +178,7 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             .andExpect(jsonPath("\$.data.umbrellaResponsePage.length()").value(6))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].storeMetaId").value(storeMeta.id))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].uuid").value(umbrellaList[0].uuid))
-            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(umbrellaList[0].isRentable))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(umbrellaList[0].rentable))
     }
 
     @Test
@@ -187,6 +188,7 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
         val id = umbrellaList[0].id
         val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
             .set("storeMetaId", storeMeta.id)
+            .set("rentable", true)
             .set("uuid", 1L)
             .sample()
 

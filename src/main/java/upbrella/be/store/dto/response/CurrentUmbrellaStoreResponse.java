@@ -1,6 +1,10 @@
 package upbrella.be.store.dto.response;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import upbrella.be.umbrella.entity.Umbrella;
 
 @Getter

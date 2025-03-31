@@ -88,13 +88,16 @@ class RentServiceTest {
             .deleted(false)
             .build()
 
-        foundUmbrella = Umbrella.builder()
-            .id(99L)
-            .uuid(99L)
-            .deleted(false)
-            .storeMeta(foundStoreMeta)
-            .rentable(true)
-            .build()
+        foundUmbrella = Umbrella(
+            id = 99L,
+            uuid = 99L,
+            deleted = false,
+            storeMeta = foundStoreMeta,
+            rentable = true,
+            createdAt = LocalDateTime.now(),
+            etc = "etc",
+            missed = false,
+        )
 
         userToRent = User(
             0L,
@@ -618,11 +621,16 @@ class RentServiceTest {
     @DisplayName("우산이 대여중이면 예외 발생")
     fun notAvailableUmbrellaTest() {
         // given
-        val umbrella = Umbrella.builder()
-            .id(1L)
-            .storeMeta(foundStoreMeta)
-            .rentable(false)
-            .build()
+        val umbrella = Umbrella(
+            id = 1L,
+            uuid = 99L,
+            deleted = false,
+            storeMeta = foundStoreMeta,
+            rentable = false,
+            createdAt = LocalDateTime.now(),
+            etc = "etc",
+            missed = false,
+        )
 
         given(rentRepository.findByUserIdAndReturnedAtIsNull(any()))
             .willReturn(Optional.empty())

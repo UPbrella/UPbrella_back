@@ -185,7 +185,7 @@ class UserServiceTest {
 
     @Nested
     @DisplayName("우산을 빌린 사용자는")
-    inner class FindBorrowedUmbrellaTest {
+    inner class FindBorrowedJavaUmbrellaTest {
 
         private lateinit var sessionUser: SessionUser
         private lateinit var history: History

@@ -65,7 +65,7 @@ class StoreMetaRepositoryImplTest {
         em.flush()
 
         val umbrella = FixtureBuilderFactory.builderUmbrella()
-            .set("id", 0)
+            .set("id", null)
             .set("rentable", true)
             .set("missed", false)
             .set("storeMeta", storeMeta)
@@ -87,9 +87,10 @@ class StoreMetaRepositoryImplTest {
 
         // then
         assertAll(
-            { assertThat(storeMetas)
-                .usingRecursiveComparison()
-                .isEqualTo(listOf(expectedStoreMeta)) },
+            {
+                assertThat(storeMetas).usingRecursiveComparison()
+                    .isEqualTo(listOf(expectedStoreMeta))
+            },
             { assertThat(storeMetas.size).isEqualTo(1) }
         )
     }
