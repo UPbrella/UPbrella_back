@@ -93,7 +93,8 @@ public class RentService {
 
         String conditionReport = rentUmbrellaByUserRequest.getConditionReport();
 
-        History history = rentRepository.save(History.ofCreatedByNewRent(willRentUmbrella, userToRent, rentalStore));
+        History history = rentRepository.save(
+            History.ofCreatedByNewRent(willRentUmbrella, userToRent, rentalStore));
 
         ConditionReport conditionReportToSave = ConditionReport.builder()
                 .content(conditionReport)
@@ -164,11 +165,6 @@ public class RentService {
         return findHistoryInfos(filter, pageable).stream()
                 .map(this::toRentalHistoryResponse)
                 .collect(Collectors.toList());
-    }
-
-    private List<History> findAll(HistoryFilterRequest filter, Pageable pageable) {
-
-        return rentRepository.findAll(filter, pageable);
     }
 
     private SingleHistoryResponse toSingleHistoryResponse(History history) {

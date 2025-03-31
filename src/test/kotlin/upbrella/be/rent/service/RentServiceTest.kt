@@ -110,17 +110,17 @@ class RentServiceTest {
             11L
         )
 
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .refundedAt(LocalDateTime.of(1000, 12, 3, 4, 26))
-            .refundedBy(userToRent)
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnedAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            refundedAt = LocalDateTime.of(1000, 12, 3, 4, 26),
+            refundedBy = userToRent,
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
         conditionReport = ConditionReport.builder()
             .id(1L)
@@ -286,7 +286,7 @@ class RentServiceTest {
 
     @Nested
     @DisplayName("사용자의 고유 번호를 입력 받아")
-    inner class FindUserHistoryTest {
+    inner class FindUserJavaHistoryTest {
 
         @Test
         @DisplayName("해당 사용자의 대여 목록을 조회할 수 있다.")
@@ -359,13 +359,13 @@ class RentServiceTest {
         @DisplayName("해당 대여 내역을 환급 완료 처리할 수 있다.")
         fun success() {
             // given
-            val historyForRefund = History.builder()
-                .id(33L)
-                .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-                .umbrella(foundUmbrella)
-                .user(userToRent)
-                .rentStoreMeta(foundStoreMeta)
-                .build()
+            val historyForRefund = History(
+                id = 33L,
+                rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+                umbrella = foundUmbrella,
+                user = userToRent,
+                rentStoreMeta = foundStoreMeta,
+            )
 
             val loginedUserId = 7L
             given(userService.findUserById(loginedUserId)).willReturn(userToRent)
@@ -534,7 +534,7 @@ class RentServiceTest {
 
     @Nested
     @DisplayName("로그인한 사용자의 정보를 입력받아")
-    inner class FindByRentHistoryByUserTest {
+    inner class FindByRentJavaHistoryByUserTest {
 
         @Test
         @DisplayName("해당 사용자의 대여 내역을 조회할 수 있다.")

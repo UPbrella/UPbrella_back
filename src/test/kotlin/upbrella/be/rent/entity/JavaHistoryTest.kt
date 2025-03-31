@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import upbrella.be.user.entity.User
 import org.junit.jupiter.api.Assertions.assertAll
 
-class HistoryTest {
+class JavaHistoryTest {
 
     private lateinit var rentUmbrellaByUserRequest: RentUmbrellaByUserRequest
     private lateinit var foundStoreMeta: StoreMeta
@@ -51,17 +51,15 @@ class HistoryTest {
     @DisplayName("반납 날짜가 없으면 미반납, 반납일은 대여일+7일로 설정")
     fun notReturnedTest() {
         // given
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(null)
-            .refundedAt(null)
-            .refundedBy(userToRent)
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            refundedBy = userToRent,
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
         val expectedResponse = SingleHistoryResponse.builder()
             .umbrellaUuid(99L)
@@ -85,17 +83,17 @@ class HistoryTest {
     @DisplayName("반납 날짜가 존재하면 반납 처리, 반납 일시 그대로 표시")
     fun returnedTest() {
         // given
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .refundedAt(null)
-            .refundedBy(userToRent)
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnedAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            refundedAt = null,
+            refundedBy = userToRent,
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
         val expectedResponse = SingleHistoryResponse.builder()
             .umbrellaUuid(99L)
@@ -119,17 +117,17 @@ class HistoryTest {
     @DisplayName("환급 날짜가 없으면 미환급 처리")
     fun notRefundedTest() {
         // given
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .refundedAt(null)
-            .refundedBy(userToRent)
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnedAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            refundedAt = null,
+            refundedBy = userToRent,
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
         val expectedResponse = SingleHistoryResponse.builder()
             .umbrellaUuid(99L)
@@ -153,17 +151,17 @@ class HistoryTest {
     @DisplayName("환급 날짜가 있으면 환급 처리")
     fun refundedTest() {
         // given
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .refundedAt(LocalDateTime.of(1000, 12, 3, 4, 26))
-            .refundedBy(userToRent)
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnedAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            refundedAt = LocalDateTime.of(1000, 12, 3, 4, 26),
+            refundedBy = userToRent,
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
         val expectedResponse = SingleHistoryResponse.builder()
             .umbrellaUuid(99L)
@@ -187,15 +185,15 @@ class HistoryTest {
     @DisplayName("환급 처리할 유저, 환급 처리 시각 받아 대여 내역 환급 확인")
     fun refundTest() {
         // given
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnedAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
         // when
         history.refund(userToRent, LocalDateTime.of(1000, 1, 2, 3, 4, 5))
@@ -211,15 +209,15 @@ class HistoryTest {
     @DisplayName("지불 처리할 유저, 처리 시각 받아 대여 내역 지불 확인")
     fun paidTest() {
         // given
-        history = History.builder()
-            .id(33L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnedAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .returnStoreMeta(foundStoreMeta)
-            .umbrella(foundUmbrella)
-            .user(userToRent)
-            .rentStoreMeta(foundStoreMeta)
-            .build()
+        history = History(
+            id = 33L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnedAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            returnStoreMeta = foundStoreMeta,
+            umbrella = foundUmbrella,
+            user = userToRent,
+            rentStoreMeta = foundStoreMeta,
+        )
 
         // when
         history.paid(userToRent, LocalDateTime.of(1000, 1, 2, 3, 4, 5))
