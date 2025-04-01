@@ -6,10 +6,10 @@ import upbrella.be.store.dto.response.QSingleClassificationResponse;
 import upbrella.be.store.dto.response.QSingleStoreResponse;
 import upbrella.be.store.dto.response.QSingleSubClassificationResponse;
 import upbrella.be.store.dto.response.SingleStoreResponse;
-import upbrella.be.store.entity.StoreDetail;
 
 import java.util.List;
 import java.util.Optional;
+import upbrella.be.store.entity.StoreDetail;
 
 import static upbrella.be.store.entity.QClassification.classification;
 import static upbrella.be.store.entity.QStoreDetail.storeDetail;

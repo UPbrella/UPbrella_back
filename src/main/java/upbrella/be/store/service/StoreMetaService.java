@@ -50,7 +50,7 @@ public class StoreMetaService {
         Umbrella foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(umbrellaId)
                 .orElseThrow(() -> new NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산입니다."));
 
-        if (foundUmbrella.getStoreMeta().isDeleted()) {
+        if (foundUmbrella.getStoreMeta().getDeleted()) {
             throw new DeletedStoreDetailException("[ERROR] 삭제된 가게입니다.");
         }
         return CurrentUmbrellaStoreResponse.fromUmbrella(foundUmbrella);
@@ -129,7 +129,7 @@ public class StoreMetaService {
 
         return businessHours.stream()
                 .filter(businessHour -> businessHour.getDate().equals(currentTime.getDayOfWeek()))
-                .filter(e -> storeMetaWithUmbrellaCount.getStoreMeta().isActivated())
+                .filter(e -> storeMetaWithUmbrellaCount.getStoreMeta().getActivated())
                 .anyMatch(businessHour ->
                         currentTime.toLocalTime().isAfter(businessHour.getOpenAt())
                                 && currentTime.toLocalTime().isBefore(businessHour.getCloseAt()));

@@ -83,7 +83,7 @@ class StoreMetaRepositoryImplTest {
         // given
 
         // when
-        val storeMetas = storeMetaRepository.findAllStoresByClassification(classification.id)
+        val storeMetas = storeMetaRepository.findAllStoresByClassification(classification.id!!)
 
         // then
         assertAll(

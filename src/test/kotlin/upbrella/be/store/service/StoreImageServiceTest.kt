@@ -48,7 +48,7 @@ class StoreImageServiceTest {
         // given
         val storeDetailId = 1L
         val file = MockMultipartFile("image", "filename.jpg", "image/jpg", "some-image".toByteArray())
-        val storeDetail = StoreDetail.builder().build()
+        val storeDetail = StoreDetail()
         val randomId = storeImageService.makeRandomId()
         val expectedUrl = "https://file.upbrella.co.kr/store-image/filename.jpg$randomId"
 
@@ -72,10 +72,10 @@ class StoreImageServiceTest {
         // given
         val testId = 1L
         val testUrl = "http://mybucket.s3.amazonaws.com/myimage.jpg"
-        val testImage = StoreImage.builder()
-            .id(testId)
-            .imageUrl(testUrl)
-            .build()
+        val testImage = StoreImage(
+            id = testId,
+            imageUrl = testUrl,
+        )
 
         given(storeImageRepository.findById(testId))
             .willReturn(Optional.of(testImage))
@@ -87,7 +87,7 @@ class StoreImageServiceTest {
         assertAll(
             { assertEquals(testId, testImage.id) },
             { assertEquals(testUrl, testImage.imageUrl) },
-            { verify(storeImageRepository, times(1)).deleteById(testImage.id) },
+            { verify(storeImageRepository, times(1)).deleteById(testImage.id!!) },
             { verify(s3Client, times(1)).deleteObject(any(DeleteObjectRequest::class.java)) },
         )
     }
