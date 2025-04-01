@@ -1,10 +1,10 @@
 package upbrella.be.store.repository;
 
 import upbrella.be.store.dto.response.SingleStoreResponse;
-import upbrella.be.store.entity.StoreDetail;
 
 import java.util.List;
 import java.util.Optional;
+import upbrella.be.store.entity.StoreDetail;
 
 public interface StoreDetailRepositoryCustom {
 

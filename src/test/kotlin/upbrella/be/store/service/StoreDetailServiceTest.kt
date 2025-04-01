@@ -71,17 +71,17 @@ class StoreDetailServiceTest {
             businessHours = businessHours,
         )
 
-        private val storeDetail = StoreDetail.builder()
-            .id(2L)
-            .storeMeta(storeMeta)
-            .content("모티브 카페 소개")
-            .address("모티브로 32길")
-            .contactInfo("010-5252-8282")
-            .instaUrl("모티브 인서타")
-            .workingHour("매일 7시 ~ 12시")
-            .umbrellaLocation("문 앞")
-            .storeImages(listOf())
-            .build()
+        private val storeDetail = StoreDetail(
+            id = 2L,
+            storeMeta = storeMeta,
+            content = "모티브 카페 소개",
+            address = "모티브로 32길",
+            contactInfo = "010-5252-8282",
+            instaUrl = "모티브 인서타",
+            workingHour = "매일 7시 ~ 12시",
+            umbrellaLocation = "문 앞",
+            storeImages = listOf(),
+        )
 
         private val storeFindByIdResponseExpected =
             StoreFindByIdResponse.fromStoreDetail(storeDetail, 10L)
@@ -366,18 +366,18 @@ class StoreDetailServiceTest {
 
         private val images = listOf(first, second)
 
-        private val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .umbrellaLocation("우산 위치")
-            .workingHour("근무 시간")
-            .instaUrl("인스타그램 주소")
-            .contactInfo("연락처")
-            .address("주소")
-            .addressDetail("상세 주소")
-            .content("내용")
-            .storeImages(images)
-            .build()
+        private val storeDetail = StoreDetail(
+            id = 1L,
+            storeMeta = storeMeta,
+            umbrellaLocation = "우산 위치",
+            workingHour = "근무 시간",
+            instaUrl = "인스타그램 주소",
+            contactInfo = "연락처",
+            address = "주소",
+            addressDetail = "상세 주소",
+            content = "내용",
+            storeImages = images
+        )
 
         @Test
         @DisplayName("id로 조회할 수 있다.")
@@ -487,18 +487,18 @@ class StoreDetailServiceTest {
             businessHours = businessHours
         )
 
-        val storedetail = StoreDetail.builder()
-            .id(storeId)
-            .storeMeta(storeMeta)
-            .umbrellaLocation("우산 위치")
-            .workingHour("근무 시간")
-            .instaUrl("인스타그램 주소")
-            .contactInfo("연락처")
-            .address("주소")
-            .addressDetail("상세 주소")
-            .content("내용")
-            .storeImages(listOf())
-            .build()
+        val storeDetail = StoreDetail(
+            id = storeId,
+            storeMeta = storeMeta,
+            umbrellaLocation = "우산 위치",
+            workingHour = "근무 시간",
+            instaUrl = "인스타그램 주소",
+            contactInfo = "연락처",
+            address = "주소",
+            addressDetail = "상세 주소",
+            content = "내용",
+            storeImages = listOf()
+        )
 
         val mondayUpdate = SingleBusinessHourRequest.builder()
             .date(DayOfWeek.MONDAY)
@@ -577,7 +577,7 @@ class StoreDetailServiceTest {
             .build()
 
         given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId))
-            .willReturn(Optional.of(storedetail))
+            .willReturn(Optional.of(storeDetail))
         given(classificationService.findClassificationById(request.classificationId!!))
             .willReturn(classificationUpdate)
         given(classificationService.findSubClassificationById(request.subClassificationId!!))
@@ -634,23 +634,21 @@ class StoreDetailServiceTest {
                 .build()
         )
 
-        val storeDetail = StoreDetail.builder()
-            .id(2L)
-            .storeMeta(storeMeta)
-            .content("모티브 카페 소개")
-            .address("모티브로 32길")
-            .contactInfo("010-5252-8282")
-            .instaUrl("모티브 인서타")
-            .workingHour("매일 7시 ~ 12시")
-            .umbrellaLocation("문 앞")
-            .storeImages(
-                listOf(
-                    StoreImage.builder()
-                        .imageUrl("가게 썸네일")
-                        .build()
-                )
+        val storeDetail = StoreDetail(
+            id = 2L,
+            storeMeta = storeMeta,
+            content = "모티브 카페 소개",
+            address = "모티브로 32길",
+            contactInfo = "010-5252-8282",
+            instaUrl = "모티브 인서타",
+            workingHour = "매일 7시 ~ 12시",
+            umbrellaLocation = "문 앞",
+            storeImages = listOf(
+                StoreImage.builder()
+                    .imageUrl("가게 썸네일")
+                    .build()
             )
-            .build()
+        )
 
         val storeIntroductionsResponseByClassification =
             StoreIntroductionsResponseByClassification.builder()

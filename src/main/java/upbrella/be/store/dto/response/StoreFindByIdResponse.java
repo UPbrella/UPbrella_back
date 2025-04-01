@@ -1,11 +1,11 @@
 package upbrella.be.store.dto.response;
 
 import lombok.*;
-import upbrella.be.store.entity.StoreDetail;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import upbrella.be.store.entity.StoreDetail;
 
 @Getter
 @Builder

@@ -58,11 +58,11 @@ class StoreDetailRepositoryImplTest {
         em.persist(expectedStoreMeta)
         em.flush()
 
-        expectedStoreDetail = StoreDetail.builder()
-            .addressDetail("주소 상세")
-            .address("주소")
-            .storeMeta(expectedStoreMeta)
-            .build()
+        expectedStoreDetail = StoreDetail(
+            address = "주소",
+            addressDetail = "주소 상세",
+            storeMeta = expectedStoreMeta
+        )
 
         val businessHour = FixtureBuilderFactory.builderBusinessHour()
             .set("id", null)
