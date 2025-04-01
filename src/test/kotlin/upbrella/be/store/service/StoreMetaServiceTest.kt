@@ -173,36 +173,36 @@ class StoreMetaServiceTest {
         @BeforeEach
         fun setUp() {
             businessHours = listOf(
-                BusinessHour.builder()
-                    .id(1L)
-                    .date(DayOfWeek.MONDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build(),
-                BusinessHour.builder()
-                    .id(2L)
-                    .date(DayOfWeek.TUESDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build(),
-                BusinessHour.builder()
-                    .id(3L)
-                    .date(DayOfWeek.WEDNESDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build(),
-                BusinessHour.builder()
-                    .id(4L)
-                    .date(DayOfWeek.THURSDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build(),
-                BusinessHour.builder()
-                    .id(5L)
-                    .date(DayOfWeek.FRIDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build()
+                BusinessHour(
+                    id = 1L,
+                    date = DayOfWeek.MONDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
+                BusinessHour(
+                    id = 2L,
+                    date = DayOfWeek.TUESDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
+                BusinessHour(
+                    id = 3L,
+                    date = DayOfWeek.WEDNESDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
+                BusinessHour(
+                    id = 4L,
+                    date = DayOfWeek.THURSDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
+                BusinessHour(
+                    id = 5L,
+                    date = DayOfWeek.FRIDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
             )
 
             val storeIn = StoreMeta(
@@ -473,12 +473,12 @@ class StoreMetaServiceTest {
             .name("카테고리")
             .build()
 
-        val businessHour = BusinessHour.builder()
-            .id(1L)
-            .date(DayOfWeek.MONDAY)
-            .openAt(LocalTime.of(10, 0))
-            .closeAt(LocalTime.of(20, 0))
-            .build()
+        val businessHour = BusinessHour(
+            id = 1L,
+            date = DayOfWeek.MONDAY,
+            openAt = LocalTime.of(10, 0),
+            closeAt = LocalTime.of(20, 0),
+        )
 
         val storeMeta = StoreMeta(
             id = 1L,
@@ -531,12 +531,12 @@ class StoreMetaServiceTest {
                 .name("카테고리")
                 .build()
 
-            val businessHour = BusinessHour.builder()
-                .id(1L)
-                .date(DayOfWeek.MONDAY)
-                .openAt(LocalTime.of(10, 0))
-                .closeAt(LocalTime.of(20, 0))
-                .build()
+            val businessHour = BusinessHour(
+                id = 1L,
+                date = DayOfWeek.MONDAY,
+                openAt = LocalTime.of(10, 0),
+                closeAt = LocalTime.of(20, 0),
+            )
 
             val storeMeta = StoreMeta(
                 id = 1L,

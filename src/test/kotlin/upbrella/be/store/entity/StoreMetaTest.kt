@@ -28,12 +28,12 @@ class StoreMetaTest {
             .name("카테고리")
             .build()
 
-        val businessHour = BusinessHour.builder()
-            .id(1L)
-            .date(DayOfWeek.MONDAY)
-            .openAt(LocalTime.of(10, 0))
-            .closeAt(LocalTime.of(20, 0))
-            .build()
+        val businessHour = BusinessHour(
+            id = 1L,
+            date = DayOfWeek.MONDAY,
+            openAt = LocalTime.of(10, 0),
+            closeAt = LocalTime.of(20, 0),
+        )
 
         val storeMeta = StoreMeta(
             id = 1L,
