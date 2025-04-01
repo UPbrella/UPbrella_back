@@ -40,11 +40,13 @@ class JavaConditionReportServiceTest {
 
     @BeforeEach
     fun setUp() {
-        foundStoreMeta = StoreMeta.builder()
-            .id(25L)
-            .name("motive study cafe")
-            .deleted(false)
-            .build()
+        foundStoreMeta = StoreMeta(
+            id = 25L,
+            name = "motive study cafe",
+            deleted = false,
+            category = "category",
+            activated = false
+        )
 
         foundUmbrella = Umbrella(
             id = 99L,

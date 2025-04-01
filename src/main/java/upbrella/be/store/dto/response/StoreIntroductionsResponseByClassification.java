@@ -2,10 +2,10 @@ package upbrella.be.store.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import upbrella.be.store.entity.StoreDetail;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import upbrella.be.store.entity.StoreDetail;
 
 @Getter
 @Builder

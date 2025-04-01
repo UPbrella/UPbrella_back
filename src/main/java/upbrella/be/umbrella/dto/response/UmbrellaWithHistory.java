@@ -4,9 +4,9 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import upbrella.be.store.entity.StoreMeta;
 
 import java.time.LocalDateTime;
+import upbrella.be.store.entity.StoreMeta;
 
 @Getter
 @Builder

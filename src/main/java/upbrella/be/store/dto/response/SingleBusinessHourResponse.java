@@ -9,10 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import upbrella.be.store.entity.BusinessHour;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import upbrella.be.store.entity.BusinessHour;
 
 @Getter
 @Builder

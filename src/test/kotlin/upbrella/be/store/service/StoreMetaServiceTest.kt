@@ -62,11 +62,13 @@ class StoreMetaServiceTest {
         @DisplayName("해당하는 우산이 보관된 협업 지점의 고유번호, 가게 이름 정보를 성공적으로 반환한다.")
         fun success() {
             // given
-            val storeMeta = StoreMeta.builder()
-                .id(3L)
-                .name("스타벅스")
-                .deleted(false)
-                .build()
+            val storeMeta = StoreMeta(
+                id = 3L,
+                name = "스타벅스",
+                activated = false,
+                deleted = false,
+                category = "카테고리",
+            )
 
             val umbrella = Umbrella(
                 id = 2L,
@@ -100,11 +102,13 @@ class StoreMetaServiceTest {
         @DisplayName("해당하는 우산이 보관된 협업 지점이 삭제된 상태면 예외를 반환한다.")
         fun isAtDeletedStore() {
             // given
-            val storeMeta = StoreMeta.builder()
-                .id(3L)
-                .name("스타벅스")
-                .deleted(true)
-                .build()
+            val storeMeta = StoreMeta(
+                id = 3L,
+                name = "스타벅스",
+                activated = false,
+                deleted = true,
+                category = "카테고리",
+            )
 
             val umbrella = Umbrella(
                 id = 2L,
@@ -169,57 +173,59 @@ class StoreMetaServiceTest {
         @BeforeEach
         fun setUp() {
             businessHours = listOf(
-                BusinessHour.builder()
-                    .id(1L)
-                    .date(DayOfWeek.MONDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build(),
-                BusinessHour.builder()
-                    .id(2L)
-                    .date(DayOfWeek.TUESDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build(),
-                BusinessHour.builder()
-                    .id(3L)
-                    .date(DayOfWeek.WEDNESDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build(),
-                BusinessHour.builder()
-                    .id(4L)
-                    .date(DayOfWeek.THURSDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build(),
-                BusinessHour.builder()
-                    .id(5L)
-                    .date(DayOfWeek.FRIDAY)
-                    .openAt(LocalTime.NOON)
-                    .closeAt(LocalTime.of(23, 0))
-                    .build()
+                BusinessHour(
+                    id = 1L,
+                    date = DayOfWeek.MONDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
+                BusinessHour(
+                    id = 2L,
+                    date = DayOfWeek.TUESDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
+                BusinessHour(
+                    id = 3L,
+                    date = DayOfWeek.WEDNESDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
+                BusinessHour(
+                    id = 4L,
+                    date = DayOfWeek.THURSDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
+                BusinessHour(
+                    id = 5L,
+                    date = DayOfWeek.FRIDAY,
+                    openAt = LocalTime.NOON,
+                    closeAt = LocalTime.of(23, 0)
+                ),
             )
 
-            val storeIn = StoreMeta.builder()
-                .id(1L)
-                .name("모티브 카페 신촌 지점")
-                .activated(true)
-                .deleted(false)
-                .latitude(4.0)
-                .longitude(3.0)
-                .businessHours(businessHours)
-                .build()
+            val storeIn = StoreMeta(
+                id = 1L,
+                name = "모티브 카페 신촌 지점",
+                activated = true,
+                deleted = false,
+                category = "카테고리",
+                businessHours = businessHours,
+                latitude = 4.0,
+                longitude = 3.0
+            )
 
-            val storeOff = StoreMeta.builder()
-                .id(1L)
-                .name("모티브 카페 공사 중")
-                .activated(false)
-                .deleted(false)
-                .latitude(4.0)
-                .longitude(3.0)
-                .businessHours(businessHours)
-                .build()
+            val storeOff = StoreMeta(
+                id = 1L,
+                name = "모티브 카페 공사 중",
+                activated = false,
+                deleted = false,
+                category = "카테고리",
+                businessHours = businessHours,
+                latitude = 4.0,
+                longitude = 3.0
+            )
 
             val storeMetaWithUmbrellaCount = StoreMetaWithUmbrellaCount(storeIn, 3L)
             val storeMetaWithUmbrellaCount2 = StoreMetaWithUmbrellaCount(storeOff, 3L)
@@ -396,30 +402,30 @@ class StoreMetaServiceTest {
             val classificationId = 1L
             val subClassificationId = 2L
 
-            val classification = Classification.builder()
-                .id(classificationId)
-                .type(ClassificationType.CLASSIFICATION)
-                .name("카테고리")
-                .latitude(33.33)
-                .longitude(33.33)
-                .build()
+            val classification = Classification(
+                id = classificationId,
+                type = ClassificationType.CLASSIFICATION,
+                name = "카테고리",
+                latitude = 33.33,
+                longitude = 33.33
+            )
 
-            val subClassification = Classification.builder()
-                .id(classificationId)
-                .type(ClassificationType.SUB_CLASSIFICATION)
-                .name("카테고리")
-                .build()
+            val subClassification = Classification(
+                id = subClassificationId,
+                type = ClassificationType.SUB_CLASSIFICATION,
+                name = "카테고리",
+            )
 
-            val storeMeta = StoreMeta.builder()
-                .name(store.name)
-                .activated(store.isActivateStatus)
-                .deleted(false)
-                .classification(classification)
-                .subClassification(subClassification)
-                .category(store.category)
-                .latitude(store.latitude)
-                .longitude(store.longitude)
-                .build()
+            val storeMeta = StoreMeta(
+                name = store.name,
+                activated = store.isActivateStatus,
+                deleted = false,
+                classification = classification,
+                subClassification = subClassification,
+                category = store.category,
+                latitude = store.latitude,
+                longitude = store.longitude,
+            )
 
             given(classificationService.findClassificationById(classificationId)).willReturn(
                 classification
@@ -453,44 +459,39 @@ class StoreMetaServiceTest {
     @DisplayName("협업지점 삭제 테스트")
     fun deleteStoreMetaTest() {
         // given
-        val classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .build()
+        val classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33
+        )
 
-        val subClassification = Classification.builder()
-            .id(2L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("카테고리")
-            .build()
+        val subClassification = Classification(
+            id = 2L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "카테고리",
+        )
 
-        val businessHour = BusinessHour.builder()
-            .id(1L)
-            .date(DayOfWeek.MONDAY)
-            .openAt(LocalTime.of(10, 0))
-            .closeAt(LocalTime.of(20, 0))
-            .build()
+        val businessHour = BusinessHour(
+            id = 1L,
+            date = DayOfWeek.MONDAY,
+            openAt = LocalTime.of(10, 0),
+            closeAt = LocalTime.of(20, 0),
+        )
 
-        val storeMeta = StoreMeta.builder()
-            .id(1L)
-            .name("협업 지점명")
-            .activated(true)
-            .deleted(false)
-            .classification(classification)
-            .subClassification(subClassification)
-            .category("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .businessHours(listOf(businessHour))
-            .build()
-
-        val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .build()
+        val storeMeta = StoreMeta(
+            id = 1L,
+            name = "협업 지점명",
+            activated = true,
+            deleted = false,
+            classification = classification,
+            subClassification = subClassification,
+            category = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33,
+            businessHours = listOf(businessHour)
+        )
 
         given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta))
 
@@ -503,7 +504,7 @@ class StoreMetaServiceTest {
                 verify(storeMetaRepository, times(1)).findById(1L)
             },
             {
-                assertThat(storeMeta.isDeleted).isTrue
+                assertThat(storeMeta.deleted).isTrue
             }
         )
     }
@@ -516,39 +517,39 @@ class StoreMetaServiceTest {
         @DisplayName("협업지점을 고유 아이디로 조회할 수 있다.")
         fun test() {
             // given
-            val classification = Classification.builder()
-                .id(1L)
-                .type(ClassificationType.CLASSIFICATION)
-                .name("카테고리")
-                .latitude(33.33)
-                .longitude(33.33)
-                .build()
+            val classification = Classification(
+                id = 1L,
+                type = ClassificationType.CLASSIFICATION,
+                name = "카테고리",
+                latitude = 33.33,
+                longitude = 33.33
+            )
 
-            val subClassification = Classification.builder()
-                .id(2L)
-                .type(ClassificationType.SUB_CLASSIFICATION)
-                .name("카테고리")
-                .build()
+            val subClassification = Classification(
+                id = 2L,
+                type = ClassificationType.SUB_CLASSIFICATION,
+                name = "카테고리",
+            )
 
-            val businessHour = BusinessHour.builder()
-                .id(1L)
-                .date(DayOfWeek.MONDAY)
-                .openAt(LocalTime.of(10, 0))
-                .closeAt(LocalTime.of(20, 0))
-                .build()
+            val businessHour = BusinessHour(
+                id = 1L,
+                date = DayOfWeek.MONDAY,
+                openAt = LocalTime.of(10, 0),
+                closeAt = LocalTime.of(20, 0),
+            )
 
-            val storeMeta = StoreMeta.builder()
-                .id(1L)
-                .name("협업 지점명")
-                .activated(true)
-                .deleted(false)
-                .classification(classification)
-                .subClassification(subClassification)
-                .category("카테고리")
-                .latitude(33.33)
-                .longitude(33.33)
-                .businessHours(listOf(businessHour))
-                .build()
+            val storeMeta = StoreMeta(
+                id = 1L,
+                name = "협업 지점명",
+                activated = true,
+                deleted = false,
+                classification = classification,
+                subClassification = subClassification,
+                category = "카테고리",
+                latitude = 33.33,
+                longitude = 33.33,
+                businessHours = listOf(businessHour)
+            )
 
             given(storeMetaRepository.findById(1L))
                 .willReturn(Optional.of(storeMeta))
@@ -590,18 +591,16 @@ class StoreMetaServiceTest {
             .set("activated", false)
             .sample()
 
-        val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .storeImages(
-                listOf(
-                    StoreImage.builder()
-                        .id(1L)
-                        .imageUrl("https://image.com")
-                        .build()
+        val storeDetail = StoreDetail(
+            id = 1L,
+            storeMeta = storeMeta,
+            storeImages = listOf(
+                StoreImage(
+                    id = 1L,
+                    imageUrl = "https://image.com"
                 )
             )
-            .build()
+        )
 
         given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail)
 
@@ -609,7 +608,7 @@ class StoreMetaServiceTest {
         storeMetaService.activateStoreStatus(1L)
 
         // then
-        assertThat(storeMeta.isActivated).isTrue
+        assertThat(storeMeta.activated).isTrue
     }
 
     @Test
@@ -620,11 +619,11 @@ class StoreMetaServiceTest {
             .set("activated", true)
             .sample()
 
-        val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .storeImages(listOf())
-            .build()
+        val storeDetail = StoreDetail(
+            id = 1L,
+            storeMeta = storeMeta,
+            storeImages = listOf()
+        )
 
         given(storeDetailService.findStoreDetailByStoreMetaId(1L))
             .willReturn(storeDetail)
@@ -645,18 +644,16 @@ class StoreMetaServiceTest {
             .set("activated", true)
             .sample()
 
-        val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .storeImages(
-                listOf(
-                    StoreImage.builder()
-                        .id(1L)
-                        .imageUrl("https://image.com")
-                        .build()
-                )
+        val storeDetail = StoreDetail(
+            id = 1L,
+            storeMeta = storeMeta,
+            storeImages = listOf(
+                StoreImage(
+                    id = 1L,
+                    imageUrl = "https://image.com"
+                        )
             )
-            .build()
+        )
 
         given(storeDetailService.findStoreDetailByStoreMetaId(1L))
             .willReturn(storeDetail)
@@ -665,6 +662,6 @@ class StoreMetaServiceTest {
         storeMetaService.inactivateStoreStatus(1L)
 
         // then
-        assertThat(storeMeta.isActivated).isFalse
+        assertThat(storeMeta.activated).isFalse
     }
 }

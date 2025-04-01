@@ -32,41 +32,41 @@ class BusinessHourServiceTest {
     @DisplayName("saveAllBusinessHour() 호출하면, 모든 요일이 저장된다.")
     fun saveAllBusinessHour() {
         // given
-        val monday = BusinessHour.builder()
-            .date(DayOfWeek.MONDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val tuesday = BusinessHour.builder()
-            .date(DayOfWeek.TUESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val wednesday = BusinessHour.builder()
-            .date(DayOfWeek.WEDNESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val thursday = BusinessHour.builder()
-            .date(DayOfWeek.THURSDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val friday = BusinessHour.builder()
-            .date(DayOfWeek.FRIDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val saturday = BusinessHour.builder()
-            .date(DayOfWeek.SATURDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val sunday = BusinessHour.builder()
-            .date(DayOfWeek.SUNDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
+        val monday = BusinessHour(
+            date = DayOfWeek.MONDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val tuesday = BusinessHour(
+            date = DayOfWeek.TUESDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val wednesday = BusinessHour(
+            date = DayOfWeek.WEDNESDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val thursday = BusinessHour(
+            date = DayOfWeek.THURSDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val friday = BusinessHour(
+            date = DayOfWeek.FRIDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val saturday = BusinessHour(
+            date = DayOfWeek.SATURDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val sunday = BusinessHour(
+            date = DayOfWeek.SUNDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
 
         val businessHours = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
@@ -81,41 +81,41 @@ class BusinessHourServiceTest {
     @DisplayName("id 를 기준으로 조회하면 모든 요일이 조회된다.")
     fun findBusinessHourByStoreMetaIdTest() {
         // given
-        val monday = BusinessHour.builder()
-            .date(DayOfWeek.MONDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val tuesday = BusinessHour.builder()
-            .date(DayOfWeek.TUESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val wednesday = BusinessHour.builder()
-            .date(DayOfWeek.WEDNESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val thursday = BusinessHour.builder()
-            .date(DayOfWeek.THURSDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val friday = BusinessHour.builder()
-            .date(DayOfWeek.FRIDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val saturday = BusinessHour.builder()
-            .date(DayOfWeek.SATURDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val sunday = BusinessHour.builder()
-            .date(DayOfWeek.SUNDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
+        val monday = BusinessHour(
+            date = DayOfWeek.MONDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val tuesday = BusinessHour(
+            date = DayOfWeek.TUESDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val wednesday = BusinessHour(
+            date = DayOfWeek.WEDNESDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val thursday = BusinessHour(
+            date = DayOfWeek.THURSDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val friday = BusinessHour(
+            date = DayOfWeek.FRIDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val saturday = BusinessHour(
+            date = DayOfWeek.SATURDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val sunday = BusinessHour(
+            date = DayOfWeek.SUNDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
 
         val businessHours = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
@@ -154,11 +154,11 @@ class BusinessHourServiceTest {
         // 이전 데이터와 업데이트 데이터를 생성
         for (day in DayOfWeek.values()) {
             businessHours.add(
-                BusinessHour.builder()
-                    .date(day)
-                    .openAt(LocalTime.of(9, 0))
-                    .closeAt(LocalTime.of(18, 0))
-                    .build()
+                BusinessHour(
+                    date = day,
+                    openAt = LocalTime.of(9, 0),
+                    closeAt = LocalTime.of(18, 0)
+                )
             )
             updateBusinessHours.add(
                 SingleBusinessHourRequest.builder()
@@ -169,10 +169,13 @@ class BusinessHourServiceTest {
             )
         }
 
-        val storeMeta = StoreMeta.builder()
-            .id(1L)
-            .businessHours(businessHours)
-            .build()
+        val storeMeta = StoreMeta(
+            id = 1L,
+            activated = false,
+            category = "category",
+            businessHours = businessHours,
+            name = "협업지점명",
+        )
 
         given(businessHourRepository.findByStoreMetaId(1L))
             .willReturn(
@@ -201,41 +204,48 @@ class BusinessHourServiceTest {
     @DisplayName("협업지점 응답을 위해 entity를 dto로 변경할 수 있다.")
     fun createBusinessHourResponseTest() {
         // given
-        val monday = BusinessHour.builder()
-            .date(DayOfWeek.MONDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val tuesday = BusinessHour.builder()
-            .date(DayOfWeek.TUESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val wednesday = BusinessHour.builder()
-            .date(DayOfWeek.WEDNESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val thursday = BusinessHour.builder()
-            .date(DayOfWeek.THURSDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val friday = BusinessHour.builder()
-            .date(DayOfWeek.FRIDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val saturday = BusinessHour.builder()
-            .date(DayOfWeek.SATURDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val sunday = BusinessHour.builder()
-            .date(DayOfWeek.SUNDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
+        val monday = BusinessHour(
+            id = 1L,
+            date = DayOfWeek.MONDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val tuesday = BusinessHour(
+            id = 2L,
+            date = DayOfWeek.TUESDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val wednesday = BusinessHour(
+            id = 3L,
+            date = DayOfWeek.WEDNESDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val thursday = BusinessHour(
+            id = 4L,
+            date = DayOfWeek.THURSDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val friday = BusinessHour(
+            id = 5L,
+            date = DayOfWeek.FRIDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val saturday = BusinessHour(
+            id = 6L,
+            date = DayOfWeek.SATURDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val sunday = BusinessHour(
+            id = 7L,
+            date = DayOfWeek.SUNDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
 
         val responseMonday = SingleBusinessHourResponse.builder()
             .date(DayOfWeek.MONDAY)

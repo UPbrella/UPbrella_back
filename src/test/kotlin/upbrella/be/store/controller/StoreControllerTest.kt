@@ -23,6 +23,7 @@ import upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse
 import upbrella.be.docs.utils.RestDocsSupport
 import upbrella.be.store.dto.request.*
 import upbrella.be.store.dto.response.*
+import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
 import upbrella.be.store.service.*
 import java.time.DayOfWeek
@@ -687,7 +688,7 @@ class StoreControllerTest : RestDocsSupport() {
             .build()
 
         given(classificationService.createClassification(any(CreateClassificationRequest::class.java)))
-            .willReturn(upbrella.be.store.entity.Classification.builder().build())
+            .willReturn(Classification())
 
         // when & then
         mockMvc.perform(
@@ -794,7 +795,7 @@ class StoreControllerTest : RestDocsSupport() {
             .build()
 
         given(classificationService.createSubClassification(any(CreateSubClassificationRequest::class.java)))
-            .willReturn(upbrella.be.store.entity.Classification.builder().build())
+            .willReturn(Classification())
 
         // when & then
         mockMvc.perform(

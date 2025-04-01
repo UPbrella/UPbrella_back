@@ -58,11 +58,11 @@ class StoreDetailRepositoryImplTest {
         em.persist(expectedStoreMeta)
         em.flush()
 
-        expectedStoreDetail = StoreDetail.builder()
-            .addressDetail("주소 상세")
-            .address("주소")
-            .storeMeta(expectedStoreMeta)
-            .build()
+        expectedStoreDetail = StoreDetail(
+            address = "주소",
+            addressDetail = "주소 상세",
+            storeMeta = expectedStoreMeta
+        )
 
         val businessHour = FixtureBuilderFactory.builderBusinessHour()
             .set("id", null)
@@ -92,7 +92,7 @@ class StoreDetailRepositoryImplTest {
     @DisplayName("협업지점의 메타 정보 고유번호에 해당하는 상세 정보를 조회한다.")
     fun findByStoreMetaIdUsingFetchJoin() {
         // when
-        val storeDetail: Optional<StoreDetail> = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(expectedStoreMeta.id)
+        val storeDetail: Optional<StoreDetail> = storeDetailRepository.findByStoreMetaIdUsingFetchJoin(expectedStoreMeta.id!!)
 
         // then
         Assertions.assertAll(
