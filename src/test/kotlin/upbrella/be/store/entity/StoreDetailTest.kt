@@ -23,9 +23,7 @@ class StoreDetailTest {
             .build()
 
         val images = listOf(second, first)
-        val storeDetail = StoreDetail.builder()
-            .storeImages(images)
-            .build()
+        val storeDetail = StoreDetail(storeImages = images)
 
         // when
         val sortedStoreImages = storeDetail.getSortedStoreImages()

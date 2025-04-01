@@ -48,7 +48,7 @@ class StoreImageServiceTest {
         // given
         val storeDetailId = 1L
         val file = MockMultipartFile("image", "filename.jpg", "image/jpg", "some-image".toByteArray())
-        val storeDetail = StoreDetail.builder().build()
+        val storeDetail = StoreDetail()
         val randomId = storeImageService.makeRandomId()
         val expectedUrl = "https://file.upbrella.co.kr/store-image/filename.jpg$randomId"
 

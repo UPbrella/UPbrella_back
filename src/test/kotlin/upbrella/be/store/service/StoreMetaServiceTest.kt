@@ -493,11 +493,6 @@ class StoreMetaServiceTest {
             businessHours = listOf(businessHour)
         )
 
-        val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .build()
-
         given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta))
 
         // when
@@ -596,18 +591,16 @@ class StoreMetaServiceTest {
             .set("activated", false)
             .sample()
 
-        val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .storeImages(
-                listOf(
-                    StoreImage.builder()
-                        .id(1L)
-                        .imageUrl("https://image.com")
-                        .build()
-                )
+        val storeDetail = StoreDetail(
+            id = 1L,
+            storeMeta = storeMeta,
+            storeImages = listOf(
+                StoreImage.builder()
+                    .id(1L)
+                    .imageUrl("https://image.com")
+                    .build()
             )
-            .build()
+        )
 
         given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail)
 
@@ -626,11 +619,11 @@ class StoreMetaServiceTest {
             .set("activated", true)
             .sample()
 
-        val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .storeImages(listOf())
-            .build()
+        val storeDetail = StoreDetail(
+            id = 1L,
+            storeMeta = storeMeta,
+            storeImages = listOf()
+        )
 
         given(storeDetailService.findStoreDetailByStoreMetaId(1L))
             .willReturn(storeDetail)
@@ -651,18 +644,16 @@ class StoreMetaServiceTest {
             .set("activated", true)
             .sample()
 
-        val storeDetail = StoreDetail.builder()
-            .id(1L)
-            .storeMeta(storeMeta)
-            .storeImages(
-                listOf(
-                    StoreImage.builder()
-                        .id(1L)
-                        .imageUrl("https://image.com")
-                        .build()
-                )
+        val storeDetail = StoreDetail(
+            id = 1L,
+            storeMeta = storeMeta,
+            storeImages = listOf(
+                StoreImage.builder()
+                    .id(1L)
+                    .imageUrl("https://image.com")
+                    .build()
             )
-            .build()
+        )
 
         given(storeDetailService.findStoreDetailByStoreMetaId(1L))
             .willReturn(storeDetail)
