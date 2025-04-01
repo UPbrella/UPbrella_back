@@ -44,7 +44,7 @@ class ClassificationServiceTest {
             .longitude(127.1234)
             .build()
         given(classificationRepository.save(any(Classification::class.java)))
-            .willReturn(Classification.builder().build())
+            .willReturn(Classification())
 
         // when
         classificationService.createClassification(request)
@@ -61,7 +61,7 @@ class ClassificationServiceTest {
             .name("편의점")
             .build()
         given(classificationRepository.save(any(Classification::class.java)))
-            .willReturn(Classification.builder().build())
+            .willReturn(Classification())
 
         // when
         classificationService.createSubClassification(request)
@@ -119,7 +119,13 @@ class ClassificationServiceTest {
     fun findAllClassificationTest() {
         // given
         val mockClassificationList = listOf(
-            Classification(1L, ClassificationType.CLASSIFICATION, "classification_name", 1.0, 1.0)
+            Classification(
+                id = 1L,
+                type = ClassificationType.CLASSIFICATION,
+                name = "classification_name",
+                latitude = 1.0,
+                longitude = 1.0
+            )
         )
         given(classificationRepository.findByType(ClassificationType.CLASSIFICATION))
             .willReturn(mockClassificationList)
@@ -139,19 +145,19 @@ class ClassificationServiceTest {
     @DisplayName("사용자는 대분류를")
     inner class ClassificationTest {
 
-        private val classification: Classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("classification_name")
-            .latitude(1.0)
-            .longitude(1.0)
-            .build()
+        private val classification: Classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "classification_name",
+            latitude = 1.0,
+            longitude = 1.0
+        )
 
-        private val subClassification: Classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("sub_classification_name")
-            .build()
+        private val subClassification: Classification = Classification(
+            id = 1L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "classification_name",
+        )
 
         @Test
         @DisplayName("id로 조회할 수 있다.")
@@ -192,7 +198,13 @@ class ClassificationServiceTest {
     fun findAllSubClassificationTest() {
         // given
         val mockClassificationList = listOf(
-            Classification(1L, ClassificationType.SUB_CLASSIFICATION, "subclassification_name", 1.0, 1.0)
+            Classification(
+                id = 1L,
+                type = ClassificationType.SUB_CLASSIFICATION,
+                name = "subclassification_name",
+                latitude = 1.0,
+                longitude = 1.0
+            )
         )
         given(classificationRepository.findByType(ClassificationType.SUB_CLASSIFICATION))
             .willReturn(mockClassificationList)
@@ -212,19 +224,19 @@ class ClassificationServiceTest {
     @DisplayName("사용자는 소분류를")
     inner class SubClassificationTest {
 
-        private val classification: Classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("classification_name")
-            .latitude(1.0)
-            .longitude(1.0)
-            .build()
+        private val classification: Classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "classification_name",
+            latitude = 1.0,
+            longitude = 1.0
+        )
 
-        private val subClassification: Classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("sub_classification_name")
-            .build()
+        private val subClassification: Classification = Classification(
+            id = 1L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "sub_classification_name",
+        )
 
         @Test
         @DisplayName("id로 조회할 수 있다.")

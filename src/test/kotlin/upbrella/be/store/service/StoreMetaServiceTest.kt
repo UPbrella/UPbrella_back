@@ -402,19 +402,19 @@ class StoreMetaServiceTest {
             val classificationId = 1L
             val subClassificationId = 2L
 
-            val classification = Classification.builder()
-                .id(classificationId)
-                .type(ClassificationType.CLASSIFICATION)
-                .name("카테고리")
-                .latitude(33.33)
-                .longitude(33.33)
-                .build()
+            val classification = Classification(
+                id = classificationId,
+                type = ClassificationType.CLASSIFICATION,
+                name = "카테고리",
+                latitude = 33.33,
+                longitude = 33.33
+            )
 
-            val subClassification = Classification.builder()
-                .id(classificationId)
-                .type(ClassificationType.SUB_CLASSIFICATION)
-                .name("카테고리")
-                .build()
+            val subClassification = Classification(
+                id = subClassificationId,
+                type = ClassificationType.SUB_CLASSIFICATION,
+                name = "카테고리",
+            )
 
             val storeMeta = StoreMeta(
                 name = store.name,
@@ -459,19 +459,19 @@ class StoreMetaServiceTest {
     @DisplayName("협업지점 삭제 테스트")
     fun deleteStoreMetaTest() {
         // given
-        val classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .build()
+        val classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33
+        )
 
-        val subClassification = Classification.builder()
-            .id(2L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("카테고리")
-            .build()
+        val subClassification = Classification(
+            id = 2L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "카테고리",
+        )
 
         val businessHour = BusinessHour(
             id = 1L,
@@ -517,19 +517,19 @@ class StoreMetaServiceTest {
         @DisplayName("협업지점을 고유 아이디로 조회할 수 있다.")
         fun test() {
             // given
-            val classification = Classification.builder()
-                .id(1L)
-                .type(ClassificationType.CLASSIFICATION)
-                .name("카테고리")
-                .latitude(33.33)
-                .longitude(33.33)
-                .build()
+            val classification = Classification(
+                id = 1L,
+                type = ClassificationType.CLASSIFICATION,
+                name = "카테고리",
+                latitude = 33.33,
+                longitude = 33.33
+            )
 
-            val subClassification = Classification.builder()
-                .id(2L)
-                .type(ClassificationType.SUB_CLASSIFICATION)
-                .name("카테고리")
-                .build()
+            val subClassification = Classification(
+                id = 2L,
+                type = ClassificationType.SUB_CLASSIFICATION,
+                name = "카테고리",
+            )
 
             val businessHour = BusinessHour(
                 id = 1L,

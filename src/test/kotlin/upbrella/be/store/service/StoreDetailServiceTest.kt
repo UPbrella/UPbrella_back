@@ -157,19 +157,19 @@ class StoreDetailServiceTest {
             closeAt = LocalTime.of(18, 0)
         )
 
-        private val classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("대분류")
-            .latitude(33.33)
-            .longitude(33.33)
-            .build()
+        private val classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "대분류",
+            latitude = 33.33,
+            longitude = 33.33
+        )
 
-        private val subClassification = Classification.builder()
-            .id(2L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("소분류")
-            .build()
+        private val subClassification = Classification(
+            id = 2L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "소분류",
+        )
 
         private val businessHours =
             listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
@@ -323,20 +323,20 @@ class StoreDetailServiceTest {
             openAt = LocalTime.of(9, 0),
             closeAt = LocalTime.of(18, 0)
         )
-        
-        private val classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("대분류")
-            .latitude(33.33)
-            .longitude(33.33)
-            .build()
 
-        private val subClassification = Classification.builder()
-            .id(2L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("소분류")
-            .build()
+        private val classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "대분류",
+            latitude = 33.33,
+            longitude = 33.33
+        )
+
+        private val subClassification = Classification(
+            id = 2L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "소분류",
+        )
 
         private val businessHours =
             listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
@@ -460,19 +460,19 @@ class StoreDetailServiceTest {
 
         val businessHours = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-        val classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("대분류")
-            .latitude(33.33)
-            .longitude(33.33)
-            .build()
+        val classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "대분류",
+            latitude = 33.33,
+            longitude = 33.33
+        )
 
-        val subClassification = Classification.builder()
-            .id(2L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("소분류")
-            .build()
+        val subClassification = Classification(
+            id = 2L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "소분류",
+        )
 
         val storeMeta = StoreMeta(
             id = 1L,
@@ -546,19 +546,19 @@ class StoreDetailServiceTest {
             sundayUpdate
         )
 
-        val classificationUpdate = Classification.builder()
-            .id(3L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("대분류 수정")
-            .latitude(33.33)
-            .longitude(33.33)
-            .build()
+        val classificationUpdate = Classification(
+            id = 3L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "대분류 수정",
+            latitude = 33.33,
+            longitude = 33.33
+        )
 
-        val subClassificationUpdate = Classification.builder()
-            .id(4L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("소분류 수정")
-            .build()
+        val subClassificationUpdate = Classification(
+            id = 4L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "소분류 수정",
+        )
 
         val request = UpdateStoreRequest.builder()
             .name("협업 지점명 수정")
@@ -627,11 +627,11 @@ class StoreDetailServiceTest {
             longitude = 127.053718,
             activated = true,
             category = "카페, 디저트",
-            subClassification = Classification.builder()
-                .id(1L)
-                .name("카페, 디저트")
-                .type(ClassificationType.SUB_CLASSIFICATION)
-                .build()
+            subClassification = Classification(
+                id = 1L,
+                type = ClassificationType.SUB_CLASSIFICATION,
+                name = "카페, 디저트",
+            )
         )
 
         val storeDetail = StoreDetail(
