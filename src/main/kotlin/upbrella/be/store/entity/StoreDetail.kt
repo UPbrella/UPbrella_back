@@ -51,7 +51,7 @@ class StoreDetail(
 
     fun getSortedStoreImages(): List<StoreImage> {
         return storeImages.stream()
-            .sorted { o1, o2 -> (o1.id - o2.id).toInt() }
+            .sorted { o1, o2 -> (o1.id!! - o2.id!!).toInt() }
             .toList()
     }
 }

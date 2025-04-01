@@ -12,15 +12,15 @@ class StoreDetailTest {
     @DisplayName("협업지점 이미지 고유번호로 정렬된 이미지들을 조회할 수 있다.")
     fun createImageUrlResponseTest() {
         // given
-        val first = StoreImage.builder()
-            .id(1L)
-            .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-            .build()
+        val first = StoreImage(
+            id = 1L,
+            imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+        )
 
-        val second = StoreImage.builder()
-            .id(2L)
-            .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-            .build()
+        val second = StoreImage(
+            id = 2L,
+            imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+        )
 
         val images = listOf(second, first)
         val storeDetail = StoreDetail(storeImages = images)

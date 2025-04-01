@@ -187,15 +187,15 @@ class StoreDetailServiceTest {
             businessHours = businessHours
         )
 
-        private val first = StoreImage.builder()
-            .id(1L)
-            .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-            .build()
+        private val first = StoreImage(
+            id = 1L,
+            imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+        )
 
-        private val second = StoreImage.builder()
-            .id(2L)
-            .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-            .build()
+        private val second = StoreImage(
+            id = 2L,
+            imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+        )
 
         private val images = setOf(first, second)
 
@@ -354,15 +354,15 @@ class StoreDetailServiceTest {
             businessHours = businessHours
         )
 
-        private val first = StoreImage.builder()
-            .id(1L)
-            .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-            .build()
+        private val first = StoreImage(
+            id = 1L,
+            imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+        )
 
-        private val second = StoreImage.builder()
-            .id(2L)
-            .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-            .build()
+        private val second = StoreImage(
+            id = 2L,
+            imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+        )
 
         private val images = listOf(first, second)
 
@@ -497,7 +497,7 @@ class StoreDetailServiceTest {
             address = "주소",
             addressDetail = "상세 주소",
             content = "내용",
-            storeImages = listOf()
+            storeImages = listOf(StoreImage(id = 1L, imageUrl = "가게 썸네일"))
         )
 
         val mondayUpdate = SingleBusinessHourRequest.builder()
@@ -644,9 +644,7 @@ class StoreDetailServiceTest {
             workingHour = "매일 7시 ~ 12시",
             umbrellaLocation = "문 앞",
             storeImages = listOf(
-                StoreImage.builder()
-                    .imageUrl("가게 썸네일")
-                    .build()
+                StoreImage(id = 1L, imageUrl = "가게 썸네일")
             )
         )
 
