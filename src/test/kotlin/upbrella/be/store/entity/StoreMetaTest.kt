@@ -14,20 +14,18 @@ class StoreMetaTest {
     @DisplayName("StoreMeta 삭제 테스트")
     fun test() {
         // given
-        val classification = Classification.builder()
-            .id(1L)
-            .type(ClassificationType.CLASSIFICATION)
-            .name("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .build()
-
-        val subClassification = Classification.builder()
-            .id(2L)
-            .type(ClassificationType.SUB_CLASSIFICATION)
-            .name("카테고리")
-            .build()
-
+        val classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33
+        )
+        val subClassification = Classification(
+            id = 2L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "카테고리",
+        )
         val businessHour = BusinessHour(
             id = 1L,
             date = DayOfWeek.MONDAY,
