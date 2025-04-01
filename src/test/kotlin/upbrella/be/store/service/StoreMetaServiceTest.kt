@@ -595,10 +595,10 @@ class StoreMetaServiceTest {
             id = 1L,
             storeMeta = storeMeta,
             storeImages = listOf(
-                StoreImage.builder()
-                    .id(1L)
-                    .imageUrl("https://image.com")
-                    .build()
+                StoreImage(
+                    id = 1L,
+                    imageUrl = "https://image.com"
+                )
             )
         )
 
@@ -648,10 +648,10 @@ class StoreMetaServiceTest {
             id = 1L,
             storeMeta = storeMeta,
             storeImages = listOf(
-                StoreImage.builder()
-                    .id(1L)
-                    .imageUrl("https://image.com")
-                    .build()
+                StoreImage(
+                    id = 1L,
+                    imageUrl = "https://image.com"
+                        )
             )
         )
 
