@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import upbrella.be.config.FixtureBuilderFactory
 import upbrella.be.config.FixtureFactory
+import upbrella.be.rent.repository.RentRepository
 import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse
@@ -26,7 +27,6 @@ import upbrella.be.rent.entity.History
 import upbrella.be.rent.exception.NonExistingHistoryException
 import upbrella.be.rent.exception.NotAvailableUmbrellaException
 import upbrella.be.rent.exception.NotRefundedException
-import upbrella.be.rent.repository.RentRepository
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.service.StoreMetaService
 import upbrella.be.umbrella.entity.Umbrella
@@ -188,7 +188,7 @@ class RentServiceTest {
                 },
                 {
                     then(rentRepository).should(times(1))
-                        .findByUserIdAndReturnedAtIsNull(userToRent.id)
+                        .findByUserIdAndReturnedAtIsNull(userToRent.id!!)
                 }
             )
         }
@@ -635,7 +635,7 @@ class RentServiceTest {
             missed = false,
         )
 
-        given(rentRepository.findByUserIdAndReturnedAtIsNull(any()))
+        given(rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id!!))
             .willReturn(Optional.empty())
         given(umbrellaService.findUmbrellaById(99L))
             .willReturn(umbrella)
