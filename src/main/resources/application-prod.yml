@@ -16,3 +16,18 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,metrics,prometheus"
+  metrics:
+    export:
+      datadog:
+        enabled: true
+        api-key: ${DD_API_KEY}
+        step: 30s
+        application-key: ${DD_APP_KEY}
+        host-tag: ${DD_HOST_TAG}
+        uri: ${DD_URI}

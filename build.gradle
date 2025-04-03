@@ -89,6 +89,10 @@ dependencies {
 
     // kotlin fixture monkey
     testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter-kotlin:1.1.10")
+
+    // datadog
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-datadog'
 }
 
 // Kotlin 컴파일 옵션 설정
