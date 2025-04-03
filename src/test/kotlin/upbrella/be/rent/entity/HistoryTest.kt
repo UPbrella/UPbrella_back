@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import upbrella.be.user.entity.User
 import org.junit.jupiter.api.Assertions.assertAll
 
-class JavaHistoryTest {
+class HistoryTest {
 
     private lateinit var rentUmbrellaByUserRequest: RentUmbrellaByUserRequest
     private lateinit var foundStoreMeta: StoreMeta

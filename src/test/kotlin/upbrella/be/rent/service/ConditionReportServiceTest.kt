@@ -24,7 +24,7 @@ import upbrella.be.user.entity.User
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
-class JavaConditionReportServiceTest {
+class ConditionReportServiceTest {
 
     @Mock
     private lateinit var conditionReportRepository: ConditionReportRepository

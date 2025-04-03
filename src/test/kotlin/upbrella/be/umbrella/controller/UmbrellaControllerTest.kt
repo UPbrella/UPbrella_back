@@ -37,7 +37,7 @@ import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.service.UmbrellaService
 
 @ExtendWith(MockitoExtension::class)
-class JavaUmbrellaControllerTest : RestDocsSupport() {
+class UmbrellaControllerTest : RestDocsSupport() {
 
     @Mock
     private lateinit var umbrellaService: UmbrellaService
