@@ -32,7 +32,7 @@ class User(
                 socialId = kakaoUser.id.hashCode().toLong(),
                 name = joinRequest.name,
                 phoneNumber = joinRequest.phoneNumber,
-                email = kakaoUser.kakaoAccount!!.email,
+                email = kakaoUser.kakaoAccount?.email ?: "",
                 bank = aesEncryptor.encrypt(joinRequest.bank),
                 accountNumber = aesEncryptor.encrypt(joinRequest.accountNumber)
             )

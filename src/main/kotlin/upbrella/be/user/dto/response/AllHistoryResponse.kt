@@ -4,8 +4,6 @@ data class AllHistoryResponse(
     val histories: List<SingleHistoryResponse>
 ) {
     companion object {
-        fun of(get: List<SingleHistoryResponse>): AllHistoryResponse {
-            return AllHistoryResponse(get)
-        }
+        fun of(get: List<SingleHistoryResponse>): AllHistoryResponse  = AllHistoryResponse(get)
     }
 }
