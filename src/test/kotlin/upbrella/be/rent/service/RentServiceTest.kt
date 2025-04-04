@@ -653,7 +653,7 @@ class RentServiceTest {
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
         val request = RentUmbrellaByUserRequest.builder().build()
 
-        doThrow(BlackListUserException::class.java).`when`(userService).checkBlackList(user.id)
+        doThrow(BlackListUserException::class.java).`when`(userService).checkBlackList(user.id!!)
 
         // when & then
         assertThatThrownBy {
