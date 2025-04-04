@@ -139,9 +139,9 @@ class UserIntegrationTest : RestDocsSupport() {
         fun socialLoginTest() {
             // given
             val code = LoginCodeRequest.builder().code("1kdfjq0243f").build()
-            given(oauthLoginService.getOauthToken(any(), eq(kakaoOauthInfo)))
+            given(oauthLoginService.getOauthToken(any<String>() ?: "code", eq(kakaoOauthInfo) ?: kakaoOauthInfo))
                 .willReturn(OauthToken("accessToken", "refreshToken", "bearer", 3600L))
-            given(oauthLoginService.processKakaoLogin(any(), any()))
+            given(oauthLoginService.processKakaoLogin(any<String>() ?: "accessToken", any<String>() ?: "loginUrl"))
                 .willReturn(FixtureFactory.buildKakaoLoginResponse())
             // when
             mockMvc.perform(
@@ -163,13 +163,13 @@ class UserIntegrationTest : RestDocsSupport() {
         fun upbrellaLoginTest() {
             // given
             val code = LoginCodeRequest.builder().code("1kdfjq0243f").build()
-            given(oauthLoginService.getOauthToken(any(), eq(kakaoOauthInfo)))
+            given(oauthLoginService.getOauthToken(any<String>() ?: "code", eq(kakaoOauthInfo) ?: kakaoOauthInfo))
                 .willReturn(OauthToken("accessToken", "refreshToken", "bearer", 3600L))
             val user = userRepository.save(FixtureBuilderFactory.builderUser(aesEncryptor).sample())
 
             mockHttpSession.setAttribute("kakaoUser", KakaoLoginResponse(user.socialId, KakaoAccount("email")))
 
-            given(oauthLoginService.processKakaoLogin(any(), any()))
+            given(oauthLoginService.processKakaoLogin(any<String>() ?: "accessToken", any<String>() ?: "loginUrl"))
                 .willReturn(KakaoLoginResponse(user.socialId, KakaoAccount("email")))
 
             mockMvc.perform(
@@ -414,7 +414,7 @@ class UserIntegrationTest : RestDocsSupport() {
         // given
         val code = LoginCodeRequest.builder().code("1kdfjq0243f").build()
 
-        given(oauthLoginService.getOauthToken(any(), eq(kakaoOauthInfo)))
+        given(oauthLoginService.getOauthToken(any<String>() ?: "code", eq(kakaoOauthInfo) ?: kakaoOauthInfo))
             .willReturn(OauthToken("accessToken", "refreshToken", "bearer", 3600L))
 
         mockMvc.perform(

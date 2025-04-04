@@ -144,7 +144,7 @@ class StoreControllerTest : RestDocsSupport() {
         // given
         val classificationId = 1L
 
-        given(storeMetaService.findAllStoresByClassification(anyLong(), any(LocalDateTime::class.java)))
+        given(storeMetaService.findAllStoresByClassification(any<Long>() ?: 0, any<LocalDateTime>() ?: LocalDateTime.now()))
             .willReturn(
                 AllCurrentLocationStoreResponse.builder()
                     .stores(
@@ -484,7 +484,7 @@ class StoreControllerTest : RestDocsSupport() {
             .build()
 
         val storeId = 1L
-        doNothing().`when`(storeDetailService).updateStore(any(Long::class.java), any(UpdateStoreRequest::class.java))
+        doNothing().`when`(storeDetailService).updateStore(any<Long>() ?: 0, any<UpdateStoreRequest>() ?: store)
 
         // when & then
         mockMvc.perform(
@@ -551,8 +551,11 @@ class StoreControllerTest : RestDocsSupport() {
     fun uploadStorageImages() {
         // given
         val firstFile = MockMultipartFile("image", "filename-1.jpeg", "text/plain", "some-image".toByteArray())
-        given(storeImageService.uploadFile(any(MultipartFile::class.java), anyLong(), nullable(String::class.java)))
-            .willReturn("url")
+        given(storeImageService.uploadFile(
+            any(MultipartFile::class.java) ?: MockMultipartFile("file", "", "application/octet-stream", ByteArray(0)),
+            any<Long>() ?: 0,
+            any<String>() ?: "randomId")
+        ).willReturn("url")
 
         // when & then
         mockMvc.perform(
@@ -687,7 +690,7 @@ class StoreControllerTest : RestDocsSupport() {
             .longitude(33.33)
             .build()
 
-        given(classificationService.createClassification(any(CreateClassificationRequest::class.java)))
+        given(classificationService.createClassification(any<CreateClassificationRequest>() ?: request))
             .willReturn(Classification())
 
         // when & then
@@ -794,7 +797,7 @@ class StoreControllerTest : RestDocsSupport() {
             .name("소분류 이름")
             .build()
 
-        given(classificationService.createSubClassification(any(CreateSubClassificationRequest::class.java)))
+        given(classificationService.createSubClassification(any<CreateSubClassificationRequest>() ?: request))
             .willReturn(Classification())
 
         // when & then
