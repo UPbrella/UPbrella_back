@@ -11,11 +11,14 @@ import javax.servlet.http.HttpServletResponse
 class AdminInterceptor : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        val session = request.getSession(false)
+        val session = request.getSession(false) ?: run {
+            request.getRequestDispatcher("/api/error").forward(request, response)
+            return false
+        }
 
         val user = session.getAttribute("user") as SessionUser
 
-        if (user.adminStatus == false) {
+        if (!user.adminStatus) {
             request.getRequestDispatcher("/api/error").forward(request, response)
             return false
         }

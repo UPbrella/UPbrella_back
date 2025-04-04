@@ -33,7 +33,6 @@ class AuthConfig(
                 "/docs/**",
                 "/nGrinder/**")
 
-
         registry.addInterceptor(adminInterceptor)
             .order(LOWEST_PRECEDENCE)
             .addPathPatterns("/admin/**")
