@@ -5,7 +5,6 @@ import org.junit.jupiter.api.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.BDDMockito.given
-import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
@@ -138,7 +137,7 @@ class UserIntegrationTest : RestDocsSupport() {
         @DisplayName("사용자는 카카오 소셜 로그인을 할 수 있다.")
         fun socialLoginTest() {
             // given
-            val code = LoginCodeRequest.builder().code("1kdfjq0243f").build()
+            val code = LoginCodeRequest(code = "1kdfjq0243f")
             given(oauthLoginService.getOauthToken(any<String>() ?: "code", eq(kakaoOauthInfo) ?: kakaoOauthInfo))
                 .willReturn(OauthToken("accessToken", "refreshToken", "bearer", 3600L))
             given(oauthLoginService.processKakaoLogin(any<String>() ?: "accessToken", any<String>() ?: "loginUrl"))
@@ -162,7 +161,7 @@ class UserIntegrationTest : RestDocsSupport() {
         @DisplayName("사용자는 소셜 로그인 상태에서 업브렐라 로그인을 할 수 있다.")
         fun upbrellaLoginTest() {
             // given
-            val code = LoginCodeRequest.builder().code("1kdfjq0243f").build()
+            val code = LoginCodeRequest(code = "1kdfjq0243f")
             given(oauthLoginService.getOauthToken(any<String>() ?: "code", eq(kakaoOauthInfo) ?: kakaoOauthInfo))
                 .willReturn(OauthToken("accessToken", "refreshToken", "bearer", 3600L))
             val user = userRepository.save(FixtureBuilderFactory.builderUser(aesEncryptor).sample())
@@ -297,8 +296,7 @@ class UserIntegrationTest : RestDocsSupport() {
                 .andExpect(jsonPath("$.data.histories[0].umbrellaUuid").exists())
                 .andExpect(jsonPath("$.data.histories[0].rentedAt").exists())
                 .andExpect(jsonPath("$.data.histories[0].rentedStore").exists())
-                .andExpect(jsonPath("$.data.histories[0].returned").value(false))
-                .andExpect(jsonPath("$.data.histories[0].returned").exists())
+                .andExpect(jsonPath("$.data.histories[0].isReturned").exists())
         }
 
         @Test
@@ -412,8 +410,7 @@ class UserIntegrationTest : RestDocsSupport() {
     @DisplayName("사용자는 카카오 소셜 로그인 후 회원 가입을 할 수 있다.")
     fun joinTest() {
         // given
-        val code = LoginCodeRequest.builder().code("1kdfjq0243f").build()
-
+        val code = LoginCodeRequest(code = "1kdfjq0243f")
         given(oauthLoginService.getOauthToken(any<String>() ?: "code", eq(kakaoOauthInfo) ?: kakaoOauthInfo))
             .willReturn(OauthToken("accessToken", "refreshToken", "bearer", 3600L))
 

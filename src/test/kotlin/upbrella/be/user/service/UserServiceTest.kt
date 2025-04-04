@@ -120,14 +120,12 @@ class UserServiceTest {
         @DisplayName("회원 가입할 수 있다.")
         fun success() {
             // given
-            val kakaoUser = KakaoLoginResponse.builder()
-                .id(notExistingSocialId)
-                .kakaoAccount(
-                    KakaoAccount.builder()
-                        .email("email@email.com")
-                        .build()
+            val kakaoUser = KakaoLoginResponse(
+                id = notExistingSocialId,
+                kakaoAccount = KakaoAccount(
+                    email = "email@email.com",
                 )
-                .build()
+            )
 
             given(userRepository.existsBySocialId(notExistingSocialId))
                 .willReturn(false)
@@ -153,14 +151,12 @@ class UserServiceTest {
         @DisplayName("이미 회원 가입된 사용자는 예외가 발생된다.")
         fun existingUser() {
             // given
-            val kakaoUser = KakaoLoginResponse.builder()
-                .id(existingSocialId)
-                .kakaoAccount(
-                    KakaoAccount.builder()
-                        .email("email@email.com")
-                        .build()
+            val kakaoUser = KakaoLoginResponse(
+                id = existingSocialId,
+                kakaoAccount = KakaoAccount(
+                    email = "email@email.com",
                 )
-                .build()
+            )
 
             given(userRepository.existsBySocialId(existingSocialId))
                 .willReturn(true)
@@ -261,14 +257,12 @@ class UserServiceTest {
         @DisplayName("회원 목록을 조회할 수 있다.")
         fun success() {
             // given
-            val expected = AllUsersInfoResponse.builder()
-                .users(
-                    expectedUsers.stream()
-                        .map { user -> user.decryptData(aesEncryptor) }
-                        .map { decrypted -> SingleUserInfoResponse.fromUser(decrypted) }
-                        .collect(Collectors.toList())
-                )
-                .build()
+            val expected = AllUsersInfoResponse(
+                users = expectedUsers.stream()
+                    .map { user -> user.decryptData(aesEncryptor) }
+                    .map { decrypted -> SingleUserInfoResponse.fromUser(decrypted) }
+                    .toList()
+            )
 
             given(userRepository.findAll()).willReturn(users)
 
@@ -319,7 +313,7 @@ class UserServiceTest {
         given(userRepository.findById(user.id!!)).willReturn(Optional.of(user))
 
         // when
-        userService.updateUserBankAccount(user.id, updateBankInfoRequest)
+        userService.updateUserBankAccount(user.id!!, updateBankInfoRequest)
 
         // then
         assertAll(
@@ -345,7 +339,7 @@ class UserServiceTest {
         given(userRepository.findById(user.id!!)).willReturn(Optional.of(user))
 
         // when
-        userService.deleteUser(user.id)
+        userService.deleteUser(user.id!!)
 
         // then
         assertAll(
@@ -370,7 +364,7 @@ class UserServiceTest {
             given(userRepository.findById(user.id!!)).willReturn(Optional.of(user))
 
             // when
-            userService.withdrawUser(user.id)
+            userService.withdrawUser(user.id!!)
 
             // then
             assertAll(
@@ -402,7 +396,7 @@ class UserServiceTest {
             given(userRepository.findById(blockedUser.id!!)).willReturn(Optional.of(blockedUser))
 
             // when
-            userService.withdrawUser(blockedUser.id)
+            userService.withdrawUser(blockedUser.id!!)
 
             // then
             assertAll(
@@ -411,7 +405,7 @@ class UserServiceTest {
                         .findById(blockedUser.id!!)
                 },
                 {
-                    assertThatThrownBy { userService.withdrawUser(blockedUser.id) }
+                    assertThatThrownBy { userService.withdrawUser(blockedUser.id!!) }
                         .isInstanceOf(NonExistingMemberException::class.java)
                 }
             )
@@ -422,14 +416,12 @@ class UserServiceTest {
     @DisplayName("블랙리스트에 들어간 회원은 회원가입이 불가능하다.")
     fun blackListMemberJoinTest() {
         // given
-        val kakaoUser = KakaoLoginResponse.builder()
-            .id(0L)
-            .kakaoAccount(
-                KakaoAccount.builder()
-                    .email("email@email.com")
-                    .build()
+        val kakaoUser = KakaoLoginResponse(
+            id = 0L,
+            kakaoAccount = KakaoAccount(
+                email = "email@email.com",
             )
-            .build()
+        )
 
         val blackListId = 0L
         given(blackListRepository.existsBySocialId(blackListId)).willReturn(true)
@@ -449,7 +441,7 @@ class UserServiceTest {
         given(userRepository.findById(user.id!!)).willReturn(Optional.of(user))
 
         // when
-        userService.deleteUser(user.id)
+        userService.deleteUser(user.id!!)
 
         // then
         assertAll(
@@ -512,7 +504,10 @@ class UserServiceTest {
     @DisplayName("정상적으로 로그인하지 않은 경우 개인정보 조회를 할 수 없다.")
     fun notLoginException() {
         // given
-        val user = SessionUser.builder().build()
+        val user = SessionUser(
+            id = 1L,
+            adminStatus = false
+            )
 
         // when & then
         assertThatThrownBy { userService.findDecryptedUserById(user) }

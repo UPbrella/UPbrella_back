@@ -41,7 +41,6 @@ import upbrella.be.user.service.OauthLoginService
 import upbrella.be.user.service.UserService
 import upbrella.be.util.AesEncryptor
 import java.time.LocalDateTime
-import java.util.stream.Collectors
 
 @ExtendWith(MockitoExtension::class)
 class UserControllerTest (
@@ -154,7 +153,7 @@ class UserControllerTest (
 
         @BeforeEach
         fun setUp() {
-            code = LoginCodeRequest.builder().code("1kdfjq0243f").build()
+            code = LoginCodeRequest(code = "1kdfjq0243f")
             oauthToken = FixtureFactory.buildOauthToken()
             kakaoLoginResponse = FixtureFactory.buildKakaoLoginResponse()
             mockHttpSession = MockHttpSession()
@@ -193,14 +192,12 @@ class UserControllerTest (
         @DisplayName("존재하지 않는 사용자는 400 에러가 반환된다.")
         fun loginFail() {
             // given
-            val kakaoUser = KakaoLoginResponse.builder()
-                .id(1L)
-                .kakaoAccount(
-                    KakaoAccount.builder()
-                        .email("email@email.com")
-                        .build()
+            val kakaoUser = KakaoLoginResponse(
+                id = 1L,
+                kakaoAccount = KakaoAccount(
+                    email = "email@email.com",
                 )
-                .build()
+            )
 
             given(userService.login(any<Long>() ?: 0L))
                 .willThrow(NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."))
@@ -253,14 +250,12 @@ class UserControllerTest (
     @DisplayName("사용자는 소셜 로그인 상태에서 업브렐라 로그인을 할 수 있다.")
     fun upbrellaLoginTest() {
         // given
-        val kakaoUser = KakaoLoginResponse.builder()
-            .id(1L)
-            .kakaoAccount(
-                KakaoAccount.builder()
-                    .email("email@email.com")
-                    .build()
+        val kakaoUser = KakaoLoginResponse(
+            id = 1L,
+            kakaoAccount = KakaoAccount(
+                email = "email@email.com",
             )
-            .build()
+        )
 
         val session = MockHttpSession()
         val sessionUser = FixtureBuilderFactory.builderSessionUser().sample()
@@ -328,19 +323,17 @@ class UserControllerTest (
         @DisplayName("사용자는 카카오 소셜 회원 가입을 할 수 있다.")
         fun joinTest() {
             // given
-            val user = SessionUser.builder()
-                .id(1L)
-                .adminStatus(false)
-                .build()
+            val user = SessionUser(
+                id = 1L,
+                adminStatus = false
+            )
 
-            val kakaoUser = KakaoLoginResponse.builder()
-                .id(1L)
-                .kakaoAccount(
-                    KakaoAccount.builder()
-                        .email("email@email.com")
-                        .build()
+            val kakaoUser = KakaoLoginResponse(
+                id = 1L,
+                kakaoAccount = KakaoAccount(
+                    email = "email@email.com",
                 )
-                .build()
+            )
 
             mockHttpSession.setAttribute("kakaoUser", kakaoUser)
 
@@ -375,14 +368,12 @@ class UserControllerTest (
         @DisplayName("이미 가입된 회원은 400 에러가 반환된다.")
         fun joinedMember() {
             // given
-            val kakaoUser = KakaoLoginResponse.builder()
-                .id(1L)
-                .kakaoAccount(
-                    KakaoAccount.builder()
-                        .email("email@email.com")
-                        .build()
+            val kakaoUser = KakaoLoginResponse(
+                id = 1L,
+                kakaoAccount = KakaoAccount(
+                    email = "email@email.com",
                 )
-                .build()
+            )
 
             mockHttpSession.setAttribute("kakaoUser", kakaoUser)
 
@@ -409,7 +400,12 @@ class UserControllerTest (
         @DisplayName("이미 로그인한 회원은 400 에러가 반환된다.")
         fun loginedMember() {
             // given
-            mockHttpSession.setAttribute("user", SessionUser.builder().build())
+            mockHttpSession.setAttribute(
+                "user",
+                SessionUser(
+                    id = 1L,
+                    adminStatus = false
+                ))
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), UserExceptionHandler())
 
             // when & then
@@ -456,14 +452,12 @@ class UserControllerTest (
             users.add(FixtureBuilderFactory.builderUser(aesEncryptor).sample())
         }
 
-        val allUsersInfoResponse = AllUsersInfoResponse.builder()
-            .users(
-                users.stream()
-                    .map { user -> user.decryptData(aesEncryptor) }
-                    .map { SingleUserInfoResponse.fromUser(it) }
-                    .collect(Collectors.toList())
-            )
-            .build()
+        val allUsersInfoResponse = AllUsersInfoResponse(
+            users = users.stream()
+                .map { user -> user.decryptData(aesEncryptor) }
+                .map { SingleUserInfoResponse.fromUser(it) }
+                .toList()
+        )
 
         given(userService.findUsers())
             .willReturn(allUsersInfoResponse)
@@ -544,9 +538,9 @@ class UserControllerTest (
                             .description("대여 협업 지점명"),
                         fieldWithPath("histories[].returnAt").type(JsonFieldType.STRING)
                             .description("반납한 날짜 혹은 반납 기한"),
-                        fieldWithPath("histories[].returned").type(JsonFieldType.BOOLEAN)
+                        fieldWithPath("histories[].isReturned").type(JsonFieldType.BOOLEAN)
                             .description("우산 반납 여부"),
-                        fieldWithPath("histories[].refunded").type(JsonFieldType.BOOLEAN)
+                        fieldWithPath("histories[].isRefunded").type(JsonFieldType.BOOLEAN)
                             .description("우산 환급 여부")
                     )
                 )
@@ -669,16 +663,14 @@ class UserControllerTest (
     @DisplayName("사용자는 블랙리스트를 조회할 수 있다.")
     fun findAllBlackListTest() {
         // given
-        val blackLists = AllBlackListResponse.builder()
-            .blackList(
-                listOf(
-                    SingleBlackListResponse.builder()
-                        .id(1L)
-                        .blockedAt(LocalDateTime.now())
-                        .build()
+        val blackLists = AllBlackListResponse(
+            blackList = listOf(
+                SingleBlackListResponse(
+                    id = 1L,
+                    blockedAt = LocalDateTime.now(),
                 )
             )
-            .build()
+        )
 
         given(userService.findBlackList())
             .willReturn(blackLists)

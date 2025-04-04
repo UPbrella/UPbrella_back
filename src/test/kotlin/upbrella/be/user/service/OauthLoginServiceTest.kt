@@ -40,7 +40,12 @@ class OauthLoginServiceTest {
         given(restTemplate.postForEntity(anyString(), any(HttpEntity::class.java), any<Class<*>>()))
             .willReturn(ResponseEntity.of(Optional.of(token)))
 
-        kakaoOauthInfo = KakaoOauthInfo("123", "abc", "kakao.com", "login.com")
+        kakaoOauthInfo = KakaoOauthInfo(
+            clientId = "123",
+            clientSecret = "abc",
+            redirectUri = "kakao.com",
+            loginUri = "login.com"
+        )
 
         // when
         val actualToken = oauthLoginService.getOauthToken(code, kakaoOauthInfo)
@@ -61,7 +66,7 @@ class OauthLoginServiceTest {
         // given
         val oauthToken = "abc"
         val loginUri = "login.com"
-        val response = KakaoLoginResponse(3L, KakaoAccount.builder().build())
+        val response = KakaoLoginResponse(3L, KakaoAccount(email = "kakao.com"))
 
         given(
             restTemplate.exchange(

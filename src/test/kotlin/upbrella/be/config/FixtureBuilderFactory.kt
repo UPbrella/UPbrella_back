@@ -5,6 +5,8 @@ import com.navercorp.fixturemonkey.FixtureMonkey
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector
 import com.navercorp.fixturemonkey.api.introspector.CompositeArbitraryIntrospector
 import com.navercorp.fixturemonkey.kotlin.KotlinPlugin
+import com.navercorp.fixturemonkey.kotlin.giveMeBuilder
+import com.navercorp.fixturemonkey.kotlin.setExp
 import net.jqwik.api.Arbitraries
 import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.BusinessHour
@@ -90,7 +92,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderStoreMeta(): ArbitraryBuilder<StoreMeta> {
-        return fixtureMonkey.giveMeBuilder(StoreMeta::class.java)
+        return fixtureMonkey.giveMeBuilder<StoreMeta>()
             .set("classification", builderClassification().sample())
             .set("deleted", false)
             .set("id", buildLong(100))
@@ -104,7 +106,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderUmbrella(): ArbitraryBuilder<Umbrella> {
-        return fixtureMonkey.giveMeBuilder(Umbrella::class.java)
+        return fixtureMonkey.giveMeBuilder<Umbrella>()
             .set("id", buildLong(10000))
             .set("uuid", buildLong(1000))
             .set("storeMeta", builderStoreMeta().sample())
@@ -114,7 +116,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderUmbrellaWithHistory(): ArbitraryBuilder<UmbrellaWithHistory> {
-        return fixtureMonkey.giveMeBuilder(UmbrellaWithHistory::class.java)
+        return fixtureMonkey.giveMeBuilder<UmbrellaWithHistory>()
             .set("id", buildLong(10000))
             .set("uuid", buildLong(1000))
             .set("historyId", buildLong(1000))
@@ -125,7 +127,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderUmbrellaResponses(): ArbitraryBuilder<UmbrellaResponse> {
-        return fixtureMonkey.giveMeBuilder(UmbrellaResponse::class.java)
+        return fixtureMonkey.giveMeBuilder<UmbrellaResponse>()
             .set("id", buildLong(10000))
             .set("storeMetaId", buildLong(100))
             .set("historyId", buildLong(100))
@@ -136,7 +138,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderUmbrellaCreateRequest(): ArbitraryBuilder<UmbrellaCreateRequest> {
-        return fixtureMonkey.giveMeBuilder(UmbrellaCreateRequest::class.java)
+        return fixtureMonkey.giveMeBuilder<UmbrellaCreateRequest>()
             .set("storeMetaId", buildLong(100))
             .set("uuid", buildLong(100))
             .set("etc", pickRandomString(nameList))
@@ -144,7 +146,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderUmbrellaModifyRequest(): ArbitraryBuilder<UmbrellaModifyRequest> {
-        return fixtureMonkey.giveMeBuilder(UmbrellaModifyRequest::class.java)
+        return fixtureMonkey.giveMeBuilder<UmbrellaModifyRequest>()
             .set("storeMetaId", buildLong(100))
             .set("uuid", buildLong(100))
             .set("etc", pickRandomString(nameList))
@@ -152,7 +154,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderUser(aesEncryptor: AesEncryptor): ArbitraryBuilder<User> {
-        return fixtureMonkey.giveMeBuilder(User::class.java)
+        return fixtureMonkey.giveMeBuilder<User>()
             .set("id", buildLong(100))
             .set("socialId", buildLong(100000000).hashCode().toLong())
             .set("name", pickRandomString(nameList))
@@ -164,14 +166,14 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderSingleHistoryResponse(): ArbitraryBuilder<SingleHistoryResponse> {
-        return fixtureMonkey.giveMeBuilder(SingleHistoryResponse::class.java)
+        return fixtureMonkey.giveMeBuilder<SingleHistoryResponse>()
             .set("umbrellaUuid", buildLong(1000))
             .set("rentedStore", pickRandomString(cafeList))
     }
 
     @JvmStatic
     fun builderJoinRequest(): ArbitraryBuilder<JoinRequest> {
-        return fixtureMonkey.giveMeBuilder(JoinRequest::class.java)
+        return fixtureMonkey.giveMeBuilder<JoinRequest>()
             .set("name", pickRandomString(nameList))
             .set("phoneNumber", pickPhoneNumberString())
             .set("bank", pickRandomString(bankList))
@@ -180,7 +182,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderBankAccount(): ArbitraryBuilder<UpdateBankAccountRequest> {
-        return fixtureMonkey.giveMeBuilder(UpdateBankAccountRequest::class.java)
+        return fixtureMonkey.giveMeBuilder<UpdateBankAccountRequest>()
             .set("bank", pickRandomString(bankList))
             .set("accountNumber", "123456789")
     }
@@ -193,7 +195,7 @@ object FixtureBuilderFactory {
         val totalUmbrellaCount = missingUmbrellaCount + rentableUmbrellaCount + rentedUmbrellaCount
         val missingRate = 100.0 * missingUmbrellaCount / totalUmbrellaCount
 
-        return fixtureMonkey.giveMeBuilder(UmbrellaStatisticsResponse::class.java)
+        return fixtureMonkey.giveMeBuilder<UmbrellaStatisticsResponse>()
             .set("totalUmbrellaCount", totalUmbrellaCount)
             .set("rentableUmbrellaCount", rentableUmbrellaCount)
             .set("rentedUmbrellaCount", rentedUmbrellaCount)
@@ -204,7 +206,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderClassification(): ArbitraryBuilder<Classification> {
-        return fixtureMonkey.giveMeBuilder(Classification::class.java)
+        return fixtureMonkey.giveMeBuilder<Classification>()
             .set("id", buildLong(100))
             .set("name", pickRandomString(nameList))
             .set("latitude", buildDouble())
@@ -213,13 +215,13 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderBusinessHour(): ArbitraryBuilder<BusinessHour> {
-        return fixtureMonkey.giveMeBuilder(BusinessHour::class.java)
+        return fixtureMonkey.giveMeBuilder<BusinessHour>()
             .set("id", buildLong(100))
     }
 
     @JvmStatic
     fun builderSessionUser(): ArbitraryBuilder<SessionUser> {
-        return fixtureMonkey.giveMeBuilder(SessionUser::class.java)
+        return fixtureMonkey.giveMeBuilder<SessionUser>()
             .set("id", buildLong(100))
             .set("socialId", buildLong(100))
             .set("adminStatus", false)
@@ -229,7 +231,7 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderHistory(aesEncryptor: AesEncryptor): ArbitraryBuilder<History> {
-        return fixtureMonkey.giveMeBuilder(History::class.java)
+        return fixtureMonkey.giveMeBuilder<History>()
             .set("id", buildLong(100))
             .set("user", builderUser(aesEncryptor).sample())
             .set("umbrella", builderUmbrella().sample())
