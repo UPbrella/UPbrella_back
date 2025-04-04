@@ -574,6 +574,7 @@ class StoreDetailServiceTest {
             .latitude(44.44)
             .longitude(44.44)
             .content("내용 수정")
+            .businessHours(businessHoursUpdate)
             .build()
 
         given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId))

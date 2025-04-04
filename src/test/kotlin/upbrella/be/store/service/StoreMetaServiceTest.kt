@@ -427,6 +427,17 @@ class StoreMetaServiceTest {
                 longitude = store.longitude,
             )
 
+            val storeDetail = StoreDetail(
+                id = 1L,
+                storeMeta = storeMeta,
+                storeImages = listOf(
+                    StoreImage(
+                        id = 1L,
+                        imageUrl = "https://image.com"
+                    )
+                )
+            )
+
             given(classificationService.findClassificationById(classificationId)).willReturn(
                 classification
             )
@@ -434,8 +445,8 @@ class StoreMetaServiceTest {
                 subClassification
             )
             given(storeMetaRepository.save(any(StoreMeta::class.java))).willReturn(storeMeta)
-            doNothing().`when`(storeDetailService).saveStoreDetail(any())
-            doNothing().`when`(businessHourService).saveAllBusinessHour(any())
+            doNothing().`when`(storeDetailService).saveStoreDetail(any<StoreDetail>() ?: storeDetail)
+            doNothing().`when`(businessHourService).saveAllBusinessHour(any<List<BusinessHour>>() ?: emptyList())
 
             // when
             storeMetaService.createStore(store)
