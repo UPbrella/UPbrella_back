@@ -63,14 +63,14 @@ class HistoryTest {
             rentStoreMeta = foundStoreMeta,
         )
 
-        val expectedResponse = SingleHistoryResponse.builder()
-            .umbrellaUuid(99L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 24).plusDays(7))
-            .rentedStore("motive study cafe")
-            .isRefunded(false)
-            .isReturned(false)
-            .build()
+        val expectedResponse = SingleHistoryResponse(
+            umbrellaUuid = 99L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnAt = LocalDateTime.of(1000, 12, 3, 4, 24).plusDays(7),
+            rentedStore = "motive study cafe",
+            isRefunded = false,
+            isReturned = false
+        )
 
         // when
         val singleHistoryResponse = History.ofUserHistory(history)
@@ -97,14 +97,14 @@ class HistoryTest {
             rentStoreMeta = foundStoreMeta,
         )
 
-        val expectedResponse = SingleHistoryResponse.builder()
-            .umbrellaUuid(99L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .rentedStore("motive study cafe")
-            .isRefunded(false)
-            .isReturned(true)
-            .build()
+        val expectedResponse = SingleHistoryResponse(
+            umbrellaUuid = 99L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            rentedStore = "motive study cafe",
+            isRefunded = false,
+            isReturned = true
+        )
 
         // when
         val singleHistoryResponse = History.ofUserHistory(history)
@@ -131,14 +131,14 @@ class HistoryTest {
             rentStoreMeta = foundStoreMeta,
         )
 
-        val expectedResponse = SingleHistoryResponse.builder()
-            .umbrellaUuid(99L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .rentedStore("motive study cafe")
-            .isRefunded(false)
-            .isReturned(true)
-            .build()
+        val expectedResponse = SingleHistoryResponse(
+            umbrellaUuid = 99L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            rentedStore = "motive study cafe",
+            isRefunded = false,
+            isReturned = true
+        )
 
         // when
         val singleHistoryResponse = History.ofUserHistory(history)
@@ -165,15 +165,14 @@ class HistoryTest {
             rentStoreMeta = foundStoreMeta,
         )
 
-        val expectedResponse = SingleHistoryResponse.builder()
-            .umbrellaUuid(99L)
-            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-            .rentedStore("motive study cafe")
-            .isRefunded(true)
-            .isReturned(true)
-            .build()
-
+        val expectedResponse = SingleHistoryResponse(
+            umbrellaUuid = 99L,
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+            rentedStore = "motive study cafe",
+            isRefunded = true,
+            isReturned = true
+        )
         // when
         val singleHistoryResponse = History.ofUserHistory(history)
 

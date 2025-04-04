@@ -17,26 +17,22 @@ class MockKakaoServerController {
 
     @PostMapping("/oauth/token")
     fun getAccessToken(request: HttpEntity<String>): ResponseEntity<OauthToken> {
-        val response = OauthToken.builder()
-            .accessToken("access_token")
-            .refreshToken("refresh_token")
-            .tokenType("bearer")
-            .expiresIn(3600L)
-            .build()
+        val response = OauthToken(
+            accessToken = "access_token",
+            refreshToken = "refresh_token",
+            tokenType = "bearer",
+            expiresIn = 3600L
+        )
 
         return ResponseEntity.ok(response)
     }
 
     @GetMapping(path = ["/user/me"], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun getMemberInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) token: String): ResponseEntity<KakaoLoginResponse> {
-        val response = KakaoLoginResponse.builder()
-            .id(1L)
-            .kakaoAccount(
-                KakaoAccount.builder()
-                    .email("email@email.com")
-                    .build()
-            )
-            .build()
+        val response = KakaoLoginResponse(
+            id = 1L,
+            kakaoAccount = KakaoAccount(email = "email@email.com")
+        )
 
         return ResponseEntity.ok(response)
     }
