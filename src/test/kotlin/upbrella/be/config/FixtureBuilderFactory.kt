@@ -3,10 +3,8 @@ package upbrella.be.config
 import com.navercorp.fixturemonkey.ArbitraryBuilder
 import com.navercorp.fixturemonkey.FixtureMonkey
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector
-import com.navercorp.fixturemonkey.api.introspector.CompositeArbitraryIntrospector
 import com.navercorp.fixturemonkey.kotlin.KotlinPlugin
 import com.navercorp.fixturemonkey.kotlin.giveMeBuilder
-import com.navercorp.fixturemonkey.kotlin.setExp
 import net.jqwik.api.Arbitraries
 import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.BusinessHour

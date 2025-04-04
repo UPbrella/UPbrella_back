@@ -6,9 +6,7 @@ data class AllUsersInfoResponse(val users: List<SingleUserInfoResponse>) {
     companion object {
         fun fromUsers(users: List<User?>): AllUsersInfoResponse {
             return AllUsersInfoResponse(
-                users = users.stream()
-                    .map { SingleUserInfoResponse.fromUser(it!!) }
-                    .toList()
+                users = users.map { SingleUserInfoResponse.fromUser(it!!) }
             )
         }
     }
