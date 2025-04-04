@@ -77,7 +77,7 @@ class OauthLoginServiceTest {
 
         // then
         assertAll(
-            { assertThat(kakaoLoginResponse.id).isEqualTo(3L) },
+            { assertThat(kakaoLoginResponse!!.id).isEqualTo(3L) },
             {
                 then(restTemplate).should(times(1))
                     .exchange(

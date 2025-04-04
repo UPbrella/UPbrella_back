@@ -164,9 +164,9 @@ class UserControllerTest (
         @DisplayName("카카오 소셜 로그인을 할 수 있다.")
         fun loginSuccess() {
             // given
-            given(oauthLoginService.getOauthToken(eq(code.code), any()))
+            given(oauthLoginService.getOauthToken(eq(code.code) ?: "code", any() ?: kakaoOauthInfo))
                 .willReturn(oauthToken)
-            given(oauthLoginService.processKakaoLogin(eq(oauthToken.accessToken), any()))
+            given(oauthLoginService.processKakaoLogin(eq(oauthToken.accessToken) ?: "accessToken", any() ?: "loginUrl"))
                 .willReturn(kakaoLoginResponse)
             given(kakaoOauthInfo.loginUri)
                 .willReturn("http://kakao.login.com")
@@ -202,10 +202,9 @@ class UserControllerTest (
                 )
                 .build()
 
-            given(userService.login(any()))
-                .willThrow(
-                    NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요.")
-                )
+            given(userService.login(any<Long>() ?: 0L))
+                .willThrow(NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요."))
+
 
             val mockHttpSession = MockHttpSession()
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), UserExceptionHandler())
@@ -229,7 +228,7 @@ class UserControllerTest (
         @DisplayName("유효하지 않은 로그인 코드면 400 에러를 반환한다.")
         fun invalidLoginCode() {
             // given
-            given(oauthLoginService.getOauthToken(any(), any()))
+            given(oauthLoginService.getOauthToken(any() ?: "code", any() ?: kakaoOauthInfo))
                 .willThrow(HttpClientErrorException(HttpStatus.BAD_REQUEST))
 
             val mockHttpSession = MockHttpSession()
@@ -267,7 +266,7 @@ class UserControllerTest (
         val sessionUser = FixtureBuilderFactory.builderSessionUser().sample()
         session.setAttribute("kakaoUser", kakaoUser)
 
-        given(userService.login(any()))
+        given(userService.login(any<Long>() ?: 0L))
             .willReturn(sessionUser)
 
         // when & then
@@ -345,7 +344,7 @@ class UserControllerTest (
 
             mockHttpSession.setAttribute("kakaoUser", kakaoUser)
 
-            given(userService.join(any(KakaoLoginResponse::class.java), any(JoinRequest::class.java)))
+            given(userService.join(any() ?: kakaoUser, any<JoinRequest>() ?: joinRequest))
                 .willReturn(user)
 
             // when & then
@@ -387,7 +386,7 @@ class UserControllerTest (
 
             mockHttpSession.setAttribute("kakaoUser", kakaoUser)
 
-            given(userService.join(any(), any(JoinRequest::class.java)))
+            given(userService.join(any() ?: kakaoUser, any<JoinRequest>() ?: joinRequest))
                 .willThrow(ExistingMemberException("[ERROR] 이미 가입된 회원입니다."))
 
             mockMvc = RestDocsSupport.setControllerAdvice(initController(), UserExceptionHandler())
