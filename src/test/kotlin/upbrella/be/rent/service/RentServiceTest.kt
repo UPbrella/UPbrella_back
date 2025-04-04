@@ -57,6 +57,12 @@ class RentServiceTest {
     private lateinit var userService: UserService
 
     @Mock
+    private lateinit var improvementReportService: ImprovementReportService
+
+    @Mock
+    private lateinit var lockerService: LockerService
+
+    @Mock
     private lateinit var aesEncryptor: AesEncryptor
 
     @Mock
@@ -142,9 +148,9 @@ class RentServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(25L)).willReturn(foundStoreMeta)
             given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
-            given(rentRepository.save(any(History::class.java))).willReturn(history)
+            given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
             doNothing().`when`(conditionReportService)
-                .saveConditionReport(any(ConditionReport::class.java))
+                .saveConditionReport(any(ConditionReport::class.java) ?: conditionReport)
 
             // when
             rentService.addRental(rentUmbrellaByUserRequest, userToRent)
