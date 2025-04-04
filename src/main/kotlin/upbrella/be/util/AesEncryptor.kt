@@ -1,17 +1,16 @@
 package upbrella.be.util
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
-import java.util.Base64
+import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 @Component
-class AesEncryptor @Autowired constructor(
+class AesEncryptor (
     @Value("\${ALGORITHM}") private val algorithm: String,
     @Value("\${SECRET_KEY}") private val keyStr: String
 ) {

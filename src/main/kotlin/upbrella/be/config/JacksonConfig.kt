@@ -9,9 +9,8 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 @Configuration
 class JacksonConfig {
     @Bean
-    fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper {
-        val objectMapper = builder.build<ObjectMapper>()
-        objectMapper.registerModule(JavaTimeModule()) // Register module to support Java 8's java.time
-        return objectMapper
+    fun objectMapper(builder: Jackson2ObjectMapperBuilder): ObjectMapper =
+         builder.build<ObjectMapper>().apply {
+            registerModules(JavaTimeModule())
     }
 }
