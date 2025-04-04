@@ -122,11 +122,11 @@ class RentControllerTest : RestDocsSupport() {
         val salt = "salt"
         val signature = "signature"
 
-        val sessionUser = SessionUser.builder()
-            .id(1L)
-            .socialId(1L)
-            .adminStatus(false)
-            .build()
+        val sessionUser = SessionUser(
+            id = 1L,
+            socialId = 1L,
+            adminStatus = false
+        )
 
         val userToReturn = User(
             1L,
@@ -200,11 +200,11 @@ class RentControllerTest : RestDocsSupport() {
     fun rentUmbrellaTest() {
         val lockerPassword = LockerPasswordResponse("password")
 
-        val sessionUser = SessionUser.builder()
-            .id(1L)
-            .socialId(1L)
-            .adminStatus(false)
-            .build()
+        val sessionUser = SessionUser(
+            id = 1L,
+            socialId = 1L,
+            adminStatus = false
+        )
 
         val request = RentUmbrellaByUserRequest.builder()
             .region("신촌")
@@ -258,11 +258,11 @@ class RentControllerTest : RestDocsSupport() {
     @Test
     @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     fun returnUmbrellaTest() {
-        val sessionUser = SessionUser.builder()
-            .id(1L)
-            .socialId(1L)
-            .adminStatus(false)
-            .build()
+        val sessionUser = SessionUser(
+            id = 1L,
+            socialId = 1L,
+            adminStatus = false
+        )
 
         val request = ReturnUmbrellaByUserRequest.builder()
             .returnStoreId(1L)

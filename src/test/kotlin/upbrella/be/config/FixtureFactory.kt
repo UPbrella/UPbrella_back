@@ -2,6 +2,10 @@ package upbrella.be.config
 
 import com.navercorp.fixturemonkey.FixtureMonkey
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector
+import com.navercorp.fixturemonkey.kotlin.KotlinPlugin
+import com.navercorp.fixturemonkey.kotlin.giveMeBuilder
+import com.navercorp.fixturemonkey.kotlin.giveMeOne
+import com.navercorp.fixturemonkey.kotlin.instantiator.instantiateBy
 import upbrella.be.rent.dto.response.HistoryInfoDto
 import upbrella.be.rent.dto.response.RentalHistoryResponse
 import upbrella.be.rent.entity.History
@@ -12,6 +16,7 @@ import upbrella.be.umbrella.dto.response.UmbrellaResponse
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.user.dto.request.JoinRequest
+import upbrella.be.user.dto.request.KakaoAccount
 import upbrella.be.user.dto.response.KakaoLoginResponse
 import upbrella.be.user.dto.token.OauthToken
 import upbrella.be.user.entity.User
@@ -21,6 +26,7 @@ import java.time.temporal.ChronoUnit
 object FixtureFactory {
 
     private val fixtureMonkey: FixtureMonkey = FixtureMonkey.builder()
+        .plugin(KotlinPlugin())
         .objectIntrospector(BuilderArbitraryIntrospector.INSTANCE)
         .defaultNotNull(true)
         .build()
@@ -63,7 +69,7 @@ object FixtureFactory {
         umbrella: UmbrellaWithHistory,
         storeMeta: StoreMeta
     ): UmbrellaResponse {
-        return fixtureMonkey.giveMeBuilder(UmbrellaResponse::class.java)
+        return fixtureMonkey.giveMeBuilder<UmbrellaResponse>()
             .set("id", umbrella.id)
             .set("storeMetaId", storeMeta.id)
             .set("uuid", umbrella.uuid)
@@ -76,7 +82,10 @@ object FixtureFactory {
 
     @JvmStatic
     fun buildJoinRequestWithUser(user: User): JoinRequest {
-        return fixtureMonkey.giveMeBuilder(JoinRequest::class.java)
+        return fixtureMonkey.giveMeBuilder<JoinRequest>()
+            .instantiateBy {
+                constructor()
+            }
             .set("name", user.name)
             .set("phoneNumber", user.phoneNumber)
             .sample()
@@ -84,14 +93,17 @@ object FixtureFactory {
 
     @JvmStatic
     fun buildHistoryWithUmbrella(umbrella: Umbrella): History {
-        return fixtureMonkey.giveMeBuilder(History::class.java)
+        return fixtureMonkey.giveMeBuilder<History>()
             .set("umbrella", umbrella)
             .sample()
     }
 
     @JvmStatic
     fun buildOauthToken(): OauthToken {
-        return fixtureMonkey.giveMeBuilder(OauthToken::class.java)
+        return fixtureMonkey.giveMeBuilder<OauthToken>()
+            .instantiateBy {
+                constructor()
+            }
             .set("accessToken", "accessToken")
             .set("refreshToken", "refreshToken")
             .set("tokenType", "tokenType")
@@ -101,12 +113,15 @@ object FixtureFactory {
 
     @JvmStatic
     fun buildKakaoLoginResponse(): KakaoLoginResponse {
-        return fixtureMonkey.giveMeOne(KakaoLoginResponse::class.java)
+        return KakaoLoginResponse(
+            id = 1L,
+            kakaoAccount = KakaoAccount(email = "kakao@gmail.com")
+        )
     }
 
     @JvmStatic
     fun buildRentalHistoryResponseWithHistory(history: HistoryInfoDto): RentalHistoryResponse {
-        return fixtureMonkey.giveMeBuilder(RentalHistoryResponse::class.java)
+        return fixtureMonkey.giveMeBuilder<RentalHistoryResponse>()
             .set("id", history.id)
             .set("name", history.name)
             .set("phoneNumber", history.phoneNumber)
