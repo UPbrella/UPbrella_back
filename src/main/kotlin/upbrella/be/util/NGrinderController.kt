@@ -30,9 +30,9 @@ class NGrinderController(
                 status = "success",
                 code = 200,
                 message = "어드민 가게 전체 조회 성공",
-                data = AllStoreResponse.builder()
-                    .stores(allStores)
-                    .build()
+                data = AllStoreResponse(
+                    stores = allStores
+                )
             ))
     }
 

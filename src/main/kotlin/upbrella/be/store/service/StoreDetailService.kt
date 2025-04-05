@@ -7,7 +7,6 @@ import upbrella.be.store.dto.response.AllStoreIntroductionResponse
 import upbrella.be.store.dto.response.SingleStoreResponse
 import upbrella.be.store.dto.response.StoreFindByIdResponse
 import upbrella.be.store.dto.response.StoreIntroductionsResponseByClassification
-import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.StoreDetail
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.exception.NonExistingStoreDetailException

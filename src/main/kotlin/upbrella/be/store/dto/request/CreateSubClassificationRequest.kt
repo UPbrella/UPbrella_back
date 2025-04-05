@@ -1,3 +1,8 @@
 package upbrella.be.store.dto.request
 
-data class CreateSubClassificationRequest()
+import javax.validation.constraints.NotBlank
+
+data class CreateSubClassificationRequest(
+    @field:NotBlank
+    val name: String
+)
