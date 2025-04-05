@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import upbrella.be.store.dto.request.*;
+import upbrella.be.store.dto.request.CreateClassificationRequest;
+import upbrella.be.store.dto.request.CreateStoreRequest;
+import upbrella.be.store.dto.request.CreateSubClassificationRequest;
+import upbrella.be.store.dto.request.UpdateStoreRequest;
 import upbrella.be.store.dto.response.*;
 import upbrella.be.store.service.*;
 import upbrella.be.util.CustomResponse;
@@ -70,9 +73,7 @@ public class StoreController {
                         "success",
                         200,
                         "어드민 가게 전체 조회 성공",
-                        AllStoreResponse.builder()
-                                .stores(allStores)
-                                .build()
+                        new AllStoreResponse(allStores)
                 ));
     }
 
