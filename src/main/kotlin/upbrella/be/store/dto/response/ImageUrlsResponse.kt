@@ -1,3 +1,5 @@
 package upbrella.be.store.dto.response
 
-data class ImageUrlsResponse()
+data class ImageUrlsResponse(
+    val imageUrls: List<String>
+)

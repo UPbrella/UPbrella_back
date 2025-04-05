@@ -1,3 +1,5 @@
 package upbrella.be.store.dto.response
 
-data class AllSubClassificationResponse()
+data class AllSubClassificationResponse(
+    val subClassifications: List<SingleSubClassificationResponse>,
+)

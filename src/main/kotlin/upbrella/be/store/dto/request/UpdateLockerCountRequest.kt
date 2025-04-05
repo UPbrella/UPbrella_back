@@ -1,3 +1,5 @@
 package upbrella.be.store.dto.request
 
-data class UpdateLockerCountRequest()
+data class UpdateLockerCountRequest(
+    val count: Long
+)

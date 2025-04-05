@@ -63,9 +63,9 @@ class ClassificationService(
             classifications.add(SingleClassificationResponse.ofCreateClassification(classification))
         }
 
-        return AllClassificationResponse.builder()
-            .classifications(classifications)
-            .build()
+        return AllClassificationResponse(
+            classifications = classifications
+        )
     }
 
     fun findAllSubClassification(): AllSubClassificationResponse {
@@ -76,9 +76,9 @@ class ClassificationService(
             classifications.add(SingleSubClassificationResponse.ofCreateSubClassification(classification))
         }
 
-        return AllSubClassificationResponse.builder()
-            .subClassifications(classifications)
-            .build()
+        return AllSubClassificationResponse(
+            subClassifications = classifications
+        )
     }
 
     fun findClassificationById(id: Long): Classification {
