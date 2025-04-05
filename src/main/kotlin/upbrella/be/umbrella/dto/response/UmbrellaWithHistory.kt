@@ -11,7 +11,7 @@ data class UmbrellaWithHistory @QueryProjection constructor(
     val rentable: Boolean,
     val deleted: Boolean,
     val createdAt: LocalDateTime,
-    val etc: String,
+    val etc: String? = null,
     val missed: Boolean,
     val historyId: Long? = null
 )
