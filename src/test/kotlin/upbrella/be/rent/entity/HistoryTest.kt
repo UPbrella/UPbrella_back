@@ -20,12 +20,12 @@ class HistoryTest {
 
     @BeforeEach
     fun setUp() {
-        rentUmbrellaByUserRequest = RentUmbrellaByUserRequest.builder()
-            .region("신촌")
-            .storeId(25L)
-            .umbrellaId(99L)
-            .conditionReport("상태 양호")
-            .build()
+        rentUmbrellaByUserRequest = RentUmbrellaByUserRequest(
+            region = "신촌",
+            storeId = 25L,
+            umbrellaId = 99L,
+            conditionReport = "상태 양호"
+        )
 
         foundStoreMeta = StoreMeta(
             id = 25L,
