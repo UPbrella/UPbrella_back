@@ -74,7 +74,11 @@ class StoreMetaRepositoryImplTest {
         em.persist(umbrella)
         em.flush()
 
-        expectedStoreMeta = StoreMetaWithUmbrellaCount(storeMeta, 1L)
+        expectedStoreMeta =
+            StoreMetaWithUmbrellaCount(
+                storeMeta,
+                1L
+            )
     }
 
     @Test
