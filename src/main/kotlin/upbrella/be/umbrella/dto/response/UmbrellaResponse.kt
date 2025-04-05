@@ -8,7 +8,7 @@ data class UmbrellaResponse (
     val storeName: String,
     val uuid: Long,
     val rentable: Boolean,
-    val etc: String
+    val etc: String?
 )
 {
     companion object {
