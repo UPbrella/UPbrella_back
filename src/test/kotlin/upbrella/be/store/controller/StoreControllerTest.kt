@@ -203,7 +203,11 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("우산의 현위치를 조회할 수 있다. ")
     fun findCurrentUmbrellaStoreTest() {
         // given
-        val currentUmbrellaStoreResponse = CurrentUmbrellaStoreResponse(1L, "모티브 카페 신촌점")
+        val currentUmbrellaStoreResponse =
+            CurrentUmbrellaStoreResponse(
+                1L,
+                "모티브 카페 신촌점"
+            )
         given(storeMetaService.findCurrentStoreIdByUmbrella(2L))
             .willReturn(currentUmbrellaStoreResponse)
 
@@ -343,6 +347,9 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("관리자는 새로운 협업지점을 등록할 수 있다.")
     fun createStoreTest() {
         // given
+
+
+
         val store = CreateStoreRequest.builder()
             .name("협업 지점명")
             .category("카테고리")
