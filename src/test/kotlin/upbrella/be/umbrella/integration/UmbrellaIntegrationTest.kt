@@ -146,7 +146,7 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             .andExpect(jsonPath("\$.data.umbrellaResponsePage.length()").value(umbrellaList.size + 1))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].storeMetaId").value(umbrellaCreateRequest.storeMetaId))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].uuid").value(umbrellaCreateRequest.uuid))
-            .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].rentable").value(umbrellaCreateRequest.isRentable))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].rentable").value(umbrellaCreateRequest.rentable))
     }
 
     @Test
@@ -211,7 +211,7 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             .andExpect(jsonPath("\$.data.umbrellaResponsePage.length()").value(umbrellaList.size))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].storeMetaId").value(umbrellaModifyRequest.storeMetaId))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].uuid").value(umbrellaModifyRequest.uuid))
-            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(umbrellaModifyRequest.isRentable))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(umbrellaModifyRequest.rentable))
     }
 
     @Test

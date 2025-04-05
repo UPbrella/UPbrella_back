@@ -10,7 +10,6 @@ import upbrella.be.rent.dto.response.RentalHistoryResponse
 import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
-import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
 import upbrella.be.umbrella.entity.Umbrella
@@ -45,21 +44,7 @@ object FixtureFactory {
         return FixtureBuilderFactory.builderUmbrella()
             .set("storeMeta", storeMeta)
             .set("uuid", umbrellaCreateRequest.uuid)
-            .set("rentable", umbrellaCreateRequest.isRentable)
-            .sample()
-    }
-
-    @JvmStatic
-    fun buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(
-        id: Long,
-        umbrellaModifyRequest: UmbrellaModifyRequest,
-        storeMeta: StoreMeta
-    ): Umbrella {
-        return FixtureBuilderFactory.builderUmbrella()
-            .set("id", id)
-            .set("storeMeta", storeMeta)
-            .set("uuid", umbrellaModifyRequest.uuid)
-            .set("rentable", umbrellaModifyRequest.isRentable)
+            .set("rentable", umbrellaCreateRequest.rentable)
             .sample()
     }
 
@@ -69,10 +54,13 @@ object FixtureFactory {
         storeMeta: StoreMeta
     ): UmbrellaResponse {
         return fixtureMonkey.giveMeBuilder<UmbrellaResponse>()
+            .instantiateBy {
+                constructor()
+            }
             .set("id", umbrella.id)
             .set("storeMetaId", storeMeta.id)
             .set("uuid", umbrella.uuid)
-            .set("rentable", umbrella.isRentable)
+            .set("rentable", umbrella.rentable)
             .set("storeName", storeMeta.name)
             .set("historyId", umbrella.historyId)
             .set("etc", umbrella.etc)
