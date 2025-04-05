@@ -10,7 +10,6 @@ import upbrella.be.rent.dto.response.RentalHistoryResponse
 import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
-import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
 import upbrella.be.umbrella.entity.Umbrella
@@ -46,20 +45,6 @@ object FixtureFactory {
             .set("storeMeta", storeMeta)
             .set("uuid", umbrellaCreateRequest.uuid)
             .set("rentable", umbrellaCreateRequest.rentable)
-            .sample()
-    }
-
-    @JvmStatic
-    fun buildUmbrellaWithIdAndUmbrellaRequestAndStoreMeta(
-        id: Long,
-        umbrellaModifyRequest: UmbrellaModifyRequest,
-        storeMeta: StoreMeta
-    ): Umbrella {
-        return FixtureBuilderFactory.builderUmbrella()
-            .set("id", id)
-            .set("storeMeta", storeMeta)
-            .set("uuid", umbrellaModifyRequest.uuid)
-            .set("rentable", umbrellaModifyRequest.rentable)
             .sample()
     }
 
