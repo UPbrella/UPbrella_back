@@ -54,6 +54,9 @@ object FixtureFactory {
         storeMeta: StoreMeta
     ): UmbrellaResponse {
         return fixtureMonkey.giveMeBuilder<UmbrellaResponse>()
+            .instantiateBy {
+                constructor()
+            }
             .set("id", umbrella.id)
             .set("storeMetaId", storeMeta.id)
             .set("uuid", umbrella.uuid)

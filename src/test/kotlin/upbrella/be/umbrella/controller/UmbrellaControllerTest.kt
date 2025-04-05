@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import upbrella.be.config.FixtureBuilderFactory
-import upbrella.be.config.FixtureBuilderFactory.buildInteger
+import upbrella.be.config.FixtureBuilderFactory.buildLong
 import upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest
 import upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse
 import upbrella.be.docs.utils.RestDocsSupport
@@ -104,7 +104,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
     @Test
     fun showUmbrellasByStoreIdTest() {
         // given
-        val storeId = buildInteger(100)
+        val storeId = buildLong(100)
         val umbrellaResponseList = mutableListOf<UmbrellaResponse>()
 
         repeat(7) {
