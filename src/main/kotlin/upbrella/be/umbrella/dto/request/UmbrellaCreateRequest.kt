@@ -5,5 +5,5 @@ data class UmbrellaCreateRequest (
     val storeMetaId: Long,
     val uuid: Long,
     val rentable: Boolean,
-    val etc: String?
+    val etc: String? = null
 )

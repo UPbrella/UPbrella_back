@@ -3,12 +3,12 @@ package upbrella.be.umbrella.dto.response;
 data class UmbrellaResponse (
 
     val id: Long,
-    val historyId: Long?,
-    val storeMetaId: Long?,
+    val historyId: Long? = null,
+    val storeMetaId: Long? = null,
     val storeName: String,
     val uuid: Long,
     val rentable: Boolean,
-    val etc: String?
+    val etc: String? = null
 )
 {
     companion object {
