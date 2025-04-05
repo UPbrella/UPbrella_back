@@ -89,17 +89,16 @@ class ConditionReportServiceTest {
         @DisplayName("사용자(관리자)는 상태 신고 내역 조회를 할 수 있다.")
         fun success() {
             // given
-            val conditionReportsResponse = ConditionReportPageResponse.builder()
-                .conditionReports(
-                    listOf(
-                        ConditionReportResponse.builder()
-                            .id(33L)
-                            .umbrellaUuid(99L)
-                            .content("content")
-                            .etc("etc")
-                            .build()
+            val conditionReportsResponse = ConditionReportPageResponse(
+                conditionReports = listOf(
+                    ConditionReportResponse(
+                        id = 33L,
+                        umbrellaUuid = 99L,
+                        content = "content",
+                        etc = "etc"
                     )
-                ).build()
+                )
+            )
 
             given(conditionReportRepository.findAll())
                 .willReturn(listOf(conditionReport))
