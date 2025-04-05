@@ -18,7 +18,7 @@ class AdminInterceptor : HandlerInterceptor {
 
         val user = session.getAttribute("user") as SessionUser
 
-        if (!user.adminStatus) {
+        if (user.adminStatus == false) {
             request.getRequestDispatcher("/api/error").forward(request, response)
             return false
         }
