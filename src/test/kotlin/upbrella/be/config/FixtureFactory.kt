@@ -4,7 +4,6 @@ import com.navercorp.fixturemonkey.FixtureMonkey
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector
 import com.navercorp.fixturemonkey.kotlin.KotlinPlugin
 import com.navercorp.fixturemonkey.kotlin.giveMeBuilder
-import com.navercorp.fixturemonkey.kotlin.giveMeOne
 import com.navercorp.fixturemonkey.kotlin.instantiator.instantiateBy
 import upbrella.be.rent.dto.response.HistoryInfoDto
 import upbrella.be.rent.dto.response.RentalHistoryResponse
@@ -122,6 +121,9 @@ object FixtureFactory {
     @JvmStatic
     fun buildRentalHistoryResponseWithHistory(history: HistoryInfoDto): RentalHistoryResponse {
         return fixtureMonkey.giveMeBuilder<RentalHistoryResponse>()
+            .instantiateBy {
+                constructor()
+            }
             .set("id", history.id)
             .set("name", history.name)
             .set("phoneNumber", history.phoneNumber)
@@ -148,7 +150,7 @@ object FixtureFactory {
         if (history.returnAt != null) {
             elapsedDay = ChronoUnit.DAYS.between(
                 history.rentAt.toLocalDate(),
-                history.returnAt.toLocalDate()
+                history.returnAt?.toLocalDate() ?: LocalDateTime.now()
             ).toInt()
         }
         return elapsedDay
