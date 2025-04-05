@@ -150,7 +150,7 @@ object FixtureFactory {
         if (history.returnAt != null) {
             elapsedDay = ChronoUnit.DAYS.between(
                 history.rentAt.toLocalDate(),
-                history.returnAt!!.toLocalDate()
+                history.returnAt?.toLocalDate() ?: LocalDateTime.now()
             ).toInt()
         }
         return elapsedDay

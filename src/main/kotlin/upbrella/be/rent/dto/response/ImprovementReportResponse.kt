@@ -11,8 +11,8 @@ data class ImprovementReportResponse(
     companion object {
         fun fromImprovementReport(improvementReport: ImprovementReport): ImprovementReportResponse {
             return ImprovementReportResponse(
-                id = improvementReport.history!!.id!!,
-                umbrellaUuid = improvementReport.history.umbrella.uuid,
+                id = improvementReport.history?.id ?: 0,
+                umbrellaUuid = improvementReport.history?.umbrella?.uuid ?: 0,
                 content = improvementReport.content,
                 etc = improvementReport.etc
             )
