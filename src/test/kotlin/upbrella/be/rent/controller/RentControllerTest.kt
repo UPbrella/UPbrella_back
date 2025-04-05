@@ -75,12 +75,12 @@ class RentControllerTest : RestDocsSupport() {
     @DisplayName("사용자는 대여 폼 자동 완성에 필요한 데이터를 조회할 수 있다.")
     fun findRentalFormTest() {
         // given
-        val rentFormResponse = RentFormResponse.builder()
-            .classificationName("신촌")
-            .storeMetaId(233L)
-            .rentStoreName("motive study cafe")
-            .umbrellaUuid(99L)
-            .build()
+        val rentFormResponse = RentFormResponse(
+            classificationName = "신촌",
+            storeMetaId = 233L,
+            rentStoreName = "motive study cafe",
+            umbrellaUuid = 99L
+        )
 
         given(rentService.findRentForm(2L))
             .willReturn(rentFormResponse)
@@ -206,12 +206,12 @@ class RentControllerTest : RestDocsSupport() {
             adminStatus = false
         )
 
-        val request = RentUmbrellaByUserRequest.builder()
-            .region("신촌")
-            .storeId(1L)
-            .umbrellaId(1L)
-            .conditionReport("필요하다면 상태 신고를 해주세요.")
-            .build()
+        val request = RentUmbrellaByUserRequest(
+            region = "신촌",
+            storeId = 1L,
+            umbrellaId = 1L,
+            conditionReport = "필요하다면 상태 신고를 해주세요."
+        )
 
         val newUser = User(1L, "테스터1", "010-1111-1111", "email", false, null, null, 11L)
 
@@ -264,12 +264,12 @@ class RentControllerTest : RestDocsSupport() {
             adminStatus = false
         )
 
-        val request = ReturnUmbrellaByUserRequest.builder()
-            .returnStoreId(1L)
-            .bank("우리은행")
-            .accountNumber("1002-111-111111")
-            .improvementReportContent("개선 요청 사항")
-            .build()
+        val request = ReturnUmbrellaByUserRequest(
+            returnStoreId = 1L,
+            bank = "우리은행",
+            accountNumber = "1002-111-111111",
+            improvementReportContent = "개선 요청 사항"
+        )
 
         val session = MockHttpSession()
         session.setAttribute("user", sessionUser)
@@ -305,32 +305,29 @@ class RentControllerTest : RestDocsSupport() {
     @Test
     @DisplayName("사용자는 우산 대여 내역을 조회 할 수 있다.")
     fun showAllRentalHistoriesTest() {
-        val response = RentalHistoriesPageResponse.builder()
-            .rentalHistoryResponsePage(
-                listOf(
-                    RentalHistoryResponse.builder()
-                        .id(1L)
-                        .name("사용자")
-                        .phoneNumber("010-1234-5678")
-                        .rentStoreName("대여점 이름")
-                        .rentAt(LocalDateTime.of(2023, 7, 18, 0, 0, 0))
-                        .elapsedDay(3)
-                        .paid(true)
-                        .umbrellaUuid(30L)
-                        .returnStoreName("반납점 이름")
-                        .returnAt(LocalDateTime.now())
-                        .totalRentalDay(5)
-                        .refundCompleted(true)
-                        .bank("우리은행")
-                        .accountNumber("1002-111-111111")
-                        .etc("기타")
-                        .build()
+        val response = RentalHistoriesPageResponse(
+            rentalHistoryResponsePage = listOf(
+                RentalHistoryResponse(
+                    id = 1L,
+                    name = "사용자",
+                    phoneNumber = "010-1234-5678",
+                    rentStoreName = "대여점 이름",
+                    rentAt = LocalDateTime.of(2023, 7, 18, 0, 0, 0),
+                    elapsedDay = 3,
+                    paid = true,
+                    umbrellaUuid = 30L,
+                    returnStoreName = "반납점 이름",
+                    returnAt = LocalDateTime.now(),
+                    totalRentalDay = 5,
+                    refundCompleted = true,
+                    bank = "우리은행",
+                    accountNumber = "1002-111-111111",
+                    etc = "기타"
                 )
-            )
-            .countOfAllPages(5L)
-            .countOfAllHistories(22L)
-            .build()
-
+            ),
+            countOfAllPages = 5L,
+            countOfAllHistories = 22L
+        )
 
         given(rentService.findAllHistories(any<HistoryFilterRequest>() ?: HistoryFilterRequest(false), any() ?: Pageable.unpaged())).willReturn(response)
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
@@ -411,18 +408,16 @@ class RentControllerTest : RestDocsSupport() {
     @Test
     @DisplayName("사용자는 신고 내역을 조회할 수 있다.")
     fun showAllStatusConditionTest() {
-        val conditionReportsResponse = ConditionReportPageResponse.builder()
-            .conditionReports(
-                listOf(
-                    ConditionReportResponse.builder()
-                        .id(33L)
-                        .umbrellaUuid(99L)
-                        .content("content")
-                        .etc("etc")
-                        .build()
+        val conditionReportsResponse = ConditionReportPageResponse(
+            conditionReports = listOf(
+                ConditionReportResponse(
+                    id = 33L,
+                    umbrellaUuid = 99L,
+                    content = "content",
+                    etc = "etc"
                 )
             )
-            .build()
+        )
 
         given(conditionReportService.findAll()).willReturn(conditionReportsResponse)
 
@@ -457,18 +452,16 @@ class RentControllerTest : RestDocsSupport() {
     @Test
     @DisplayName("사용자는 개선 요청 내역을 조회할 수 있다.")
     fun showAllImprovementsTest() {
-        val improvementReportsResponse = ImprovementReportPageResponse.builder()
-            .improvementReports(
-                listOf(
-                    ImprovementReportResponse.builder()
-                        .id(33L)
-                        .umbrellaUuid(99L)
-                        .content("정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?")
-                        .etc("기타 사항")
-                        .build()
+        val improvementReportsResponse = ImprovementReportPageResponse(
+            improvementReports = listOf(
+                ImprovementReportResponse(
+                    id = 33L,
+                    umbrellaUuid = 99L,
+                    content = "정상적인 시기에 반납하기가 어려울 떈 어떻게 하죠?",
+                    etc = "기타 사항"
                 )
             )
-            .build()
+        )
 
         given(improvementReportService.findAll()).willReturn(improvementReportsResponse)
 

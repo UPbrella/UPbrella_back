@@ -20,6 +20,7 @@ import upbrella.be.config.FixtureFactory
 import upbrella.be.rent.repository.RentRepository
 import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
+import upbrella.be.rent.dto.response.HistoryInfoDto
 import upbrella.be.rent.dto.response.RentalHistoriesPageResponse
 import upbrella.be.rent.dto.response.RentalHistoryResponse
 import upbrella.be.rent.entity.ConditionReport
@@ -83,12 +84,12 @@ class RentServiceTest {
 
     @BeforeEach
     fun setUp() {
-        rentUmbrellaByUserRequest = RentUmbrellaByUserRequest.builder()
-            .region("신촌")
-            .storeId(25L)
-            .umbrellaId(99L)
-            .conditionReport("상태 양호")
-            .build()
+        rentUmbrellaByUserRequest = RentUmbrellaByUserRequest(
+            region = "신촌",
+            storeId = 25L,
+            umbrellaId = 99L,
+            conditionReport = "상태 양호"
+        )
 
         foundStoreMeta = StoreMeta(
             id = 25L,
@@ -233,40 +234,39 @@ class RentServiceTest {
         @DisplayName("조건이 없으면 전체 대여/반납 현황을 조회할 수 있다.")
         fun success() {
             // given
-            filter = HistoryFilterRequest.builder().build()
+            filter = HistoryFilterRequest()
             val pageable: Pageable = PageRequest.of(0, 5)
 
             for (i in 0 until 5) {
                 generatedHistories.add(
-                    upbrella.be.rent.dto.response.HistoryInfoDto.builder()
-                        .id(i.toLong())
-                        .name("테스터")
-                        .phoneNumber("010-1234-5678")
-                        .rentStoreName("motive study cafe")
-                        .rentAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-                        .umbrellaUuid(99L)
-                        .returnStoreName("motive study cafe")
-                        .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-                        .paidAt(LocalDateTime.of(1000, 12, 3, 4, 26))
-                        .bank("국민은행")
-                        .accountNumber("1234567890")
-                        .etc("etc")
-                        .refundedAt(LocalDateTime.of(1000, 12, 3, 4, 27))
-                        .build()
+                    HistoryInfoDto(
+                        id = i.toLong(),
+                        name = "테스터",
+                        phoneNumber = "010-1234-5678",
+                        rentStoreName = "motive study cafe",
+                        rentAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+                        umbrellaUuid = 99L,
+                        returnStoreName = "motive study cafe",
+                        returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+                        paidAt = LocalDateTime.of(1000, 12, 3, 4, 26),
+                        bank = "국민은행",
+                        accountNumber = "1234567890",
+                        etc = "etc",
+                        refundedAt = LocalDateTime.of(1000, 12, 3, 4, 27)
+                    )
                 )
             }
 
             expectedRentalHistoryResponses.addAll(
-                generatedHistories.stream()
+                generatedHistories
                     .map(FixtureFactory::buildRentalHistoryResponseWithHistory)
-                    .collect(Collectors.toList())
             )
 
-            val historyResponse = RentalHistoriesPageResponse.builder()
-                .rentalHistoryResponsePage(expectedRentalHistoryResponses)
-                .countOfAllHistories(5L)
-                .countOfAllPages(1L)
-                .build()
+            val historyResponse = RentalHistoriesPageResponse(
+                rentalHistoryResponsePage = expectedRentalHistoryResponses,
+                countOfAllHistories = 5L,
+                countOfAllPages = 1L
+            )
 
             given(rentRepository.findHistoryInfos(filter, pageable)).willReturn(generatedHistories)
             given(rentRepository.countAll(filter, pageable)).willReturn(5L)
@@ -658,7 +658,7 @@ class RentServiceTest {
     fun testBlacklistedUserRent() {
         // given
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
-        val request = RentUmbrellaByUserRequest.builder().build()
+        val request = RentUmbrellaByUserRequest()
 
         doThrow(BlackListUserException::class.java).`when`(userService).checkBlackList(user.id!!)
 
