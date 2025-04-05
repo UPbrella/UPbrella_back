@@ -181,7 +181,7 @@ class LockerControllerTest : RestDocsSupport() {
             .build()
 
         val response = LockerPasswordResponse("1234")
-        given(lockerService.updateCount(anyLong(), any())).willReturn(response)
+        given(lockerService.updateCount(any<Long>() ?: 0, any<UpdateLockerCountRequest>() ?: request)).willReturn(response)
 
         // when & then
         mockMvc.perform(

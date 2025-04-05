@@ -108,7 +108,7 @@ class LoginInterceptorTest {
             .willReturn(mockHttpSession)
         given(httpServletRequest.getRequestDispatcher(any()))
             .willReturn(requestDispatcher)
-        given(userRepository.existsById(sessionUser.getId()))
+        given(userRepository.existsById(sessionUser.id))
             .willReturn(false)
         willDoNothing().given(requestDispatcher)
             .forward(any(HttpServletRequest::class.java), any(HttpServletResponse::class.java))
@@ -120,7 +120,7 @@ class LoginInterceptorTest {
         assertAll(
             { assertThat(result).isEqualTo(false) },
             { then(httpServletRequest).should(times(1)).getSession(false) },
-            { then(userRepository).should(times(1)).existsById(sessionUser.getId()) },
+            { then(userRepository).should(times(1)).existsById(sessionUser.id) },
             { then(httpServletRequest).should(times(1)).getRequestDispatcher("/api/error") },
             {
                 then(requestDispatcher).should(times(1)).forward(
@@ -141,7 +141,7 @@ class LoginInterceptorTest {
 
         given(httpServletRequest.getSession(false))
             .willReturn(mockHttpSession)
-        given(userRepository.existsById(sessionUser.getId()))
+        given(userRepository.existsById(sessionUser.id))
             .willReturn(true)
 
         // when
@@ -151,7 +151,7 @@ class LoginInterceptorTest {
         assertAll(
             { assertThat(result).isEqualTo(true) },
             { then(httpServletRequest).should(times(1)).getSession(false) },
-            { then(userRepository).should(times(1)).existsById(sessionUser.getId()) }
+            { then(userRepository).should(times(1)).existsById(sessionUser.id) }
         )
     }
 }

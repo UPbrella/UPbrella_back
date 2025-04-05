@@ -46,21 +46,19 @@ class UserServiceDynamicTest {
             1L
         )
 
-        val joinRequest = JoinRequest.builder()
-            .name("홍길동")
-            .bank("신한")
-            .accountNumber("110-421-674103")
-            .phoneNumber("010-2084-3478")
-            .build()
+        val joinRequest = JoinRequest(
+            name = "홍길동",
+            bank = "신한",
+            accountNumber = "110-421-674103",
+            phoneNumber = "010-2084-3478"
+        )
 
-        val kakaoUser = KakaoLoginResponse.builder()
-            .id(23132L)
-            .kakaoAccount(
-                KakaoAccount.builder()
-                    .email("email@email.com")
-                    .build()
+        val kakaoUser = KakaoLoginResponse(
+            id = 23132L,
+            kakaoAccount = KakaoAccount(
+                email = "email@email.com",
             )
-            .build()
+        )
 
         return listOf(
             DynamicTest.dynamicTest("새로 가입한 유저는 DB에 저장된다.") {
