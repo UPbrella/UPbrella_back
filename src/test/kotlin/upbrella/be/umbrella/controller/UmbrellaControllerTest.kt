@@ -174,7 +174,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
             val umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest()
                 .sample()
 
-            doNothing().`when`(umbrellaService).addUmbrella(refEq(umbrellaCreateRequest))
+            doNothing().`when`(umbrellaService).addUmbrella(refEq(umbrellaCreateRequest) ?: umbrellaCreateRequest)
 
             // when & then
             mockMvc.perform(
@@ -217,7 +217,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
 
             doThrow(
                 ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다.")
-            ).`when`(umbrellaService).addUmbrella(refEq(umbrellaCreateRequest))
+            ).`when`(umbrellaService).addUmbrella(refEq(umbrellaCreateRequest) ?: umbrellaCreateRequest)
 
             // when & then
             mockMvc.perform(
@@ -246,7 +246,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
             val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                 .sample()
 
-            doNothing().`when`(umbrellaService).modifyUmbrella(eq(id), refEq(umbrellaModifyRequest))
+            doNothing().`when`(umbrellaService).modifyUmbrella(eq(id), refEq(umbrellaModifyRequest) ?: umbrellaModifyRequest)
 
             // when & then
             mockMvc.perform(
@@ -295,7 +295,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
 
             doThrow(
                 ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다.")
-            ).`when`(umbrellaService).modifyUmbrella(eq(id), refEq(umbrellaModifyRequest))
+            ).`when`(umbrellaService).modifyUmbrella(eq(id), refEq(umbrellaModifyRequest) ?: umbrellaModifyRequest)
 
             // when & then
             mockMvc.perform(
@@ -323,7 +323,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
 
             doThrow(
                 NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 관리번호입니다.")
-            ).`when`(umbrellaService).modifyUmbrella(eq(id), refEq(umbrellaModifyRequest))
+            ).`when`(umbrellaService).modifyUmbrella(eq(id), refEq(umbrellaModifyRequest) ?: umbrellaModifyRequest)
 
             // when & then
             mockMvc.perform(

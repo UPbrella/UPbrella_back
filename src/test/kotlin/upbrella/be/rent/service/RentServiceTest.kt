@@ -32,6 +32,8 @@ import upbrella.be.store.service.StoreMetaService
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
 import upbrella.be.umbrella.service.UmbrellaService
+import upbrella.be.user.dto.response.AllHistoryResponse
+import upbrella.be.user.dto.response.SingleHistoryResponse
 import upbrella.be.user.entity.User
 import upbrella.be.user.exception.BlackListUserException
 import upbrella.be.user.exception.NonExistingMemberException
@@ -55,6 +57,12 @@ class RentServiceTest {
 
     @Mock
     private lateinit var userService: UserService
+
+    @Mock
+    private lateinit var improvementReportService: ImprovementReportService
+
+    @Mock
+    private lateinit var lockerService: LockerService
 
     @Mock
     private lateinit var aesEncryptor: AesEncryptor
@@ -142,9 +150,9 @@ class RentServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(25L)).willReturn(foundStoreMeta)
             given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
-            given(rentRepository.save(any(History::class.java))).willReturn(history)
+            given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
             doNothing().`when`(conditionReportService)
-                .saveConditionReport(any(ConditionReport::class.java))
+                .saveConditionReport(any(ConditionReport::class.java) ?: conditionReport)
 
             // when
             rentService.addRental(rentUmbrellaByUserRequest, userToRent)
@@ -297,19 +305,18 @@ class RentServiceTest {
             // given
             val loginedUserId = 7L
 
-            val historyResponse = upbrella.be.user.dto.response.AllHistoryResponse.builder()
-                .histories(
-                    listOf(
-                        upbrella.be.user.dto.response.SingleHistoryResponse.builder()
-                            .umbrellaUuid(99L)
-                            .rentedAt(LocalDateTime.of(1000, 12, 3, 4, 24))
-                            .returnAt(LocalDateTime.of(1000, 12, 3, 4, 25))
-                            .rentedStore("motive study cafe")
-                            .isRefunded(true)
-                            .isReturned(true)
-                            .build()
+            val historyResponse = AllHistoryResponse(
+                histories = listOf(
+                    SingleHistoryResponse(
+                        umbrellaUuid = 99L,
+                        rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+                        returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+                        rentedStore = "motive study cafe",
+                        isRefunded = true,
+                        isReturned = true
                     )
-                ).build()
+                )
+            )
 
             given(rentRepository.findAllByUserId(loginedUserId)).willReturn(listOf(history))
 
@@ -653,7 +660,7 @@ class RentServiceTest {
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
         val request = RentUmbrellaByUserRequest.builder().build()
 
-        doThrow(BlackListUserException::class.java).`when`(userService).checkBlackList(user.id)
+        doThrow(BlackListUserException::class.java).`when`(userService).checkBlackList(user.id!!)
 
         // when & then
         assertThatThrownBy {

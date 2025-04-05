@@ -95,14 +95,14 @@ class History(
                 isRefunded = true
             }
 
-            return SingleHistoryResponse.builder()
-                .umbrellaUuid(history.umbrella.uuid)
-                .rentedAt(history.rentedAt)
-                .rentedStore(history.rentStoreMeta.name)
-                .returnAt(returnAt)
-                .isReturned(isReturned)
-                .isRefunded(isRefunded)
-                .build()
+            return SingleHistoryResponse(
+                umbrellaUuid = history.umbrella.uuid,
+                rentedAt = history.rentedAt,
+                rentedStore = history.rentStoreMeta.name,
+                returnAt = returnAt!!,
+                isReturned = isReturned,
+                isRefunded = isRefunded
+            )
         }
     }
 

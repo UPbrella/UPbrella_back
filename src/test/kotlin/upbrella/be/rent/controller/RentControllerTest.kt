@@ -8,6 +8,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.Mockito.doNothing
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockHttpSession
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
@@ -23,6 +24,7 @@ import upbrella.be.config.FixtureBuilderFactory
 import upbrella.be.docs.utils.ApiDocumentUtils.getDocumentRequest
 import upbrella.be.docs.utils.ApiDocumentUtils.getDocumentResponse
 import upbrella.be.docs.utils.RestDocsSupport
+import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest
 import upbrella.be.rent.dto.response.*
@@ -120,11 +122,11 @@ class RentControllerTest : RestDocsSupport() {
         val salt = "salt"
         val signature = "signature"
 
-        val sessionUser = SessionUser.builder()
-            .id(1L)
-            .socialId(1L)
-            .adminStatus(false)
-            .build()
+        val sessionUser = SessionUser(
+            id = 1L,
+            socialId = 1L,
+            adminStatus = false
+        )
 
         val userToReturn = User(
             1L,
@@ -198,11 +200,11 @@ class RentControllerTest : RestDocsSupport() {
     fun rentUmbrellaTest() {
         val lockerPassword = LockerPasswordResponse("password")
 
-        val sessionUser = SessionUser.builder()
-            .id(1L)
-            .socialId(1L)
-            .adminStatus(false)
-            .build()
+        val sessionUser = SessionUser(
+            id = 1L,
+            socialId = 1L,
+            adminStatus = false
+        )
 
         val request = RentUmbrellaByUserRequest.builder()
             .region("신촌")
@@ -217,7 +219,7 @@ class RentControllerTest : RestDocsSupport() {
         session.setAttribute("user", sessionUser)
 
         given(userService.findUserById(1L)).willReturn(newUser)
-        given(lockerService.findLockerPassword(any())).willReturn(lockerPassword)
+        given(lockerService.findLockerPassword(any<RentUmbrellaByUserRequest>() ?: request)).willReturn(lockerPassword)
 
         mockMvc.perform(
             post("/rent")
@@ -256,11 +258,11 @@ class RentControllerTest : RestDocsSupport() {
     @Test
     @DisplayName("사용자는 우산 반납 요청을 할 수 있다.")
     fun returnUmbrellaTest() {
-        val sessionUser = SessionUser.builder()
-            .id(1L)
-            .socialId(1L)
-            .adminStatus(false)
-            .build()
+        val sessionUser = SessionUser(
+            id = 1L,
+            socialId = 1L,
+            adminStatus = false
+        )
 
         val request = ReturnUmbrellaByUserRequest.builder()
             .returnStoreId(1L)
@@ -329,8 +331,8 @@ class RentControllerTest : RestDocsSupport() {
             .countOfAllHistories(22L)
             .build()
 
-        given(rentService.findAllHistories(any(), any())).willReturn(response)
 
+        given(rentService.findAllHistories(any<HistoryFilterRequest>() ?: HistoryFilterRequest(false), any() ?: Pageable.unpaged())).willReturn(response)
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         params.add("refunded", "true")
         params.add("page", "0")
