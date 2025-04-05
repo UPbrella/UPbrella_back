@@ -30,10 +30,9 @@ public class UmbrellaController {
                         "success",
                         200,
                         "전체 우산 현황 조회 성공",
-                        UmbrellaPageResponse.builder()
-                                .umbrellaResponsePage(
-                                        umbrellaService.findAllUmbrellas(pageable)
-                                ).build()));
+                    UmbrellaPageResponse(
+                        umbrellaResponsePage = umbrellaService.findAllUmbrellas(pageable)
+                    )));
     }
 
     @GetMapping("/admin/umbrellas/{storeId}")

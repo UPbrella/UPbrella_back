@@ -213,7 +213,9 @@ class UmbrellaControllerTest : RestDocsSupport() {
                 .sample()
 
             // 여기서 컨트롤러에 예외 핸들러를 설정
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UmbrellaExceptionHandler())
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(),
+                UmbrellaExceptionHandler()
+            )
 
             doThrow(
                 ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다.")
@@ -291,7 +293,9 @@ class UmbrellaControllerTest : RestDocsSupport() {
             val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                 .sample()
 
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UmbrellaExceptionHandler())
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(),
+                UmbrellaExceptionHandler()
+            )
 
             doThrow(
                 ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리번호입니다.")
@@ -319,7 +323,9 @@ class UmbrellaControllerTest : RestDocsSupport() {
             val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                 .sample()
 
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UmbrellaExceptionHandler())
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(),
+                UmbrellaExceptionHandler()
+            )
 
             doThrow(
                 NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 관리번호입니다.")
@@ -375,7 +381,9 @@ class UmbrellaControllerTest : RestDocsSupport() {
         fun notExistingUmbrella() {
             // given
             val id = FixtureBuilderFactory.buildLong(1000)
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UmbrellaExceptionHandler())
+            mockMvc = RestDocsSupport.setControllerAdvice(initController(),
+                UmbrellaExceptionHandler()
+            )
 
             willThrow(
                 NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.")

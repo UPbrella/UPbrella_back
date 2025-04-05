@@ -45,7 +45,7 @@ object FixtureFactory {
         return FixtureBuilderFactory.builderUmbrella()
             .set("storeMeta", storeMeta)
             .set("uuid", umbrellaCreateRequest.uuid)
-            .set("rentable", umbrellaCreateRequest.isRentable)
+            .set("rentable", umbrellaCreateRequest.rentable)
             .sample()
     }
 
@@ -59,7 +59,7 @@ object FixtureFactory {
             .set("id", id)
             .set("storeMeta", storeMeta)
             .set("uuid", umbrellaModifyRequest.uuid)
-            .set("rentable", umbrellaModifyRequest.isRentable)
+            .set("rentable", umbrellaModifyRequest.rentable)
             .sample()
     }
 
@@ -72,7 +72,7 @@ object FixtureFactory {
             .set("id", umbrella.id)
             .set("storeMetaId", storeMeta.id)
             .set("uuid", umbrella.uuid)
-            .set("rentable", umbrella.isRentable)
+            .set("rentable", umbrella.rentable)
             .set("storeName", storeMeta.name)
             .set("historyId", umbrella.historyId)
             .set("etc", umbrella.etc)
