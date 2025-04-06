@@ -61,7 +61,7 @@ class UserController(
     }
 
     @PostMapping("/users/oauth/login")
-    fun kakaoLogin(session: HttpSession, @RequestBody code: LoginCodeRequest): ResponseEntity<CustomResponse<*>> {
+    fun kakaoLogin(session: HttpSession, @RequestBody code: LoginCodeRequest): ResponseEntity<CustomResponse<Unit>> {
         val kakaoAccessToken: OauthToken
 
         try {
@@ -76,7 +76,7 @@ class UserController(
 
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "카카오 로그인 성공",
@@ -85,7 +85,7 @@ class UserController(
     }
 
     @PostMapping("/users/login")
-    fun upbrellaLogin(session: HttpSession): ResponseEntity<CustomResponse<*>> {
+    fun upbrellaLogin(session: HttpSession): ResponseEntity<CustomResponse<Unit>> {
         if (session.getAttribute("kakaoUser") == null) {
             throw NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.")
         }
@@ -99,7 +99,7 @@ class UserController(
         log.info("UUL 로그인 성공")
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "업브렐라 로그인 성공",
@@ -108,12 +108,12 @@ class UserController(
     }
 
     @PostMapping("/users/logout")
-    fun upbrellaLogout(session: HttpSession): ResponseEntity<CustomResponse<*>> {
+    fun upbrellaLogout(session: HttpSession): ResponseEntity<CustomResponse<Unit>> {
         session.invalidate()
 
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "업브렐라 로그아웃 성공",
@@ -122,7 +122,7 @@ class UserController(
     }
 
     @PostMapping("/users/join")
-    fun kakaoJoin(session: HttpSession, @RequestBody @Valid joinRequest: JoinRequest): ResponseEntity<CustomResponse<*>> {
+    fun kakaoJoin(session: HttpSession, @RequestBody @Valid joinRequest: JoinRequest): ResponseEntity<CustomResponse<Unit>> {
         val kakaoUser = session.getAttribute("kakaoUser") as KakaoLoginResponse?
 
         if (session.getAttribute("user") != null) {
@@ -139,7 +139,7 @@ class UserController(
         log.info("UNU 회원가입 성공")
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "카카오 회원가입 성공",
@@ -176,14 +176,14 @@ class UserController(
     }
 
     @PatchMapping("/users/bankAccount")
-    fun updateUserBankAccount(@Valid @RequestBody updateBankAccountRequest: UpdateBankAccountRequest, session: HttpSession): ResponseEntity<CustomResponse<*>> {
+    fun updateUserBankAccount(@Valid @RequestBody updateBankAccountRequest: UpdateBankAccountRequest, session: HttpSession): ResponseEntity<CustomResponse<Unit>> {
         val sessionUser = session.getAttribute("user") as SessionUser
 
         userService.updateUserBankAccount(sessionUser.id, updateBankAccountRequest)
 
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "사용자 계좌 정보 수정 성공"
@@ -191,14 +191,14 @@ class UserController(
     }
 
     @DeleteMapping("/users/loggedIn")
-    fun deleteUser(session: HttpSession): ResponseEntity<CustomResponse<*>> {
+    fun deleteUser(session: HttpSession): ResponseEntity<CustomResponse<Unit>> {
         val loginedUser = session.getAttribute("user") as SessionUser
 
         userService.deleteUser(loginedUser.id)
 
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "사용자 탈퇴 성공"
@@ -206,12 +206,12 @@ class UserController(
     }
 
     @DeleteMapping("/admin/users/{userId}")
-    fun withdrawUser(@PathVariable userId: Long): ResponseEntity<CustomResponse<*>> {
+    fun withdrawUser(@PathVariable userId: Long): ResponseEntity<CustomResponse<Unit>> {
         userService.withdrawUser(userId)
 
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "사용자 탈퇴 성공"
@@ -219,14 +219,14 @@ class UserController(
     }
 
     @DeleteMapping("/users/bankAccount")
-    fun deleteUserBankAccount(session: HttpSession): ResponseEntity<CustomResponse<*>> {
+    fun deleteUserBankAccount(session: HttpSession): ResponseEntity<CustomResponse<Unit>> {
         val sessionUser = session.getAttribute("user") as SessionUser
 
         userService.deleteUserBankAccount(sessionUser.id)
 
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "사용자 계좌 정보 삭제 성공"
@@ -248,12 +248,12 @@ class UserController(
     }
 
     @DeleteMapping("/users/blackList/{blackListId}")
-    fun deleteBlackList(@PathVariable blackListId: Long): ResponseEntity<CustomResponse<*>> {
+    fun deleteBlackList(@PathVariable blackListId: Long): ResponseEntity<CustomResponse<Unit>> {
         userService.deleteBlackList(blackListId)
 
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "블랙리스트 삭제 성공"
@@ -261,12 +261,12 @@ class UserController(
     }
 
     @PatchMapping("/admin/users/{userId}")
-    fun updateAdminStatus(@PathVariable userId: Long): ResponseEntity<CustomResponse<*>> {
+    fun updateAdminStatus(@PathVariable userId: Long): ResponseEntity<CustomResponse<Unit>> {
         userService.updateAdminStatus(userId)
 
         return ResponseEntity
             .ok()
-            .body(CustomResponse<Any?>(
+            .body(CustomResponse(
                 "success",
                 200,
                 "관리자 권한 변경 성공"
