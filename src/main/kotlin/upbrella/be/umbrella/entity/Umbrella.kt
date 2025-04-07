@@ -15,7 +15,7 @@ class Umbrella(
     var rentable: Boolean,
     var deleted: Boolean,
     val createdAt: LocalDateTime,
-    var etc: String,
+    var etc: String?,
     var missed: Boolean,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ class Umbrella(
             return Umbrella(
                 storeMeta = storeMeta,
                 uuid = request.uuid,
-                rentable = request.isRentable,
+                rentable = request.rentable,
                 deleted = false,
                 createdAt = LocalDateTime.now(),
                 etc = request.etc,
@@ -44,9 +44,9 @@ class Umbrella(
     fun update(request: UmbrellaModifyRequest, storeMeta: StoreMeta) {
         this.storeMeta = storeMeta
         this.uuid = request.uuid
-        this.rentable = request.isRentable
+        this.rentable = request.rentable
         this.etc = request.etc
-        this.missed = request.isMissed
+        this.missed = request.missed
     }
 
     fun rentUmbrella() {
