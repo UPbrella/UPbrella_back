@@ -161,11 +161,11 @@ class BusinessHourServiceTest {
                 )
             )
             updateBusinessHours.add(
-                SingleBusinessHourRequest.builder()
-                    .date(day)
-                    .openAt(LocalTime.of(10, 10))
-                    .closeAt(LocalTime.of(19, 10))
-                    .build()
+                SingleBusinessHourRequest(
+                    date = day,
+                    openAt = LocalTime.of(10, 10),
+                    closeAt = LocalTime.of(19, 10)
+                )
             )
         }
 
@@ -247,53 +247,16 @@ class BusinessHourServiceTest {
             closeAt = LocalTime.of(18, 0)
         )
 
-        val responseMonday = SingleBusinessHourResponse.builder()
-            .date(DayOfWeek.MONDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-
-        val responseTuesday = SingleBusinessHourResponse.builder()
-            .date(DayOfWeek.TUESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-
-        val responseWednesday = SingleBusinessHourResponse.builder()
-            .date(DayOfWeek.WEDNESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-
-        val responseThursday = SingleBusinessHourResponse.builder()
-            .date(DayOfWeek.THURSDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-
-        val responseFriday = SingleBusinessHourResponse.builder()
-            .date(DayOfWeek.FRIDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-
-        val responseSaturday = SingleBusinessHourResponse.builder()
-            .date(DayOfWeek.SATURDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-
-        val responseSunday = SingleBusinessHourResponse.builder()
-            .date(DayOfWeek.SUNDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
+        val businessHourResponses = DayOfWeek.entries.map { day ->
+            SingleBusinessHourResponse(
+                id = 1L,
+                date = day,
+                openAt = LocalTime.of(9, 0),
+                closeAt = LocalTime.of(18, 0)
+            )
+        }
 
         val businessHours = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
-        val businessHourResponses = listOf(
-            responseMonday, responseTuesday, responseWednesday,
-            responseThursday, responseFriday, responseSaturday, responseSunday
-        )
 
         // when
         val response = businessHourService.createBusinessHourResponse(businessHours)

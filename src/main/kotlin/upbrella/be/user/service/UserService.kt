@@ -11,22 +11,23 @@ import upbrella.be.user.dto.response.*
 import upbrella.be.user.entity.BlackList
 import upbrella.be.user.entity.User
 import upbrella.be.user.exception.*
-import upbrella.be.user.repository.BlackListRepository
-import upbrella.be.user.repository.UserRepository
+import upbrella.be.user.repository.*
 import upbrella.be.util.AesEncryptor
 import java.time.LocalDateTime
 
 @Service
 class UserService(
-    private val userRepository: UserRepository,
-    private val blackListRepository: BlackListRepository,
+    private val userReader: UserReader,
+    private val userWriter: UserWriter,
     @Lazy private val rentService: RentService,
-    private val aesEncryptor: AesEncryptor
+    private val aesEncryptor: AesEncryptor,
+    private val userRepository: UserRepository,
+    private val blackListReader: BlackListReader,
+    private val blackListWriter: BlackListWriter,
 ) {
 
     fun login(socialId: Long): SessionUser {
-        val foundUser = userRepository.findBySocialId(socialId.hashCode().toLong())
-            .orElseThrow { NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다. 회원 가입을 해주세요.") }
+        val foundUser = userReader.findBySocialId(socialId)
 
         return SessionUser.fromUser(foundUser)
     }
@@ -34,15 +35,15 @@ class UserService(
     fun join(kakaoUser: KakaoLoginResponse, joinRequest: JoinRequest): SessionUser {
         val socialIdHash = kakaoUser.id.hashCode().toLong()
 
-        if (userRepository.existsBySocialId(socialIdHash)) {
+        if (userReader.existsBySocialId(socialIdHash)) {
             throw ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.")
         }
 
-        if (blackListRepository.existsBySocialId(socialIdHash)) {
+        if (blackListReader.existsBySocialId(socialIdHash)) {
             throw BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.")
         }
 
-        val joinedUser = userRepository.save(
+        val joinedUser = userWriter.save(
             User.createNewUser(kakaoUser, joinRequest, aesEncryptor)
         )
 
@@ -50,7 +51,7 @@ class UserService(
     }
 
     fun findUsers(): AllUsersInfoResponse {
-        val users = userRepository.findAll()
+        val users = userReader.findAll()
             .map { it.decryptData(aesEncryptor) }
 
         return AllUsersInfoResponse.fromUsers(users)
@@ -67,19 +68,19 @@ class UserService(
 
     @Transactional
     fun updateUserBankAccount(id: Long, request: UpdateBankAccountRequest) {
-        val foundUser = findUserById(id)
+        val foundUser = userReader.findUserById(id)
         foundUser.updateBankAccount(request.bank, request.accountNumber, aesEncryptor)
     }
 
     @Transactional
     fun deleteUser(id: Long) {
-        val foundUser = findUserById(id)
+        val foundUser = userReader.findUserById(id)
         foundUser.deleteUser()
     }
 
     @Transactional
     fun withdrawUser(id: Long) {
-        val foundUser = findUserById(id)
+        val foundUser = userReader.findUserById(id)
         val socialId = foundUser.socialId
 
         if (socialId == 0L) {
@@ -87,18 +88,13 @@ class UserService(
         }
 
         val newBlackList = BlackList.createNewBlackList(socialId, LocalDateTime.now())
-        blackListRepository.save(newBlackList)
+        blackListWriter.save(newBlackList)
 
         foundUser.withdrawUser()
     }
 
-    fun findUserById(id: Long): User {
-        return userRepository.findById(id)
-            .orElseThrow { NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다.") }
-    }
-
     fun findDecryptedUserById(sessionUser: SessionUser): User {
-        val id = sessionUser.id ?: throw NotLoginException("[ERROR] 로그인이 필요합니다.")
+        val id = sessionUser.id
 
         return userRepository.findById(id)
             .orElseThrow { NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다.") }
@@ -107,31 +103,12 @@ class UserService(
 
     @Transactional
     fun deleteUserBankAccount(id: Long) {
-        val foundUser = findUserById(id)
+        val foundUser = userReader.findUserById(id)
         foundUser.deleteBankAccount()
     }
-
-    @Transactional
-    fun findBlackList(): AllBlackListResponse {
-        val blackLists = blackListRepository.findAll()
-        return AllBlackListResponse.of(blackLists)
-    }
-
-    @Transactional
-    fun deleteBlackList(blackListId: Long) {
-        blackListRepository.deleteById(blackListId)
-    }
-
     @Transactional
     fun updateAdminStatus(id: Long) {
-        val foundUser = findUserById(id)
+        val foundUser = userReader.findUserById(id)
         foundUser.updateAdminStatus()
-    }
-
-    @Transactional(readOnly = true)
-    fun checkBlackList(userId: Long) {
-        blackListRepository.findById(userId).ifPresent {
-            throw BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 이용이 불가능합니다.")
-        }
     }
 }
