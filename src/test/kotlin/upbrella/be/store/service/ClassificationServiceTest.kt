@@ -14,6 +14,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import upbrella.be.store.dto.request.CreateClassificationRequest
+import upbrella.be.store.dto.request.CreateSubClassificationRequest
 import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
 import upbrella.be.store.exception.AssignedClassificationException
@@ -37,11 +38,12 @@ class ClassificationServiceTest {
     @DisplayName("사용자는 대분류를 저장할 수 있다.")
     fun createClassificationTest() {
         // given
-        val request = CreateClassificationRequest.builder()
-            .name("편의점")
-            .latitude(37.1234)
-            .longitude(127.1234)
-            .build()
+        val request = CreateClassificationRequest(
+            name = "편의점",
+            latitude = 37.1234,
+            longitude = 127.1234
+        )
+
         given(classificationRepository.save(any(Classification::class.java)))
             .willReturn(Classification())
 
@@ -56,9 +58,10 @@ class ClassificationServiceTest {
     @DisplayName("사용자는 소분류를 저장할 수 있다.")
     fun createSubClassificationTest() {
         // given
-        val request = CreateSubClassificationRequest.builder()
-            .name("편의점")
-            .build()
+        val request = CreateSubClassificationRequest(
+            name = "편의점"
+        )
+
         given(classificationRepository.save(any(Classification::class.java)))
             .willReturn(Classification())
 

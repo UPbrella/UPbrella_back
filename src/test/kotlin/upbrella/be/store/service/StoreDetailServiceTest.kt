@@ -199,37 +199,33 @@ class StoreDetailServiceTest {
 
         private val images = setOf(first, second)
 
-        private val singleStoreResponse = SingleStoreResponse.builder()
-            .id(1L)
-            .name("협업 지점명")
-            .activateStatus(true)
-            .classification(
-                SingleClassificationResponse.builder()
-                    .id(1L)
-                    .name("대분류")
-                    .type(ClassificationType.CLASSIFICATION)
-                    .latitude(33.33)
-                    .longitude(33.33)
-                    .build()
-            )
-            .subClassification(
-                SingleSubClassificationResponse.builder()
-                    .id(2L)
-                    .type(ClassificationType.SUB_CLASSIFICATION)
-                    .name("소분류")
-                    .build()
-            )
-            .category("카테고리")
-            .latitude(33.33)
-            .longitude(33.33)
-            .umbrellaLocation("우산 위치")
-            .businessHour("근무 시간")
-            .instagramId("인스타그램 주소")
-            .contactNumber("연락처")
-            .address("주소")
-            .addressDetail("상세 주소")
-            .content("내용")
-            .build()
+        private val singleStoreResponse = SingleStoreResponse(
+            id = 1L,
+            name = "협업 지점명",
+            activateStatus = true,
+            classification = SingleClassificationResponse(
+                id = 1L,
+                name = "대분류",
+                type = ClassificationType.CLASSIFICATION,
+                latitude = 33.33,
+                longitude = 33.33
+            ),
+            subClassification = SingleSubClassificationResponse(
+                id = 2L,
+                type = ClassificationType.SUB_CLASSIFICATION,
+                name = "소분류"
+            ),
+            category = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33,
+            umbrellaLocation = "우산 위치",
+            businessHour = "근무 시간",
+            instagramId = "인스타그램 주소",
+            contactNumber = "연락처",
+            address = "주소",
+            addressDetail = "상세 주소",
+            content = "내용"
+        )
 
         @Test
         @DisplayName("모든 협업 지점의 정보를 조회할 수 있다.")
@@ -238,37 +234,33 @@ class StoreDetailServiceTest {
             given(storeDetailRepository.findAllStoresForAdmin())
                 .willReturn(listOf(singleStoreResponse))
 
-            val expected = SingleStoreResponse.builder()
-                .id(1L)
-                .name("협업 지점명")
-                .activateStatus(true)
-                .classification(
-                    SingleClassificationResponse.builder()
-                        .id(1L)
-                        .name("대분류")
-                        .type(ClassificationType.CLASSIFICATION)
-                        .latitude(33.33)
-                        .longitude(33.33)
-                        .build()
+            val expected = SingleStoreResponse(
+                    id = 1L,
+                    name = "협업 지점명",
+                    activateStatus = true,
+                    classification = SingleClassificationResponse(
+                        id = 1L,
+                        name = "대분류",
+                        type = ClassificationType.CLASSIFICATION,
+                        latitude = 33.33,
+                        longitude = 33.33
+                    ),
+                    subClassification = SingleSubClassificationResponse(
+                        id = 2L,
+                        type = ClassificationType.SUB_CLASSIFICATION,
+                        name = "소분류"
+                    ),
+                    category = "카테고리",
+                    latitude = 33.33,
+                    longitude = 33.33,
+                    umbrellaLocation = "우산 위치",
+                    businessHour = "근무 시간",
+                    instagramId = "인스타그램 주소",
+                    contactNumber = "연락처",
+                    address = "주소",
+                    addressDetail = "상세 주소",
+                    content = "내용"
                 )
-                .subClassification(
-                    SingleSubClassificationResponse.builder()
-                        .id(2L)
-                        .type(ClassificationType.SUB_CLASSIFICATION)
-                        .name("소분류")
-                        .build()
-                )
-                .category("카테고리")
-                .latitude(33.33)
-                .longitude(33.33)
-                .umbrellaLocation("우산 위치")
-                .businessHour("근무 시간")
-                .instagramId("인스타그램 주소")
-                .contactNumber("연락처")
-                .address("주소")
-                .addressDetail("상세 주소")
-                .content("내용")
-                .build()
 
             // when
             val allStores = storeDetailService.findAllStores()
@@ -500,41 +492,41 @@ class StoreDetailServiceTest {
             storeImages = listOf(StoreImage(id = 1L, imageUrl = "가게 썸네일"))
         )
 
-        val mondayUpdate = SingleBusinessHourRequest.builder()
-            .date(DayOfWeek.MONDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val tuesdayUpdate = SingleBusinessHourRequest.builder()
-            .date(DayOfWeek.TUESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val wednesdayUpdate = SingleBusinessHourRequest.builder()
-            .date(DayOfWeek.WEDNESDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val thursdayUpdate = SingleBusinessHourRequest.builder()
-            .date(DayOfWeek.THURSDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val fridayUpdate = SingleBusinessHourRequest.builder()
-            .date(DayOfWeek.FRIDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val saturdayUpdate = SingleBusinessHourRequest.builder()
-            .date(DayOfWeek.SATURDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
-        val sundayUpdate = SingleBusinessHourRequest.builder()
-            .date(DayOfWeek.SUNDAY)
-            .openAt(LocalTime.of(9, 0))
-            .closeAt(LocalTime.of(18, 0))
-            .build()
+        val mondayUpdate = SingleBusinessHourRequest(
+                date = DayOfWeek.MONDAY,
+                openAt = LocalTime.of(9, 0),
+                closeAt = LocalTime.of(18, 0)
+            )
+            val tuesdayUpdate = SingleBusinessHourRequest(
+                date = DayOfWeek.TUESDAY,
+                openAt = LocalTime.of(9, 0),
+                closeAt = LocalTime.of(18, 0)
+            )
+            val wednesdayUpdate = SingleBusinessHourRequest(
+                date = DayOfWeek.WEDNESDAY,
+                openAt = LocalTime.of(9, 0),
+                closeAt = LocalTime.of(18, 0)
+            )
+            val thursdayUpdate = SingleBusinessHourRequest(
+                date = DayOfWeek.THURSDAY,
+                openAt = LocalTime.of(9, 0),
+                closeAt = LocalTime.of(18, 0)
+            )
+            val fridayUpdate = SingleBusinessHourRequest(
+                date = DayOfWeek.FRIDAY,
+                openAt = LocalTime.of(9, 0),
+                closeAt = LocalTime.of(18, 0)
+            )
+            val saturdayUpdate = SingleBusinessHourRequest(
+                date = DayOfWeek.SATURDAY,
+                openAt = LocalTime.of(9, 0),
+                closeAt = LocalTime.of(18, 0)
+            )
+            val sundayUpdate = SingleBusinessHourRequest(
+                date = DayOfWeek.SUNDAY,
+                openAt = LocalTime.of(9, 0),
+                closeAt = LocalTime.of(18, 0)
+            )
 
         val businessHoursUpdate = listOf(
             mondayUpdate,
@@ -560,22 +552,22 @@ class StoreDetailServiceTest {
             name = "소분류 수정",
         )
 
-        val request = UpdateStoreRequest.builder()
-            .name("협업 지점명 수정")
-            .category("카테고리 수정")
-            .classificationId(3L)
-            .subClassificationId(4L)
-            .address("주소 수정")
-            .addressDetail("상세 주소 수정")
-            .umbrellaLocation("우산 위치 수정")
-            .businessHour("근무 시간 수정")
-            .contactNumber("연락처 수정")
-            .instagramId("인스타그램 주소 수정")
-            .latitude(44.44)
-            .longitude(44.44)
-            .content("내용 수정")
-            .businessHours(businessHoursUpdate)
-            .build()
+        val request = UpdateStoreRequest(
+            name = "협업 지점명 수정",
+            category = "카테고리 수정",
+            classificationId = 3L,
+            subClassificationId = 4L,
+            address = "주소 수정",
+            addressDetail = "상세 주소 수정",
+            umbrellaLocation = "우산 위치 수정",
+            businessHour = "근무 시간 수정",
+            contactNumber = "연락처 수정",
+            instagramId = "인스타그램 주소 수정",
+            latitude = 44.44,
+            longitude = 44.44,
+            content = "내용 수정",
+            businessHours = businessHoursUpdate,
+        )
 
         given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId))
             .willReturn(Optional.of(storeDetail))
@@ -649,25 +641,21 @@ class StoreDetailServiceTest {
             )
         )
 
-        val storeIntroductionsResponseByClassification =
-            StoreIntroductionsResponseByClassification.builder()
-                .subClassificationId(1)
-                .stores(
-                    listOf(
-                        SingleStoreIntroductionResponse.of(
-                            3L,
-                            "가게 썸네일",
-                            "스타벅스",
-                            "카페, 디저트"
-                        )
-                    )
-                )
-                .build()
+val storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification(
+    subClassificationId = 1,
+    stores = listOf(
+        SingleStoreIntroductionResponse.of(
+            3L,
+            "가게 썸네일",
+            "스타벅스",
+            "카페, 디저트"
+        )
+    )
+)
 
-        val expected = AllStoreIntroductionResponse.builder()
-            .storesByClassification(listOf(storeIntroductionsResponseByClassification))
-            .build()
-
+val expected = AllStoreIntroductionResponse(
+    storesByClassification = listOf(storeIntroductionsResponseByClassification)
+)
         given(storeDetailRepository.findAllStores())
             .willReturn(listOf(storeDetail))
 

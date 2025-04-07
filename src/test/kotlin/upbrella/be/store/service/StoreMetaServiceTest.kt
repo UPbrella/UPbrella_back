@@ -238,14 +238,14 @@ class StoreMetaServiceTest {
                     3L
                 )
 
-            expected = SingleCurrentLocationStoreResponse.builder()
-                .id(1L)
-                .latitude(4.0)
-                .longitude(3.0)
-                .name("모티브 카페 신촌 지점")
-                .openStatus(true)
-                .rentableUmbrellasCount(3L)
-                .build()
+            expected = SingleCurrentLocationStoreResponse(
+                id = 1L,
+                latitude = 4.0,
+                longitude = 3.0,
+                name = "모티브 카페 신촌 지점",
+                openStatus = true,
+                rentableUmbrellasCount = 3L
+            )
 
             storeMetaList.add(storeMetaWithUmbrellaCount)
             storeMetaList.add(storeMetaWithUmbrellaCount2)
@@ -296,7 +296,7 @@ class StoreMetaServiceTest {
                     assertThat(storesInCurrentMap.stores.size).isEqualTo(2)
                 },
                 {
-                    assertThat(storesInCurrentMap.stores[1].isOpenStatus).isFalse
+                    assertThat(storesInCurrentMap.stores[1].openStatus).isFalse
                 }
             )
         }
@@ -320,7 +320,7 @@ class StoreMetaServiceTest {
                     assertThat(storesInCurrentMap.stores.size).isEqualTo(2)
                 },
                 {
-                    assertThat(storesInCurrentMap.stores[0].isOpenStatus).isFalse
+                    assertThat(storesInCurrentMap.stores[0].openStatus).isFalse
                 }
             )
         }
@@ -347,61 +347,59 @@ class StoreMetaServiceTest {
     @DisplayName("협업지점 생성 위해 협업지점 정보를 입력받아")
     inner class CreateStoreTest {
 
-        private val store = CreateStoreRequest.builder()
-            .name("협업 지점명")
-            .category("카테고리")
-            .classificationId(1L)
-            .subClassificationId(2L)
-            .activateStatus(true)
-            .address("주소")
-            .addressDetail("상세주소")
-            .umbrellaLocation("우산 위치")
-            .businessHour("영업 시간")
-            .contactNumber("연락처")
-            .instagramId("인스타그램 아이디")
-            .latitude(33.33)
-            .longitude(33.33)
-            .content("내용")
-            .businessHours(
-                listOf(
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.MONDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.TUESDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.WEDNESDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.THURSDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.FRIDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.SATURDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.SUNDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build()
+        private val store = CreateStoreRequest(
+            name = "협업 지점명",
+            category = "카테고리",
+            classificationId = 1L,
+            subClassificationId = 2L,
+            activateStatus = true,
+            address = "주소",
+            addressDetail = "상세주소",
+            umbrellaLocation = "우산 위치",
+            businessHour = "영업 시간",
+            contactNumber = "연락처",
+            instagramId = "인스타그램 아이디",
+            latitude = 33.33,
+            longitude = 33.33,
+            content = "내용",
+            businessHours = listOf(
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.MONDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.TUESDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.WEDNESDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.THURSDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.FRIDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.SATURDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.SUNDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
                 )
             )
-            .build()
+        )
 
         @Test
         @DisplayName("새로운 협업지점을 생성할 수 있다.")
@@ -426,7 +424,7 @@ class StoreMetaServiceTest {
 
             val storeMeta = StoreMeta(
                 name = store.name,
-                activated = store.isActivateStatus,
+                activated = store.activateStatus,
                 deleted = false,
                 classification = classification,
                 subClassification = subClassification,
@@ -453,8 +451,10 @@ class StoreMetaServiceTest {
                 subClassification
             )
             given(storeMetaRepository.save(any(StoreMeta::class.java))).willReturn(storeMeta)
-            doNothing().`when`(storeDetailService).saveStoreDetail(any<StoreDetail>() ?: storeDetail)
-            doNothing().`when`(businessHourService).saveAllBusinessHour(any<List<BusinessHour>>() ?: emptyList())
+            doNothing().`when`(storeDetailService)
+                .saveStoreDetail(any<StoreDetail>() ?: storeDetail)
+            doNothing().`when`(businessHourService)
+                .saveAllBusinessHour(any<List<BusinessHour>>() ?: emptyList())
 
             // when
             storeMetaService.createStore(store)
@@ -670,7 +670,7 @@ class StoreMetaServiceTest {
                 StoreImage(
                     id = 1L,
                     imageUrl = "https://image.com"
-                        )
+                )
             )
         )
 
