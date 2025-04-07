@@ -227,8 +227,16 @@ class StoreMetaServiceTest {
                 longitude = 3.0
             )
 
-            val storeMetaWithUmbrellaCount = StoreMetaWithUmbrellaCount(storeIn, 3L)
-            val storeMetaWithUmbrellaCount2 = StoreMetaWithUmbrellaCount(storeOff, 3L)
+            val storeMetaWithUmbrellaCount =
+                StoreMetaWithUmbrellaCount(
+                    storeIn,
+                    3L
+                )
+            val storeMetaWithUmbrellaCount2 =
+                StoreMetaWithUmbrellaCount(
+                    storeOff,
+                    3L
+                )
 
             expected = SingleCurrentLocationStoreResponse.builder()
                 .id(1L)

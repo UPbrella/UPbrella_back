@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
@@ -41,15 +40,15 @@ class LockerControllerTest : RestDocsSupport() {
     @DisplayName("모든 보관함을 조회할 수 있다.")
     fun findAllLockerTest() {
         // given
-        val locker = SingleLockerResponse.builder()
-            .id(1L)
-            .storeMetaId(1L)
-            .secretKey("secretKey")
-            .build()
+        val locker = SingleLockerResponse(
+            id = 1L,
+            storeMetaId = 1L,
+            secretKey = "secretKey"
+        )
 
-        val response = AllLockerResponse.builder()
-            .lockers(listOf(locker))
-            .build()
+        val response = AllLockerResponse(
+            lockers = listOf(locker)
+        )
 
         given(lockerService.findAll()).willReturn(response)
 
@@ -83,10 +82,10 @@ class LockerControllerTest : RestDocsSupport() {
     @DisplayName("새로운 보관함을 생성할 수 있다.")
     fun createLockerTest() {
         // given
-        val request = CreateLockerRequest.builder()
-            .storeId(1L)
-            .secretKey("12345678901234567890123456789012")
-            .build()
+        val request = CreateLockerRequest(
+            storeId = 1L,
+            secretKey = "12345678901234567890123456789012"
+        )
 
         // then
         mockMvc.perform(
@@ -115,10 +114,11 @@ class LockerControllerTest : RestDocsSupport() {
     @DisplayName("보관함의 정보를 수정할 수 있다.")
     fun updateLockerTest() {
         // given
-        val request = UpdateLockerRequest.builder()
-            .storeId(1L)
-            .secretKey("12345678901234567890123456789012")
-            .build()
+        val request = UpdateLockerRequest(
+            storeId = 1L,
+            secretKey = "12345678901234567890123456789012"
+        )
+
         val lockerId = 1L
 
         // when & then
@@ -176,9 +176,9 @@ class LockerControllerTest : RestDocsSupport() {
     fun updateLockerCount() {
         // given
         val storeId = 1L
-        val request = UpdateLockerCountRequest.builder()
-            .count(1L)
-            .build()
+        val request = UpdateLockerCountRequest(
+            count = 1L
+        )
 
         val response = LockerPasswordResponse("1234")
         given(lockerService.updateCount(any<Long>() ?: 0, any<UpdateLockerCountRequest>() ?: request)).willReturn(response)

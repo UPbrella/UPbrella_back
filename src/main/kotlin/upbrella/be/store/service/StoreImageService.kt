@@ -1,6 +1,5 @@
 package upbrella.be.store.service
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,7 +10,6 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import upbrella.be.store.dto.response.AllImageUrlResponse
 import upbrella.be.store.dto.response.SingleImageUrlResponse
-import upbrella.be.store.entity.StoreDetail
 import upbrella.be.store.entity.StoreImage
 import upbrella.be.store.exception.NonExistingStoreImageException
 import upbrella.be.store.repository.StoreImageRepository

@@ -34,7 +34,7 @@ class StoreMeta(
         ): StoreMeta {
             return StoreMeta(
                 name = request.name,
-                activated = request.isActivateStatus,
+                activated = request.activateStatus,
                 classification = classification,
                 subClassification = subClassification,
                 category = request.category,
