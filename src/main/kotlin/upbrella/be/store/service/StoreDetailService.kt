@@ -12,6 +12,7 @@ import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.exception.NonExistingStoreDetailException
 import upbrella.be.store.repository.StoreDetailRepository
 import upbrella.be.umbrella.service.UmbrellaService
+import kotlin.streams.toList
 
 @Service
 class StoreDetailService(

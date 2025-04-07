@@ -9,38 +9,38 @@ import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
 import upbrella.be.util.CustomErrorResponse;
 
 @RestControllerAdvice
-public class UmbrellaExceptionHandler {
+class UmbrellaExceptionHandler {
 
-    @ExceptionHandler(ExistingUmbrellaUuidException.class)
-    public ResponseEntity<CustomErrorResponse> existingUmbrella(ExistingUmbrellaUuidException ex) {
+    @ExceptionHandler(ExistingUmbrellaUuidException::class)
+    fun existingUmbrella(ex: ExistingUmbrellaUuidException): ResponseEntity<CustomErrorResponse> {
 
         return ResponseEntity
                 .badRequest()
-                .body(new CustomErrorResponse(
+                .body(CustomErrorResponse(
                         "fail",
                         400,
                         "이미 존재하는 우산 관리 번호입니다."));
     }
 
-    @ExceptionHandler(NonExistingUmbrellaException.class)
-    public ResponseEntity<CustomErrorResponse> nonExistingUmbrella(NonExistingUmbrellaException ex) {
+    @ExceptionHandler(NonExistingUmbrellaException::class)
+    fun nonExistingUmbrella(ex: NonExistingUmbrellaException): ResponseEntity<CustomErrorResponse> {
 
         return ResponseEntity
                 .badRequest()
-                .body(new CustomErrorResponse(
+                .body(CustomErrorResponse(
                         "fail",
                         404,
                         "존재하지 않는 우산 고유 번호입니다."));
     }
 
-    @ExceptionHandler(NonExistingBorrowedHistoryException.class)
-    public ResponseEntity<CustomErrorResponse> nonExistingBorrowedHistory(NonExistingBorrowedHistoryException ex) {
+    @ExceptionHandler(NonExistingBorrowedHistoryException::class)
+    fun nonExistingBorrowedHistory(ex: NonExistingBorrowedHistoryException): ResponseEntity<CustomErrorResponse> {
 
-        return ResponseEntity
+            return ResponseEntity
                 .badRequest()
-                .body(new CustomErrorResponse(
-                        "fail",
-                        404,
-                        "사용자가 빌린 우산이 없습니다."));
-    }
+                .body(CustomErrorResponse(
+                    "fail",
+                    404,
+                    "사용자가 빌린 우산이 없습니다."));
+        }
 }

@@ -6,7 +6,7 @@ import java.io.Serializable
 data class SessionUser(
     val id: Long,
     val socialId: Long? = null,
-    val adminStatus: Boolean?
+    val adminStatus: Boolean = false
 ) : Serializable {
     companion object {
         fun fromUser(user: User): SessionUser {
