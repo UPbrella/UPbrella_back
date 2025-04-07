@@ -33,9 +33,10 @@ class BusinessHourService(
     @Transactional(readOnly = true)
     fun findAllBusinessHours(storeId: Long): AllBusinessHourResponse {
         val businessHours = findBusinessHourByStoreMetaId(storeId)
-        return AllBusinessHourResponse.builder()
-            .businessHours(createBusinessHourResponse(businessHours))
-            .build()
+
+        return AllBusinessHourResponse(
+            businessHours = createBusinessHourResponse(businessHours)
+        )
     }
 
     @Transactional

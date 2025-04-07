@@ -14,7 +14,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import upbrella.be.store.dto.request.CreateClassificationRequest
-import upbrella.be.store.dto.request.CreateSubClassificationRequest
 import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
 import upbrella.be.store.exception.AssignedClassificationException
