@@ -62,28 +62,26 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("스토어의 아이디로 스토어를 상세조회할 수 있다.")
     fun findStoreByIdTest() {
         // given
-        val storeFindByIdResponse = StoreFindByIdResponse.builder()
-            .id(1)
-            .name("업브렐라")
-            .category("카페")
-            .umbrellaLocation("가게 앞")
-            .instaUrl("인스타 ID 예시")
-            .businessHours("09:00 ~ 18:00")
-            .contactNumber("010-0000-0000")
-            .address("서울특별시 강남구 테헤란로 427")
-            .description("우리 카페는 맛있고 뷰가 좋습니다.")
-            .availableUmbrellaCount(10)
-            .openStatus(true)
-            .latitude(37.503716)
-            .longitude(127.053718)
-            .imageUrls(
-                listOf(
-                    "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/1.jpg",
-                    "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/2.jpg",
-                    "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/3.jpg"
-                )
+        val storeFindByIdResponse = StoreFindByIdResponse(
+            id = 1L,
+            name = "업브렐라",
+            category = "카페",
+            umbrellaLocation = "가게 앞",
+            instaUrl = "인스타 ID 예시",
+            businessHours = "09:00 ~ 18:00",
+            contactNumber = "010-0000-0000",
+            address = "서울특별시 강남구 테헤란로 427",
+            description = "우리 카페는 맛있고 뷰가 좋습니다.",
+            availableUmbrellaCount = 10,
+            openStatus = true,
+            latitude = 37.503716,
+            longitude = 127.053718,
+            imageUrls = listOf(
+                "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/1.jpg",
+                "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/2.jpg",
+                "https://upbrella-store-image.s3.ap-northeast-2.amazonaws.com/3.jpg"
             )
-            .build()
+        )
 
         given(storeDetailService.findStoreDetailByStoreId(2L))
             .willReturn(storeFindByIdResponse)
@@ -144,22 +142,25 @@ class StoreControllerTest : RestDocsSupport() {
         // given
         val classificationId = 1L
 
-        given(storeMetaService.findAllStoresByClassification(any<Long>() ?: 0, any<LocalDateTime>() ?: LocalDateTime.now()))
+        given(
+            storeMetaService.findAllStoresByClassification(
+                any<Long>() ?: 0,
+                any<LocalDateTime>() ?: LocalDateTime.now()
+            )
+        )
             .willReturn(
-                AllCurrentLocationStoreResponse.builder()
-                    .stores(
-                        listOf(
-                            SingleCurrentLocationStoreResponse.builder()
-                                .id(1)
-                                .name("업브렐라")
-                                .latitude(37.503716)
-                                .longitude(127.053718)
-                                .openStatus(true)
-                                .rentableUmbrellasCount(3)
-                                .build()
+                AllCurrentLocationStoreResponse(
+                    stores = listOf(
+                        SingleCurrentLocationStoreResponse(
+                            id = 1,
+                            name = "업브렐라",
+                            latitude = 37.503716,
+                            longitude = 127.053718,
+                            openStatus = true,
+                            rentableUmbrellasCount = 3
                         )
                     )
-                    .build()
+                )
             )
 
         // when & then
@@ -244,36 +245,33 @@ class StoreControllerTest : RestDocsSupport() {
         given(storeDetailService.findAllStores())
             .willReturn(
                 listOf(
-                    SingleStoreResponse.builder()
-                        .name("모티브 카페 신촌점")
-                        .category("카페 티저트")
-                        .content("모티브 카페")
-                        .classification(
-                            SingleClassificationResponse.builder()
-                                .id(1L)
-                                .type(ClassificationType.CLASSIFICATION)
-                                .name("신촌")
-                                .latitude(33.33)
-                                .longitude(33.33)
-                                .build()
-                        )
-                        .subClassification(
-                            SingleSubClassificationResponse.builder()
-                                .id(1L)
-                                .type(ClassificationType.SUB_CLASSIFICATION)
-                                .name("신촌")
-                                .build()
-                        )
-                        .activateStatus(true)
-                        .address("주소")
-                        .addressDetail("상세주소")
-                        .umbrellaLocation("가게 앞")
-                        .businessHour("연중 무휴")
-                        .contactNumber("010-0000-0000")
-                        .instagramId("instagramId")
-                        .latitude(33.33)
-                        .longitude(33.33)
-                        .build()
+                    SingleStoreResponse(
+                        id = 1,
+                        name = "모티브 카페 신촌점",
+                        category = "카페 티저트",
+                        content = "모티브 카페",
+                        classification = SingleClassificationResponse(
+                            id = 1L,
+                            type = ClassificationType.CLASSIFICATION,
+                            name = "신촌",
+                            latitude = 33.33,
+                            longitude = 33.33
+                        ),
+                        subClassification = SingleSubClassificationResponse(
+                            id = 1L,
+                            type = ClassificationType.SUB_CLASSIFICATION,
+                            name = "신촌"
+                        ),
+                        activateStatus = true,
+                        address = "주소",
+                        addressDetail = "상세주소",
+                        umbrellaLocation = "가게 앞",
+                        businessHour = "연중 무휴",
+                        contactNumber = "010-0000-0000",
+                        instagramId = "instagramId",
+                        latitude = 33.33,
+                        longitude = 33.33
+                    )
                 )
             )
 
@@ -347,64 +345,59 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("관리자는 새로운 협업지점을 등록할 수 있다.")
     fun createStoreTest() {
         // given
-
-
-
-        val store = CreateStoreRequest.builder()
-            .name("협업 지점명")
-            .category("카테고리")
-            .classificationId(1L)
-            .subClassificationId(2L)
-            .activateStatus(true)
-            .address("주소")
-            .addressDetail("상세주소")
-            .umbrellaLocation("우산 위치")
-            .businessHour("영업 시간")
-            .contactNumber("연락처")
-            .instagramId("인스타그램 아이디")
-            .latitude(33.33)
-            .longitude(33.33)
-            .content("내용")
-            .businessHours(
-                listOf(
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.MONDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.TUESDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.WEDNESDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.THURSDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.FRIDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.SATURDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build(),
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.SUNDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build()
+        val store = CreateStoreRequest(
+            name = "협업 지점명",
+            category = "카테고리",
+            classificationId = 1L,
+            subClassificationId = 2L,
+            activateStatus = true,
+            address = "주소",
+            addressDetail = "상세주소",
+            umbrellaLocation = "우산 위치",
+            businessHour = "영업 시간",
+            contactNumber = "연락처",
+            instagramId = "인스타그램 아이디",
+            latitude = 33.33,
+            longitude = 33.33,
+            content = "내용",
+            businessHours = listOf(
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.MONDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.TUESDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.WEDNESDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.THURSDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.FRIDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.SATURDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
+                ),
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.SUNDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
                 )
             )
-            .build()
+        )
 
         // when & then
         mockMvc.perform(
@@ -465,33 +458,32 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("관리자는 협업지점 정보를 수정할 수 있다.")
     fun updateStoreTest() {
         // given
-        val store = UpdateStoreRequest.builder()
-            .name("협업 지점명")
-            .category("카테고리")
-            .classificationId(1L)
-            .subClassificationId(2L)
-            .address("주소")
-            .addressDetail("상세주소")
-            .umbrellaLocation("우산 위치")
-            .businessHour("영업 시간")
-            .contactNumber("연락처")
-            .instagramId("인스타그램 아이디")
-            .latitude(33.33)
-            .longitude(33.33)
-            .content("내용")
-            .businessHours(
-                listOf(
-                    SingleBusinessHourRequest.builder()
-                        .date(DayOfWeek.MONDAY)
-                        .openAt(LocalTime.of(10, 0))
-                        .closeAt(LocalTime.of(20, 0))
-                        .build()
+        val store = UpdateStoreRequest(
+            name = "협업 지점명",
+            category = "카테고리",
+            classificationId = 1L,
+            subClassificationId = 2L,
+            address = "주소",
+            addressDetail = "상세주소",
+            umbrellaLocation = "우산 위치",
+            businessHour = "영업 시간",
+            contactNumber = "연락처",
+            instagramId = "인스타그램 아이디",
+            latitude = 33.33,
+            longitude = 33.33,
+            content = "내용",
+            businessHours = listOf(
+                SingleBusinessHourRequest(
+                    date = DayOfWeek.MONDAY,
+                    openAt = LocalTime.of(10, 0),
+                    closeAt = LocalTime.of(20, 0)
                 )
             )
-            .build()
+        )
 
         val storeId = 1L
-        doNothing().`when`(storeDetailService).updateStore(any<Long>() ?: 0, any<UpdateStoreRequest>() ?: store)
+        doNothing().`when`(storeDetailService)
+            .updateStore(any<Long>() ?: 0, any<UpdateStoreRequest>() ?: store)
 
         // when & then
         mockMvc.perform(
@@ -557,11 +549,19 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("사용자는 협업지점의 사진을 등록할 수 있다.")
     fun uploadStorageImages() {
         // given
-        val firstFile = MockMultipartFile("image", "filename-1.jpeg", "text/plain", "some-image".toByteArray())
-        given(storeImageService.uploadFile(
-            any(MultipartFile::class.java) ?: MockMultipartFile("file", "", "application/octet-stream", ByteArray(0)),
-            any<Long>() ?: 0,
-            any<String>() ?: "randomId")
+        val firstFile =
+            MockMultipartFile("image", "filename-1.jpeg", "text/plain", "some-image".toByteArray())
+        given(
+            storeImageService.uploadFile(
+                any(MultipartFile::class.java) ?: MockMultipartFile(
+                    "file",
+                    "",
+                    "application/octet-stream",
+                    ByteArray(0)
+                ),
+                any<Long>() ?: 0,
+                any<String>() ?: "randomId"
+            )
         ).willReturn("url")
 
         // when & then
@@ -642,19 +642,17 @@ class StoreControllerTest : RestDocsSupport() {
         // given
         given(classificationService.findAllClassification())
             .willReturn(
-                AllClassificationResponse.builder()
-                    .classifications(
-                        listOf(
-                            SingleClassificationResponse.builder()
-                                .id(1L)
-                                .type(ClassificationType.CLASSIFICATION)
-                                .name("대분류 이름")
-                                .latitude(33.33)
-                                .longitude(33.33)
-                                .build()
+                AllClassificationResponse(
+                    classifications = listOf(
+                        SingleClassificationResponse(
+                            id = 1L,
+                            type = ClassificationType.CLASSIFICATION,
+                            name = "대분류 이름",
+                            latitude = 33.33,
+                            longitude = 33.33
                         )
                     )
-                    .build()
+                )
             )
 
         // when & then
@@ -691,13 +689,17 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("사용자는 대분류를 추가할 수 있다.")
     fun createClassificationTest() {
         // given
-        val request = CreateClassificationRequest.builder()
-            .name("대분류 이름")
-            .latitude(33.33)
-            .longitude(33.33)
-            .build()
+        val request = CreateClassificationRequest(
+            name = "대분류 이름",
+            latitude = 33.33,
+            longitude = 33.33
+        )
 
-        given(classificationService.createClassification(any<CreateClassificationRequest>() ?: request))
+        given(
+            classificationService.createClassification(
+                any<CreateClassificationRequest>() ?: request
+            )
+        )
             .willReturn(Classification())
 
         // when & then
@@ -757,17 +759,15 @@ class StoreControllerTest : RestDocsSupport() {
         // given
         given(classificationService.findAllSubClassification())
             .willReturn(
-                AllSubClassificationResponse.builder()
-                    .subClassifications(
-                        listOf(
-                            SingleSubClassificationResponse.builder()
-                                .id(1L)
-                                .type(ClassificationType.SUB_CLASSIFICATION)
-                                .name("소분류 이름")
-                                .build()
+                AllSubClassificationResponse(
+                    subClassifications = listOf(
+                        SingleSubClassificationResponse(
+                            id = 1L,
+                            type = ClassificationType.SUB_CLASSIFICATION,
+                            name = "소분류 이름"
                         )
                     )
-                    .build()
+                )
             )
 
         // when & then
@@ -800,11 +800,15 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("사용자는 소분류를 추가할 수 있다.")
     fun createSubClassificationTest() {
         // given
-        val request = CreateSubClassificationRequest.builder()
-            .name("소분류 이름")
-            .build()
+        val request = CreateSubClassificationRequest(
+            name = "소분류 이름"
+        )
 
-        given(classificationService.createSubClassification(any<CreateSubClassificationRequest>() ?: request))
+        given(
+            classificationService.createSubClassification(
+                any<CreateSubClassificationRequest>() ?: request
+            )
+        )
             .willReturn(Classification())
 
         // when & then
@@ -858,23 +862,21 @@ class StoreControllerTest : RestDocsSupport() {
     @DisplayName("사용자는 협업지점 소개 페이지를 조회할 수 있다.")
     fun findStoreIntroductionTest() {
         // given
-        val storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification.builder()
-            .subClassificationId(1)
-            .stores(
-                listOf(
-                    SingleStoreIntroductionResponse.of(
-                        1L,
-                        "가게 이름",
-                        "가게 카테고리",
-                        "가게 썸네일"
-                    )
+        val storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification(
+            subClassificationId = 1,
+            stores = listOf(
+                SingleStoreIntroductionResponse(
+                    id = 1L,
+                    name = "가게 이름",
+                    category = "가게 카테고리",
+                    thumbnail = "가게 썸네일"
                 )
             )
-            .build()
+        )
 
-        val response = AllStoreIntroductionResponse.builder()
-            .storesByClassification(listOf(storeIntroductionsResponseByClassification))
-            .build()
+        val response = AllStoreIntroductionResponse(
+            storesByClassification = listOf(storeIntroductionsResponseByClassification)
+        )
 
         given(storeDetailService.findAllStoreIntroductions())
             .willReturn(response)
@@ -894,7 +896,9 @@ class StoreControllerTest : RestDocsSupport() {
                         beneathPath("data").withSubsectionId("data"),
                         fieldWithPath("storesByClassification[]").type(JsonFieldType.ARRAY)
                             .description("전체 협업 지점 소개 목록"),
-                        fieldWithPath("storesByClassification[].subClassificationId").type(JsonFieldType.NUMBER)
+                        fieldWithPath("storesByClassification[].subClassificationId").type(
+                            JsonFieldType.NUMBER
+                        )
                             .description("협업 지점 소분류 고유번호"),
                         fieldWithPath("storesByClassification[].stores[]").type(JsonFieldType.ARRAY)
                             .description("소분류별 협업 지점 목록"),
@@ -902,9 +906,13 @@ class StoreControllerTest : RestDocsSupport() {
                             .description("가게 고유번호"),
                         fieldWithPath("storesByClassification[].stores[].name").type(JsonFieldType.STRING)
                             .description("가게 이름"),
-                        fieldWithPath("storesByClassification[].stores[].category").type(JsonFieldType.STRING)
+                        fieldWithPath("storesByClassification[].stores[].category").type(
+                            JsonFieldType.STRING
+                        )
                             .description("가게 카테고리"),
-                        fieldWithPath("storesByClassification[].stores[].thumbnail").type(JsonFieldType.STRING)
+                        fieldWithPath("storesByClassification[].stores[].thumbnail").type(
+                            JsonFieldType.STRING
+                        )
                             .description("가게 썸네일")
                     )
                 )
@@ -973,17 +981,15 @@ class StoreControllerTest : RestDocsSupport() {
         // given
         given(storeImageService.findAllImages(1L))
             .willReturn(
-                AllImageUrlResponse.builder()
-                    .storeId(1L)
-                    .images(
-                        listOf(
-                            SingleImageUrlResponse.builder()
-                                .id(1L)
-                                .imageUrl("url")
-                                .build()
+                AllImageUrlResponse(
+                    storeId = 1L,
+                    images = listOf(
+                        SingleImageUrlResponse(
+                            id = 1L,
+                            imageUrl = "url"
                         )
                     )
-                    .build()
+                )
             )
 
         // when
@@ -1024,18 +1030,16 @@ class StoreControllerTest : RestDocsSupport() {
         // given
         given(businessHourService.findAllBusinessHours(1L))
             .willReturn(
-                AllBusinessHourResponse.builder()
-                    .businessHours(
-                        listOf(
-                            SingleBusinessHourResponse.builder()
-                                .id(1L)
-                                .date(DayOfWeek.MONDAY)
-                                .openAt(LocalTime.of(10, 0))
-                                .closeAt(LocalTime.of(20, 0))
-                                .build()
+                AllBusinessHourResponse(
+                    businessHours = listOf(
+                        SingleBusinessHourResponse(
+                            id = 1L,
+                            date = DayOfWeek.MONDAY,
+                            openAt = LocalTime.of(10, 0),
+                            closeAt = LocalTime.of(20, 0)
                         )
                     )
-                    .build()
+                )
             )
 
         // when

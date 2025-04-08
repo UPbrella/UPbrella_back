@@ -11,12 +11,8 @@ data class UpdateStoreRequest(
     @field:NotBlank
     val category: String,
 
-    @field:NotBlank
-    val phoneNumber: String,
-
     val classificationId: Long,
     val subClassificationId: Long,
-    val activateStatus: Boolean,
 
     @field:NotBlank
     val address: String,

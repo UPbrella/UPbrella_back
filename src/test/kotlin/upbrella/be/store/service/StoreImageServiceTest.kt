@@ -47,7 +47,8 @@ class StoreImageServiceTest {
     fun uploadFileTest() {
         // given
         val storeDetailId = 1L
-        val file = MockMultipartFile("image", "filename.jpg", "image/jpg", "some-image".toByteArray())
+        val file =
+            MockMultipartFile("image", "filename.jpg", "image/jpg", "some-image".toByteArray())
         val storeDetail = StoreDetail()
         val randomId = storeImageService.makeRandomId()
         val expectedUrl = "https://file.upbrella.co.kr/store-image/filename.jpg$randomId"
@@ -114,17 +115,17 @@ class StoreImageServiceTest {
         @DisplayName("사용자는 썸네일을 생성할 수 있다.")
         fun createThumbnailTest() {
             // given
-            val fist = SingleImageUrlResponse.builder()
-                .id(1L)
-                .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-                .build()
+            val first = SingleImageUrlResponse(
+                id = 1L,
+                imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+            )
 
-            val second = SingleImageUrlResponse.builder()
-                .id(2L)
-                .imageUrl("https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg")
-                .build()
+            val second = SingleImageUrlResponse(
+                id = 2L,
+                imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+            )
 
-            val imageUrls = listOf(fist, second)
+            val imageUrls = listOf(first, second)
 
             // when
             val thumbnail = storeImageService.createThumbnail(imageUrls)

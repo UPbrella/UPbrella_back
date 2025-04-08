@@ -14,7 +14,7 @@ import upbrella.be.rent.service.LockerService
 import upbrella.be.rent.service.RentService
 import upbrella.be.slack.service.SlackAlarmService
 import upbrella.be.user.dto.response.SessionUser
-import upbrella.be.user.service.UserService
+import upbrella.be.user.repository.UserReader
 import upbrella.be.util.CustomResponse
 import javax.servlet.http.HttpSession
 import javax.validation.Valid
@@ -24,7 +24,7 @@ class RentController(
     private val conditionReportService: ConditionReportService,
     private val improvementReportService: ImprovementReportService,
     private val rentService: RentService,
-    private val userService: UserService,
+    private val userReader: UserReader,
     private val slackAlarmService: SlackAlarmService,
     private val lockerService: LockerService
 ) {
@@ -52,7 +52,7 @@ class RentController(
         @RequestParam(required = false) signature: String?
     ): ResponseEntity<CustomResponse<ReturnFormResponse>> {
         val user = httpSession.getAttribute("user") as SessionUser
-        val userToReturn = userService.findUserById(user.id)
+        val userToReturn = userReader.findUserById(user.id)
 
         val returnForm = rentService.findReturnForm(storeId, userToReturn, salt!!, signature!!)
 
@@ -69,7 +69,7 @@ class RentController(
     @PostMapping("/rent")
     fun rentUmbrellaByUser(@RequestBody @Valid rentUmbrellaByUserRequest: RentUmbrellaByUserRequest, httpSession: HttpSession): ResponseEntity<CustomResponse<LockerPasswordResponse>> {
         val user = httpSession.getAttribute("user") as SessionUser
-        val userToRent = userService.findUserById(user.id)
+        val userToRent = userReader.findUserById(user.id)
 
         val lockerPasswordResponse = lockerService.findLockerPassword(rentUmbrellaByUserRequest)
 
@@ -94,7 +94,7 @@ class RentController(
         httpSession: HttpSession
     ): ResponseEntity<CustomResponse<Unit>> {
         val user = httpSession.getAttribute("user") as SessionUser
-        val userToReturn = userService.findUserById(user.id)
+        val userToReturn = userReader.findUserById(user.id)
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest)
         val unrefundedRentCount = rentService.countUnrefundedRent()

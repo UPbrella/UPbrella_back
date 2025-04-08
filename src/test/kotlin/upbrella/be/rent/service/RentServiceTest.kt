@@ -38,11 +38,11 @@ import upbrella.be.user.dto.response.SingleHistoryResponse
 import upbrella.be.user.entity.User
 import upbrella.be.user.exception.BlackListUserException
 import upbrella.be.user.exception.NonExistingMemberException
-import upbrella.be.user.service.UserService
+import upbrella.be.user.repository.UserReader
+import upbrella.be.user.service.BlackListService
 import upbrella.be.util.AesEncryptor
 import java.time.LocalDateTime
 import java.util.*
-import java.util.stream.Collectors
 
 @ExtendWith(MockitoExtension::class)
 class RentServiceTest {
@@ -57,7 +57,9 @@ class RentServiceTest {
     private lateinit var rentRepository: RentRepository
 
     @Mock
-    private lateinit var userService: UserService
+    private lateinit var blackListService: BlackListService
+    @Mock
+    private lateinit var userReader: UserReader
 
     @Mock
     private lateinit var improvementReportService: ImprovementReportService
@@ -378,7 +380,7 @@ class RentServiceTest {
             )
 
             val loginedUserId = 7L
-            given(userService.findUserById(loginedUserId)).willReturn(userToRent)
+            given(userReader.findUserById(loginedUserId)).willReturn(userToRent)
             given(rentRepository.findById(33L)).willReturn(Optional.of(historyForRefund))
 
             // when
@@ -393,7 +395,7 @@ class RentServiceTest {
                     assertThat(historyForRefund.refundedAt).isBeforeOrEqualTo(LocalDateTime.now())
                 },
                 {
-                    then(userService).should(times(1)).findUserById(loginedUserId)
+                    then(userReader).should(times(1)).findUserById(loginedUserId)
                 },
                 {
                     then(rentRepository).should(times(1)).findById(33L)
@@ -409,7 +411,7 @@ class RentServiceTest {
         fun nonExistingUser() {
             // given
             val loginedUserId = 7L
-            given(userService.findUserById(loginedUserId)).willThrow(NonExistingMemberException::class.java)
+            given(userReader.findUserById(loginedUserId)).willThrow(NonExistingMemberException::class.java)
 
             // when & then
             assertAll(
@@ -419,7 +421,7 @@ class RentServiceTest {
                     }.isInstanceOf(NonExistingMemberException::class.java)
                 },
                 {
-                    then(userService).should(times(1)).findUserById(loginedUserId)
+                    then(userReader).should(times(1)).findUserById(loginedUserId)
                 },
                 {
                     then(rentRepository).shouldHaveNoInteractions()
@@ -432,7 +434,7 @@ class RentServiceTest {
         fun nonExistingHistory() {
             // given
             val loginedUserId = 7L
-            given(userService.findUserById(loginedUserId)).willReturn(userToRent)
+            given(userReader.findUserById(loginedUserId)).willReturn(userToRent)
             given(rentRepository.findById(33L)).willThrow(NonExistingHistoryException::class.java)
 
             // when & then
@@ -443,7 +445,7 @@ class RentServiceTest {
                     }.isInstanceOf(NonExistingHistoryException::class.java)
                 },
                 {
-                    then(userService).should(times(1)).findUserById(loginedUserId)
+                    then(userReader).should(times(1)).findUserById(loginedUserId)
                 },
                 {
                     then(rentRepository).should(times(1)).findById(33L)
@@ -464,7 +466,7 @@ class RentServiceTest {
         fun success() {
             // given
             val loginedUserId = 7L
-            given(userService.findUserById(loginedUserId)).willReturn(userToRent)
+            given(userReader.findUserById(loginedUserId)).willReturn(userToRent)
             given(rentRepository.findById(33L)).willReturn(Optional.of(history))
             given(rentRepository.save(history)).willReturn(history)
 
@@ -480,7 +482,7 @@ class RentServiceTest {
                     assertThat(history.paidAt).isBeforeOrEqualTo(LocalDateTime.now())
                 },
                 {
-                    then(userService).should(times(1)).findUserById(loginedUserId)
+                    then(userReader).should(times(1)).findUserById(loginedUserId)
                 },
                 {
                     then(rentRepository).should(times(1)).findById(33L)
@@ -496,7 +498,7 @@ class RentServiceTest {
         fun nonExistingUser() {
             // given
             val loginedUserId = 7L
-            given(userService.findUserById(loginedUserId)).willThrow(NonExistingMemberException::class.java)
+            given(userReader.findUserById(loginedUserId)).willThrow(NonExistingMemberException::class.java)
 
             // when & then
             assertAll(
@@ -506,7 +508,7 @@ class RentServiceTest {
                     }.isInstanceOf(NonExistingMemberException::class.java)
                 },
                 {
-                    then(userService).should(times(1)).findUserById(loginedUserId)
+                    then(userReader).should(times(1)).findUserById(loginedUserId)
                 },
                 {
                     then(rentRepository).shouldHaveNoInteractions()
@@ -519,7 +521,7 @@ class RentServiceTest {
         fun nonExistingHistory() {
             // given
             val loginedUserId = 7L
-            given(userService.findUserById(loginedUserId)).willReturn(userToRent)
+            given(userReader.findUserById(loginedUserId)).willReturn(userToRent)
             given(rentRepository.findById(33L)).willThrow(NonExistingHistoryException::class.java)
 
             // when & then
@@ -530,7 +532,7 @@ class RentServiceTest {
                     }.isInstanceOf(NonExistingHistoryException::class.java)
                 },
                 {
-                    then(userService).should(times(1)).findUserById(loginedUserId)
+                    then(userReader).should(times(1)).findUserById(loginedUserId)
                 },
                 {
                     then(rentRepository).should(times(1)).findById(33L)
@@ -660,7 +662,7 @@ class RentServiceTest {
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
         val request = RentUmbrellaByUserRequest()
 
-        doThrow(BlackListUserException::class.java).`when`(userService).checkBlackList(user.id!!)
+        doThrow(BlackListUserException::class.java).`when`(blackListService).checkBlackList(user.id!!)
 
         // when & then
         assertThatThrownBy {

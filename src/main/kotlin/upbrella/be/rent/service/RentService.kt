@@ -1,22 +1,16 @@
 package upbrella.be.rent.service
 
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import upbrella.be.rent.repository.RentRepository
-import upbrella.be.rent.dto.response.HistoryInfoDto
 import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest
-import upbrella.be.rent.dto.response.RentFormResponse
-import upbrella.be.rent.dto.response.RentalHistoriesPageResponse
-import upbrella.be.rent.dto.response.RentalHistoryResponse
-import upbrella.be.rent.dto.response.ReturnFormResponse
+import upbrella.be.rent.dto.response.*
 import upbrella.be.rent.entity.ConditionReport
 import upbrella.be.rent.entity.History
 import upbrella.be.rent.exception.*
+import upbrella.be.rent.repository.RentRepository
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.service.StoreMetaService
 import upbrella.be.umbrella.entity.Umbrella
@@ -27,17 +21,21 @@ import upbrella.be.user.dto.response.AllHistoryResponse
 import upbrella.be.user.dto.response.SessionUser
 import upbrella.be.user.dto.response.SingleHistoryResponse
 import upbrella.be.user.entity.User
-import upbrella.be.user.service.UserService
+import upbrella.be.user.repository.UserReader
+import upbrella.be.user.service.BlackListService
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 @Service
 class RentService(
     private val umbrellaService: UmbrellaService,
     private val storeMetaService: StoreMetaService,
     private val improvementReportService: ImprovementReportService,
-    private val userService: UserService,
     private val rentRepository: RentRepository,
     private val conditionReportService: ConditionReportService,
-    private val lockerService: LockerService
+    private val lockerService: LockerService,
+    private val blackListService: BlackListService,
+    private val userReader: UserReader,
 ) {
 
     fun findRentForm(umbrellaId: Long): RentFormResponse {
@@ -63,7 +61,7 @@ class RentService(
 
     @Transactional
     fun addRental(rentUmbrellaByUserRequest: RentUmbrellaByUserRequest, userToRent: User) {
-        userService.checkBlackList(userToRent.id!!)
+        blackListService.checkBlackList(userToRent.id!!)
         rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id).ifPresent {
             throw ExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 있습니다.")
         }
@@ -89,7 +87,7 @@ class RentService(
 
     @Transactional
     fun returnUmbrellaByUser(userToReturn: User, request: ReturnUmbrellaByUserRequest) {
-        userService.checkBlackList(userToReturn.id!!)
+        blackListService.checkBlackList(userToReturn.id!!)
         val history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.id)
             .orElseThrow { NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다.") }
         val returnStore = storeMetaService.findStoreMetaById(request.returnStoreId)
@@ -137,7 +135,7 @@ class RentService(
         if (history.refundedAt != null) {
             isRefunded = true
         }
-        return SingleHistoryResponse.ofUserHistory(history, returnAt, isReturned, isRefunded)
+        return SingleHistoryResponse.ofUserHistory(history, returnAt!!, isReturned, isRefunded)
     }
 
     private fun toRentalHistoryResponse(history: HistoryInfoDto): RentalHistoryResponse {
@@ -161,7 +159,7 @@ class RentService(
 
     @Transactional
     fun checkRefund(historyId: Long, userId: Long) {
-        val loginedUser = userService.findUserById(userId)
+        val loginedUser = userReader.findUserById(userId)
         val history = findHistoryById(historyId)
         history.refund(loginedUser, LocalDateTime.now())
         rentRepository.save(history)
@@ -169,7 +167,7 @@ class RentService(
 
     @Transactional
     fun checkPayment(historyId: Long, userId: Long) {
-        val loginedUser = userService.findUserById(userId)
+        val loginedUser = userReader.findUserById(userId)
         val history = findHistoryById(historyId)
         history.paid(loginedUser, LocalDateTime.now())
         rentRepository.save(history)
