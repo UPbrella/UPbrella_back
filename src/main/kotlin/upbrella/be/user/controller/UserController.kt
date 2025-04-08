@@ -14,6 +14,7 @@ import upbrella.be.user.dto.token.OauthToken
 import upbrella.be.user.exception.InvalidLoginCodeException
 import upbrella.be.user.exception.LoginedMemberException
 import upbrella.be.user.exception.NotSocialLoginedException
+import upbrella.be.user.service.BlackListService
 import upbrella.be.user.service.OauthLoginService
 import upbrella.be.user.service.UserService
 import upbrella.be.util.CustomResponse
@@ -25,7 +26,8 @@ class UserController(
     private val oauthLoginService: OauthLoginService,
     private val userService: UserService,
     private val kakaoOauthInfo: KakaoOauthInfo,
-    private val rentService: RentService
+    private val rentService: RentService,
+    private val blackListService: BlackListService,
 ) {
     private val log = LoggerFactory.getLogger(UserController::class.java)
 
@@ -235,7 +237,7 @@ class UserController(
 
     @GetMapping("/users/blackList")
     fun findBlackList(): ResponseEntity<CustomResponse<AllBlackListResponse>> {
-        val blackListResponse = userService.findBlackList()
+        val blackListResponse = blackListService.findBlackList()
 
         return ResponseEntity
             .ok()
@@ -249,7 +251,7 @@ class UserController(
 
     @DeleteMapping("/users/blackList/{blackListId}")
     fun deleteBlackList(@PathVariable blackListId: Long): ResponseEntity<CustomResponse<Unit>> {
-        userService.deleteBlackList(blackListId)
+        blackListService.deleteBlackList(blackListId)
 
         return ResponseEntity
             .ok()

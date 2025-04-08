@@ -37,6 +37,7 @@ import upbrella.be.user.dto.token.KakaoOauthInfo
 import upbrella.be.user.dto.token.OauthToken
 import upbrella.be.user.entity.User
 import upbrella.be.user.exception.*
+import upbrella.be.user.service.BlackListService
 import upbrella.be.user.service.OauthLoginService
 import upbrella.be.user.service.UserService
 import upbrella.be.util.AesEncryptor
@@ -54,10 +55,18 @@ class UserControllerTest (
     private val rentService: RentService,
     @Mock
     private val aesEncryptor: AesEncryptor,
+    @Mock
+    private val blackListService: BlackListService,
 ) : RestDocsSupport() {
 
     override fun initController(): Any {
-        return UserController(oauthLoginService, userService, kakaoOauthInfo, rentService)
+        return UserController(
+            oauthLoginService = oauthLoginService,
+            userService = userService,
+            kakaoOauthInfo = kakaoOauthInfo,
+            rentService = rentService,
+            blackListService = blackListService,
+        )
     }
 
     @Test
@@ -204,7 +213,7 @@ class UserControllerTest (
 
 
             val mockHttpSession = MockHttpSession()
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UserExceptionHandler())
+            mockMvc = setControllerAdvice(initController(), UserExceptionHandler())
 
             mockHttpSession.setAttribute("kakaoUser", kakaoUser)
 
@@ -229,7 +238,7 @@ class UserControllerTest (
                 .willThrow(HttpClientErrorException(HttpStatus.BAD_REQUEST))
 
             val mockHttpSession = MockHttpSession()
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UserExceptionHandler())
+            mockMvc = setControllerAdvice(initController(), UserExceptionHandler())
 
             // when & then
             mockMvc.perform(
@@ -380,7 +389,7 @@ class UserControllerTest (
             given(userService.join(any() ?: kakaoUser, any<JoinRequest>() ?: joinRequest))
                 .willThrow(ExistingMemberException("[ERROR] 이미 가입된 회원입니다."))
 
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UserExceptionHandler())
+            mockMvc = setControllerAdvice(initController(), UserExceptionHandler())
 
             // when & then
             mockMvc.perform(
@@ -406,7 +415,7 @@ class UserControllerTest (
                     id = 1L,
                     adminStatus = false
                 ))
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UserExceptionHandler())
+            mockMvc = setControllerAdvice(initController(), UserExceptionHandler())
 
             // when & then
             mockMvc.perform(
@@ -426,7 +435,7 @@ class UserControllerTest (
         @DisplayName("소셜 로그인이 되어있지 않은 사용자는 400 에러가 반환된다.")
         fun notSocialLogined() {
             // given
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(), UserExceptionHandler())
+            mockMvc = setControllerAdvice(initController(), UserExceptionHandler())
 
             // when & then
             mockMvc.perform(
@@ -672,7 +681,7 @@ class UserControllerTest (
             )
         )
 
-        given(userService.findBlackList())
+        given(blackListService.findBlackList())
             .willReturn(blackLists)
 
         // when & then
@@ -703,7 +712,7 @@ class UserControllerTest (
     fun deleteBlackListTest() {
         // given
         val blackListId = 1L
-        doNothing().`when`(userService).deleteBlackList(blackListId)
+        doNothing().`when`(blackListService).deleteBlackList(blackListId)
 
         // when & then
         mockMvc.perform(
