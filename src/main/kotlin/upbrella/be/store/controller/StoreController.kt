@@ -65,9 +65,7 @@ class StoreController(
                 "success",
                 200,
                 "어드민 가게 전체 조회 성공",
-                AllStoreResponse.builder()
-                    .stores(allStores)
-                    .build()
+                AllStoreResponse(allStores)
             ))
     }
 

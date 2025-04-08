@@ -36,6 +36,7 @@ import upbrella.be.rent.service.RentService
 import upbrella.be.slack.service.SlackAlarmService
 import upbrella.be.user.dto.response.SessionUser
 import upbrella.be.user.entity.User
+import upbrella.be.user.repository.UserReader
 import upbrella.be.user.service.UserService
 import java.time.LocalDateTime
 
@@ -60,14 +61,17 @@ class RentControllerTest : RestDocsSupport() {
     @Mock
     private lateinit var lockerService: LockerService
 
+    @Mock
+    private lateinit var userReader: UserReader
+
     override fun initController(): Any {
         return RentController(
-            conditionReportService,
-            improvementReportService,
-            rentService,
-            userService,
-            slackAlarmService,
-            lockerService
+            conditionReportService = conditionReportService,
+            improvementReportService = improvementReportService,
+            rentService = rentService,
+            userReader = userReader,
+            slackAlarmService =slackAlarmService,
+            lockerService= lockerService
         )
     }
 
@@ -154,7 +158,7 @@ class RentControllerTest : RestDocsSupport() {
 
         val returnFormResponse = ReturnFormResponse.of(storeMeta, history)
 
-        given(userService.findUserById(1L)).willReturn(userToReturn)
+        given(userReader.findUserById(1L)).willReturn(userToReturn)
         given(rentService.findReturnForm(storeMeta.id!!, userToReturn, salt, signature))
             .willReturn(returnFormResponse)
 
@@ -218,7 +222,7 @@ class RentControllerTest : RestDocsSupport() {
         val session = MockHttpSession()
         session.setAttribute("user", sessionUser)
 
-        given(userService.findUserById(1L)).willReturn(newUser)
+        given(userReader.findUserById(1L)).willReturn(newUser)
         given(lockerService.findLockerPassword(any<RentUmbrellaByUserRequest>() ?: request)).willReturn(lockerPassword)
 
         mockMvc.perform(

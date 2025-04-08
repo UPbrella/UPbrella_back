@@ -1,7 +1,7 @@
 package upbrella.be.user.service
 
-import org.assertj.core.api.Assertions.*
-import org.assertj.core.api.AssertionsForClassTypes.assertThatCode
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.*
@@ -15,24 +15,36 @@ import upbrella.be.rent.service.RentService
 import upbrella.be.user.dto.request.JoinRequest
 import upbrella.be.user.dto.request.KakaoAccount
 import upbrella.be.user.dto.request.UpdateBankAccountRequest
-import upbrella.be.user.dto.response.*
+import upbrella.be.user.dto.response.AllUsersInfoResponse
+import upbrella.be.user.dto.response.KakaoLoginResponse
+import upbrella.be.user.dto.response.SessionUser
+import upbrella.be.user.dto.response.SingleUserInfoResponse
 import upbrella.be.user.entity.BlackList
 import upbrella.be.user.entity.User
 import upbrella.be.user.exception.BlackListUserException
 import upbrella.be.user.exception.ExistingMemberException
 import upbrella.be.user.exception.NonExistingMemberException
-import upbrella.be.user.repository.BlackListRepository
-import upbrella.be.user.repository.UserRepository
+import upbrella.be.user.repository.*
 import upbrella.be.util.AesEncryptor
 import java.time.LocalDateTime
-import java.util.*
-import java.util.stream.Collectors
 
 @ExtendWith(MockitoExtension::class)
 class UserServiceTest {
 
     @Mock
     private lateinit var userRepository: UserRepository
+
+    @Mock
+    private lateinit var blackListReader: BlackListReader
+
+    @Mock
+    private lateinit var blackListWriter: BlackListWriter
+
+    @Mock
+    private lateinit var userReader: UserReader
+
+    @Mock
+    private lateinit var userWriter: UserWriter
 
     @Mock
     private lateinit var blackListRepository: BlackListRepository
@@ -63,7 +75,7 @@ class UserServiceTest {
         @DisplayName("회원은 로그인할 수 있다.")
         fun success() {
             // given
-            given(userRepository.findBySocialId(user.socialId)).willReturn(Optional.of(user))
+            given(userReader.findBySocialId(user.socialId)).willReturn(user)
 
             // when
             val loginedUserId = userService.login(user.socialId)
@@ -72,7 +84,7 @@ class UserServiceTest {
             assertAll(
                 { assertThat(loginedUserId.id).isEqualTo(user.id) },
                 {
-                    then(userRepository).should(times(1))
+                    then(userReader).should(times(1))
                         .findBySocialId(user.socialId)
                 }
             )
@@ -82,8 +94,8 @@ class UserServiceTest {
         @DisplayName("미가입된 사용자는 로그인 시 예외가 발생된다.")
         fun nonExistingUser() {
             // given
-            given(userRepository.findBySocialId(notExistingSocialId))
-                .willReturn(Optional.ofNullable(null))
+            given(userReader.findBySocialId(notExistingSocialId))
+                .willThrow(NonExistingMemberException("회원이 존재하지 않습니다."))
 
             // when & then
             assertAll(
@@ -92,7 +104,7 @@ class UserServiceTest {
                         .isInstanceOf(NonExistingMemberException::class.java)
                 },
                 {
-                    then(userRepository).should(times(1))
+                    then(userReader).should(times(1))
                         .findBySocialId(notExistingSocialId)
                 }
             )
@@ -127,9 +139,9 @@ class UserServiceTest {
                 )
             )
 
-            given(userRepository.existsBySocialId(notExistingSocialId))
+            given(userReader.existsBySocialId(notExistingSocialId))
                 .willReturn(false)
-            given(userRepository.save(any<User>())).willReturn(user)
+            given(userWriter.save(any<User>() ?: user)).willReturn(user)
 
             // when
             val joinedUserId = userService.join(kakaoUser, joinRequest)
@@ -138,10 +150,10 @@ class UserServiceTest {
             assertAll(
                 { assertThat(joinedUserId.id).isEqualTo(user.id) },
                 {
-                    then(userRepository).should(times(1)).save(any<User>())
+                    then(userWriter).should(times(1)).save(any<User>() ?: user)
                 },
                 {
-                    then(userRepository).should(times(1))
+                    then(userReader).should(times(1))
                         .existsBySocialId(notExistingSocialId)
                 }
             )
@@ -158,7 +170,7 @@ class UserServiceTest {
                 )
             )
 
-            given(userRepository.existsBySocialId(existingSocialId))
+            given(userReader.existsBySocialId(existingSocialId))
                 .willReturn(true)
 
             // when & then
@@ -168,12 +180,12 @@ class UserServiceTest {
                         .isInstanceOf(ExistingMemberException::class.java)
                 },
                 {
-                    then(userRepository).should(times(1))
+                    then(userReader).should(times(1))
                         .existsBySocialId(existingSocialId)
                 },
                 {
-                    then(userRepository).should(never())
-                        .save(any<User>())
+                    then(userWriter).should(never())
+                        .save(any<User>() ?: user)
                 }
             )
         }
@@ -264,7 +276,7 @@ class UserServiceTest {
                     .toList()
             )
 
-            given(userRepository.findAll()).willReturn(users)
+            given(userReader.findAll()).willReturn(users)
 
             // when
             val allUsersInfoResponse = userService.findUsers()
@@ -277,7 +289,7 @@ class UserServiceTest {
                         .isEqualTo(expected)
                 },
                 {
-                    then(userRepository).should(times(1)).findAll()
+                    then(userReader).should(times(1)).findAll()
                 }
             )
         }
@@ -286,7 +298,7 @@ class UserServiceTest {
         @DisplayName("존재하는 회원이 없으면 빈 목록이 반환된다.")
         fun nonExistingUser() {
             // given
-            given(userRepository.findAll())
+            given(userReader.findAll())
                 .willReturn(listOf())
 
             // when
@@ -298,7 +310,7 @@ class UserServiceTest {
                     assertThat(allUsersInfoResponse.users.size).isEqualTo(0)
                 },
                 {
-                    then(userRepository).should(times(1)).findAll()
+                    then(userReader).should(times(1)).findAll()
                 }
             )
         }
@@ -309,8 +321,9 @@ class UserServiceTest {
     fun updateBankTest() {
         // given
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
-        val updateBankInfoRequest: UpdateBankAccountRequest = FixtureBuilderFactory.builderBankAccount().sample()
-        given(userRepository.findById(user.id!!)).willReturn(Optional.of(user))
+        val updateBankInfoRequest: UpdateBankAccountRequest =
+            FixtureBuilderFactory.builderBankAccount().sample()
+        given(userReader.findUserById(user.id!!)).willReturn(user)
 
         // when
         userService.updateUserBankAccount(user.id!!, updateBankInfoRequest)
@@ -318,7 +331,7 @@ class UserServiceTest {
         // then
         assertAll(
             {
-                then(userRepository).should(times(1)).findById(user.id!!)
+                then(userReader).should(times(1)).findUserById(user.id!!)
             },
             {
                 assertThat(user.bank)
@@ -336,7 +349,7 @@ class UserServiceTest {
     fun deleteUser() {
         // given
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
-        given(userRepository.findById(user.id!!)).willReturn(Optional.of(user))
+        given(userReader.findUserById(user.id!!)).willReturn(user)
 
         // when
         userService.deleteUser(user.id!!)
@@ -361,7 +374,8 @@ class UserServiceTest {
         fun withdrawTest() {
             // given
             val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
-            given(userRepository.findById(user.id!!)).willReturn(Optional.of(user))
+            val blackList = BlackList(1L, LocalDateTime.now(), 1L)
+            given(userReader.findUserById(user.id!!)).willReturn(user)
 
             // when
             userService.withdrawUser(user.id!!)
@@ -369,8 +383,8 @@ class UserServiceTest {
             // then
             assertAll(
                 {
-                    then(userRepository).should(times(1))
-                        .findById(user.id!!)
+                    then(userReader).should(times(1))
+                        .findUserById(user.id!!)
                 },
                 { assertThat(user.socialId).isEqualTo(0L) },
                 { assertThat(user.name).isEqualTo("정지된 회원") },
@@ -379,8 +393,8 @@ class UserServiceTest {
                 { assertThat(user.bank).isNull() },
                 { assertThat(user.accountNumber).isNull() },
                 {
-                    then(blackListRepository).should(times(1))
-                        .save(any<BlackList>())
+                    then(blackListWriter).should(times(1))
+                        .save(any<BlackList>() ?: blackList)
                 }
             )
         }
@@ -393,7 +407,7 @@ class UserServiceTest {
                 .set("id", 0L)
                 .sample()
 
-            given(userRepository.findById(blockedUser.id!!)).willReturn(Optional.of(blockedUser))
+            given(userReader.findUserById(blockedUser.id!!)).willReturn(blockedUser)
 
             // when
             userService.withdrawUser(blockedUser.id!!)
@@ -401,8 +415,8 @@ class UserServiceTest {
             // then
             assertAll(
                 {
-                    then(userRepository).should(times(1))
-                        .findById(blockedUser.id!!)
+                    then(userReader).should(times(1))
+                        .findUserById(blockedUser.id!!)
                 },
                 {
                     assertThatThrownBy { userService.withdrawUser(blockedUser.id!!) }
@@ -424,8 +438,8 @@ class UserServiceTest {
         )
 
         val blackListId = 0L
-        given(blackListRepository.existsBySocialId(blackListId)).willReturn(true)
-        given(userRepository.existsBySocialId(blackListId)).willReturn(false)
+        given(blackListReader.existsBySocialId(blackListId)).willReturn(true)
+        given(userReader.existsBySocialId(blackListId)).willReturn(false)
         val joinRequest = FixtureBuilderFactory.builderJoinRequest().sample()
 
         // when & then
@@ -438,7 +452,7 @@ class UserServiceTest {
     fun deleteUserBankAccountTest() {
         // given
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
-        given(userRepository.findById(user.id!!)).willReturn(Optional.of(user))
+        given(userReader.findUserById(user.id!!)).willReturn(user)
 
         // when
         userService.deleteUser(user.id!!)
@@ -450,38 +464,6 @@ class UserServiceTest {
         )
     }
 
-    @Test
-    @DisplayName("사용자는 블랙리스트를 조회할 수 있다.")
-    fun blackListTest() {
-        // given
-        val now = LocalDateTime.now()
-
-        given(blackListRepository.findAll()).willReturn(
-            listOf(
-                BlackList(1L, now, 1L)
-            )
-        )
-
-        // when & then
-        assertAll(
-            { assertThat(userService.findBlackList().blackList.size).isEqualTo(1) },
-            { assertThat(userService.findBlackList().blackList[0].blockedAt).isEqualTo(now) }
-        )
-    }
-
-    @Test
-    @DisplayName("사용자는 블랙리스트의 유저를 삭제할 수 있다.")
-    fun deleteBlackListTest() {
-        // given
-        val blackListId = 1L
-        doNothing().`when`(blackListRepository).deleteById(blackListId)
-
-        // when
-        userService.deleteBlackList(blackListId)
-
-        // then
-        verify(blackListRepository, times(1)).deleteById(blackListId)
-    }
 
     @Test
     @DisplayName("사용자는 관리자 권한을 변경할 수 있다.")
@@ -491,7 +473,7 @@ class UserServiceTest {
             .set("adminStatus", false)
             .sample()
 
-        given(userRepository.findById(1L)).willReturn(Optional.of(user))
+        given(userReader.findUserById(1L)).willReturn(user)
 
         // when
         userService.updateAdminStatus(1L)
@@ -507,37 +489,11 @@ class UserServiceTest {
         val user = SessionUser(
             id = 1L,
             adminStatus = false
-            )
+        )
 
         // when & then
         assertThatThrownBy { userService.findDecryptedUserById(user) }
             .isInstanceOf(NonExistingMemberException::class.java)
     }
 
-    @Test
-    @DisplayName("사용자가 블랙리스트에 등록되어 있으면 예외가 발생한다.")
-    fun checkBlackListThrowTest() {
-        // given
-        val blackList = BlackList.createNewBlackList(1L)
-
-        given(blackListRepository.findById(1L))
-            .willReturn(Optional.of(blackList))
-
-        // when & then
-        assertThatThrownBy { userService.checkBlackList(1L) }
-            .isInstanceOf(BlackListUserException::class.java)
-    }
-
-    @Test
-    @DisplayName("사용자가 블랙리스트에 없으면 예외가 발생하지 않는다.")
-    fun checkBlackListNotThrowTest() {
-        // given
-        given(blackListRepository.findById(1L))
-            .willReturn(Optional.empty())
-
-        // when & then
-        assertThatCode {
-            userService.checkBlackList(1L)
-        }.doesNotThrowAnyException()
-    }
 }
