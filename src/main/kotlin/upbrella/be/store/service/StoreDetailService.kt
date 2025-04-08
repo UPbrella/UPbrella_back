@@ -10,15 +10,16 @@ import upbrella.be.store.dto.response.StoreIntroductionsResponseByClassification
 import upbrella.be.store.entity.StoreDetail
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.exception.NonExistingStoreDetailException
-import upbrella.be.store.repository.StoreDetailRepository
+import upbrella.be.store.repository.StoreDetailReader
+import upbrella.be.store.repository.StoreDetailWriter
 import upbrella.be.umbrella.service.UmbrellaService
-import kotlin.streams.toList
 
 @Service
 class StoreDetailService(
     private val classificationService: ClassificationService,
     private val umbrellaService: UmbrellaService,
-    private val storeDetailRepository: StoreDetailRepository,
+    private val storeDetailReader: StoreDetailReader,
+    private val storeDetailWriter: StoreDetailWriter,
     private val businessHourService: BusinessHourService
 ) {
 
@@ -40,7 +41,7 @@ class StoreDetailService(
 
     @Transactional(readOnly = true)
     fun findStoreDetailByStoreMetaId(storeId: Long): StoreDetail {
-        return storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId)
+        return storeDetailReader.findByStoreMetaIdUsingFetchJoin(storeId)
             .orElseThrow { NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다.") }
     }
 
@@ -54,12 +55,12 @@ class StoreDetailService(
 
     @Transactional(readOnly = true)
     fun findAllStores(): List<SingleStoreResponse> {
-        return storeDetailRepository.findAllStoresForAdmin()
+        return storeDetailReader.findAllStoresForAdmin()
     }
 
     @Transactional(readOnly = true)
     fun findAllStoreIntroductions(): AllStoreIntroductionResponse {
-        val storeDetails = storeDetailRepository.findAllStores()
+        val storeDetails = storeDetailReader.findAllStores()
 
         val collected = storeDetails.groupBy { it.storeMeta!!.subClassification!!.id }
 
@@ -74,12 +75,12 @@ class StoreDetailService(
 
     @Transactional
     fun saveStoreDetail(storeDetail: StoreDetail) {
-        storeDetailRepository.save(storeDetail)
+        storeDetailWriter.
+        save(storeDetail)
     }
 
     @Transactional(readOnly = true)
     fun findByStoreMetaId(storeId: Long): StoreDetail {
-        return storeDetailRepository.findStoreDetailByStoreMetaId(storeId)
-            .orElseThrow { NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다.") }
+        return storeDetailReader.findStoreDetailByStoreMetaId(storeId);
     }
 }
