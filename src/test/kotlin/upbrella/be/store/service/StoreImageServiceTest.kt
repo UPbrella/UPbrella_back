@@ -115,7 +115,7 @@ class StoreImageServiceTest {
         @DisplayName("사용자는 썸네일을 생성할 수 있다.")
         fun createThumbnailTest() {
             // given
-            val fist = SingleImageUrlResponse(
+            val first = SingleImageUrlResponse(
                 id = 1L,
                 imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
             )
@@ -125,7 +125,7 @@ class StoreImageServiceTest {
                 imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
             )
 
-            val imageUrls = listOf(fist, second)
+            val imageUrls = listOf(first, second)
 
             // when
             val thumbnail = storeImageService.createThumbnail(imageUrls)
