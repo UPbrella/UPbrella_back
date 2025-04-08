@@ -7,13 +7,13 @@ import upbrella.be.store.dto.response.AllBusinessHourResponse
 import upbrella.be.store.dto.response.SingleBusinessHourResponse
 import upbrella.be.store.entity.BusinessHour
 import upbrella.be.store.entity.StoreMeta
-import upbrella.be.store.repository.BusignessHourReader
-import upbrella.be.store.repository.BusignessHourWriter
+import upbrella.be.store.repository.BusinessHourReader
+import upbrella.be.store.repository.BusinessHourWriter
 
 @Service
 class BusinessHourService(
-    private val businessHourReader: BusignessHourReader,
-    private val businessHourWriter: BusignessHourWriter
+    private val businessHourReader: BusinessHourReader,
+    private val businessHourWriter: BusinessHourWriter
 ) {
 
     @Transactional

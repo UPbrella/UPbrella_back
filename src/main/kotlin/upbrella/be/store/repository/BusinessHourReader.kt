@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component
 import upbrella.be.store.entity.BusinessHour
 
 @Component
-class BusignessHourReader(
+class BusinessHourReader(
     private val businessHourRepository: BusinessHourRepository,
 ) {
     fun findByStoreMetaId(storeMetaId: Long): List<BusinessHour> {

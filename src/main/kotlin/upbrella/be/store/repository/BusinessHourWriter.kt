@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component
 import upbrella.be.store.entity.BusinessHour
 
 @Component
-class BusignessHourWriter(
+class BusinessHourWriter(
     private val businessHourRepository: BusinessHourRepository,
 ) {
     fun deleteAllByStoreMetaId(storeMetaId: Long) {
