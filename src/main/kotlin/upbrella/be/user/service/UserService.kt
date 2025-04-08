@@ -17,9 +17,9 @@ import java.time.LocalDateTime
 
 @Service
 class UserService(
+    private val rentService: RentService,
     private val userReader: UserReader,
     private val userWriter: UserWriter,
-    @Lazy private val rentService: RentService,
     private val aesEncryptor: AesEncryptor,
     private val userRepository: UserRepository,
     private val blackListReader: BlackListReader,
