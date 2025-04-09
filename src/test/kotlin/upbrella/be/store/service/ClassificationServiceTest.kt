@@ -19,14 +19,17 @@ import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
 import upbrella.be.store.exception.AssignedClassificationException
 import upbrella.be.store.exception.IncorrectClassificationException
-import upbrella.be.store.repository.ClassificationRepository
-import java.util.*
+import upbrella.be.store.repository.ClassificationReader
+import upbrella.be.store.repository.ClassificationWriter
 
 @ExtendWith(MockitoExtension::class)
 class ClassificationServiceTest {
 
     @Mock
-    private lateinit var classificationRepository: ClassificationRepository
+    private lateinit var classificationReader: ClassificationReader
+
+    @Mock
+    private lateinit var classificationWriter: ClassificationWriter
 
     @Mock
     private lateinit var storeMetaService: StoreMetaService
@@ -44,14 +47,14 @@ class ClassificationServiceTest {
             longitude = 127.1234
         )
 
-        given(classificationRepository.save(any(Classification::class.java)))
+        given(classificationWriter.save(any(Classification::class.java)))
             .willReturn(Classification())
 
         // when
         classificationService.createClassification(request)
 
         // then
-        Mockito.verify(classificationRepository, Mockito.times(1)).save(any(Classification::class.java))
+        Mockito.verify(classificationWriter, Mockito.times(1)).save(any(Classification::class.java))
     }
 
     @Test
@@ -62,14 +65,14 @@ class ClassificationServiceTest {
             name = "편의점"
         )
 
-        given(classificationRepository.save(any(Classification::class.java)))
+        given(classificationWriter.save(any(Classification::class.java)))
             .willReturn(Classification())
 
         // when
         classificationService.createSubClassification(request)
 
         // then
-        Mockito.verify(classificationRepository, Mockito.times(1)).save(any(Classification::class.java))
+        Mockito.verify(classificationWriter, Mockito.times(1)).save(any(Classification::class.java))
     }
 
     @Test
@@ -78,14 +81,14 @@ class ClassificationServiceTest {
         // given
         val classificationId = 1L
         given(storeMetaService.existByClassificationId(classificationId)).willReturn(false)
-        given(classificationRepository.existsById(classificationId)).willReturn(true)
-        doNothing().`when`(classificationRepository).deleteById(classificationId)
+        given(classificationReader.existsById(classificationId)).willReturn(true)
+        doNothing().`when`(classificationWriter).deleteById(classificationId)
 
         // when
         classificationService.deleteClassification(classificationId)
 
         // then
-        Mockito.verify(classificationRepository, Mockito.times(1)).deleteById(classificationId)
+        Mockito.verify(classificationWriter, Mockito.times(1)).deleteById(classificationId)
     }
 
     @Test
@@ -94,7 +97,7 @@ class ClassificationServiceTest {
         // given
         val classificationId = 1L
         given(storeMetaService.existByClassificationId(classificationId)).willReturn(true)
-        given(classificationRepository.existsById(classificationId)).willReturn(true)
+        given(classificationReader.existsById(classificationId)).willReturn(true)
 
         // when & then
         assertThatThrownBy { classificationService.deleteClassification(classificationId) }
@@ -108,7 +111,7 @@ class ClassificationServiceTest {
         // given
         val classificationId = 1L
         given(storeMetaService.existByClassificationId(classificationId)).willReturn(true)
-        given(classificationRepository.existsById(classificationId)).willReturn(true)
+        given(classificationReader.existsById(classificationId)).willReturn(true)
 
         // when & then
         assertThatThrownBy { classificationService.deleteSubClassification(classificationId) }
@@ -129,7 +132,7 @@ class ClassificationServiceTest {
                 longitude = 1.0
             )
         )
-        given(classificationRepository.findByType(ClassificationType.CLASSIFICATION))
+        given(classificationReader.findByType(ClassificationType.CLASSIFICATION))
             .willReturn(mockClassificationList)
 
         // when
@@ -166,8 +169,8 @@ class ClassificationServiceTest {
         fun findClassificationById() {
             // given
             val classificationId = 1L
-            given(classificationRepository.findById(classificationId))
-                .willReturn(Optional.ofNullable(classification))
+            given(classificationReader.findById(classificationId))
+                .willReturn(classification)
 
             // when
             val foundClassification = classificationService.findClassificationById(classificationId)
@@ -185,8 +188,8 @@ class ClassificationServiceTest {
         fun test() {
             // given
             val classificationId = 1L
-            given(classificationRepository.findById(classificationId))
-                .willReturn(Optional.ofNullable(subClassification))
+            given(classificationReader.findById(classificationId))
+                .willReturn(classification)
 
             // when & then
             assertThatThrownBy { classificationService.findClassificationById(classificationId) }
@@ -208,7 +211,7 @@ class ClassificationServiceTest {
                 longitude = 1.0
             )
         )
-        given(classificationRepository.findByType(ClassificationType.SUB_CLASSIFICATION))
+        given(classificationReader.findByType(ClassificationType.SUB_CLASSIFICATION))
             .willReturn(mockClassificationList)
 
         // when
@@ -245,8 +248,8 @@ class ClassificationServiceTest {
         fun findClassificationById() {
             // given
             val subClassificationId = 1L
-            given(classificationRepository.findById(subClassificationId))
-                .willReturn(Optional.ofNullable(subClassification))
+            given(classificationReader.findById(subClassificationId))
+                .willReturn(classification)
 
             // when
             val foundSubClassification = classificationService.findSubClassificationById(subClassificationId)
@@ -264,8 +267,8 @@ class ClassificationServiceTest {
         fun test() {
             // given
             val classificationId = 1L
-            given(classificationRepository.findById(classificationId))
-                .willReturn(Optional.ofNullable(classification))
+            given(classificationReader.findById(classificationId))
+                .willReturn(classification)
 
             // when & then
             assertThatThrownBy { classificationService.findSubClassificationById(classificationId) }

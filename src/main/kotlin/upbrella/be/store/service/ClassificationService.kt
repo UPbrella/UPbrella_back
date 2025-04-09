@@ -101,6 +101,8 @@ class ClassificationService(
     }
 
     private fun findClassificationEntityById(id: Long): Classification {
+
         return classificationReader.findById(id)
+            ?: throw NonExistingClassificationException("[ERROR] 존재하지 않는 분류입니다.")
     }
 }

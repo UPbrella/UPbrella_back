@@ -3,16 +3,13 @@ package upbrella.be.store.repository
 import org.springframework.stereotype.Component
 import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
-import upbrella.be.store.exception.NonExistingClassificationException
 
 @Component
 class ClassificationReader(
     private val classificationRepository: ClassificationRepository,
 ) {
-    fun findById(id: Long): Classification {
-        return classificationRepository.findById(id)
-            .orElseThrow { NonExistingClassificationException("[ERROR] 존재하지 않는 분류입니다.")
-            }
+    fun findById(id: Long): Classification? {
+        return classificationRepository.findById(id).orElse(null)
     }
 
     fun findByType(type: ClassificationType): List<Classification> {
