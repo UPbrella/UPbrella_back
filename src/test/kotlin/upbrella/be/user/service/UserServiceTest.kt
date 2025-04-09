@@ -32,9 +32,6 @@ import java.time.LocalDateTime
 class UserServiceTest {
 
     @Mock
-    private lateinit var userRepository: UserRepository
-
-    @Mock
     private lateinit var blackListReader: BlackListReader
 
     @Mock
@@ -45,9 +42,6 @@ class UserServiceTest {
 
     @Mock
     private lateinit var userWriter: UserWriter
-
-    @Mock
-    private lateinit var blackListRepository: BlackListRepository
 
     @Mock
     private lateinit var rentService: RentService
