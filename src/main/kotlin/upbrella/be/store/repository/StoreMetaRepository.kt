@@ -6,4 +6,6 @@ import java.util.Optional
 
 interface StoreMetaRepository : JpaRepository<StoreMeta, Long>, StoreMetaRepositoryCustom {
     fun findByClassificationIdAndDeletedIsFalse(id: Long): Optional<StoreMeta>
+
+    fun existsByClassificationIdAndDeletedIsFalse(classificationId: Long): Boolean
 }
