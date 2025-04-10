@@ -15,6 +15,7 @@ import upbrella.be.store.entity.*
 import upbrella.be.store.exception.NonExistingStoreDetailException
 import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreDetailWriter
+import upbrella.be.umbrella.repository.UmbrellaReader
 import upbrella.be.umbrella.service.UmbrellaService
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -30,6 +31,9 @@ class StoreDetailServiceTest {
 
     @Mock
     private lateinit var umbrellaService: UmbrellaService
+
+    @Mock
+    private lateinit var umbrellaReader: UmbrellaReader
 
     @Mock
     private lateinit var storeDetailReader: StoreDetailReader
@@ -95,7 +99,7 @@ class StoreDetailServiceTest {
             // given
             given(storeDetailReader.findByStoreMetaId(3L))
                 .willReturn(storeDetail)
-            given(umbrellaService.countAvailableUmbrellaAtStore(3L))
+            given(umbrellaReader.countRentableUmbrellasByStore(3L))
                 .willReturn(10L)
 
             // when
@@ -113,8 +117,8 @@ class StoreDetailServiceTest {
                         .findByStoreMetaId(3L)
                 },
                 {
-                    then(umbrellaService).should(times(1))
-                        .countAvailableUmbrellaAtStore(3L)
+                    then(umbrellaReader).should(times(1))
+                        .countRentableUmbrellasByStore(3L)
                 }
             )
         }
