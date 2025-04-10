@@ -15,7 +15,6 @@ import upbrella.be.store.exception.AssignedClassificationException
 import upbrella.be.store.exception.IncorrectClassificationException
 import upbrella.be.store.exception.NonExistingClassificationException
 import upbrella.be.store.repository.ClassificationReader
-import upbrella.be.store.repository.ClassificationRepository
 import upbrella.be.store.repository.ClassificationWriter
 
 @Service
@@ -85,7 +84,7 @@ class ClassificationService(
     }
 
     fun findClassificationById(id: Long): Classification {
-        val classification = findClassificationEntityById(id)
+        val classification = classificationReader.findById(id)
         if (classification.type != ClassificationType.CLASSIFICATION) {
             throw IncorrectClassificationException("[ERROR] Classification이 아닙니다.")
         }
@@ -93,16 +92,10 @@ class ClassificationService(
     }
 
     fun findSubClassificationById(id: Long): Classification {
-        val classification = findClassificationEntityById(id)
+        val classification = classificationReader.findById(id)
         if (classification.type != ClassificationType.SUB_CLASSIFICATION) {
             throw IncorrectClassificationException("[ERROR] SubClassification이 아닙니다.")
         }
         return classification
-    }
-
-    private fun findClassificationEntityById(id: Long): Classification {
-
-        return classificationReader.findById(id)
-            ?: throw NonExistingClassificationException("[ERROR] 존재하지 않는 분류입니다.")
     }
 }

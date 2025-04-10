@@ -20,6 +20,7 @@ import upbrella.be.store.entity.*
 import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
 import upbrella.be.store.exception.NonExistingStoreMetaException
+import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.store.repository.StoreMetaWriter
 import upbrella.be.umbrella.entity.Umbrella
@@ -41,6 +42,9 @@ class StoreMetaServiceTest {
 
     @Mock
     private lateinit var storeMetaWriter: StoreMetaWriter
+
+    @Mock
+    private lateinit var storeDetailReader: StoreDetailReader
 
     @Mock
     private lateinit var storeDetailService: StoreDetailService
@@ -623,7 +627,7 @@ class StoreMetaServiceTest {
             )
         )
 
-        given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail)
+        given(storeDetailReader.findByStoreMetaId(1L)).willReturn(storeDetail)
 
         // when
         storeMetaService.activateStoreStatus(1L)
@@ -646,7 +650,7 @@ class StoreMetaServiceTest {
             storeImages = listOf()
         )
 
-        given(storeDetailService.findStoreDetailByStoreMetaId(1L))
+        given(storeDetailReader.findByStoreMetaId(1L))
             .willReturn(storeDetail)
 
         // when & then
@@ -676,7 +680,7 @@ class StoreMetaServiceTest {
             )
         )
 
-        given(storeDetailService.findStoreDetailByStoreMetaId(1L))
+        given(storeDetailReader.findByStoreMetaId(1L))
             .willReturn(storeDetail)
 
         // when

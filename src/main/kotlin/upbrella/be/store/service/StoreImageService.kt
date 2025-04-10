@@ -12,6 +12,7 @@ import upbrella.be.store.dto.response.AllImageUrlResponse
 import upbrella.be.store.dto.response.SingleImageUrlResponse
 import upbrella.be.store.entity.StoreImage
 import upbrella.be.store.exception.NonExistingStoreImageException
+import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreImageReader
 import upbrella.be.store.repository.StoreImageWriter
 import java.io.IOException
@@ -22,7 +23,7 @@ class StoreImageService(
     private val s3Client: S3Client,
     private val storeImageReader: StoreImageReader,
     private val storeImageWriter: StoreImageWriter,
-    @Lazy private val storeDetailService: StoreDetailService
+    private val storeDetailReader: StoreDetailReader,
 ) {
 
     @Transactional
@@ -67,7 +68,7 @@ class StoreImageService(
 
     @Transactional(readOnly = true)
     fun findAllImages(storeId: Long): AllImageUrlResponse {
-        val storeDetail = storeDetailService.findByStoreMetaId(storeId)
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
 
         return AllImageUrlResponse.of(
             storeId,
@@ -87,7 +88,7 @@ class StoreImageService(
     }
 
     private fun saveStoreImage(imageUrl: String, storeId: Long) {
-        val storeDetail = storeDetailService.findByStoreMetaId(storeId)
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
         storeImageWriter.save(StoreImage.createStoreImage(storeDetail, imageUrl))
     }
 

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.*
 import org.mockito.InjectMocks
@@ -170,6 +169,7 @@ class ClassificationServiceTest {
         fun findClassificationById() {
             // given
             val classificationId = 1L
+
             given(classificationReader.findById(classificationId))
                 .willReturn(classification)
 
@@ -192,13 +192,10 @@ class ClassificationServiceTest {
             given(classificationReader.findById(classificationId))
                 .willReturn(subClassification)
 
-            // when
-            val exception = assertThrows<IncorrectClassificationException> {
-                classificationService.findClassificationById(classificationId)
-            }
-
-            // then
-            assertThat(exception.message).isEqualTo("[ERROR] Classification이 아닙니다.")
+            // when & then
+            assertThatThrownBy { classificationService.findClassificationById(classificationId) }
+                .isInstanceOf(IncorrectClassificationException::class.java)
+                .hasMessage("[ERROR] Classification이 아닙니다.")
         }
     }
 
@@ -275,12 +272,9 @@ class ClassificationServiceTest {
                 .willReturn(classification)
 
             // when & then
-            val exception = assertThrows<IncorrectClassificationException> {
-                classificationService.findSubClassificationById(classificationId)
-            }
-
-            // when & then
-            assertThat(exception.message).isEqualTo("[ERROR] SubClassification이 아닙니다.")
+            assertThatThrownBy { classificationService.findSubClassificationById(classificationId) }
+                .isInstanceOf(IncorrectClassificationException::class.java)
+                .hasMessage("[ERROR] SubClassification이 아닙니다.")
         }
     }
 }

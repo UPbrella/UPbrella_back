@@ -1,6 +1,7 @@
 package upbrella.be.store.repository
 
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import upbrella.be.store.dto.response.SingleStoreResponse
 import upbrella.be.store.entity.StoreDetail
 import upbrella.be.store.exception.NonExistingStoreDetailException
@@ -10,17 +11,14 @@ import java.util.*
 class StoreDetailReader(
     private val storeDetailRepository: StoreDetailRepository
 ) {
-    fun findStoreDetailByStoreMetaId(storeMetaId: Long): StoreDetail {
-        return storeDetailRepository.findStoreDetailByStoreMetaId(storeMetaId)
-            .orElseThrow { NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다.") }
-    }
-
     fun findAllStores(): List<StoreDetail> {
         return storeDetailRepository.findAllStores()
     }
 
-    fun findByStoreMetaIdUsingFetchJoin(storeMetaId: Long): Optional<StoreDetail> {
+    @Transactional(readOnly = true)
+    fun findByStoreMetaId(storeMetaId: Long): StoreDetail {
         return storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId)
+            .orElseThrow() { NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다.") }
     }
 
     fun findAllStoresForAdmin(): List<SingleStoreResponse> {

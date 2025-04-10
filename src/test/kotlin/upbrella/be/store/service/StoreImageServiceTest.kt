@@ -23,6 +23,7 @@ import org.mockito.Mockito.verify
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
+import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreImageReader
 import upbrella.be.store.repository.StoreImageWriter
 
@@ -40,7 +41,7 @@ class StoreImageServiceTest {
     private lateinit var storeImageWriter: StoreImageWriter
 
     @Mock
-    private lateinit var storeDetailService: StoreDetailService
+    private lateinit var storeDetailReader: StoreDetailReader
 
     @InjectMocks
     private lateinit var storeImageService: StoreImageService
@@ -56,7 +57,7 @@ class StoreImageServiceTest {
         val randomId = storeImageService.makeRandomId()
         val expectedUrl = "https://file.upbrella.co.kr/store-image/filename.jpg$randomId"
 
-        given(storeDetailService.findByStoreMetaId(storeDetailId)).willReturn(storeDetail)
+        given(storeDetailReader.findByStoreMetaId(storeDetailId)).willReturn(storeDetail)
         given(s3Client.putObject(any(PutObjectRequest::class.java), any(RequestBody::class.java)))
             .willReturn(PutObjectResponse.builder().build())
 

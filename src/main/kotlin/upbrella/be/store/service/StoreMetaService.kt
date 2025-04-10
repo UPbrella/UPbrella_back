@@ -15,6 +15,7 @@ import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
 import upbrella.be.store.exception.NonExistingStoreMetaException
+import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.store.repository.StoreMetaWriter
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
@@ -26,6 +27,7 @@ class StoreMetaService(
     private val umbrellaRepository: UmbrellaRepository,
     private val storeMetaReader: StoreMetaReader,
     private val storeMetaWriter: StoreMetaWriter,
+    private val storeDetailReder: StoreDetailReader,
     @Lazy private val storeDetailService: StoreDetailService,
     private val classificationService: ClassificationService,
     private val businessHourService: BusinessHourService
@@ -83,7 +85,7 @@ class StoreMetaService(
 
     @Transactional
     fun activateStoreStatus(storeId: Long) {
-        val storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId)
+        val storeDetail = storeDetailReder.findByStoreMetaId(storeId)
 
         val storeImages: List<StoreImage> = storeDetail.storeImages
         if (storeImages.isEmpty()) {
@@ -95,7 +97,7 @@ class StoreMetaService(
 
     @Transactional
     fun inactivateStoreStatus(storeId: Long) {
-        val storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId)
+        val storeDetail = storeDetailReder.findByStoreMetaId(storeId)
         storeDetail.storeMeta!!.inactivateStoreStatus()
     }
 
