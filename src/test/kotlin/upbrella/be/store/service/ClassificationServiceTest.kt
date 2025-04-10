@@ -21,6 +21,7 @@ import upbrella.be.store.exception.AssignedClassificationException
 import upbrella.be.store.exception.IncorrectClassificationException
 import upbrella.be.store.repository.ClassificationReader
 import upbrella.be.store.repository.ClassificationWriter
+import upbrella.be.store.repository.StoreMetaReader
 
 @ExtendWith(MockitoExtension::class)
 class ClassificationServiceTest {
@@ -32,7 +33,7 @@ class ClassificationServiceTest {
     private lateinit var classificationWriter: ClassificationWriter
 
     @Mock
-    private lateinit var storeMetaService: StoreMetaService
+    private lateinit var storeMetaReader: StoreMetaReader
 
     @InjectMocks
     private lateinit var classificationService: ClassificationService
@@ -80,7 +81,7 @@ class ClassificationServiceTest {
     fun deleteClassificationTest() {
         // given
         val classificationId = 1L
-        given(storeMetaService.existByClassificationId(classificationId)).willReturn(false)
+        given(storeMetaReader.existByClassificationId(classificationId)).willReturn(false)
         given(classificationReader.existsById(classificationId)).willReturn(true)
         doNothing().`when`(classificationWriter).deleteById(classificationId)
 
@@ -96,7 +97,7 @@ class ClassificationServiceTest {
     fun unableToDeleteClassification() {
         // given
         val classificationId = 1L
-        given(storeMetaService.existByClassificationId(classificationId)).willReturn(true)
+        given(storeMetaReader.existByClassificationId(classificationId)).willReturn(true)
         given(classificationReader.existsById(classificationId)).willReturn(true)
 
         // when & then
@@ -110,7 +111,7 @@ class ClassificationServiceTest {
     fun unableToDeleteSubClassification() {
         // given
         val classificationId = 1L
-        given(storeMetaService.existByClassificationId(classificationId)).willReturn(true)
+        given(storeMetaReader.existByClassificationId(classificationId)).willReturn(true)
         given(classificationReader.existsById(classificationId)).willReturn(true)
 
         // when & then

@@ -16,12 +16,13 @@ import upbrella.be.store.exception.IncorrectClassificationException
 import upbrella.be.store.exception.NonExistingClassificationException
 import upbrella.be.store.repository.ClassificationReader
 import upbrella.be.store.repository.ClassificationWriter
+import upbrella.be.store.repository.StoreMetaReader
 
 @Service
 class ClassificationService(
     private val classificationReader: ClassificationReader,
     private val classificationWriter: ClassificationWriter,
-    @Lazy private val storeMetaService: StoreMetaService
+    private val storeMetaReader: StoreMetaReader
 ) {
 
     fun createClassification(request: CreateClassificationRequest): Classification {
@@ -38,7 +39,7 @@ class ClassificationService(
             throw NonExistingClassificationException("[ERROR] 존재하지 않는 대분류입니다.")
         }
 
-        if (storeMetaService.existByClassificationId(id)) {
+        if (storeMetaReader.existByClassificationId(id)) {
             throw AssignedClassificationException("[ERROR] 해당 대분류에 속한 협업지점이 존재합니다.")
         }
 
@@ -50,7 +51,7 @@ class ClassificationService(
             throw NonExistingClassificationException("[ERROR] 존재하지 않는 소분류입니다.")
         }
 
-        if (storeMetaService.existByClassificationId(id)) {
+        if (storeMetaReader.existByClassificationId(id)) {
             throw AssignedClassificationException("[ERROR] 해당 소분류에 속한 협업지점이 존재합니다.")
         }
 

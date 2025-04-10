@@ -77,12 +77,6 @@ class StoreMetaService(
         return storeMetaReader.existsById(storeId)
     }
 
-    @Transactional(readOnly = true)
-    fun existByClassificationId(classificationId: Long): Boolean {
-
-        return storeMetaReader.existsByClassificationIdAndDeletedIsFalse(classificationId)
-    }
-
     @Transactional
     fun activateStoreStatus(storeId: Long) {
         val storeDetail = storeDetailReder.findByStoreMetaId(storeId)

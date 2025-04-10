@@ -12,7 +12,7 @@ class StoreMetaReader(
         return storeMetaRepository.findByClassificationIdAndDeletedIsFalse(id).orElse(null)
     }
 
-    fun existsByClassificationIdAndDeletedIsFalse(classificationId: Long): Boolean {
+    fun existByClassificationId(classificationId: Long): Boolean {
         return storeMetaRepository.existsByClassificationIdAndDeletedIsFalse(classificationId)
     }
 
