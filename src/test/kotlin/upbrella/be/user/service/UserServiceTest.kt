@@ -47,14 +47,9 @@ class UserServiceTest {
     private lateinit var userWriter: UserWriter
 
     @Mock
-    private lateinit var blackListRepository: BlackListRepository
-
-    @Mock
     private lateinit var rentService: RentService
-
     @Mock
     private lateinit var aesEncryptor: AesEncryptor
-
     @InjectMocks
     private lateinit var userService: UserService
 

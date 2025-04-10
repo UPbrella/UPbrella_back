@@ -9,22 +9,22 @@ import upbrella.be.store.dto.response.StoreFindByIdResponse
 import upbrella.be.store.dto.response.StoreIntroductionsResponseByClassification
 import upbrella.be.store.entity.StoreDetail
 import upbrella.be.store.entity.StoreMeta
-import upbrella.be.store.exception.NonExistingStoreDetailException
-import upbrella.be.store.repository.StoreDetailRepository
+import upbrella.be.store.repository.StoreDetailReader
+import upbrella.be.store.repository.StoreDetailWriter
 import upbrella.be.umbrella.service.UmbrellaService
-import kotlin.streams.toList
 
 @Service
 class StoreDetailService(
     private val classificationService: ClassificationService,
     private val umbrellaService: UmbrellaService,
-    private val storeDetailRepository: StoreDetailRepository,
+    private val storeDetailReader: StoreDetailReader,
+    private val storeDetailWriter: StoreDetailWriter,
     private val businessHourService: BusinessHourService
 ) {
 
     @Transactional
     fun updateStore(storeId: Long, request: UpdateStoreRequest) {
-        val storeDetailById = findStoreDetailByStoreMetaId(storeId)
+        val storeDetailById = storeDetailReader.findByStoreMetaId(storeId)
 
         val classification = classificationService.findClassificationById(request.classificationId)
         val subClassification = classificationService.findSubClassificationById(request.subClassificationId)
@@ -38,15 +38,14 @@ class StoreDetailService(
         businessHourService.updateBusinessHours(foundStoreMeta, request.businessHours)
     }
 
-    @Transactional(readOnly = true)
-    fun findStoreDetailByStoreMetaId(storeId: Long): StoreDetail {
-        return storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId)
-            .orElseThrow { NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다.") }
-    }
 
+    /**
+     * storeId(storeMetaId)를 통해 가게 상세정보 response를 반환하는 메소드
+     */
     @Transactional(readOnly = true)
     fun findStoreDetailByStoreId(storeId: Long): StoreFindByIdResponse {
-        val storeDetail = findStoreDetailByStoreMetaId(storeId)
+
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
         val availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeId)
 
         return StoreFindByIdResponse.fromStoreDetail(storeDetail, availableUmbrellaCount)
@@ -54,12 +53,12 @@ class StoreDetailService(
 
     @Transactional(readOnly = true)
     fun findAllStores(): List<SingleStoreResponse> {
-        return storeDetailRepository.findAllStoresForAdmin()
+        return storeDetailReader.findAllStoresForAdmin()
     }
 
     @Transactional(readOnly = true)
     fun findAllStoreIntroductions(): AllStoreIntroductionResponse {
-        val storeDetails = storeDetailRepository.findAllStores()
+        val storeDetails = storeDetailReader.findAllStores()
 
         val collected = storeDetails.groupBy { it.storeMeta!!.subClassification!!.id }
 
@@ -74,12 +73,7 @@ class StoreDetailService(
 
     @Transactional
     fun saveStoreDetail(storeDetail: StoreDetail) {
-        storeDetailRepository.save(storeDetail)
-    }
-
-    @Transactional(readOnly = true)
-    fun findByStoreMetaId(storeId: Long): StoreDetail {
-        return storeDetailRepository.findStoreDetailByStoreMetaId(storeId)
-            .orElseThrow { NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다.") }
+        storeDetailWriter.
+        save(storeDetail)
     }
 }

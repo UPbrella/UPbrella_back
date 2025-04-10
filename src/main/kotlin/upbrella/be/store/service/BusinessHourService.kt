@@ -7,21 +7,23 @@ import upbrella.be.store.dto.response.AllBusinessHourResponse
 import upbrella.be.store.dto.response.SingleBusinessHourResponse
 import upbrella.be.store.entity.BusinessHour
 import upbrella.be.store.entity.StoreMeta
-import upbrella.be.store.repository.BusinessHourRepository
+import upbrella.be.store.repository.BusinessHourReader
+import upbrella.be.store.repository.BusinessHourWriter
 
 @Service
 class BusinessHourService(
-    private val businessHourRepository: BusinessHourRepository
+    private val businessHourReader: BusinessHourReader,
+    private val businessHourWriter: BusinessHourWriter
 ) {
 
     @Transactional
     fun saveAllBusinessHour(businessHours: List<BusinessHour>) {
-        businessHourRepository.saveAll(businessHours)
+        businessHourWriter.saveAll(businessHours)
     }
 
     @Transactional(readOnly = true)
     fun findBusinessHourByStoreMetaId(storeMetaId: Long): List<BusinessHour> {
-        return businessHourRepository.findByStoreMetaId(storeMetaId)
+        return businessHourReader.findByStoreMetaId(storeMetaId)
     }
 
     fun createBusinessHourResponse(businessHours: List<BusinessHour>): List<SingleBusinessHourResponse> {
@@ -41,12 +43,12 @@ class BusinessHourService(
 
     @Transactional
     fun updateBusinessHours(storeMeta: StoreMeta, businessHoursRequest: List<SingleBusinessHourRequest>) {
-        businessHourRepository.deleteAllByStoreMetaId(storeMeta.id!!)
+        businessHourWriter.deleteAllByStoreMetaId(storeMeta.id!!)
 
         val businessHours = businessHoursRequest.map { businessHourRequest ->
             BusinessHour.ofCreateBusinessHour(businessHourRequest, storeMeta)
         }
 
-        businessHourRepository.saveAll(businessHours)
+        businessHourWriter.saveAll(businessHours)
     }
 }
