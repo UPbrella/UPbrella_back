@@ -14,7 +14,9 @@ import upbrella.be.store.dto.request.UpdateStoreRequest
 import upbrella.be.store.dto.response.*
 import upbrella.be.store.entity.*
 import upbrella.be.store.exception.NonExistingStoreDetailException
+import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreDetailRepository
+import upbrella.be.store.repository.StoreDetailWriter
 import upbrella.be.umbrella.service.UmbrellaService
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -33,7 +35,10 @@ class StoreDetailServiceTest {
     private lateinit var umbrellaService: UmbrellaService
 
     @Mock
-    private lateinit var storeDetailRepository: StoreDetailRepository
+    private lateinit var storeDetailReader: StoreDetailReader
+
+    @Mock
+    private lateinit var storeDetailWriter: StoreDetailWriter
 
     @Mock
     private lateinit var businessHourService: BusinessHourService
@@ -91,7 +96,7 @@ class StoreDetailServiceTest {
         @DisplayName("해당하는 협업 지점의 정보를 성공적으로 반환한다.")
         fun success() {
             // given
-            given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(3L))
+            given(storeDetailReader.findByStoreMetaIdUsingFetchJoin(3L))
                 .willReturn(Optional.of(storeDetail))
             given(umbrellaService.countAvailableUmbrellaAtStore(3L))
                 .willReturn(10L)
@@ -107,7 +112,7 @@ class StoreDetailServiceTest {
                         .isEqualTo(storeFindByIdResponseExpected)
                 },
                 {
-                    then(storeDetailRepository).should(times(1))
+                    then(storeDetailReader).should(times(1))
                         .findByStoreMetaIdUsingFetchJoin(3L)
                 },
                 {
@@ -231,7 +236,7 @@ class StoreDetailServiceTest {
         @DisplayName("모든 협업 지점의 정보를 조회할 수 있다.")
         fun findAllTest() {
             // given
-            given(storeDetailRepository.findAllStoresForAdmin())
+            given(storeDetailReader.findAllStoresForAdmin())
                 .willReturn(listOf(singleStoreResponse))
 
             val expected = SingleStoreResponse(
@@ -376,7 +381,7 @@ class StoreDetailServiceTest {
         fun findByIdTest() {
             // given
             val storeMetaId = 1L
-            given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId))
+            given(storeDetailReader.findByStoreMetaIdUsingFetchJoin(storeMetaId))
                 .willReturn(Optional.of(storeDetail))
 
             // when
@@ -569,7 +574,7 @@ class StoreDetailServiceTest {
             businessHours = businessHoursUpdate,
         )
 
-        given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId))
+        given(storeDetailReader.findByStoreMetaIdUsingFetchJoin(storeId))
             .willReturn(Optional.of(storeDetail))
         given(classificationService.findClassificationById(request.classificationId!!))
             .willReturn(classificationUpdate)
@@ -656,7 +661,7 @@ val storeIntroductionsResponseByClassification = StoreIntroductionsResponseByCla
 val expected = AllStoreIntroductionResponse(
     storesByClassification = listOf(storeIntroductionsResponseByClassification)
 )
-        given(storeDetailRepository.findAllStores())
+        given(storeDetailReader.findAllStores())
             .willReturn(listOf(storeDetail))
 
         // when
