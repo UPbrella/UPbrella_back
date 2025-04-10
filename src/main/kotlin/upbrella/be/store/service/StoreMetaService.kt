@@ -27,7 +27,7 @@ class StoreMetaService(
     private val umbrellaRepository: UmbrellaRepository,
     private val storeMetaReader: StoreMetaReader,
     private val storeMetaWriter: StoreMetaWriter,
-    private val storeDetailReder: StoreDetailReader,
+    private val storeDetailReader: StoreDetailReader,
     @Lazy private val storeDetailService: StoreDetailService,
     private val classificationService: ClassificationService,
     private val businessHourService: BusinessHourService
@@ -79,7 +79,7 @@ class StoreMetaService(
 
     @Transactional
     fun activateStoreStatus(storeId: Long) {
-        val storeDetail = storeDetailReder.findByStoreMetaId(storeId)
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
 
         val storeImages: List<StoreImage> = storeDetail.storeImages
         if (storeImages.isEmpty()) {
@@ -91,7 +91,7 @@ class StoreMetaService(
 
     @Transactional
     fun inactivateStoreStatus(storeId: Long) {
-        val storeDetail = storeDetailReder.findByStoreMetaId(storeId)
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
         storeDetail.storeMeta!!.inactivateStoreStatus()
     }
 
