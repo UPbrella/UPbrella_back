@@ -99,7 +99,7 @@ class StoreDetailServiceTest {
                 .willReturn(10L)
 
             // when
-            val storeFindByIdResponse = storeDetailReader.findByStoreMetaId(3L)
+            val storeFindByIdResponse = storeDetailService.findStoreDetailByStoreId(3L)
 
             // then
             assertAll(
@@ -400,6 +400,8 @@ class StoreDetailServiceTest {
         fun notFoundException() {
             // given
             val storeMetaId = 3L
+            given(storeDetailReader.findByStoreMetaId(storeMetaId))
+                .willThrow(NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다."))
 
             // when
             val exception = assertThrows<NonExistingStoreDetailException> {
