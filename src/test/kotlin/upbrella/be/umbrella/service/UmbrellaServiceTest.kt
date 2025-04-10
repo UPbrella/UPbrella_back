@@ -29,15 +29,18 @@ import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
-import upbrella.be.umbrella.repository.UmbrellaRepository
-import java.util.*
+import upbrella.be.umbrella.repository.UmbrellaReader
+import upbrella.be.umbrella.repository.UmbrellaWriter
 import java.util.stream.Collectors
 
 @ExtendWith(MockitoExtension::class)
 class UmbrellaServiceTest {
 
     @Mock
-    private lateinit var umbrellaRepository: UmbrellaRepository
+    private lateinit var umbrellaReader: UmbrellaReader
+
+    @Mock
+    private lateinit var umbrellaWriter: UmbrellaWriter
 
     @Mock
     private lateinit var storeMetaService: StoreMetaService
@@ -86,7 +89,7 @@ class UmbrellaServiceTest {
         fun success() {
             // given
             val pageable: Pageable = PageRequest.of(0, 5)
-            given(umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable))
+            given(umbrellaReader.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable))
                 .willReturn(generatedUmbrellasWithHistory)
 
             // when
@@ -111,7 +114,7 @@ class UmbrellaServiceTest {
         fun empty() {
             // given
             val pageable: Pageable = PageRequest.of(0, 5)
-            given(umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable))
+            given(umbrellaReader.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable))
                 .willReturn(listOf())
 
             // when
@@ -160,7 +163,7 @@ class UmbrellaServiceTest {
         fun success() {
             // given
             val pageable: Pageable = PageRequest.of(0, 5)
-            given(umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(2L, pageable))
+            given(umbrellaReader.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(2L, pageable))
                 .willReturn(generatedUmbrellasWithHistory)
 
             // when
@@ -185,7 +188,7 @@ class UmbrellaServiceTest {
         fun empty() {
             // given
             val pageable: Pageable = PageRequest.of(0, 5)
-            given(umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(2L, pageable))
+            given(umbrellaReader.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(2L, pageable))
                 .willReturn(listOf())
 
             // when
@@ -217,9 +220,9 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
-            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.uuid))
+            given(umbrellaReader.existsByUuid(umbrellaCreateRequest.uuid))
                 .willReturn(false)
-            given(umbrellaRepository.save(any(Umbrella::class.java)))
+            given(umbrellaWriter.save(org.mockito.kotlin.any<Umbrella>()))
                 .willReturn(umbrella)
 
             // when
@@ -228,16 +231,16 @@ class UmbrellaServiceTest {
             // then
             assertAll(
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.uuid)
+                    then(umbrellaReader).should(times(1))
+                        .existsByUuid(umbrellaCreateRequest.uuid)
                 },
                 {
                     then(storeMetaService).should(times(1))
                         .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .save(any(Umbrella::class.java))
+                    then(umbrellaWriter).should(times(1))
+                        .save(org.mockito.kotlin.any<Umbrella>())
                 }
             )
         }
@@ -248,7 +251,7 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
-            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrella.uuid))
+            given(umbrellaReader.existsByUuid(umbrella.uuid))
                 .willReturn(true)
 
             // when
@@ -262,12 +265,12 @@ class UmbrellaServiceTest {
                         .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.uuid)
+                    then(umbrellaReader).should(times(1))
+                        .existsByUuid(umbrellaCreateRequest.uuid)
                 },
                 {
-                    then(umbrellaRepository).should(never())
-                        .save(any(Umbrella::class.java))
+                    then(umbrellaWriter).should(never())
+                        .save(org.mockito.kotlin.any<Umbrella>())
                 }
             )
         }
@@ -290,7 +293,7 @@ class UmbrellaServiceTest {
                         .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
-                    then(umbrellaRepository).shouldHaveNoInteractions()
+                    then(umbrellaReader).shouldHaveNoInteractions()
                 }
             )
         }
@@ -321,9 +324,9 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
-            given(umbrellaRepository.findByIdAndDeletedIsFalse(umbrella.id!!))
-                .willReturn(Optional.of(umbrella))
-            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.uuid))
+            given(umbrellaReader.findById(umbrella.id!!))
+                .willReturn(umbrella)
+            given(umbrellaReader.existsByUuid(umbrellaModifyRequest.uuid))
                 .willReturn(false)
 
             // when
@@ -332,12 +335,12 @@ class UmbrellaServiceTest {
             // then
             assertAll(
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.uuid)
+                    then(umbrellaReader).should(times(1))
+                        .existsByUuid(umbrellaModifyRequest.uuid)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .findByIdAndDeletedIsFalse(id)
+                    then(umbrellaReader).should(times(1))
+                        .findById(id)
                 },
                 {
                     then(storeMetaService).should(times(1))
@@ -352,8 +355,8 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
-            given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
-                .willReturn(Optional.ofNullable(null))
+            given(umbrellaReader.findById(id))
+                .willReturn(null)
 
             // when & then
             assertAll(
@@ -364,20 +367,20 @@ class UmbrellaServiceTest {
                 },
                 {
                     // 우산이 존재하지 않으므로 중복 uuid 체크 로직조차 호출되지 않음
-                    then(umbrellaRepository).should(never())
-                        .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.uuid)
+                    then(umbrellaReader).should(never())
+                        .existsByUuid(umbrellaModifyRequest.uuid)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .findByIdAndDeletedIsFalse(id)
+                    then(umbrellaReader).should(times(1))
+                        .findById(id)
                 },
                 {
                     then(storeMetaService).should(times(1))
                         .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
-                    then(umbrellaRepository).should(never())
-                        .save(any(Umbrella::class.java))
+                    then(umbrellaWriter).should(never())
+                        .save(org.mockito.kotlin.any<Umbrella>())
                 }
             )
         }
@@ -388,9 +391,9 @@ class UmbrellaServiceTest {
             // given
             given(storeMetaService.findStoreMetaById(foundStoreMeta.id!!))
                 .willReturn(foundStoreMeta)
-            given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
-                .willReturn(Optional.of(umbrella))
-            given(umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.uuid))
+            given(umbrellaReader.findById(id))
+                .willReturn(umbrella)
+            given(umbrellaReader.existsByUuid(umbrellaModifyRequest.uuid))
                 .willReturn(true)
 
             // when & then
@@ -401,20 +404,20 @@ class UmbrellaServiceTest {
                     }.isInstanceOf(ExistingUmbrellaUuidException::class.java)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.uuid)
+                    then(umbrellaReader).should(times(1))
+                        .existsByUuid(umbrellaModifyRequest.uuid)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .findByIdAndDeletedIsFalse(id)
+                    then(umbrellaReader).should(times(1))
+                        .findById(id)
                 },
                 {
                     then(storeMetaService).should(times(1))
                         .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
-                    then(umbrellaRepository).should(never())
-                        .save(any(Umbrella::class.java))
+                    then(umbrellaWriter).should(never())
+                        .save(org.mockito.kotlin.any<Umbrella>())
                 }
             )
         }
@@ -438,7 +441,7 @@ class UmbrellaServiceTest {
                         .findStoreMetaById(foundStoreMeta.id!!)
                 },
                 {
-                    then(umbrellaRepository).shouldHaveNoInteractions()
+                    then(umbrellaReader).shouldHaveNoInteractions()
                 }
             )
         }
@@ -461,9 +464,9 @@ class UmbrellaServiceTest {
         @DisplayName("우산을 정상적으로 삭제한다.")
         fun success() {
             // given
-            given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
-                .willReturn(Optional.of(umbrella))
+            given(umbrellaReader.findById(id))
 
+                .willReturn(umbrella)
             // when
             umbrellaService.deleteUmbrella(id)
 
@@ -473,8 +476,8 @@ class UmbrellaServiceTest {
                     assertThat(umbrella.deleted).isTrue
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .findByIdAndDeletedIsFalse(id)
+                    then(umbrellaReader).should(times(1))
+                        .findById(id)
                 }
             )
         }
@@ -483,8 +486,8 @@ class UmbrellaServiceTest {
         @DisplayName("우산이 이미 삭제되었거나 고유번호가 존재하지 않는 경우 예외를 발생시킨다.")
         fun alreadyDeletedOrNonExistingId() {
             // given
-            given(umbrellaRepository.findByIdAndDeletedIsFalse(id))
-                .willReturn(Optional.ofNullable(null))
+            given(umbrellaReader.findById(id))
+                .willReturn(null)
 
             // when & then
             assertAll(
@@ -493,8 +496,8 @@ class UmbrellaServiceTest {
                         .isInstanceOf(NonExistingUmbrellaException::class.java)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
-                        .findByIdAndDeletedIsFalse(id)
+                    then(umbrellaReader).should(times(1))
+                        .findById(id)
                 }
             )
         }
@@ -511,7 +514,7 @@ class UmbrellaServiceTest {
             val id = FixtureBuilderFactory.buildLong(1000)
             val availableCount = FixtureBuilderFactory.buildInteger(100).toLong()
 
-            given(umbrellaRepository.countRentableUmbrellasByStore(id))
+            given(umbrellaReader.countRentableUmbrellasByStore(id))
                 .willReturn(availableCount)
 
             // when
@@ -523,7 +526,7 @@ class UmbrellaServiceTest {
                     assertThat(count).isEqualTo(availableCount)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
+                    then(umbrellaReader).should(times(1))
                         .countRentableUmbrellasByStore(id)
                 }
             )
@@ -536,13 +539,13 @@ class UmbrellaServiceTest {
         // given
         val expected = FixtureBuilderFactory.builderUmbrellaStatisticsResponse().sample()
 
-        given(umbrellaRepository.countAllUmbrellas())
+        given(umbrellaReader.countAllUmbrellas())
             .willReturn(expected.totalUmbrellaCount)
-        given(umbrellaRepository.countRentableUmbrellas())
+        given(umbrellaReader.countRentableUmbrellas())
             .willReturn(expected.rentableUmbrellaCount)
-        given(umbrellaRepository.countRentedUmbrellas())
+        given(umbrellaReader.countRentedUmbrellas())
             .willReturn(expected.rentedUmbrellaCount)
-        given(umbrellaRepository.countMissingUmbrellas())
+        given(umbrellaReader.countMissingUmbrellas())
             .willReturn(expected.missingUmbrellaCount)
         given(rentService.countTotalRent())
             .willReturn(expected.totalRentCount)
@@ -558,19 +561,19 @@ class UmbrellaServiceTest {
                     .isEqualTo(expected)
             },
             {
-                then(umbrellaRepository).should(times(1))
+                then(umbrellaReader).should(times(1))
                     .countAllUmbrellas()
             },
             {
-                then(umbrellaRepository).should(times(1))
+                then(umbrellaReader).should(times(1))
                     .countRentableUmbrellas()
             },
             {
-                then(umbrellaRepository).should(times(1))
+                then(umbrellaReader).should(times(1))
                     .countRentedUmbrellas()
             },
             {
-                then(umbrellaRepository).should(times(1))
+                then(umbrellaReader).should(times(1))
                     .countMissingUmbrellas()
             },
             {
@@ -594,13 +597,13 @@ class UmbrellaServiceTest {
 
             given(storeMetaService.existByStoreId(storeId))
                 .willReturn(true)
-            given(umbrellaRepository.countAllUmbrellasByStore(storeId))
+            given(umbrellaReader.countAllUmbrellasByStore(storeId))
                 .willReturn(expected.totalUmbrellaCount)
-            given(umbrellaRepository.countRentableUmbrellasByStore(storeId))
+            given(umbrellaReader.countRentableUmbrellasByStore(storeId))
                 .willReturn(expected.rentableUmbrellaCount)
-            given(umbrellaRepository.countRentedUmbrellasByStore(storeId))
+            given(umbrellaReader.countRentedUmbrellasByStore(storeId))
                 .willReturn(expected.rentedUmbrellaCount)
-            given(umbrellaRepository.countMissingUmbrellasByStore(storeId))
+            given(umbrellaReader.countMissingUmbrellasByStore(storeId))
                 .willReturn(expected.missingUmbrellaCount)
             given(rentService.countTotalRentByStoreId(storeId))
                 .willReturn(expected.totalRentCount)
@@ -616,19 +619,19 @@ class UmbrellaServiceTest {
                         .isEqualTo(expected)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
+                    then(umbrellaReader).should(times(1))
                         .countAllUmbrellasByStore(storeId)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
+                    then(umbrellaReader).should(times(1))
                         .countRentableUmbrellasByStore(storeId)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
+                    then(umbrellaReader).should(times(1))
                         .countRentedUmbrellasByStore(storeId)
                 },
                 {
-                    then(umbrellaRepository).should(times(1))
+                    then(umbrellaReader).should(times(1))
                         .countMissingUmbrellasByStore(storeId)
                 },
                 {

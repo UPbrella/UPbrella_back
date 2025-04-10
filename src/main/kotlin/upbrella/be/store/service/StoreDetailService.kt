@@ -11,11 +11,13 @@ import upbrella.be.store.entity.StoreDetail
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreDetailWriter
+import upbrella.be.umbrella.repository.UmbrellaReader
 import upbrella.be.umbrella.service.UmbrellaService
 
 @Service
 class StoreDetailService(
     private val classificationService: ClassificationService,
+    private val umbrellaReader: UmbrellaReader,
     private val umbrellaService: UmbrellaService,
     private val storeDetailReader: StoreDetailReader,
     private val storeDetailWriter: StoreDetailWriter,
@@ -46,7 +48,7 @@ class StoreDetailService(
     fun findStoreDetailByStoreId(storeId: Long): StoreFindByIdResponse {
 
         val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
-        val availableUmbrellaCount = umbrellaService.countAvailableUmbrellaAtStore(storeId)
+        val availableUmbrellaCount = umbrellaReader.countRentableUmbrellasByStore(storeId)
 
         return StoreFindByIdResponse.fromStoreDetail(storeDetail, availableUmbrellaCount)
     }

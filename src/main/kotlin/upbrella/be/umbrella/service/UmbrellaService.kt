@@ -14,41 +14,46 @@ import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
-import upbrella.be.umbrella.repository.UmbrellaRepository
+import upbrella.be.umbrella.repository.UmbrellaReader
+import upbrella.be.umbrella.repository.UmbrellaWriter
 import javax.transaction.Transactional
 
 @Service
 class UmbrellaService(
-    private val umbrellaRepository: UmbrellaRepository,
+    private val umbrellaReader: UmbrellaReader,
+    private val umbrellaWriter: UmbrellaWriter,
     private val storeMetaService: StoreMetaService,
     @Lazy private val rentService: RentService
 ) {
 
     fun findAllUmbrellas(pageable: Pageable): List<UmbrellaResponse> =
-        umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable)
+        umbrellaReader.findUmbrellaAndHistoryOrderedByUmbrellaId(pageable)
             .map { UmbrellaResponse.fromUmbrella(it) }
 
     fun findUmbrellasByStoreId(storeId: Long, pageable: Pageable): List<UmbrellaResponse> =
-        umbrellaRepository.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(storeId, pageable)
+        umbrellaReader.findUmbrellaAndHistoryOrderedByUmbrellaIdByStoreId(storeId, pageable)
             .map { UmbrellaResponse.fromUmbrella(it) }
 
     @Transactional
     fun addUmbrella(umbrellaCreateRequest: UmbrellaCreateRequest) {
-        val storeMeta: StoreMeta = storeMetaService.findStoreMetaById(umbrellaCreateRequest.storeMetaId)
-        if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.uuid)) {
+        val storeMeta: StoreMeta =
+            storeMetaService.findStoreMetaById(umbrellaCreateRequest.storeMetaId)
+        if (umbrellaReader.existsByUuid(umbrellaCreateRequest.uuid)) {
             throw ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리 번호입니다.")
         }
-        umbrellaRepository.save(Umbrella.ofCreated(umbrellaCreateRequest, storeMeta))
+        umbrellaWriter.save(Umbrella.ofCreated(umbrellaCreateRequest, storeMeta))
     }
 
     @Transactional
     fun modifyUmbrella(id: Long, umbrellaModifyRequest: UmbrellaModifyRequest) {
-        val storeMeta: StoreMeta = storeMetaService.findStoreMetaById(umbrellaModifyRequest.storeMetaId)
-        val foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
-            .orElseThrow { NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.") }
+        val storeMeta: StoreMeta =
+            storeMetaService.findStoreMetaById(umbrellaModifyRequest.storeMetaId)
+
+        val foundUmbrella = umbrellaReader.findById(id)
+            ?: throw NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.")
 
         if (foundUmbrella.uuid != umbrellaModifyRequest.uuid) {
-            if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaModifyRequest.uuid)) {
+            if (umbrellaReader.existsByUuid(umbrellaModifyRequest.uuid)) {
                 throw ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리 번호입니다.")
             }
         }
@@ -62,17 +67,22 @@ class UmbrellaService(
     }
 
     fun findUmbrellaById(id: Long): Umbrella =
-        umbrellaRepository.findByIdAndDeletedIsFalse(id)
-            .orElseThrow { NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.") }
+        umbrellaReader.findById(id)
+            ?: throw NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.")
 
+    /**
+     * TODO
+     * Persistance Layer 테스트 작성 후 삭제 (Service Layer에서 사용하지 않음)
+     * 기존 ServiceTest에서도 삭제
+     */
     fun countAvailableUmbrellaAtStore(storeMetaId: Long): Long =
-        umbrellaRepository.countRentableUmbrellasByStore(storeMetaId)
+        umbrellaReader.countRentableUmbrellasByStore(storeMetaId)
 
     fun getUmbrellaAllStatistics(): UmbrellaStatisticsResponse {
-        val totalUmbrella = umbrellaRepository.countAllUmbrellas()
-        val availableUmbrella = umbrellaRepository.countRentableUmbrellas()
-        val rentedUmbrella = umbrellaRepository.countRentedUmbrellas()
-        val missingUmbrella = umbrellaRepository.countMissingUmbrellas()
+        val totalUmbrella = umbrellaReader.countAllUmbrellas()
+        val availableUmbrella = umbrellaReader.countRentableUmbrellas()
+        val rentedUmbrella = umbrellaReader.countRentedUmbrellas()
+        val missingUmbrella = umbrellaReader.countMissingUmbrellas()
         val totalRent = rentService.countTotalRent()
 
         return UmbrellaStatisticsResponse.fromCounts(
@@ -88,10 +98,10 @@ class UmbrellaService(
         if (!storeMetaService.existByStoreId(storeId)) {
             throw NonExistingStoreMetaException("[ERROR] 존재하지 않는 매장 고유번호입니다.")
         }
-        val totalUmbrellaByStoreId = umbrellaRepository.countAllUmbrellasByStore(storeId)
-        val availableUmbrellaByStoreId = umbrellaRepository.countRentableUmbrellasByStore(storeId)
-        val rentedUmbrellaByStoreId = umbrellaRepository.countRentedUmbrellasByStore(storeId)
-        val missingUmbrellaByStoreId = umbrellaRepository.countMissingUmbrellasByStore(storeId)
+        val totalUmbrellaByStoreId = umbrellaReader.countAllUmbrellasByStore(storeId)
+        val availableUmbrellaByStoreId = umbrellaReader.countRentableUmbrellasByStore(storeId)
+        val rentedUmbrellaByStoreId = umbrellaReader.countRentedUmbrellasByStore(storeId)
+        val missingUmbrellaByStoreId = umbrellaReader.countMissingUmbrellasByStore(storeId)
         val totalRentByStoreId = rentService.countTotalRentByStoreId(storeId)
 
         return UmbrellaStatisticsResponse.fromCounts(
