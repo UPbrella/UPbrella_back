@@ -15,7 +15,9 @@ import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
 import upbrella.be.store.exception.NonExistingStoreMetaException
-import upbrella.be.store.repository.StoreMetaRepository
+import upbrella.be.store.repository.StoreDetailReader
+import upbrella.be.store.repository.StoreMetaReader
+import upbrella.be.store.repository.StoreMetaWriter
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.repository.UmbrellaRepository
 import java.time.LocalDateTime
@@ -23,7 +25,9 @@ import java.time.LocalDateTime
 @Service
 class StoreMetaService(
     private val umbrellaRepository: UmbrellaRepository,
-    private val storeMetaRepository: StoreMetaRepository,
+    private val storeMetaReader: StoreMetaReader,
+    private val storeMetaWriter: StoreMetaWriter,
+    private val storeDetailReder: StoreDetailReader,
     @Lazy private val storeDetailService: StoreDetailService,
     private val classificationService: ClassificationService,
     private val businessHourService: BusinessHourService
@@ -42,7 +46,7 @@ class StoreMetaService(
 
     @Transactional(readOnly = true)
     fun findAllStoresByClassification(classificationId: Long, currentTime: LocalDateTime): AllCurrentLocationStoreResponse {
-        val storeMetaWithUmbrellaCounts = storeMetaRepository.findAllStoresByClassification(classificationId)
+        val storeMetaWithUmbrellaCounts = storeMetaReader.findAllStoresByClassification(classificationId)
 
         return AllCurrentLocationStoreResponse.ofCreate(
             storeMetaWithUmbrellaCounts.map {
@@ -64,24 +68,18 @@ class StoreMetaService(
 
     @Transactional(readOnly = true)
     fun findStoreMetaById(id: Long): StoreMeta {
-        return storeMetaRepository.findById(id)
-            .orElseThrow { NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.") }
+        return storeMetaReader.findById(id)
+            ?: throw NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.")
     }
 
     @Transactional(readOnly = true)
     fun existByStoreId(storeId: Long): Boolean {
-        return storeMetaRepository.existsById(storeId)
-    }
-
-    @Transactional(readOnly = true)
-    fun existByClassificationId(classificationId: Long): Boolean {
-        val store = storeMetaRepository.findByClassificationIdAndDeletedIsFalse(classificationId)
-        return store.isPresent
+        return storeMetaReader.existsById(storeId)
     }
 
     @Transactional
     fun activateStoreStatus(storeId: Long) {
-        val storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId)
+        val storeDetail = storeDetailReder.findByStoreMetaId(storeId)
 
         val storeImages: List<StoreImage> = storeDetail.storeImages
         if (storeImages.isEmpty()) {
@@ -93,7 +91,7 @@ class StoreMetaService(
 
     @Transactional
     fun inactivateStoreStatus(storeId: Long) {
-        val storeDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId)
+        val storeDetail = storeDetailReder.findByStoreMetaId(storeId)
         storeDetail.storeMeta!!.inactivateStoreStatus()
     }
 
@@ -128,7 +126,7 @@ class StoreMetaService(
 
         val businessHourRequests = store.businessHours
 
-        val storeMeta = storeMetaRepository.save(
+        val storeMeta = storeMetaWriter.save(
             StoreMeta.createStoreMetaForSave(store, classification, subClassification)
         )
 

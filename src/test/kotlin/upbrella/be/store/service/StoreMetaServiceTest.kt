@@ -2,16 +2,12 @@ package upbrella.be.store.service
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
@@ -24,7 +20,9 @@ import upbrella.be.store.entity.*
 import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
 import upbrella.be.store.exception.NonExistingStoreMetaException
-import upbrella.be.store.repository.StoreMetaRepository
+import upbrella.be.store.repository.StoreDetailReader
+import upbrella.be.store.repository.StoreMetaReader
+import upbrella.be.store.repository.StoreMetaWriter
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.repository.UmbrellaRepository
@@ -40,7 +38,13 @@ class StoreMetaServiceTest {
     private lateinit var umbrellaRepository: UmbrellaRepository
 
     @Mock
-    private lateinit var storeMetaRepository: StoreMetaRepository
+    private lateinit var storeMetaReader: StoreMetaReader
+
+    @Mock
+    private lateinit var storeMetaWriter: StoreMetaWriter
+
+    @Mock
+    private lateinit var storeDetailReader: StoreDetailReader
 
     @Mock
     private lateinit var storeDetailService: StoreDetailService
@@ -255,7 +259,7 @@ class StoreMetaServiceTest {
         @DisplayName("해당 대분류의 협업 지점 및 현재 시각을 토대로 영업 여부를 판단해 정보를 반환한다.")
         fun success() {
             // given
-            given(storeMetaRepository.findAllStoresByClassification(1L))
+            given(storeMetaReader.findAllStoresByClassification(1L))
                 .willReturn(storeMetaList)
 
             // when
@@ -281,7 +285,7 @@ class StoreMetaServiceTest {
         @DisplayName("내부 공사로 비활성화 상태인 협업 지점은 영업 시간이어도 영업 중으로 표시되지 않는다.")
         fun isNotActiveStore() {
             // given
-            given(storeMetaRepository.findAllStoresByClassification(1L))
+            given(storeMetaReader.findAllStoresByClassification(1L))
                 .willReturn(storeMetaList)
 
             // when
@@ -305,7 +309,7 @@ class StoreMetaServiceTest {
         @DisplayName("영업 시간이 아닌 협업 지점은 영업 중으로 표시되지 않는다.")
         fun isNotOpen() {
             // given
-            given(storeMetaRepository.findAllStoresByClassification(1L))
+            given(storeMetaReader.findAllStoresByClassification(1L))
                 .willReturn(storeMetaList)
 
             // when
@@ -329,7 +333,7 @@ class StoreMetaServiceTest {
         @DisplayName("만족하는 협업 지점이 없으면 빈 리스트를 반환한다.")
         fun empty() {
             // given
-            given(storeMetaRepository.findAllStoresByClassification(1L))
+            given(storeMetaReader.findAllStoresByClassification(1L))
                 .willReturn(listOf())
 
             // when
@@ -450,7 +454,7 @@ class StoreMetaServiceTest {
             given(classificationService.findSubClassificationById(subClassificationId)).willReturn(
                 subClassification
             )
-            given(storeMetaRepository.save(any(StoreMeta::class.java))).willReturn(storeMeta)
+            given(storeMetaWriter.save(org.mockito.kotlin.any<StoreMeta>())).willReturn(storeMeta)
             doNothing().`when`(storeDetailService)
                 .saveStoreDetail(any<StoreDetail>() ?: storeDetail)
             doNothing().`when`(businessHourService)
@@ -468,7 +472,7 @@ class StoreMetaServiceTest {
                     verify(classificationService).findSubClassificationById(subClassificationId)
                 },
                 {
-                    verify(storeMetaRepository).save(Mockito.any(StoreMeta::class.java))
+                    verify(storeMetaWriter).save(org.mockito.kotlin.any<StoreMeta>())
                 }
             )
         }
@@ -512,7 +516,7 @@ class StoreMetaServiceTest {
             businessHours = listOf(businessHour)
         )
 
-        given(storeMetaRepository.findById(1L)).willReturn(Optional.of(storeMeta))
+        given(storeMetaReader.findById(1L)).willReturn(storeMeta)
 
         // when
         storeMetaService.deleteStoreMeta(1L)
@@ -520,7 +524,7 @@ class StoreMetaServiceTest {
         // then
         assertAll(
             {
-                verify(storeMetaRepository, times(1)).findById(1L)
+                verify(storeMetaReader, times(1)).findById(1L)
             },
             {
                 assertThat(storeMeta.deleted).isTrue
@@ -532,46 +536,47 @@ class StoreMetaServiceTest {
     @DisplayName("사용자는 ")
     inner class FindStoreMeta {
 
+        // given
+        val classification = Classification(
+            id = 1L,
+            type = ClassificationType.CLASSIFICATION,
+            name = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33
+        )
+
+        val subClassification = Classification(
+            id = 2L,
+            type = ClassificationType.SUB_CLASSIFICATION,
+            name = "카테고리",
+        )
+
+        val businessHour = BusinessHour(
+            id = 1L,
+            date = DayOfWeek.MONDAY,
+            openAt = LocalTime.of(10, 0),
+            closeAt = LocalTime.of(20, 0),
+        )
+
+        val storeMeta = StoreMeta(
+            id = 1L,
+            name = "협업 지점명",
+            activated = true,
+            deleted = false,
+            classification = classification,
+            subClassification = subClassification,
+            category = "카테고리",
+            latitude = 33.33,
+            longitude = 33.33,
+            businessHours = listOf(businessHour)
+        )
+
         @Test
         @DisplayName("협업지점을 고유 아이디로 조회할 수 있다.")
         fun test() {
-            // given
-            val classification = Classification(
-                id = 1L,
-                type = ClassificationType.CLASSIFICATION,
-                name = "카테고리",
-                latitude = 33.33,
-                longitude = 33.33
-            )
 
-            val subClassification = Classification(
-                id = 2L,
-                type = ClassificationType.SUB_CLASSIFICATION,
-                name = "카테고리",
-            )
-
-            val businessHour = BusinessHour(
-                id = 1L,
-                date = DayOfWeek.MONDAY,
-                openAt = LocalTime.of(10, 0),
-                closeAt = LocalTime.of(20, 0),
-            )
-
-            val storeMeta = StoreMeta(
-                id = 1L,
-                name = "협업 지점명",
-                activated = true,
-                deleted = false,
-                classification = classification,
-                subClassification = subClassification,
-                category = "카테고리",
-                latitude = 33.33,
-                longitude = 33.33,
-                businessHours = listOf(businessHour)
-            )
-
-            given(storeMetaRepository.findById(1L))
-                .willReturn(Optional.of(storeMeta))
+            given(storeMetaReader.findById(1L))
+                .willReturn(storeMeta)
 
             // when
             val foundStoreMeta = storeMetaService.findStoreMetaById(1L)
@@ -579,7 +584,7 @@ class StoreMetaServiceTest {
             // then
             assertAll(
                 {
-                    verify(storeMetaRepository, times(1)).findById(1L)
+                    verify(storeMetaReader, times(1)).findById(1L)
                 },
                 {
                     assertThat(foundStoreMeta).isEqualTo(storeMeta)
@@ -591,14 +596,15 @@ class StoreMetaServiceTest {
         @DisplayName("협업지점이 존재하지 않으면 예외가 발생한다.")
         fun storeMetaNotFoundTest() {
             // given
-            given(storeMetaRepository.findById(1L)).willReturn(Optional.empty())
+            given(storeMetaReader.findById(1L)).willReturn(null)
 
-            // when & then
-            assertThatThrownBy {
+            // when
+            val exception = assertThrows<NonExistingStoreMetaException> {
                 storeMetaService.findStoreMetaById(1L)
             }
-                .isInstanceOf(NonExistingStoreMetaException::class.java)
-                .hasMessage("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.")
+
+            // then
+            assertThat(exception.message).isEqualTo("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.")
         }
     }
 
@@ -621,7 +627,7 @@ class StoreMetaServiceTest {
             )
         )
 
-        given(storeDetailService.findStoreDetailByStoreMetaId(1L)).willReturn(storeDetail)
+        given(storeDetailReader.findByStoreMetaId(1L)).willReturn(storeDetail)
 
         // when
         storeMetaService.activateStoreStatus(1L)
@@ -644,7 +650,7 @@ class StoreMetaServiceTest {
             storeImages = listOf()
         )
 
-        given(storeDetailService.findStoreDetailByStoreMetaId(1L))
+        given(storeDetailReader.findByStoreMetaId(1L))
             .willReturn(storeDetail)
 
         // when & then
@@ -674,7 +680,7 @@ class StoreMetaServiceTest {
             )
         )
 
-        given(storeDetailService.findStoreDetailByStoreMetaId(1L))
+        given(storeDetailReader.findByStoreMetaId(1L))
             .willReturn(storeDetail)
 
         // when

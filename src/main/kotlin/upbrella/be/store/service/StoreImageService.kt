@@ -12,15 +12,18 @@ import upbrella.be.store.dto.response.AllImageUrlResponse
 import upbrella.be.store.dto.response.SingleImageUrlResponse
 import upbrella.be.store.entity.StoreImage
 import upbrella.be.store.exception.NonExistingStoreImageException
-import upbrella.be.store.repository.StoreImageRepository
+import upbrella.be.store.repository.StoreDetailReader
+import upbrella.be.store.repository.StoreImageReader
+import upbrella.be.store.repository.StoreImageWriter
 import java.io.IOException
 import java.util.UUID
 
 @Service
 class StoreImageService(
     private val s3Client: S3Client,
-    private val storeImageRepository: StoreImageRepository,
-    @Lazy private val storeDetailService: StoreDetailService
+    private val storeImageReader: StoreImageReader,
+    private val storeImageWriter: StoreImageWriter,
+    private val storeDetailReader: StoreDetailReader,
 ) {
 
     @Transactional
@@ -49,9 +52,9 @@ class StoreImageService(
 
     @Transactional
     fun deleteFile(imageId: Long) {
-        val storeImage = storeImageRepository.findById(imageId)
-            .orElseThrow { NonExistingStoreImageException("[ERROR] 해당 이미지가 존재하지 않습니다.") }
-        storeImageRepository.deleteById(imageId)
+        val storeImage = storeImageReader.findById(imageId)
+            ?: throw NonExistingStoreImageException("[ERROR] 해당 이미지가 존재하지 않습니다.")
+        storeImageWriter.deleteById(imageId)
         deleteFileInS3(storeImage.imageUrl!!)
     }
 
@@ -65,7 +68,7 @@ class StoreImageService(
 
     @Transactional(readOnly = true)
     fun findAllImages(storeId: Long): AllImageUrlResponse {
-        val storeDetail = storeDetailService.findByStoreMetaId(storeId)
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
 
         return AllImageUrlResponse.of(
             storeId,
@@ -85,8 +88,8 @@ class StoreImageService(
     }
 
     private fun saveStoreImage(imageUrl: String, storeId: Long) {
-        val storeDetail = storeDetailService.findByStoreMetaId(storeId)
-        storeImageRepository.save(StoreImage.createStoreImage(storeDetail, imageUrl))
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
+        storeImageWriter.save(StoreImage.createStoreImage(storeDetail, imageUrl))
     }
 
     private fun parseKey(url: String): String {

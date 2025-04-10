@@ -83,6 +83,8 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 
+    testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
+
     // QueryDSL Kotlin 설정 변경
     kapt "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"

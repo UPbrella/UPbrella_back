@@ -1,7 +1,6 @@
 package upbrella.be.store.service
 
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
@@ -14,11 +13,11 @@ import upbrella.be.store.dto.request.UpdateStoreRequest
 import upbrella.be.store.dto.response.*
 import upbrella.be.store.entity.*
 import upbrella.be.store.exception.NonExistingStoreDetailException
-import upbrella.be.store.repository.StoreDetailRepository
+import upbrella.be.store.repository.StoreDetailReader
+import upbrella.be.store.repository.StoreDetailWriter
 import upbrella.be.umbrella.service.UmbrellaService
 import java.time.DayOfWeek
 import java.time.LocalTime
-import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class StoreDetailServiceTest {
@@ -33,7 +32,10 @@ class StoreDetailServiceTest {
     private lateinit var umbrellaService: UmbrellaService
 
     @Mock
-    private lateinit var storeDetailRepository: StoreDetailRepository
+    private lateinit var storeDetailReader: StoreDetailReader
+
+    @Mock
+    private lateinit var storeDetailWriter: StoreDetailWriter
 
     @Mock
     private lateinit var businessHourService: BusinessHourService
@@ -91,8 +93,8 @@ class StoreDetailServiceTest {
         @DisplayName("해당하는 협업 지점의 정보를 성공적으로 반환한다.")
         fun success() {
             // given
-            given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(3L))
-                .willReturn(Optional.of(storeDetail))
+            given(storeDetailReader.findByStoreMetaId(3L))
+                .willReturn(storeDetail)
             given(umbrellaService.countAvailableUmbrellaAtStore(3L))
                 .willReturn(10L)
 
@@ -107,8 +109,8 @@ class StoreDetailServiceTest {
                         .isEqualTo(storeFindByIdResponseExpected)
                 },
                 {
-                    then(storeDetailRepository).should(times(1))
-                        .findByStoreMetaIdUsingFetchJoin(3L)
+                    then(storeDetailReader).should(times(1))
+                        .findByStoreMetaId(3L)
                 },
                 {
                     then(umbrellaService).should(times(1))
@@ -231,36 +233,36 @@ class StoreDetailServiceTest {
         @DisplayName("모든 협업 지점의 정보를 조회할 수 있다.")
         fun findAllTest() {
             // given
-            given(storeDetailRepository.findAllStoresForAdmin())
+            given(storeDetailReader.findAllStoresForAdmin())
                 .willReturn(listOf(singleStoreResponse))
 
             val expected = SingleStoreResponse(
+                id = 1L,
+                name = "협업 지점명",
+                activateStatus = true,
+                classification = SingleClassificationResponse(
                     id = 1L,
-                    name = "협업 지점명",
-                    activateStatus = true,
-                    classification = SingleClassificationResponse(
-                        id = 1L,
-                        name = "대분류",
-                        type = ClassificationType.CLASSIFICATION,
-                        latitude = 33.33,
-                        longitude = 33.33
-                    ),
-                    subClassification = SingleSubClassificationResponse(
-                        id = 2L,
-                        type = ClassificationType.SUB_CLASSIFICATION,
-                        name = "소분류"
-                    ),
-                    category = "카테고리",
+                    name = "대분류",
+                    type = ClassificationType.CLASSIFICATION,
                     latitude = 33.33,
-                    longitude = 33.33,
-                    umbrellaLocation = "우산 위치",
-                    businessHour = "근무 시간",
-                    instagramId = "인스타그램 주소",
-                    contactNumber = "연락처",
-                    address = "주소",
-                    addressDetail = "상세 주소",
-                    content = "내용"
-                )
+                    longitude = 33.33
+                ),
+                subClassification = SingleSubClassificationResponse(
+                    id = 2L,
+                    type = ClassificationType.SUB_CLASSIFICATION,
+                    name = "소분류"
+                ),
+                category = "카테고리",
+                latitude = 33.33,
+                longitude = 33.33,
+                umbrellaLocation = "우산 위치",
+                businessHour = "근무 시간",
+                instagramId = "인스타그램 주소",
+                contactNumber = "연락처",
+                address = "주소",
+                addressDetail = "상세 주소",
+                content = "내용"
+            )
 
             // when
             val allStores = storeDetailService.findAllStores()
@@ -372,15 +374,15 @@ class StoreDetailServiceTest {
         )
 
         @Test
-        @DisplayName("id로 조회할 수 있다.")
+        @DisplayName("storeMetaId로 조회할 수 있다.")
         fun findByIdTest() {
             // given
             val storeMetaId = 1L
-            given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId))
-                .willReturn(Optional.of(storeDetail))
+            given(storeDetailReader.findByStoreMetaId(storeMetaId))
+                .willReturn(storeDetail)
 
             // when
-            val storeDetailById = storeDetailService.findStoreDetailByStoreMetaId(storeMetaId)
+            val storeDetailById = storeDetailReader.findByStoreMetaId(storeMetaId)
 
             // then
             assertAll(
@@ -394,17 +396,20 @@ class StoreDetailServiceTest {
         }
 
         @Test
-        @DisplayName("id로 조회하는데 없을 경우 예외를 발생시킨다.")
+        @DisplayName("storeMetaId로 조회하는데 없을 경우 예외를 발생시킨다.")
         fun notFoundException() {
             // given
-            val storeDetailId = 1L
+            val storeMetaId = 3L
+            given(storeDetailReader.findByStoreMetaId(storeMetaId))
+                .willThrow(NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다."))
 
-            // when & then
-            assertThatThrownBy {
-                storeDetailService.findStoreDetailByStoreMetaId(storeDetailId)
+            // when
+            val exception = assertThrows<NonExistingStoreDetailException> {
+                storeDetailReader.findByStoreMetaId(storeMetaId)
             }
-                .isInstanceOf(NonExistingStoreDetailException::class.java)
-                .hasMessageContaining("[ERROR] 존재하지 않는 가게입니다.")
+
+            // then
+            assertThat(exception.message).isEqualTo("[ERROR] 존재하지 않는 가게입니다.")
         }
     }
 
@@ -493,40 +498,40 @@ class StoreDetailServiceTest {
         )
 
         val mondayUpdate = SingleBusinessHourRequest(
-                date = DayOfWeek.MONDAY,
-                openAt = LocalTime.of(9, 0),
-                closeAt = LocalTime.of(18, 0)
-            )
-            val tuesdayUpdate = SingleBusinessHourRequest(
-                date = DayOfWeek.TUESDAY,
-                openAt = LocalTime.of(9, 0),
-                closeAt = LocalTime.of(18, 0)
-            )
-            val wednesdayUpdate = SingleBusinessHourRequest(
-                date = DayOfWeek.WEDNESDAY,
-                openAt = LocalTime.of(9, 0),
-                closeAt = LocalTime.of(18, 0)
-            )
-            val thursdayUpdate = SingleBusinessHourRequest(
-                date = DayOfWeek.THURSDAY,
-                openAt = LocalTime.of(9, 0),
-                closeAt = LocalTime.of(18, 0)
-            )
-            val fridayUpdate = SingleBusinessHourRequest(
-                date = DayOfWeek.FRIDAY,
-                openAt = LocalTime.of(9, 0),
-                closeAt = LocalTime.of(18, 0)
-            )
-            val saturdayUpdate = SingleBusinessHourRequest(
-                date = DayOfWeek.SATURDAY,
-                openAt = LocalTime.of(9, 0),
-                closeAt = LocalTime.of(18, 0)
-            )
-            val sundayUpdate = SingleBusinessHourRequest(
-                date = DayOfWeek.SUNDAY,
-                openAt = LocalTime.of(9, 0),
-                closeAt = LocalTime.of(18, 0)
-            )
+            date = DayOfWeek.MONDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val tuesdayUpdate = SingleBusinessHourRequest(
+            date = DayOfWeek.TUESDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val wednesdayUpdate = SingleBusinessHourRequest(
+            date = DayOfWeek.WEDNESDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val thursdayUpdate = SingleBusinessHourRequest(
+            date = DayOfWeek.THURSDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val fridayUpdate = SingleBusinessHourRequest(
+            date = DayOfWeek.FRIDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val saturdayUpdate = SingleBusinessHourRequest(
+            date = DayOfWeek.SATURDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
+        val sundayUpdate = SingleBusinessHourRequest(
+            date = DayOfWeek.SUNDAY,
+            openAt = LocalTime.of(9, 0),
+            closeAt = LocalTime.of(18, 0)
+        )
 
         val businessHoursUpdate = listOf(
             mondayUpdate,
@@ -569,8 +574,8 @@ class StoreDetailServiceTest {
             businessHours = businessHoursUpdate,
         )
 
-        given(storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeId))
-            .willReturn(Optional.of(storeDetail))
+        given(storeDetailReader.findByStoreMetaId(storeId))
+            .willReturn(storeDetail)
         given(classificationService.findClassificationById(request.classificationId!!))
             .willReturn(classificationUpdate)
         given(classificationService.findSubClassificationById(request.subClassificationId!!))
@@ -583,7 +588,7 @@ class StoreDetailServiceTest {
 
         // then
         val foundStoreMeta = storeMetaService.findStoreMetaById(storeId)
-        val foundStoreDetail = storeDetailService.findStoreDetailByStoreMetaId(storeId)
+        val foundStoreDetail = storeDetailReader.findByStoreMetaId(storeId)
 
         assertAll(
             {
@@ -641,22 +646,22 @@ class StoreDetailServiceTest {
             )
         )
 
-val storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification(
-    subClassificationId = 1,
-    stores = listOf(
-        SingleStoreIntroductionResponse.of(
-            3L,
-            "가게 썸네일",
-            "스타벅스",
-            "카페, 디저트"
+        val storeIntroductionsResponseByClassification = StoreIntroductionsResponseByClassification(
+            subClassificationId = 1,
+            stores = listOf(
+                SingleStoreIntroductionResponse.of(
+                    3L,
+                    "가게 썸네일",
+                    "스타벅스",
+                    "카페, 디저트"
+                )
+            )
         )
-    )
-)
 
-val expected = AllStoreIntroductionResponse(
-    storesByClassification = listOf(storeIntroductionsResponseByClassification)
-)
-        given(storeDetailRepository.findAllStores())
+        val expected = AllStoreIntroductionResponse(
+            storesByClassification = listOf(storeIntroductionsResponseByClassification)
+        )
+        given(storeDetailReader.findAllStores())
             .willReturn(listOf(storeDetail))
 
         // when

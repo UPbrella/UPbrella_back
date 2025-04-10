@@ -23,9 +23,6 @@ import java.util.*
 class BlackListServiceTest {
 
     @Mock
-    private lateinit var blackListRepository: BlackListRepository
-
-    @Mock
     private lateinit var blackListReader: BlackListReader
 
     @Mock

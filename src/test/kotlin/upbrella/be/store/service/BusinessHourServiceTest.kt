@@ -15,7 +15,8 @@ import upbrella.be.store.dto.request.SingleBusinessHourRequest
 import upbrella.be.store.dto.response.SingleBusinessHourResponse
 import upbrella.be.store.entity.BusinessHour
 import upbrella.be.store.entity.StoreMeta
-import upbrella.be.store.repository.BusinessHourRepository
+import upbrella.be.store.repository.BusinessHourReader
+import upbrella.be.store.repository.BusinessHourWriter
 import java.time.DayOfWeek
 import java.time.LocalTime
 
@@ -23,7 +24,10 @@ import java.time.LocalTime
 class BusinessHourServiceTest {
 
     @Mock
-    private lateinit var businessHourRepository: BusinessHourRepository
+    private lateinit var businessHourReader: BusinessHourReader
+
+    @Mock
+    private lateinit var businessHourWriter: BusinessHourWriter
 
     @InjectMocks
     private lateinit var businessHourService: BusinessHourService
@@ -74,7 +78,7 @@ class BusinessHourServiceTest {
         businessHourService.saveAllBusinessHour(businessHours)
 
         // then
-        then(businessHourRepository).should(times(1)).saveAll(businessHours)
+        then(businessHourWriter).should(times(1)).saveAll(businessHours)
     }
 
     @Test
@@ -119,7 +123,7 @@ class BusinessHourServiceTest {
 
         val businessHours = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-        given(businessHourRepository.findByStoreMetaId(1L)).willReturn(businessHours)
+        given(businessHourReader.findByStoreMetaId(1L)).willReturn(businessHours)
 
         // when
         val businessHourList = businessHourService.findBusinessHourByStoreMetaId(1L)
@@ -135,7 +139,7 @@ class BusinessHourServiceTest {
     @DisplayName("id를 기준으로 조회했는데 id가 없으면 빈 리스트가 조회된다.")
     fun emptyBusinessTest() {
         // given
-        given(businessHourRepository.findByStoreMetaId(1L)).willReturn(listOf())
+        given(businessHourReader.findByStoreMetaId(1L)).willReturn(listOf())
 
         // when
         val businessHours = businessHourService.findBusinessHourByStoreMetaId(1L)
@@ -177,7 +181,7 @@ class BusinessHourServiceTest {
             name = "협업지점명",
         )
 
-        given(businessHourRepository.findByStoreMetaId(1L))
+        given(businessHourReader.findByStoreMetaId(1L))
             .willReturn(
                 updateBusinessHours.map {
                     BusinessHour.ofCreateBusinessHour(it, storeMeta)
@@ -186,7 +190,7 @@ class BusinessHourServiceTest {
 
         // when
         businessHourService.updateBusinessHours(storeMeta, updateBusinessHours)
-        val foundStore = businessHourRepository.findByStoreMetaId(1L)
+        val foundStore = businessHourReader.findByStoreMetaId(1L)
 
         // then
         for (i in businessHours.indices) {
