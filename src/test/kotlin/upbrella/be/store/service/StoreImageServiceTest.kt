@@ -16,8 +16,6 @@ import upbrella.be.store.dto.response.SingleImageUrlResponse
 import upbrella.be.store.entity.StoreDetail
 import upbrella.be.store.entity.StoreImage
 import upbrella.be.store.exception.NonExistingStoreImageException
-import upbrella.be.store.repository.StoreImageRepository
-import java.util.Optional
 import org.mockito.BDDMockito.*
 import org.mockito.Mockito.any
 import org.mockito.Mockito.times
@@ -25,6 +23,8 @@ import org.mockito.Mockito.verify
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
+import upbrella.be.store.repository.StoreImageReader
+import upbrella.be.store.repository.StoreImageWriter
 
 @Transactional
 @ExtendWith(MockitoExtension::class)
@@ -34,7 +34,10 @@ class StoreImageServiceTest {
     private lateinit var s3Client: S3Client
 
     @Mock
-    private lateinit var storeImageRepository: StoreImageRepository
+    private lateinit var storeImageReader: StoreImageReader
+
+    @Mock
+    private lateinit var storeImageWriter: StoreImageWriter
 
     @Mock
     private lateinit var storeDetailService: StoreDetailService
@@ -63,8 +66,8 @@ class StoreImageServiceTest {
         // then
         assertThat(result).isEqualTo(expectedUrl)
         verify(s3Client, times(1))
-            .putObject(any(PutObjectRequest::class.java), any(RequestBody::class.java))
-        verify(storeImageRepository, times(1)).save(any(StoreImage::class.java))
+            .putObject(org.mockito.kotlin.any<PutObjectRequest>(), org.mockito.kotlin.any<RequestBody>())
+        verify(storeImageWriter, times(1)).save(org.mockito.kotlin.any<StoreImage>())
     }
 
     @Test
@@ -78,8 +81,8 @@ class StoreImageServiceTest {
             imageUrl = testUrl,
         )
 
-        given(storeImageRepository.findById(testId))
-            .willReturn(Optional.of(testImage))
+        given(storeImageReader.findById(testId))
+            .willReturn(testImage)
 
         // when
         storeImageService.deleteFile(testId)
@@ -88,7 +91,7 @@ class StoreImageServiceTest {
         assertAll(
             { assertEquals(testId, testImage.id) },
             { assertEquals(testUrl, testImage.imageUrl) },
-            { verify(storeImageRepository, times(1)).deleteById(testImage.id!!) },
+            { verify(storeImageWriter, times(1)).deleteById(testImage.id!!) },
             { verify(s3Client, times(1)).deleteObject(any(DeleteObjectRequest::class.java)) },
         )
     }
