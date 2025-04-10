@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.*
 import org.mockito.InjectMocks
@@ -47,14 +48,14 @@ class ClassificationServiceTest {
             longitude = 127.1234
         )
 
-        given(classificationWriter.save(any(Classification::class.java)))
+        given(classificationWriter.save(org.mockito.kotlin.any<Classification>()))
             .willReturn(Classification())
 
         // when
         classificationService.createClassification(request)
 
         // then
-        Mockito.verify(classificationWriter, Mockito.times(1)).save(any(Classification::class.java))
+        Mockito.verify(classificationWriter, Mockito.times(1)).save(org.mockito.kotlin.any<Classification>())
     }
 
     @Test
@@ -65,14 +66,14 @@ class ClassificationServiceTest {
             name = "편의점"
         )
 
-        given(classificationWriter.save(any(Classification::class.java)))
+        given(classificationWriter.save(org.mockito.kotlin.any<Classification>()))
             .willReturn(Classification())
 
         // when
         classificationService.createSubClassification(request)
 
         // then
-        Mockito.verify(classificationWriter, Mockito.times(1)).save(any(Classification::class.java))
+        Mockito.verify(classificationWriter, Mockito.times(1)).save(org.mockito.kotlin.any<Classification>())
     }
 
     @Test
@@ -189,12 +190,15 @@ class ClassificationServiceTest {
             // given
             val classificationId = 1L
             given(classificationReader.findById(classificationId))
-                .willReturn(classification)
+                .willReturn(subClassification)
 
-            // when & then
-            assertThatThrownBy { classificationService.findClassificationById(classificationId) }
-                .isInstanceOf(IncorrectClassificationException::class.java)
-                .hasMessage("[ERROR] Classification이 아닙니다.")
+            // when
+            val exception = assertThrows<IncorrectClassificationException> {
+                classificationService.findClassificationById(classificationId)
+            }
+
+            // then
+            assertThat(exception.message).isEqualTo("[ERROR] Classification이 아닙니다.")
         }
     }
 
@@ -249,7 +253,7 @@ class ClassificationServiceTest {
             // given
             val subClassificationId = 1L
             given(classificationReader.findById(subClassificationId))
-                .willReturn(classification)
+                .willReturn(subClassification)
 
             // when
             val foundSubClassification = classificationService.findSubClassificationById(subClassificationId)
@@ -271,9 +275,12 @@ class ClassificationServiceTest {
                 .willReturn(classification)
 
             // when & then
-            assertThatThrownBy { classificationService.findSubClassificationById(classificationId) }
-                .isInstanceOf(IncorrectClassificationException::class.java)
-                .hasMessage("[ERROR] SubClassification이 아닙니다.")
+            val exception = assertThrows<IncorrectClassificationException> {
+                classificationService.findSubClassificationById(classificationId)
+            }
+
+            // when & then
+            assertThat(exception.message).isEqualTo("[ERROR] SubClassification이 아닙니다.")
         }
     }
 }
