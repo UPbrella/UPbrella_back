@@ -6,4 +6,6 @@ import upbrella.be.store.entity.ClassificationType
 
 interface ClassificationRepository : JpaRepository<Classification, Long> {
     fun findByType(type: ClassificationType): List<Classification>
+
+    fun findByIdAndType(id: Long, type: ClassificationType): Classification?
 }

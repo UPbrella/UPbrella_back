@@ -14,6 +14,7 @@ import upbrella.be.store.dto.request.UpdateStoreRequest
 import upbrella.be.store.dto.response.*
 import upbrella.be.store.entity.*
 import upbrella.be.store.exception.NonExistingStoreDetailException
+import upbrella.be.store.repository.ClassificationReader
 import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreDetailWriter
 import upbrella.be.store.repository.StoreMetaReader
@@ -25,7 +26,8 @@ import java.time.LocalTime
 class StoreDetailServiceTest {
 
     @Mock
-    private lateinit var classificationService: ClassificationService
+//    private lateinit var classificationService: ClassificationService
+    private lateinit var classificationReader: ClassificationReader
 
     @Mock
     private lateinit var storeMetaReader: StoreMetaReader
@@ -578,9 +580,9 @@ class StoreDetailServiceTest {
 
         given(storeDetailReader.findByStoreMetaId(storeId))
             .willReturn(storeDetail)
-        given(classificationService.findClassificationById(request.classificationId!!))
+        given(classificationReader.findByIdAndType(request.classificationId!!, ClassificationType.CLASSIFICATION))
             .willReturn(classificationUpdate)
-        given(classificationService.findSubClassificationById(request.subClassificationId!!))
+        given(classificationReader.findByIdAndType(request.subClassificationId!!, ClassificationType.SUB_CLASSIFICATION))
             .willReturn(subClassificationUpdate)
         given(storeMetaReader.findById(storeId))
             .willReturn(storeMeta)

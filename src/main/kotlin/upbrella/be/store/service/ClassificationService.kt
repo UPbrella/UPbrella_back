@@ -83,20 +83,4 @@ class ClassificationService(
             subClassifications = classifications
         )
     }
-
-    fun findClassificationById(id: Long): Classification {
-        val classification = classificationReader.findById(id)
-        if (classification.type != ClassificationType.CLASSIFICATION) {
-            throw IncorrectClassificationException("[ERROR] Classification이 아닙니다.")
-        }
-        return classification
-    }
-
-    fun findSubClassificationById(id: Long): Classification {
-        val classification = classificationReader.findById(id)
-        if (classification.type != ClassificationType.SUB_CLASSIFICATION) {
-            throw IncorrectClassificationException("[ERROR] SubClassification이 아닙니다.")
-        }
-        return classification
-    }
 }
