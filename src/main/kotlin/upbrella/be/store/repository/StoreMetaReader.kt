@@ -3,6 +3,7 @@ package upbrella.be.store.repository
 import org.springframework.stereotype.Component
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount
 import upbrella.be.store.entity.StoreMeta
+import upbrella.be.store.exception.NonExistingStoreMetaException
 
 @Component
 class StoreMetaReader(
@@ -20,11 +21,13 @@ class StoreMetaReader(
         return storeMetaRepository.existsById(id)
     }
 
-    fun findById(id: Long): StoreMeta? {
-        return storeMetaRepository.findById(id).orElse(null)
+    fun findById(id: Long): StoreMeta {
+        return storeMetaRepository.findById(id)
+            .orElseThrow { NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.") }
     }
 
     fun findAllStoresByClassification(classificationId: Long): List<StoreMetaWithUmbrellaCount> {
         return storeMetaRepository.findAllStoresByClassification(classificationId)
     }
+
 }

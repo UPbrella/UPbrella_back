@@ -12,7 +12,7 @@ import upbrella.be.rent.entity.History
 import upbrella.be.rent.exception.*
 import upbrella.be.rent.repository.RentRepository
 import upbrella.be.store.entity.StoreMeta
-import upbrella.be.store.service.StoreMetaService
+import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.exception.MissingUmbrellaException
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
@@ -29,7 +29,7 @@ import java.time.temporal.ChronoUnit
 @Service
 class RentService(
     private val umbrellaService: UmbrellaService,
-    private val storeMetaService: StoreMetaService,
+    private val storeMetaReader: StoreMetaReader,
     private val improvementReportService: ImprovementReportService,
     private val rentRepository: RentRepository,
     private val conditionReportService: ConditionReportService,
@@ -52,7 +52,7 @@ class RentService(
         salt: String,
         signature: String
     ): ReturnFormResponse {
-        val storeMeta: StoreMeta = storeMetaService.findStoreMetaById(storeId)
+        val storeMeta: StoreMeta = storeMetaReader.findById(storeId)
         lockerService.validateLockerSignature(storeMeta.id!!, salt, signature)
         val history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.id!!)
             .orElseThrow { NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다.") }
@@ -76,7 +76,7 @@ class RentService(
             throw NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.")
         }
         willRentUmbrella.rentUmbrella()
-        val rentalStore = storeMetaService.findStoreMetaById(rentUmbrellaByUserRequest.storeId)
+        val rentalStore = storeMetaReader.findById(rentUmbrellaByUserRequest.storeId)
         val conditionReport = rentUmbrellaByUserRequest.conditionReport
         val history = rentRepository.save(
             History.ofCreatedByNewRent(willRentUmbrella, userToRent, rentalStore)
@@ -90,7 +90,7 @@ class RentService(
         blackListService.checkBlackList(userToReturn.id!!)
         val history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.id)
             .orElseThrow { NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다.") }
-        val returnStore = storeMetaService.findStoreMetaById(request.returnStoreId)
+        val returnStore = storeMetaReader.findById(request.returnStoreId)
         val updatedHistory = History.updateHistoryForReturn(history, returnStore, request)
         val returnedUmbrella: Umbrella = history.umbrella
         returnedUmbrella.returnUmbrella(returnStore)

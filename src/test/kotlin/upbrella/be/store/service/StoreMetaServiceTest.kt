@@ -579,7 +579,7 @@ class StoreMetaServiceTest {
                 .willReturn(storeMeta)
 
             // when
-            val foundStoreMeta = storeMetaService.findStoreMetaById(1L)
+            val foundStoreMeta = storeMetaReader.findById(1L)
 
             // then
             assertAll(
@@ -596,11 +596,12 @@ class StoreMetaServiceTest {
         @DisplayName("협업지점이 존재하지 않으면 예외가 발생한다.")
         fun storeMetaNotFoundTest() {
             // given
-            given(storeMetaReader.findById(1L)).willReturn(null)
+            given(storeMetaReader.findById(1L))
+                .willThrow(NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다."))
 
             // when
             val exception = assertThrows<NonExistingStoreMetaException> {
-                storeMetaService.findStoreMetaById(1L)
+                storeMetaReader.findById(1L)
             }
 
             // then

@@ -3,11 +3,12 @@ package upbrella.be.store.service
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.BDDMockito.*
 import org.mockito.Mockito.times
+import org.mockito.junit.jupiter.MockitoExtension
 import upbrella.be.store.dto.request.SingleBusinessHourRequest
 import upbrella.be.store.dto.request.UpdateStoreRequest
 import upbrella.be.store.dto.response.*
@@ -15,6 +16,7 @@ import upbrella.be.store.entity.*
 import upbrella.be.store.exception.NonExistingStoreDetailException
 import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreDetailWriter
+import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.service.UmbrellaService
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -26,7 +28,7 @@ class StoreDetailServiceTest {
     private lateinit var classificationService: ClassificationService
 
     @Mock
-    private lateinit var storeMetaService: StoreMetaService
+    private lateinit var storeMetaReader: StoreMetaReader
 
     @Mock
     private lateinit var umbrellaService: UmbrellaService
@@ -580,14 +582,14 @@ class StoreDetailServiceTest {
             .willReturn(classificationUpdate)
         given(classificationService.findSubClassificationById(request.subClassificationId!!))
             .willReturn(subClassificationUpdate)
-        given(storeMetaService.findStoreMetaById(storeId))
+        given(storeMetaReader.findById(storeId))
             .willReturn(storeMeta)
 
         // when
         storeDetailService.updateStore(storeId, request)
 
         // then
-        val foundStoreMeta = storeMetaService.findStoreMetaById(storeId)
+        val foundStoreMeta = storeMetaReader.findById(storeId)
         val foundStoreDetail = storeDetailReader.findByStoreMetaId(storeId)
 
         assertAll(
