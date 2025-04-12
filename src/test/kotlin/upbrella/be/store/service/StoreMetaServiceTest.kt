@@ -20,9 +20,7 @@ import upbrella.be.store.entity.*
 import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
 import upbrella.be.store.exception.NonExistingStoreMetaException
-import upbrella.be.store.repository.StoreDetailReader
-import upbrella.be.store.repository.StoreMetaReader
-import upbrella.be.store.repository.StoreMetaWriter
+import upbrella.be.store.repository.*
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.repository.UmbrellaRepository
@@ -47,13 +45,14 @@ class StoreMetaServiceTest {
     private lateinit var storeDetailReader: StoreDetailReader
 
     @Mock
-    private lateinit var storeDetailService: StoreDetailService
+    private lateinit var storeDetailWriter: StoreDetailWriter
 
     @Mock
-    private lateinit var classificationService: ClassificationService
+    private lateinit var classificationReader: ClassificationReader
 
     @Mock
-    private lateinit var businessHourService: BusinessHourService
+//    private lateinit var businessHourService: BusinessHourService
+    private lateinit var businessHourWriter: BusinessHourWriter
 
     @InjectMocks
     private lateinit var storeMetaService: StoreMetaService
@@ -448,17 +447,15 @@ class StoreMetaServiceTest {
                 )
             )
 
-            given(classificationService.findClassificationById(classificationId)).willReturn(
-                classification
-            )
-            given(classificationService.findSubClassificationById(subClassificationId)).willReturn(
-                subClassification
-            )
+            given(classificationReader.findByIdAndType(classificationId, ClassificationType.CLASSIFICATION))
+                .willReturn(classification)
+            given(classificationReader.findByIdAndType(subClassificationId, ClassificationType.SUB_CLASSIFICATION))
+                .willReturn(subClassification)
             given(storeMetaWriter.save(org.mockito.kotlin.any<StoreMeta>())).willReturn(storeMeta)
-            doNothing().`when`(storeDetailService)
-                .saveStoreDetail(any<StoreDetail>() ?: storeDetail)
-            doNothing().`when`(businessHourService)
-                .saveAllBusinessHour(any<List<BusinessHour>>() ?: emptyList())
+            doNothing().`when`(storeDetailWriter)
+                .save(any<StoreDetail>() ?: storeDetail)
+            doNothing().`when`(businessHourWriter)
+                .saveAll(any<List<BusinessHour>>() ?: emptyList())
 
             // when
             storeMetaService.createStore(store)
@@ -466,10 +463,10 @@ class StoreMetaServiceTest {
             // then
             assertAll(
                 {
-                    verify(classificationService).findClassificationById(classificationId)
+                    verify(classificationReader).findByIdAndType(classificationId, ClassificationType.CLASSIFICATION)
                 },
                 {
-                    verify(classificationService).findSubClassificationById(subClassificationId)
+                    verify(classificationReader).findByIdAndType(subClassificationId, ClassificationType.SUB_CLASSIFICATION)
                 },
                 {
                     verify(storeMetaWriter).save(org.mockito.kotlin.any<StoreMeta>())
@@ -530,82 +527,6 @@ class StoreMetaServiceTest {
                 assertThat(storeMeta.deleted).isTrue
             }
         )
-    }
-
-    @Nested
-    @DisplayName("사용자는 ")
-    inner class FindStoreMeta {
-
-        // given
-        val classification = Classification(
-            id = 1L,
-            type = ClassificationType.CLASSIFICATION,
-            name = "카테고리",
-            latitude = 33.33,
-            longitude = 33.33
-        )
-
-        val subClassification = Classification(
-            id = 2L,
-            type = ClassificationType.SUB_CLASSIFICATION,
-            name = "카테고리",
-        )
-
-        val businessHour = BusinessHour(
-            id = 1L,
-            date = DayOfWeek.MONDAY,
-            openAt = LocalTime.of(10, 0),
-            closeAt = LocalTime.of(20, 0),
-        )
-
-        val storeMeta = StoreMeta(
-            id = 1L,
-            name = "협업 지점명",
-            activated = true,
-            deleted = false,
-            classification = classification,
-            subClassification = subClassification,
-            category = "카테고리",
-            latitude = 33.33,
-            longitude = 33.33,
-            businessHours = listOf(businessHour)
-        )
-
-        @Test
-        @DisplayName("협업지점을 고유 아이디로 조회할 수 있다.")
-        fun test() {
-
-            given(storeMetaReader.findById(1L))
-                .willReturn(storeMeta)
-
-            // when
-            val foundStoreMeta = storeMetaService.findStoreMetaById(1L)
-
-            // then
-            assertAll(
-                {
-                    verify(storeMetaReader, times(1)).findById(1L)
-                },
-                {
-                    assertThat(foundStoreMeta).isEqualTo(storeMeta)
-                }
-            )
-        }
-
-        @Test
-        @DisplayName("협업지점이 존재하지 않으면 예외가 발생한다.")
-        fun storeMetaNotFoundTest() {
-            // given
-            given(storeMetaReader.findById(1L)).willReturn(null)
-
-            // when
-            val exception = assertThrows<NonExistingStoreMetaException> {
-                storeMetaService.findStoreMetaById(1L)
-            }
-
-            // then
-            assertThat(exception.message).isEqualTo("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.")
-        }
     }
 
     @Test

@@ -1,6 +1,5 @@
 package upbrella.be.store.service
 
-import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import upbrella.be.store.dto.request.CreateStoreRequest
@@ -8,16 +7,10 @@ import upbrella.be.store.dto.response.AllCurrentLocationStoreResponse
 import upbrella.be.store.dto.response.CurrentUmbrellaStoreResponse
 import upbrella.be.store.dto.response.SingleCurrentLocationStoreResponse
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount
-import upbrella.be.store.entity.BusinessHour
-import upbrella.be.store.entity.StoreDetail
-import upbrella.be.store.entity.StoreImage
-import upbrella.be.store.entity.StoreMeta
+import upbrella.be.store.entity.*
 import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
-import upbrella.be.store.exception.NonExistingStoreMetaException
-import upbrella.be.store.repository.StoreDetailReader
-import upbrella.be.store.repository.StoreMetaReader
-import upbrella.be.store.repository.StoreMetaWriter
+import upbrella.be.store.repository.*
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.repository.UmbrellaRepository
 import java.time.LocalDateTime
@@ -27,10 +20,10 @@ class StoreMetaService(
     private val umbrellaRepository: UmbrellaRepository,
     private val storeMetaReader: StoreMetaReader,
     private val storeMetaWriter: StoreMetaWriter,
-    private val storeDetailReder: StoreDetailReader,
-    @Lazy private val storeDetailService: StoreDetailService,
-    private val classificationService: ClassificationService,
-    private val businessHourService: BusinessHourService
+    private val storeDetailReader: StoreDetailReader,
+    private val storeDetailWriter: StoreDetailWriter,
+    private val businessHourWriter: BusinessHourWriter,
+    private val classificationReader: ClassificationReader
 ) {
 
     @Transactional(readOnly = true)
@@ -57,29 +50,32 @@ class StoreMetaService(
 
     @Transactional
     fun createStore(store: CreateStoreRequest) {
-        val storeMeta = saveStoreMeta(store)
-        saveStoreDetail(store, storeMeta)
+        val classification = classificationReader.findByIdAndType(store.classificationId, ClassificationType.CLASSIFICATION)
+        val subClassification = classificationReader.findByIdAndType(store.subClassificationId, ClassificationType.SUB_CLASSIFICATION)
+
+        val businessHourRequests = store.businessHours
+
+        val storeMeta = storeMetaWriter.save(
+            StoreMeta.createStoreMetaForSave(store, classification, subClassification)
+        )
+
+        val businessHours = businessHourRequests.map { businessHourRequest ->
+            BusinessHour.ofCreateBusinessHour(businessHourRequest, storeMeta)
+        }
+
+        businessHourWriter.saveAll(businessHours)
+
+        storeDetailWriter.save(StoreDetail.createForSave(store, storeMeta))
     }
 
     @Transactional
     fun deleteStoreMeta(storeMetaId: Long) {
-        findStoreMetaById(storeMetaId).delete()
-    }
-
-    @Transactional(readOnly = true)
-    fun findStoreMetaById(id: Long): StoreMeta {
-        return storeMetaReader.findById(id)
-            ?: throw NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.")
-    }
-
-    @Transactional(readOnly = true)
-    fun existByStoreId(storeId: Long): Boolean {
-        return storeMetaReader.existsById(storeId)
+        storeMetaReader.findById(storeMetaId).delete()
     }
 
     @Transactional
     fun activateStoreStatus(storeId: Long) {
-        val storeDetail = storeDetailReder.findByStoreMetaId(storeId)
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
 
         val storeImages: List<StoreImage> = storeDetail.storeImages
         if (storeImages.isEmpty()) {
@@ -91,7 +87,7 @@ class StoreMetaService(
 
     @Transactional
     fun inactivateStoreStatus(storeId: Long) {
-        val storeDetail = storeDetailReder.findByStoreMetaId(storeId)
+        val storeDetail = storeDetailReader.findByStoreMetaId(storeId)
         storeDetail.storeMeta!!.inactivateStoreStatus()
     }
 
@@ -114,28 +110,5 @@ class StoreMetaService(
         return SingleCurrentLocationStoreResponse.fromStoreMeta(
             isOpenStore(storeMetaWithUmbrellaCount, currentTime), storeMetaWithUmbrellaCount
         )
-    }
-
-    private fun saveStoreDetail(store: CreateStoreRequest, storeMeta: StoreMeta) {
-        storeDetailService.saveStoreDetail(StoreDetail.createForSave(store, storeMeta))
-    }
-
-    private fun saveStoreMeta(store: CreateStoreRequest): StoreMeta {
-        val classification = classificationService.findClassificationById(store.classificationId)
-        val subClassification = classificationService.findSubClassificationById(store.subClassificationId)
-
-        val businessHourRequests = store.businessHours
-
-        val storeMeta = storeMetaWriter.save(
-            StoreMeta.createStoreMetaForSave(store, classification, subClassification)
-        )
-
-        val businessHours = businessHourRequests.map { businessHourRequest ->
-            BusinessHour.ofCreateBusinessHour(businessHourRequest, storeMeta)
-        }
-
-        businessHourService.saveAllBusinessHour(businessHours)
-
-        return storeMeta
     }
 }

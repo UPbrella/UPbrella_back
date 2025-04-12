@@ -16,11 +16,6 @@ class BusinessHourService(
     private val businessHourWriter: BusinessHourWriter
 ) {
 
-    @Transactional
-    fun saveAllBusinessHour(businessHours: List<BusinessHour>) {
-        businessHourWriter.saveAll(businessHours)
-    }
-
     @Transactional(readOnly = true)
     fun findBusinessHourByStoreMetaId(storeMetaId: Long): List<BusinessHour> {
         return businessHourReader.findByStoreMetaId(storeMetaId)
