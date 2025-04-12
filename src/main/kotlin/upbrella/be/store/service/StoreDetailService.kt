@@ -7,27 +7,26 @@ import upbrella.be.store.dto.response.AllStoreIntroductionResponse
 import upbrella.be.store.dto.response.SingleStoreResponse
 import upbrella.be.store.dto.response.StoreFindByIdResponse
 import upbrella.be.store.dto.response.StoreIntroductionsResponseByClassification
-import upbrella.be.store.entity.StoreDetail
+import upbrella.be.store.entity.ClassificationType
 import upbrella.be.store.entity.StoreMeta
+import upbrella.be.store.repository.ClassificationReader
 import upbrella.be.store.repository.StoreDetailReader
-import upbrella.be.store.repository.StoreDetailWriter
 import upbrella.be.umbrella.service.UmbrellaService
 
 @Service
 class StoreDetailService(
-    private val classificationService: ClassificationService,
-    private val umbrellaService: UmbrellaService,
     private val storeDetailReader: StoreDetailReader,
-    private val storeDetailWriter: StoreDetailWriter,
-    private val businessHourService: BusinessHourService
+    private val classificationReader: ClassificationReader,
+    private val businessHourService: BusinessHourService,
+    private val umbrellaService: UmbrellaService,
 ) {
 
     @Transactional
     fun updateStore(storeId: Long, request: UpdateStoreRequest) {
         val storeDetailById = storeDetailReader.findByStoreMetaId(storeId)
 
-        val classification = classificationService.findClassificationById(request.classificationId)
-        val subClassification = classificationService.findSubClassificationById(request.subClassificationId)
+        val classification = classificationReader.findByIdAndType(request.classificationId, ClassificationType.CLASSIFICATION)
+        val subClassification = classificationReader.findByIdAndType(request.subClassificationId, ClassificationType.SUB_CLASSIFICATION)
 
         val storeMetaForUpdate = StoreMeta.createStoreMetaForUpdate(request, classification, subClassification)
         val foundStoreMeta = storeDetailById.storeMeta
@@ -69,11 +68,5 @@ class StoreDetailService(
             .toList()
 
         return AllStoreIntroductionResponse.of(storeDetailsByClassification)
-    }
-
-    @Transactional
-    fun saveStoreDetail(storeDetail: StoreDetail) {
-        storeDetailWriter.
-        save(storeDetail)
     }
 }

@@ -147,59 +147,6 @@ class ClassificationServiceTest {
         )
     }
 
-    @Nested
-    @DisplayName("사용자는 대분류를")
-    inner class ClassificationTest {
-
-        private val classification: Classification = Classification(
-            id = 1L,
-            type = ClassificationType.CLASSIFICATION,
-            name = "classification_name",
-            latitude = 1.0,
-            longitude = 1.0
-        )
-
-        private val subClassification: Classification = Classification(
-            id = 1L,
-            type = ClassificationType.SUB_CLASSIFICATION,
-            name = "classification_name",
-        )
-
-        @Test
-        @DisplayName("id로 조회할 수 있다.")
-        fun findClassificationById() {
-            // given
-            val classificationId = 1L
-
-            given(classificationReader.findById(classificationId))
-                .willReturn(classification)
-
-            // when
-            val foundClassification = classificationService.findClassificationById(classificationId)
-
-            // then
-            assertAll(
-                { assertThat(foundClassification).isNotNull() },
-                { assertEquals(1L, foundClassification.id) },
-                { assertEquals("classification_name", foundClassification.name) }
-            )
-        }
-
-        @Test
-        @DisplayName("조회했는데 소분류가 조회되면 예외를 발생시킨다.")
-        fun test() {
-            // given
-            val classificationId = 1L
-            given(classificationReader.findById(classificationId))
-                .willReturn(subClassification)
-
-            // when & then
-            assertThatThrownBy { classificationService.findClassificationById(classificationId) }
-                .isInstanceOf(IncorrectClassificationException::class.java)
-                .hasMessage("[ERROR] Classification이 아닙니다.")
-        }
-    }
-
     @Test
     @DisplayName("사용자는 소분류를 조회할 수 있다.")
     fun findAllSubClassificationTest() {
@@ -225,57 +172,5 @@ class ClassificationServiceTest {
             { assertEquals(1L, result.subClassifications[0].id) },
             { assertEquals("subclassification_name", result.subClassifications[0].name) }
         )
-    }
-
-    @Nested
-    @DisplayName("사용자는 소분류를")
-    inner class SubClassificationTest {
-
-        private val classification: Classification = Classification(
-            id = 1L,
-            type = ClassificationType.CLASSIFICATION,
-            name = "classification_name",
-            latitude = 1.0,
-            longitude = 1.0
-        )
-
-        private val subClassification: Classification = Classification(
-            id = 1L,
-            type = ClassificationType.SUB_CLASSIFICATION,
-            name = "sub_classification_name",
-        )
-
-        @Test
-        @DisplayName("id로 조회할 수 있다.")
-        fun findClassificationById() {
-            // given
-            val subClassificationId = 1L
-            given(classificationReader.findById(subClassificationId))
-                .willReturn(subClassification)
-
-            // when
-            val foundSubClassification = classificationService.findSubClassificationById(subClassificationId)
-
-            // then
-            assertAll(
-                { assertThat(foundSubClassification).isNotNull() },
-                { assertEquals(1L, foundSubClassification.id) },
-                { assertEquals("sub_classification_name", foundSubClassification.name) }
-            )
-        }
-
-        @Test
-        @DisplayName("조회했는데 대분류가 조회되면 예외를 발생시킨다.")
-        fun test() {
-            // given
-            val classificationId = 1L
-            given(classificationReader.findById(classificationId))
-                .willReturn(classification)
-
-            // when & then
-            assertThatThrownBy { classificationService.findSubClassificationById(classificationId) }
-                .isInstanceOf(IncorrectClassificationException::class.java)
-                .hasMessage("[ERROR] SubClassification이 아닙니다.")
-        }
     }
 }

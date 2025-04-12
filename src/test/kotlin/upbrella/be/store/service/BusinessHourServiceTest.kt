@@ -5,12 +5,10 @@ import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.then
-import org.mockito.Mockito.times
 import upbrella.be.store.dto.request.SingleBusinessHourRequest
 import upbrella.be.store.dto.response.SingleBusinessHourResponse
 import upbrella.be.store.entity.BusinessHour
@@ -31,55 +29,6 @@ class BusinessHourServiceTest {
 
     @InjectMocks
     private lateinit var businessHourService: BusinessHourService
-
-    @Test
-    @DisplayName("saveAllBusinessHour() 호출하면, 모든 요일이 저장된다.")
-    fun saveAllBusinessHour() {
-        // given
-        val monday = BusinessHour(
-            date = DayOfWeek.MONDAY,
-            openAt = LocalTime.of(9, 0),
-            closeAt = LocalTime.of(18, 0)
-        )
-        val tuesday = BusinessHour(
-            date = DayOfWeek.TUESDAY,
-            openAt = LocalTime.of(9, 0),
-            closeAt = LocalTime.of(18, 0)
-        )
-        val wednesday = BusinessHour(
-            date = DayOfWeek.WEDNESDAY,
-            openAt = LocalTime.of(9, 0),
-            closeAt = LocalTime.of(18, 0)
-        )
-        val thursday = BusinessHour(
-            date = DayOfWeek.THURSDAY,
-            openAt = LocalTime.of(9, 0),
-            closeAt = LocalTime.of(18, 0)
-        )
-        val friday = BusinessHour(
-            date = DayOfWeek.FRIDAY,
-            openAt = LocalTime.of(9, 0),
-            closeAt = LocalTime.of(18, 0)
-        )
-        val saturday = BusinessHour(
-            date = DayOfWeek.SATURDAY,
-            openAt = LocalTime.of(9, 0),
-            closeAt = LocalTime.of(18, 0)
-        )
-        val sunday = BusinessHour(
-            date = DayOfWeek.SUNDAY,
-            openAt = LocalTime.of(9, 0),
-            closeAt = LocalTime.of(18, 0)
-        )
-
-        val businessHours = listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
-
-        // when
-        businessHourService.saveAllBusinessHour(businessHours)
-
-        // then
-        then(businessHourWriter).should(times(1)).saveAll(businessHours)
-    }
 
     @Test
     @DisplayName("id 를 기준으로 조회하면 모든 요일이 조회된다.")

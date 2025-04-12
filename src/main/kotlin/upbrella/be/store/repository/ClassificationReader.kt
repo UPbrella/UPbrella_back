@@ -9,9 +9,9 @@ import upbrella.be.store.exception.NonExistingClassificationException
 class ClassificationReader(
     private val classificationRepository: ClassificationRepository,
 ) {
-    fun findById(id: Long): Classification {
-        return classificationRepository.findById(id)
-            .orElseThrow() { NonExistingClassificationException("[ERROR] 존재하지 않는 분류입니다.") }
+    fun findByIdAndType(id: Long, type: ClassificationType): Classification {
+        return classificationRepository.findByIdAndType(id, type)
+            ?: throw NonExistingClassificationException("[ERROR] 존재하지 않는 분류입니다.")
     }
 
     fun findByType(type: ClassificationType): List<Classification> {
