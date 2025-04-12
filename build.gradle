@@ -5,7 +5,6 @@ buildscript {
 }
 
 plugins {
-    id 'java'
     id 'org.springframework.boot' version '2.7.13'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
@@ -15,10 +14,6 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.spring' version '1.9.21'    // Kotlin Spring 플러그인 추가
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.21'       // Kotlin JPA 플러그인 추가
     id 'org.jetbrains.kotlin.kapt' version '1.9.21'             // Kotlin Annotation Processing 플러그인
-
-    // java lombok을 읽기 위한 용도 todo: 마이그레이션후 삭제 필요
-    id 'org.jetbrains.kotlin.plugin.lombok' version '2.1.20'
-    id 'io.freefair.lombok' version '8.13'
 }
 
 group = 'upbrella-server-dev'
@@ -40,16 +35,13 @@ repositories {
 }
 
 ext {
-    set('snippetsDir', file("build/generated-snippets"))
+    set('snippetsDir', file("./build/generated-snippets"))
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.projectlombok:lombok:1.18.26'
-    compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
-    annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
@@ -113,7 +105,7 @@ compileTestKotlin {
 }
 
 ext {
-    snippetsDir = file('../build/generated-snippets')
+    snippetsDir = file('./build/generated-snippets')
 }
 
 test {
@@ -201,19 +193,11 @@ jacocoTestCoverageVerification {
     }
 }
 
-def querydslDir = "$buildDir/generated/querydsl"
-
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
-    main.java.srcDirs += 'src/main/java'
-    main.java.srcDirs += querydslDir
 }
 
 kapt {
-    javacOptions {
-        option("querydsl.entityAccessors", true)
-    }
     correctErrorTypes = true
     generateStubs = true
-    keepJavacAnnotationProcessors = true
 }
