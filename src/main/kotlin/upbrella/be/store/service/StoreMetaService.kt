@@ -14,7 +14,6 @@ import upbrella.be.store.entity.StoreImage
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
-import upbrella.be.store.exception.NonExistingStoreMetaException
 import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.store.repository.StoreMetaWriter
@@ -63,18 +62,7 @@ class StoreMetaService(
 
     @Transactional
     fun deleteStoreMeta(storeMetaId: Long) {
-        findStoreMetaById(storeMetaId).delete()
-    }
-
-    @Transactional(readOnly = true)
-    fun findStoreMetaById(id: Long): StoreMeta {
-        return storeMetaReader.findById(id)
-            ?: throw NonExistingStoreMetaException("[ERROR] 존재하지 않는 협업 지점 고유번호입니다.")
-    }
-
-    @Transactional(readOnly = true)
-    fun existByStoreId(storeId: Long): Boolean {
-        return storeMetaReader.existsById(storeId)
+        storeMetaReader.findById(storeMetaId).delete()
     }
 
     @Transactional

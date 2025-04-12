@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import upbrella.be.config.FixtureBuilderFactory
 import upbrella.be.config.FixtureFactory
-import upbrella.be.rent.repository.RentRepository
 import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.dto.response.HistoryInfoDto
@@ -28,8 +27,9 @@ import upbrella.be.rent.entity.History
 import upbrella.be.rent.exception.NonExistingHistoryException
 import upbrella.be.rent.exception.NotAvailableUmbrellaException
 import upbrella.be.rent.exception.NotRefundedException
+import upbrella.be.rent.repository.RentRepository
 import upbrella.be.store.entity.StoreMeta
-import upbrella.be.store.service.StoreMetaService
+import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
 import upbrella.be.umbrella.service.UmbrellaService
@@ -51,13 +51,14 @@ class RentServiceTest {
     private lateinit var umbrellaService: UmbrellaService
 
     @Mock
-    private lateinit var storeMetaService: StoreMetaService
+    private lateinit var storeMetaReader: StoreMetaReader
 
     @Mock
     private lateinit var rentRepository: RentRepository
 
     @Mock
     private lateinit var blackListService: BlackListService
+
     @Mock
     private lateinit var userReader: UserReader
 
@@ -151,7 +152,7 @@ class RentServiceTest {
         @DisplayName("대여 이력을 정상적으로 추가할 수 있다.")
         fun success() {
             // given
-            given(storeMetaService.findStoreMetaById(25L)).willReturn(foundStoreMeta)
+            given(storeMetaReader.findById(25L)).willReturn(foundStoreMeta)
             given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
             given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
             doNothing().`when`(conditionReportService)
@@ -167,8 +168,8 @@ class RentServiceTest {
                         .findUmbrellaById(99L)
                 },
                 {
-                    then(storeMetaService).should(times(1))
-                        .findStoreMetaById(25L)
+                    then(storeMetaReader).should(times(1))
+                        .findById(25L)
                 },
                 {
                     then(rentRepository).should(times(1))
@@ -182,7 +183,7 @@ class RentServiceTest {
         fun isNotExistingStore() {
             // given
             given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
-            given(storeMetaService.findStoreMetaById(25L)).willThrow(IllegalArgumentException::class.java)
+            given(storeMetaReader.findById(25L)).willThrow(IllegalArgumentException::class.java)
 
             // when & then
             assertAll(
@@ -195,7 +196,7 @@ class RentServiceTest {
                     then(umbrellaService).should(times(1)).findUmbrellaById(99L)
                 },
                 {
-                    then(storeMetaService).should(times(1)).findStoreMetaById(25L)
+                    then(storeMetaReader).should(times(1)).findById(25L)
                 },
                 {
                     then(rentRepository).should(times(1))
@@ -230,7 +231,7 @@ class RentServiceTest {
 
         private val expectedRentalHistoryResponses = mutableListOf<RentalHistoryResponse>()
         private val generatedHistories =
-            mutableListOf<upbrella.be.rent.dto.response.HistoryInfoDto>()
+            mutableListOf<HistoryInfoDto>()
 
         @Test
         @DisplayName("조건이 없으면 전체 대여/반납 현황을 조회할 수 있다.")
@@ -662,7 +663,8 @@ class RentServiceTest {
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
         val request = RentUmbrellaByUserRequest()
 
-        doThrow(BlackListUserException::class.java).`when`(blackListService).checkBlackList(user.id!!)
+        doThrow(BlackListUserException::class.java).`when`(blackListService)
+            .checkBlackList(user.id!!)
 
         // when & then
         assertThatThrownBy {
