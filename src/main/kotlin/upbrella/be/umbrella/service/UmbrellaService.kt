@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 import upbrella.be.rent.service.RentService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.exception.NonExistingStoreMetaException
-import upbrella.be.store.service.StoreMetaService
+import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse
@@ -20,7 +20,7 @@ import javax.transaction.Transactional
 @Service
 class UmbrellaService(
     private val umbrellaRepository: UmbrellaRepository,
-    private val storeMetaService: StoreMetaService,
+    private val storeMetaReader: StoreMetaReader,
     @Lazy private val rentService: RentService
 ) {
 
@@ -34,7 +34,7 @@ class UmbrellaService(
 
     @Transactional
     fun addUmbrella(umbrellaCreateRequest: UmbrellaCreateRequest) {
-        val storeMeta: StoreMeta = storeMetaService.findStoreMetaById(umbrellaCreateRequest.storeMetaId)
+        val storeMeta: StoreMeta = storeMetaReader.findById(umbrellaCreateRequest.storeMetaId)
         if (umbrellaRepository.existsByUuidAndDeletedIsFalse(umbrellaCreateRequest.uuid)) {
             throw ExistingUmbrellaUuidException("[ERROR] 이미 존재하는 우산 관리 번호입니다.")
         }
@@ -43,7 +43,7 @@ class UmbrellaService(
 
     @Transactional
     fun modifyUmbrella(id: Long, umbrellaModifyRequest: UmbrellaModifyRequest) {
-        val storeMeta: StoreMeta = storeMetaService.findStoreMetaById(umbrellaModifyRequest.storeMetaId)
+        val storeMeta: StoreMeta = storeMetaReader.findById(umbrellaModifyRequest.storeMetaId)
         val foundUmbrella = umbrellaRepository.findByIdAndDeletedIsFalse(id)
             .orElseThrow { NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.") }
 
@@ -85,7 +85,7 @@ class UmbrellaService(
     }
 
     fun getUmbrellaStatisticsByStoreId(storeId: Long): UmbrellaStatisticsResponse {
-        if (!storeMetaService.existByStoreId(storeId)) {
+        if (!storeMetaReader.existsById(storeId)) {
             throw NonExistingStoreMetaException("[ERROR] 존재하지 않는 매장 고유번호입니다.")
         }
         val totalUmbrellaByStoreId = umbrellaRepository.countAllUmbrellasByStore(storeId)

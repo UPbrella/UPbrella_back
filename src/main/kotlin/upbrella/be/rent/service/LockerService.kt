@@ -15,7 +15,7 @@ import upbrella.be.store.dto.request.UpdateLockerRequest
 import upbrella.be.store.dto.response.AllLockerResponse
 import upbrella.be.store.dto.response.SingleLockerResponse
 import upbrella.be.store.entity.StoreMeta
-import upbrella.be.store.service.StoreMetaService
+import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.util.HotpGenerator
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 @Service
 class LockerService(
     private val lockerRepository: LockerRepository,
-    private val storeMetaService: StoreMetaService
+    private val storeMetaReader: StoreMetaReader
 ) {
 
     fun findAll(): AllLockerResponse {
@@ -37,7 +37,7 @@ class LockerService(
     @Transactional
     fun createLocker(request: CreateLockerRequest) {
         isMultipleLockers(request.storeId)
-        val storeMeta: StoreMeta = storeMetaService.findStoreMetaById(request.storeId)
+        val storeMeta: StoreMeta = storeMetaReader.findById(request.storeId)
         val locker = Locker(storeMeta, 0L, request.secretKey, null, null)
         lockerRepository.save(locker)
     }
@@ -48,7 +48,7 @@ class LockerService(
         if (existing.isPresent && existing.get().id != lockerId) {
             throw IllegalArgumentException("이미 보관함이 존재합니다.")
         }
-        val storeMeta: StoreMeta = storeMetaService.findStoreMetaById(request.storeId)
+        val storeMeta: StoreMeta = storeMetaReader.findById(request.storeId)
         lockerRepository.findById(lockerId).ifPresent { locker ->
             locker.updateLocker(storeMeta, request.secretKey)
         }
