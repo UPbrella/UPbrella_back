@@ -9,10 +9,6 @@ import upbrella.be.store.exception.NonExistingStoreMetaException
 class StoreMetaReader(
     val storeMetaRepository: StoreMetaRepository
 ) {
-    fun findByClassificationIdAndDeletedIsFalse(id: Long): StoreMeta? {
-        return storeMetaRepository.findByClassificationIdAndDeletedIsFalse(id).orElse(null)
-    }
-
     fun existByClassificationId(classificationId: Long): Boolean {
         return storeMetaRepository.existsByClassificationIdAndDeletedIsFalse(classificationId)
     }
