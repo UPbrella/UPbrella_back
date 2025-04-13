@@ -97,9 +97,7 @@ class RentController(
         val userToReturn = userReader.findUserById(user.id)
 
         rentService.returnUmbrellaByUser(userToReturn, returnUmbrellaByUserRequest)
-        val unrefundedRentCount = rentService.countUnrefundedRent()
 
-        slackAlarmService.notifyReturn(unrefundedRentCount)
         return ResponseEntity
             .ok()
             .body(CustomResponse(

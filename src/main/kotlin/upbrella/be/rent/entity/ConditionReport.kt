@@ -6,7 +6,7 @@ import javax.persistence.*
 class ConditionReport(
     @OneToOne
     @JoinColumn(name = "history_id")
-    val history: History? = null,
+    val history: History,
     val content: String? = null,
     val etc: String? = null,
     @Id
