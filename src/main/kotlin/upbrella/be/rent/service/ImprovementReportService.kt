@@ -15,9 +15,9 @@ class ImprovementReportService(
     fun findAll(): ImprovementReportPageResponse =
         ImprovementReportPageResponse.of(findAllImprovementReport())
 
-    fun addImprovementReportFromReturn(history: History, content: String) {
-        val report = ImprovementReport.createFromReturn(history, content)
-        improvementReportRepository.save(report)
+    fun save(improvementReport: ImprovementReport) {
+
+        improvementReportRepository.save(improvementReport)
     }
 
     private fun findAllImprovementReport(): List<ImprovementReportResponse> =
