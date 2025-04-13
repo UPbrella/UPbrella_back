@@ -2,7 +2,9 @@ name: Upbrella DEV PR Test
 
 on:
   pull_request:
-    branches: [ "release-dev", "release-production" ]
+    paths:
+      - 'src/**'
+
 permissions:
   contents: read
   pull-requests: write
