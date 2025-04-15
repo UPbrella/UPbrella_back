@@ -28,6 +28,7 @@ import upbrella.be.rent.exception.NonExistingHistoryException
 import upbrella.be.rent.exception.NotAvailableUmbrellaException
 import upbrella.be.rent.exception.NotRefundedException
 import upbrella.be.rent.repository.RentRepository
+import upbrella.be.slack.service.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
@@ -73,6 +74,9 @@ class RentServiceTest {
 
     @Mock
     private lateinit var conditionReportService: ConditionReportService
+
+    @Mock
+    private lateinit var slackAlarmService: SlackAlarmService
 
     @InjectMocks
     private lateinit var rentService: RentService
