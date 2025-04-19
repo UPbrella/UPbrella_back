@@ -1,14 +1,13 @@
 package upbrella.be.store.service
 
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.doNothing
+import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
@@ -18,7 +17,6 @@ import upbrella.be.store.dto.request.CreateSubClassificationRequest
 import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
 import upbrella.be.store.exception.AssignedClassificationException
-import upbrella.be.store.exception.IncorrectClassificationException
 import upbrella.be.store.repository.ClassificationReader
 import upbrella.be.store.repository.ClassificationWriter
 import upbrella.be.store.repository.StoreMetaReader

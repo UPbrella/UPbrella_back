@@ -3,7 +3,6 @@ package upbrella.be.store.entity
 import upbrella.be.store.dto.request.CreateStoreRequest
 import upbrella.be.store.dto.request.UpdateStoreRequest
 import javax.persistence.*
-import kotlin.streams.toList
 
 @Entity
 class StoreDetail(

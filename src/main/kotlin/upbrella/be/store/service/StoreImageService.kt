@@ -1,6 +1,5 @@
 package upbrella.be.store.service
 
-import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -16,7 +15,7 @@ import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreImageReader
 import upbrella.be.store.repository.StoreImageWriter
 import java.io.IOException
-import java.util.UUID
+import java.util.*
 
 @Service
 class StoreImageService(

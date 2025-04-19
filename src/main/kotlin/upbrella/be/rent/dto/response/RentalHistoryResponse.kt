@@ -24,9 +24,6 @@ data class RentalHistoryResponse(
     val etc: String? = null
 ) {
     companion object {
-        private fun isRefunded(history: History): Boolean {
-            return history.refundedAt != null
-        }
 
         fun createReturnedHistory(history: HistoryInfoDto, elapsedDay: Int, totalRentalDay: Int): RentalHistoryResponse {
             return RentalHistoryResponse(

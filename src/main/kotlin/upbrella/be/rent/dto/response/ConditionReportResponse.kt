@@ -11,7 +11,7 @@ data class ConditionReportResponse(
     companion object {
         fun fromConditionReport(conditionReport: ConditionReport): ConditionReportResponse {
             return ConditionReportResponse(
-                id = conditionReport.history!!.id!!,
+                id = conditionReport.history.id!!,
                 umbrellaUuid = conditionReport.history.umbrella.uuid,
                 content = conditionReport.content,
                 etc = conditionReport.etc

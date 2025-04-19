@@ -1,4 +1,4 @@
-package upbrella.be.umbrella.dto.request;
+package upbrella.be.umbrella.dto.request
 
 data class UmbrellaModifyRequest (
 

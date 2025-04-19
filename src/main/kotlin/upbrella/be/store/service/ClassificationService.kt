@@ -1,6 +1,5 @@
 package upbrella.be.store.service
 
-import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import upbrella.be.store.dto.request.CreateClassificationRequest
@@ -12,7 +11,6 @@ import upbrella.be.store.dto.response.SingleSubClassificationResponse
 import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
 import upbrella.be.store.exception.AssignedClassificationException
-import upbrella.be.store.exception.IncorrectClassificationException
 import upbrella.be.store.exception.NonExistingClassificationException
 import upbrella.be.store.repository.ClassificationReader
 import upbrella.be.store.repository.ClassificationWriter
