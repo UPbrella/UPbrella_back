@@ -16,7 +16,6 @@ import upbrella.be.store.entity.*
 import upbrella.be.store.exception.NonExistingStoreDetailException
 import upbrella.be.store.repository.ClassificationReader
 import upbrella.be.store.repository.StoreDetailReader
-import upbrella.be.store.repository.StoreDetailWriter
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.service.UmbrellaService
 import java.time.DayOfWeek

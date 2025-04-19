@@ -12,7 +12,7 @@ import upbrella.be.rent.entity.History
 import upbrella.be.rent.entity.ImprovementReport
 import upbrella.be.rent.exception.*
 import upbrella.be.rent.repository.RentRepository
-import upbrella.be.slack.service.SlackAlarmService
+import upbrella.be.slack.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella

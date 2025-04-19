@@ -27,7 +27,7 @@ import java.time.LocalDateTime
 
 object FixtureBuilderFactory {
 
-    val fixtureMonkey = FixtureMonkey.builder()
+    private val fixtureMonkey: FixtureMonkey = FixtureMonkey.builder()
         .objectIntrospector(BuilderArbitraryIntrospector.INSTANCE )
         .plugin(KotlinPlugin())
         .defaultNotNull(true)

@@ -12,7 +12,7 @@ import upbrella.be.rent.service.ConditionReportService
 import upbrella.be.rent.service.ImprovementReportService
 import upbrella.be.rent.service.LockerService
 import upbrella.be.rent.service.RentService
-import upbrella.be.slack.service.SlackAlarmService
+import upbrella.be.slack.SlackAlarmService
 import upbrella.be.user.dto.response.SessionUser
 import upbrella.be.user.repository.UserReader
 import upbrella.be.util.CustomResponse
