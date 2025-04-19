@@ -14,7 +14,6 @@ import upbrella.be.store.dto.response.SingleBusinessHourResponse
 import upbrella.be.store.entity.BusinessHour
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.BusinessHourReader
-import upbrella.be.store.repository.BusinessHourWriter
 import java.time.DayOfWeek
 import java.time.LocalTime
 
@@ -102,7 +101,7 @@ class BusinessHourServiceTest {
         val updateBusinessHours = mutableListOf<SingleBusinessHourRequest>()
 
         // 이전 데이터와 업데이트 데이터를 생성
-        for (day in DayOfWeek.values()) {
+        for (day in DayOfWeek.entries) {
             businessHours.add(
                 BusinessHour(
                     date = day,

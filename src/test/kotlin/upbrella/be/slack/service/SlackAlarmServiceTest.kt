@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate
 import upbrella.be.config.SlackBotConfig
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.entity.History
+import upbrella.be.slack.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.user.entity.User

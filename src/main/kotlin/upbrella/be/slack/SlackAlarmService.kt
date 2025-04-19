@@ -1,4 +1,4 @@
-package upbrella.be.slack.service
+package upbrella.be.slack
 
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod.POST

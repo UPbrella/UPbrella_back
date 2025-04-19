@@ -7,7 +7,6 @@ import com.navercorp.fixturemonkey.kotlin.giveMeBuilder
 import com.navercorp.fixturemonkey.kotlin.instantiator.instantiateBy
 import upbrella.be.rent.dto.response.HistoryInfoDto
 import upbrella.be.rent.dto.response.RentalHistoryResponse
-import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse
