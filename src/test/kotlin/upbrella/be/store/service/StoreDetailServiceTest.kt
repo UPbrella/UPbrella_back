@@ -580,9 +580,9 @@ class StoreDetailServiceTest {
 
         given(storeDetailReader.findByStoreMetaId(storeId))
             .willReturn(storeDetail)
-        given(classificationReader.findByIdAndType(request.classificationId!!, ClassificationType.CLASSIFICATION))
+        given(classificationReader.findByIdAndType(request.classificationId, ClassificationType.CLASSIFICATION))
             .willReturn(classificationUpdate)
-        given(classificationReader.findByIdAndType(request.subClassificationId!!, ClassificationType.SUB_CLASSIFICATION))
+        given(classificationReader.findByIdAndType(request.subClassificationId, ClassificationType.SUB_CLASSIFICATION))
             .willReturn(subClassificationUpdate)
         given(storeMetaReader.findById(storeId))
             .willReturn(storeMeta)

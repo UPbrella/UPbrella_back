@@ -112,7 +112,7 @@ class SlackAlarmServiceTest {
         slackAlarmService.notifyReturn(userToRent, history, 1L)
 
         val requestEntityCaptor =
-            ArgumentCaptor.forClass(HttpEntity::class.java as Class<HttpEntity<Any>>)
+            ArgumentCaptor.forClass(HttpEntity::class.java)
         // then
 
         assertAll(
