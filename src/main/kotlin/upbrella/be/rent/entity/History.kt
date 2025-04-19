@@ -1,6 +1,5 @@
 package upbrella.be.rent.entity
 
-import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest
 import upbrella.be.rent.exception.NotRefundedException
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella

@@ -79,13 +79,6 @@ object FixtureFactory {
     }
 
     @JvmStatic
-    fun buildHistoryWithUmbrella(umbrella: Umbrella): History {
-        return fixtureMonkey.giveMeBuilder<History>()
-            .set("umbrella", umbrella)
-            .sample()
-    }
-
-    @JvmStatic
     fun buildOauthToken(): OauthToken {
         return fixtureMonkey.giveMeBuilder<OauthToken>()
             .instantiateBy {

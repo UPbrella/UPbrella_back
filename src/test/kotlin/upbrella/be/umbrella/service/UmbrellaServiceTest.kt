@@ -22,7 +22,6 @@ import upbrella.be.rent.service.RentService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.exception.NonExistingStoreMetaException
 import upbrella.be.store.repository.StoreMetaReader
-import upbrella.be.store.service.StoreMetaService
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse

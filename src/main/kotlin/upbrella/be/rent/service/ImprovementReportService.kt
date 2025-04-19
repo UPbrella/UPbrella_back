@@ -3,7 +3,6 @@ package upbrella.be.rent.service
 import org.springframework.stereotype.Service
 import upbrella.be.rent.dto.response.ImprovementReportPageResponse
 import upbrella.be.rent.dto.response.ImprovementReportResponse
-import upbrella.be.rent.entity.History
 import upbrella.be.rent.entity.ImprovementReport
 import upbrella.be.rent.repository.ImprovementReportRepository
 

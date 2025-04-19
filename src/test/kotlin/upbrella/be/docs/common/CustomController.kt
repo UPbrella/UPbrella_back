@@ -15,7 +15,7 @@ class CustomController {
         return ResponseEntity
             .ok()
             .body(
-                CustomResponse<Any>(
+                CustomResponse(
                     "success",
                     200,
                     "요청 성공 메시지",
@@ -29,7 +29,7 @@ class CustomController {
         return ResponseEntity
             .badRequest()
             .body(
-                CustomResponse<Any>(
+                CustomResponse(
                     "fail",
                     400,
                     "잘못된 요청입니다",

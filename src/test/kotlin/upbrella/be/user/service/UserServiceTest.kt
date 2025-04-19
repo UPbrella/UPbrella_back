@@ -32,9 +32,6 @@ import java.time.LocalDateTime
 class UserServiceTest {
 
     @Mock
-    private lateinit var userRepository: UserRepository
-
-    @Mock
     private lateinit var blackListReader: BlackListReader
 
     @Mock

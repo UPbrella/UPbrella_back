@@ -27,7 +27,7 @@ class RentRepositoryImpl(
             .orderBy(history.id.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
-            .fetch();
+            .fetch()
     }
 
     override fun findHistoryInfos(
@@ -61,7 +61,7 @@ class RentRepositoryImpl(
             .orderBy(history.id.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
-            .fetch();
+            .fetch()
     }
 
     override fun countAll(filter: HistoryFilterRequest, pageable: Pageable): Long {
@@ -82,12 +82,12 @@ class RentRepositoryImpl(
             .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
             .where(history.user.id.eq(userId))
             .orderBy(history.id.desc())
-            .fetch();
+            .fetch()
     }
 
     private fun filterRefunded(filter: HistoryFilterRequest): BooleanExpression? {
         if (filter.refunded == null) {
-            return null;
+            return null
         }
 
         if (filter.refunded == true) {

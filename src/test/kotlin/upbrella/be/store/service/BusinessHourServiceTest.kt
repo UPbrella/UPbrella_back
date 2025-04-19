@@ -24,9 +24,6 @@ class BusinessHourServiceTest {
     @Mock
     private lateinit var businessHourReader: BusinessHourReader
 
-    @Mock
-    private lateinit var businessHourWriter: BusinessHourWriter
-
     @InjectMocks
     private lateinit var businessHourService: BusinessHourService
 

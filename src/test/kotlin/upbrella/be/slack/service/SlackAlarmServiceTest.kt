@@ -16,9 +16,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.web.client.RestTemplate
 import upbrella.be.config.SlackBotConfig
-import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
-import upbrella.be.rent.entity.ConditionReport
 import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
