@@ -27,7 +27,7 @@ class UmbrellaController(
                     200,
                     "전체 우산 현황 조회 성공",
                     UmbrellaPageResponse(
-                        umbrellaResponsePage = umbrellaService!!.findAllUmbrellas(pageable!!)
+                        umbrellaResponsePage = umbrellaService.findAllUmbrellas(pageable!!)
                     )
                 )
             )
@@ -46,7 +46,7 @@ class UmbrellaController(
                     200,
                     "지점 우산 현황 조회 성공",
                     UmbrellaPageResponse(
-                        umbrellaResponsePage = umbrellaService!!.findUmbrellasByStoreId(storeId, pageable!!)
+                        umbrellaResponsePage = umbrellaService.findUmbrellasByStoreId(storeId, pageable!!)
                     )
                 )
             )
@@ -54,7 +54,7 @@ class UmbrellaController(
 
     @PostMapping("/admin/umbrellas")
     fun addUmbrella(@RequestBody umbrellaCreateRequest: @Valid UmbrellaCreateRequest?): ResponseEntity<CustomResponse<*>> {
-        umbrellaService!!.addUmbrella(umbrellaCreateRequest!!)
+        umbrellaService.addUmbrella(umbrellaCreateRequest!!)
         return ResponseEntity
             .ok()
             .body(
@@ -72,7 +72,7 @@ class UmbrellaController(
         @RequestBody umbrellaModifyRequest: @Valid UmbrellaModifyRequest?,
         @PathVariable id: Long
     ): ResponseEntity<CustomResponse<*>> {
-        umbrellaService!!.modifyUmbrella(id, umbrellaModifyRequest!!)
+        umbrellaService.modifyUmbrella(id, umbrellaModifyRequest!!)
         return ResponseEntity
             .ok()
             .body(
@@ -87,7 +87,7 @@ class UmbrellaController(
 
     @DeleteMapping("/admin/umbrellas/{id}")
     fun deleteUmbrella(@PathVariable id: Long): ResponseEntity<CustomResponse<*>> {
-        umbrellaService!!.deleteUmbrella(id)
+        umbrellaService.deleteUmbrella(id)
         return ResponseEntity
             .ok()
             .body(
@@ -109,7 +109,7 @@ class UmbrellaController(
                     "success",
                     200,
                     "전체 우산 통계 조회 성공",
-                    umbrellaService!!.getUmbrellaAllStatistics()
+                    umbrellaService.getUmbrellaAllStatistics()
                 )
             )
     }
@@ -123,7 +123,7 @@ class UmbrellaController(
                     "success",
                     200,
                     "지점 우산 통계 조회 성공",
-                    umbrellaService!!.getUmbrellaStatisticsByStoreId(storeId)
+                    umbrellaService.getUmbrellaStatisticsByStoreId(storeId)
                 )
             )
     }
