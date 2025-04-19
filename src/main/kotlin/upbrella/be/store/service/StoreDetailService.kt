@@ -62,10 +62,9 @@ class StoreDetailService(
         val collected = storeDetails.groupBy { it.storeMeta!!.subClassification!!.id }
 
         // 같은 ID끼리 리스트로 모은 것을 StoreIntroductionsResponseByClassification으로 변환
-        val storeDetailsByClassification = collected.entries.stream()
-            .sorted(compareBy { it.key })
+        val storeDetailsByClassification = collected.entries
+            .sortedBy { it.key }
             .map { StoreIntroductionsResponseByClassification.of(it.key!!, it.value) }
-            .toList()
 
         return AllStoreIntroductionResponse.of(storeDetailsByClassification)
     }
