@@ -14,6 +14,7 @@ import upbrella.be.store.dto.response.SingleBusinessHourResponse
 import upbrella.be.store.entity.BusinessHour
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.BusinessHourReader
+import upbrella.be.store.repository.BusinessHourWriter
 import java.time.DayOfWeek
 import java.time.LocalTime
 
@@ -22,6 +23,9 @@ class BusinessHourServiceTest {
 
     @Mock
     private lateinit var businessHourReader: BusinessHourReader
+
+    @Mock
+    private lateinit var businessHourWriter: BusinessHourWriter
 
     @InjectMocks
     private lateinit var businessHourService: BusinessHourService
