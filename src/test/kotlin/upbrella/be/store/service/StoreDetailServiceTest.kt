@@ -37,6 +37,9 @@ class StoreDetailServiceTest {
     @Mock
     private lateinit var storeDetailReader: StoreDetailReader
 
+    @Mock
+    private lateinit var businessHourService: BusinessHourService
+
     @InjectMocks
     private lateinit var storeDetailService: StoreDetailService
 

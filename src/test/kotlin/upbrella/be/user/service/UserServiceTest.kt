@@ -38,6 +38,9 @@ class UserServiceTest {
     private lateinit var blackListWriter: BlackListWriter
 
     @Mock
+    private lateinit var userRepository: UserRepository
+
+    @Mock
     private lateinit var userReader: UserReader
 
     @Mock
