@@ -9,8 +9,10 @@ import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest
 import upbrella.be.rent.dto.response.*
 import upbrella.be.rent.entity.ConditionReport
 import upbrella.be.rent.entity.History
+import upbrella.be.rent.entity.ImprovementReport
 import upbrella.be.rent.exception.*
 import upbrella.be.rent.repository.RentRepository
+import upbrella.be.slack.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
@@ -30,6 +32,7 @@ import java.time.temporal.ChronoUnit
 class RentService(
     private val umbrellaService: UmbrellaService,
     private val storeMetaReader: StoreMetaReader,
+    private val slackAlarmService: SlackAlarmService,
     private val improvementReportService: ImprovementReportService,
     private val rentRepository: RentRepository,
     private val conditionReportService: ConditionReportService,
@@ -65,24 +68,31 @@ class RentService(
         rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id).ifPresent {
             throw ExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 있습니다.")
         }
-        val willRentUmbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.umbrellaId)
-        if (willRentUmbrella.storeMeta.id != rentUmbrellaByUserRequest.storeId) {
+        val umbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.umbrellaId)
+        if (umbrella.storeMeta.id != rentUmbrellaByUserRequest.storeId) {
             throw UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.")
         }
-        if (willRentUmbrella.missed) {
+        if (umbrella.missed) {
             throw MissingUmbrellaException("[ERROR] 해당 우산은 분실되었습니다.")
         }
-        if (!willRentUmbrella.rentable) {
+        if (!umbrella.rentable) {
             throw NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.")
         }
-        willRentUmbrella.rentUmbrella()
+        umbrella.rentUmbrella()
         val rentalStore = storeMetaReader.findById(rentUmbrellaByUserRequest.storeId)
-        val conditionReport = rentUmbrellaByUserRequest.conditionReport
         val history = rentRepository.save(
-            History.ofCreatedByNewRent(willRentUmbrella, userToRent, rentalStore)
+            History.ofCreatedByNewRent(umbrella, userToRent, rentalStore)
         )
-        val conditionReportToSave = ConditionReport(history, conditionReport, null, null)
-        conditionReportService.saveConditionReport(conditionReportToSave)
+        slackAlarmService.notifyRent(userToRent, history)
+
+        rentUmbrellaByUserRequest.conditionReport
+            ?.takeIf { it.isNotBlank() }
+            ?.let { content ->
+                ConditionReport(history = history, content = content).also { conditionReport ->
+                    conditionReportService.saveConditionReport(conditionReport)
+                    slackAlarmService.notifyConditionReport(conditionReport)
+                }
+            }
     }
 
     @Transactional
@@ -91,15 +101,34 @@ class RentService(
         val history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.id)
             .orElseThrow { NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다.") }
         val returnStore = storeMetaReader.findById(request.returnStoreId)
-        val updatedHistory = History.updateHistoryForReturn(history, returnStore, request)
+
+        history.bank = request.bank
+        history.accountNumber = request.accountNumber
+        history.returnStoreMeta = returnStore
+        history.returnedAt = LocalDateTime.now()
+
         val returnedUmbrella: Umbrella = history.umbrella
         returnedUmbrella.returnUmbrella(returnStore)
-        rentRepository.save(updatedHistory)
-        addImprovementReportFromReturnByUser(updatedHistory, request)
+
+        val unrefundedRentCount = countUnrefundedRent()
+
+        slackAlarmService.notifyReturn(userToReturn, history, unrefundedRentCount)
+        rentRepository.save(history)
+
+        request.improvementReportContent?.takeIf { it.isNotBlank() }
+            ?.let { content ->
+                ImprovementReport(history = history, content = content).also { improvementReport ->
+                    improvementReportService.save(improvementReport)
+                    slackAlarmService.notifyImprovementReport(improvementReport)
+                }
+            }
     }
 
     @Transactional
-    fun findAllHistories(filter: HistoryFilterRequest, pageable: Pageable): RentalHistoriesPageResponse {
+    fun findAllHistories(
+        filter: HistoryFilterRequest,
+        pageable: Pageable
+    ): RentalHistoriesPageResponse {
         val countOfAllHistories = rentRepository.countAll(filter, pageable)
         val countOfAllPages = countOfAllHistories / pageable.pageSize
         val rentalHistories = findAllRentalHistory(filter, pageable)
@@ -109,19 +138,16 @@ class RentService(
     fun findAllHistoriesByUser(userId: Long): AllHistoryResponse =
         AllHistoryResponse.of(findAllByUserId(userId))
 
-    private fun addImprovementReportFromReturnByUser(history: History, request: ReturnUmbrellaByUserRequest) {
-        request.improvementReportContent?.let { content ->
-            improvementReportService.addImprovementReportFromReturn(history, content)
-        }
-    }
-
     private fun findAllByUserId(userId: Long): List<SingleHistoryResponse> =
         findAllByUser(userId).map { toSingleHistoryResponse(it) }
 
     private fun findAllByUser(userId: Long): List<History> =
         rentRepository.findAllByUserId(userId)
 
-    private fun findAllRentalHistory(filter: HistoryFilterRequest, pageable: Pageable): List<RentalHistoryResponse> =
+    private fun findAllRentalHistory(
+        filter: HistoryFilterRequest,
+        pageable: Pageable
+    ): List<RentalHistoryResponse> =
         findHistoryInfos(filter, pageable).map { toRentalHistoryResponse(it) }
 
     private fun toSingleHistoryResponse(history: History): SingleHistoryResponse {
@@ -141,8 +167,14 @@ class RentService(
     private fun toRentalHistoryResponse(history: HistoryInfoDto): RentalHistoryResponse {
         var elapsedDay = ChronoUnit.DAYS.between(history.rentAt, LocalDateTime.now()).toInt()
         return if (history.returnAt != null) {
-            elapsedDay = ChronoUnit.DAYS.between(history.rentAt.toLocalDate(), history.returnAt.toLocalDate()).toInt()
-            val totalRentalDay = ChronoUnit.DAYS.between(history.rentAt.toLocalDate(), history.returnAt.toLocalDate()).toInt()
+            elapsedDay = ChronoUnit.DAYS.between(
+                history.rentAt.toLocalDate(),
+                history.returnAt.toLocalDate()
+            ).toInt()
+            val totalRentalDay = ChronoUnit.DAYS.between(
+                history.rentAt.toLocalDate(),
+                history.returnAt.toLocalDate()
+            ).toInt()
             RentalHistoryResponse.createReturnedHistory(history, elapsedDay, totalRentalDay)
         } else {
             RentalHistoryResponse.createNonReturnedHistory(history, elapsedDay)
@@ -187,6 +219,9 @@ class RentService(
         history.deleteBankAccount()
     }
 
-    private fun findHistoryInfos(filter: HistoryFilterRequest, pageable: Pageable): List<HistoryInfoDto> =
+    private fun findHistoryInfos(
+        filter: HistoryFilterRequest,
+        pageable: Pageable
+    ): List<HistoryInfoDto> =
         rentRepository.findHistoryInfos(filter, pageable)
 }

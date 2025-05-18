@@ -475,7 +475,8 @@ class UserIntegrationTest : RestDocsSupport() {
             .andExpect(status().isOk)
 
         // then
-        assertThat(em.find(User::class.java, 1L)).isNotNull
+        val user = userRepository.findAll().firstOrNull()
+        assertThat(user).isNotNull
     }
 
     @Test

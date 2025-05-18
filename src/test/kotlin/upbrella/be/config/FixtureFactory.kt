@@ -7,7 +7,6 @@ import com.navercorp.fixturemonkey.kotlin.giveMeBuilder
 import com.navercorp.fixturemonkey.kotlin.instantiator.instantiateBy
 import upbrella.be.rent.dto.response.HistoryInfoDto
 import upbrella.be.rent.dto.response.RentalHistoryResponse
-import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse
@@ -75,13 +74,6 @@ object FixtureFactory {
             }
             .set("name", user.name)
             .set("phoneNumber", user.phoneNumber)
-            .sample()
-    }
-
-    @JvmStatic
-    fun buildHistoryWithUmbrella(umbrella: Umbrella): History {
-        return fixtureMonkey.giveMeBuilder<History>()
-            .set("umbrella", umbrella)
             .sample()
     }
 

@@ -2,8 +2,11 @@ package upbrella.be.store.service
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.*
 import org.mockito.InjectMocks
@@ -19,7 +22,6 @@ import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount
 import upbrella.be.store.entity.*
 import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
-import upbrella.be.store.exception.NonExistingStoreMetaException
 import upbrella.be.store.repository.*
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException

@@ -17,7 +17,7 @@ class StoreDetailReader(
     @Transactional(readOnly = true)
     fun findByStoreMetaId(storeMetaId: Long): StoreDetail {
         return storeDetailRepository.findByStoreMetaIdUsingFetchJoin(storeMetaId)
-            .orElseThrow() { NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다.") }
+            .orElseThrow { NonExistingStoreDetailException("[ERROR] 존재하지 않는 가게입니다.") }
     }
 
     fun findAllStoresForAdmin(): List<SingleStoreResponse> {

@@ -16,7 +16,6 @@ import upbrella.be.store.entity.*
 import upbrella.be.store.exception.NonExistingStoreDetailException
 import upbrella.be.store.repository.ClassificationReader
 import upbrella.be.store.repository.StoreDetailReader
-import upbrella.be.store.repository.StoreDetailWriter
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.service.UmbrellaService
 import java.time.DayOfWeek
@@ -39,13 +38,7 @@ class StoreDetailServiceTest {
     private lateinit var storeDetailReader: StoreDetailReader
 
     @Mock
-    private lateinit var storeDetailWriter: StoreDetailWriter
-
-    @Mock
     private lateinit var businessHourService: BusinessHourService
-
-    @Mock
-    private lateinit var storeImageService: StoreImageService
 
     @InjectMocks
     private lateinit var storeDetailService: StoreDetailService
@@ -180,19 +173,6 @@ class StoreDetailServiceTest {
         private val businessHours =
             listOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-        private val storeMeta = StoreMeta(
-            id = 1L,
-            name = "협업 지점명",
-            activated = true,
-            deleted = false,
-            classification = classification,
-            subClassification = subClassification,
-            category = "카테고리",
-            latitude = 33.33,
-            longitude = 33.33,
-            businessHours = businessHours
-        )
-
         private val first = StoreImage(
             id = 1L,
             imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
@@ -202,8 +182,6 @@ class StoreDetailServiceTest {
             id = 2L,
             imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
         )
-
-        private val images = setOf(first, second)
 
         private val singleStoreResponse = SingleStoreResponse(
             id = 1L,
@@ -580,9 +558,9 @@ class StoreDetailServiceTest {
 
         given(storeDetailReader.findByStoreMetaId(storeId))
             .willReturn(storeDetail)
-        given(classificationReader.findByIdAndType(request.classificationId!!, ClassificationType.CLASSIFICATION))
+        given(classificationReader.findByIdAndType(request.classificationId, ClassificationType.CLASSIFICATION))
             .willReturn(classificationUpdate)
-        given(classificationReader.findByIdAndType(request.subClassificationId!!, ClassificationType.SUB_CLASSIFICATION))
+        given(classificationReader.findByIdAndType(request.subClassificationId, ClassificationType.SUB_CLASSIFICATION))
             .willReturn(subClassificationUpdate)
         given(storeMetaReader.findById(storeId))
             .willReturn(storeMeta)

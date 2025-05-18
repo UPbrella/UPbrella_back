@@ -6,7 +6,6 @@ import upbrella.be.user.dto.response.AllBlackListResponse
 import upbrella.be.user.exception.BlackListUserException
 import upbrella.be.user.repository.BlackListReader
 import upbrella.be.user.repository.BlackListWriter
-import upbrella.be.user.repository.UserReader
 
 @Service
 class BlackListService(

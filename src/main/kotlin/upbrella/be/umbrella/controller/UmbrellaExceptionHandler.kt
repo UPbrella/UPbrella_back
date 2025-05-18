@@ -1,12 +1,12 @@
-package upbrella.be.umbrella.controller;
+package upbrella.be.umbrella.controller
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException;
-import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException;
-import upbrella.be.umbrella.exception.NonExistingUmbrellaException;
-import upbrella.be.util.CustomErrorResponse;
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
+import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException
+import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
+import upbrella.be.umbrella.exception.NonExistingUmbrellaException
+import upbrella.be.util.CustomErrorResponse
 
 @RestControllerAdvice
 class UmbrellaExceptionHandler {
@@ -19,7 +19,7 @@ class UmbrellaExceptionHandler {
                 .body(CustomErrorResponse(
                         "fail",
                         400,
-                        "이미 존재하는 우산 관리 번호입니다."));
+                        "이미 존재하는 우산 관리 번호입니다."))
     }
 
     @ExceptionHandler(NonExistingUmbrellaException::class)
@@ -30,7 +30,7 @@ class UmbrellaExceptionHandler {
                 .body(CustomErrorResponse(
                         "fail",
                         404,
-                        "존재하지 않는 우산 고유 번호입니다."));
+                        "존재하지 않는 우산 고유 번호입니다."))
     }
 
     @ExceptionHandler(NonExistingBorrowedHistoryException::class)
@@ -41,6 +41,6 @@ class UmbrellaExceptionHandler {
                 .body(CustomErrorResponse(
                     "fail",
                     404,
-                    "사용자가 빌린 우산이 없습니다."));
+                    "사용자가 빌린 우산이 없습니다."))
         }
 }

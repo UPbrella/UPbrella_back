@@ -1,6 +1,5 @@
 package upbrella.be.rent.entity
 
-import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest
 import upbrella.be.rent.exception.NotRefundedException
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
@@ -25,11 +24,11 @@ class History(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rent_store_meta_id")
-    val rentStoreMeta: StoreMeta,
+    var rentStoreMeta: StoreMeta,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "return_store_meta_id")
-    val returnStoreMeta: StoreMeta? = null,
+    var returnStoreMeta: StoreMeta? = null,
 
     val rentedAt: LocalDateTime = LocalDateTime.now(),
     var returnedAt: LocalDateTime? = null,
@@ -57,26 +56,6 @@ class History(
                 umbrella = umbrella,
                 user = user,
                 rentStoreMeta = rentStoreMeta,
-            )
-        }
-
-        @JvmStatic
-        fun updateHistoryForReturn(
-            rentedHistory: History,
-            returnStoreMeta: StoreMeta,
-            request: ReturnUmbrellaByUserRequest
-        ): History {
-            return History(
-                id = rentedHistory.id,
-                umbrella =  rentedHistory.umbrella,
-                user = rentedHistory.user,
-                paidAt =  rentedHistory.paidAt,
-                bank = request.bank,
-                accountNumber = request.accountNumber,
-                rentStoreMeta = rentedHistory.rentStoreMeta,
-                returnStoreMeta = returnStoreMeta,
-                rentedAt = rentedHistory.rentedAt,
-                returnedAt = LocalDateTime.now(),
             )
         }
 

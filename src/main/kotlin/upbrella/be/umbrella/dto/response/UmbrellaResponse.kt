@@ -1,4 +1,4 @@
-package upbrella.be.umbrella.dto.response;
+package upbrella.be.umbrella.dto.response
 
 data class UmbrellaResponse (
 
