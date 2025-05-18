@@ -14,10 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension
 import upbrella.be.user.entity.BlackList
 import upbrella.be.user.exception.BlackListUserException
 import upbrella.be.user.repository.BlackListReader
-import upbrella.be.user.repository.BlackListRepository
 import upbrella.be.user.repository.BlackListWriter
 import java.time.LocalDateTime
-import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class BlackListServiceTest {

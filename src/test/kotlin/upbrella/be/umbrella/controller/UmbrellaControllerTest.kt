@@ -116,7 +116,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
         }
 
         val pageable = PageRequest.of(0, 5)
-        given(umbrellaService.findUmbrellasByStoreId(storeId.toLong(), pageable))
+        given(umbrellaService.findUmbrellasByStoreId(storeId, pageable))
             .willReturn(umbrellaResponseList)
 
         val info: MultiValueMap<String, String> = LinkedMultiValueMap()
@@ -213,7 +213,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
                 .sample()
 
             // 여기서 컨트롤러에 예외 핸들러를 설정
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(),
+            mockMvc = setControllerAdvice(initController(),
                 UmbrellaExceptionHandler()
             )
 
@@ -244,7 +244,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
         @Test
         fun success() {
             // given
-            val id = FixtureBuilderFactory.buildLong(1000)
+            val id = buildLong(1000)
             val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                 .sample()
 
@@ -289,11 +289,11 @@ class UmbrellaControllerTest : RestDocsSupport() {
         @Test
         fun existingUmbrellaUuid() {
             // given
-            val id = FixtureBuilderFactory.buildLong(1000)
+            val id = buildLong(1000)
             val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                 .sample()
 
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(),
+            mockMvc = setControllerAdvice(initController(),
                 UmbrellaExceptionHandler()
             )
 
@@ -319,11 +319,11 @@ class UmbrellaControllerTest : RestDocsSupport() {
         @Test
         fun notExistingUmbrellaId() {
             // given
-            val id = FixtureBuilderFactory.buildLong(1000)
+            val id = buildLong(1000)
             val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
                 .sample()
 
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(),
+            mockMvc = setControllerAdvice(initController(),
                 UmbrellaExceptionHandler()
             )
 
@@ -354,7 +354,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
         @Test
         fun success() {
             // given
-            val id = FixtureBuilderFactory.buildLong(1000)
+            val id = buildLong(1000)
             willDoNothing().given(umbrellaService).deleteUmbrella(eq(id))
 
             // when & then
@@ -380,8 +380,8 @@ class UmbrellaControllerTest : RestDocsSupport() {
         @Test
         fun notExistingUmbrella() {
             // given
-            val id = FixtureBuilderFactory.buildLong(1000)
-            mockMvc = RestDocsSupport.setControllerAdvice(initController(),
+            val id = buildLong(1000)
+            mockMvc = setControllerAdvice(initController(),
                 UmbrellaExceptionHandler()
             )
 
@@ -492,7 +492,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
         @Test
         fun notExistingStoreMeta() {
             // given
-            val storeId = FixtureBuilderFactory.buildLong(1000)
+            val storeId = buildLong(1000)
             mockMvc = setControllerAdvice(initController(), StoreExceptionHandler())
 
             willThrow(
