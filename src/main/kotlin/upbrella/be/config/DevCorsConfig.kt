@@ -15,7 +15,8 @@ class DevCorsConfig : WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOrigins(
                 "http://localhost:3000",
-                "https://upbrella-front.vercel.app"
+                "https://upbrella-front.vercel.app",
+                "https://dev.upbrella.link"
             )
             .allowedMethods(
                 HttpMethod.GET.name,
