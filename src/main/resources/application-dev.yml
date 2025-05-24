@@ -2,9 +2,9 @@ spring:
   config:
     import: "classpath:application.properties"
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: jdbc:mysql://localhost:3306/upbrella_dev?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=utf8
+    username: root
+    password: ${DEV_DATABASE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
