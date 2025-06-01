@@ -31,7 +31,7 @@ class UserService(
 ) {
 
     fun login(socialId: Long): SessionUser {
-        val foundUser = userReader.findBySocialId(socialId)
+        val foundUser = userReader.findBySocialId(socialId.hashCode().toLong())
 
         return SessionUser.fromUser(foundUser)
     }
