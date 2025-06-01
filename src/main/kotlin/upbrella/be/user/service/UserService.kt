@@ -31,7 +31,7 @@ class UserService(
 ) {
 
     fun login(socialId: Long): SessionUser {
-        val foundUser = userReader.findBySocialId(socialId)
+        val foundUser = userReader.findBySocialId(socialId.hashCode().toLong())
 
         return SessionUser.fromUser(foundUser)
     }
@@ -56,7 +56,7 @@ class UserService(
 
     fun findUsers(): AllUsersInfoResponse {
         val users = userReader.findAll()
-            .map { it.decryptData(aesEncryptor) }
+        users.forEach { it.decryptData(aesEncryptor) }
 
         return AllUsersInfoResponse.fromUsers(users)
     }
@@ -100,9 +100,12 @@ class UserService(
     fun findDecryptedUserById(sessionUser: SessionUser): User {
         val id = sessionUser.id
 
-        return userRepository.findById(id)
+        val user = userRepository.findById(id)
             .orElseThrow { NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다.") }
-            .decryptData(aesEncryptor)
+
+        user.decryptData(aesEncryptor)
+
+        return user
     }
 
     @Transactional
@@ -110,6 +113,7 @@ class UserService(
         val foundUser = userReader.findUserById(id)
         foundUser.deleteBankAccount()
     }
+
     @Transactional
     fun updateAdminStatus(id: Long) {
         val foundUser = userReader.findUserById(id)

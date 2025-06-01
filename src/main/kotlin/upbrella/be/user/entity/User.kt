@@ -3,6 +3,7 @@ package upbrella.be.user.entity
 import upbrella.be.user.dto.request.JoinRequest
 import upbrella.be.user.dto.response.KakaoLoginResponse
 import upbrella.be.util.AesEncryptor
+import upbrella.be.util.BaseTimeEntity
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -20,7 +21,7 @@ class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-) {
+) : BaseTimeEntity() {
 
     companion object {
         fun createNewUser(
@@ -64,17 +65,9 @@ class User(
         this.accountNumber = null
     }
 
-    fun decryptData(aesEncryptor: AesEncryptor): User {
-        return User(
-            socialId = socialId,
-            name = name,
-            phoneNumber = phoneNumber,
-            email = email,
-            adminStatus = adminStatus,
-            bank = aesEncryptor.decrypt(bank),
-            accountNumber = aesEncryptor.decrypt(accountNumber),
-            id = id
-        )
+    fun decryptData(aesEncryptor: AesEncryptor) {
+        this.bank = aesEncryptor.decrypt(bank)
+        this.accountNumber = aesEncryptor.decrypt(accountNumber)
     }
 
     fun deleteBankAccount() {

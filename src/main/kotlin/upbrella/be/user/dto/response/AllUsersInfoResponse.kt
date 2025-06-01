@@ -4,9 +4,9 @@ import upbrella.be.user.entity.User
 
 data class AllUsersInfoResponse(val users: List<SingleUserInfoResponse>) {
     companion object {
-        fun fromUsers(users: List<User?>): AllUsersInfoResponse {
+        fun fromUsers(users: List<User>): AllUsersInfoResponse {
             return AllUsersInfoResponse(
-                users = users.map { SingleUserInfoResponse.fromUser(it!!) }
+                users = users.map { SingleUserInfoResponse.fromUser(it) }
             )
         }
     }
