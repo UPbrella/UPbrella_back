@@ -70,11 +70,6 @@ class UmbrellaService(
         umbrellaReader.findById(id)
             ?: throw NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.")
 
-    /**
-     * TODO
-     * Persistance Layer 테스트 작성 후 삭제 (Service Layer에서 사용하지 않음)
-     * 기존 ServiceTest에서도 삭제
-     */
     fun countAvailableUmbrellaAtStore(storeMetaId: Long): Long =
         umbrellaReader.countRentableUmbrellasByStore(storeMetaId)
 
