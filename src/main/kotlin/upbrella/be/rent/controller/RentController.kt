@@ -47,14 +47,12 @@ class RentController(
     @GetMapping("/return/form/{storeId}")
     fun findReturnForm(
         @PathVariable storeId: Long,
-        httpSession: HttpSession,
-        @RequestParam(required = false) salt: String?,
-        @RequestParam(required = false) signature: String?
+        httpSession: HttpSession
     ): ResponseEntity<CustomResponse<ReturnFormResponse>> {
         val user = httpSession.getAttribute("user") as SessionUser
         val userToReturn = userReader.findUserById(user.id)
 
-        val returnForm = rentService.findReturnForm(storeId, userToReturn, salt!!, signature!!)
+        val returnForm = rentService.findReturnForm(storeId, userToReturn)
 
         return ResponseEntity
             .ok()

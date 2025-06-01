@@ -51,12 +51,9 @@ class RentService(
 
     fun findReturnForm(
         storeId: Long,
-        userToReturn: User,
-        salt: String,
-        signature: String
+        userToReturn: User
     ): ReturnFormResponse {
         val storeMeta: StoreMeta = storeMetaReader.findById(storeId)
-        lockerService.validateLockerSignature(storeMeta.id!!, salt, signature)
         val history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.id!!)
             .orElseThrow { NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다.") }
         return ReturnFormResponse.of(storeMeta, history)
