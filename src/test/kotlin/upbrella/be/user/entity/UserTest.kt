@@ -110,12 +110,12 @@ class UserTest {
             accountNumber = aesEncryptor.encrypt("accountNumber")
         )
         // when
-        val decryptedUser = user.decryptData(aesEncryptor)
+        user.decryptData(aesEncryptor)
 
         // then
         assertAll(
-            { assertThat(decryptedUser.bank).isEqualTo("bank") },
-            { assertThat(decryptedUser.accountNumber).isEqualTo("accountNumber") }
+            { assertThat(user.bank).isEqualTo("bank") },
+            { assertThat(user.accountNumber).isEqualTo("accountNumber") }
         )
     }
 

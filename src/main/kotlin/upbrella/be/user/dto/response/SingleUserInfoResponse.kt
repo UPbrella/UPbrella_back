@@ -12,8 +12,6 @@ data class SingleUserInfoResponse(
     val accountNumber: String?,
     val adminStatus: Boolean,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
-    val deletedAt: LocalDateTime? = null
 ) {
     companion object {
         fun fromUser(user: User): SingleUserInfoResponse {
@@ -25,9 +23,7 @@ data class SingleUserInfoResponse(
                 bank = user.bank,
                 accountNumber = user.accountNumber,
                 adminStatus = user.adminStatus,
-                createdAt = user.createdAt!!,
-                updatedAt = user.updatedAt!!,
-                deletedAt = user.deletedAt
+                createdAt = user.createdAt!!
             )
         }
     }
