@@ -78,10 +78,10 @@ class UserControllerTest (
         val user = FixtureBuilderFactory.builderUser(aesEncryptor).sample()
 
         session.setAttribute("user", sessionUser)
-        val decryptedUser = user.decryptData(aesEncryptor)
+        user.decryptData(aesEncryptor)
 
         given(userService.findDecryptedUserById(sessionUser))
-            .willReturn(decryptedUser)
+            .willReturn(user)
 
         // when & then
         mockMvc.perform(
@@ -461,9 +461,12 @@ class UserControllerTest (
             users.add(FixtureBuilderFactory.builderUser(aesEncryptor).sample())
         }
 
+        users.forEach { user -> user.createdAt = LocalDateTime.now()}
+        users.forEach { user -> user.decryptData(aesEncryptor)
+        }
+
         val allUsersInfoResponse = AllUsersInfoResponse(
             users = users.stream()
-                .map { user -> user.decryptData(aesEncryptor) }
                 .map { SingleUserInfoResponse.fromUser(it) }
                 .toList()
         )
@@ -499,7 +502,10 @@ class UserControllerTest (
                             .optional()
                             .description("사용자 계좌 번호"),
                         fieldWithPath("users[].adminStatus").type(JsonFieldType.BOOLEAN)
-                            .description("관리자 여부")
+                            .description("관리자 여부"),
+                        fieldWithPath("users[].createdAt").type(JsonFieldType.ARRAY)
+                            .description("사용자 생성일")
+
                     )
                 )
             )
