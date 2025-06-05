@@ -12,6 +12,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.times
+import org.mockito.ArgumentMatchers.any
 import org.mockito.junit.jupiter.MockitoExtension
 import upbrella.be.rent.dto.response.ConditionReportPageResponse
 import upbrella.be.rent.dto.response.ConditionReportResponse
@@ -120,6 +121,24 @@ class ConditionReportServiceTest {
                     then(conditionReportRepository).should(times(1)).findAll()
                 }
             )
+        }
+    }
+
+    @Nested
+    @DisplayName("상태 신고 내용이 없으면 저장하지 않는다")
+    inner class SaveConditionReportTest {
+
+        @Test
+        @DisplayName("빈 내용일 경우 레포지토리에 저장하지 않는다")
+        fun doNotSaveWhenContentBlank() {
+            // given
+            val blankReport = ConditionReport(history = history, content = " ")
+
+            // when
+            conditionReportService.saveConditionReport(blankReport)
+
+            // then
+            then(conditionReportRepository).should(times(0)).save(any(ConditionReport::class.java))
         }
     }
 }
