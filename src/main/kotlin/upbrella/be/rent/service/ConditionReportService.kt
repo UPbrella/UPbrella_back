@@ -15,7 +15,9 @@ class ConditionReportService(
         ConditionReportPageResponse.of(findAllConditionReport())
 
     fun saveConditionReport(conditionReport: ConditionReport) {
-        conditionReportRepository.save(conditionReport)
+        conditionReport.content
+            ?.takeIf { it.isNotBlank() }
+            ?.let { conditionReportRepository.save(conditionReport) }
     }
 
     private fun findAllConditionReport(): List<ConditionReportResponse> =

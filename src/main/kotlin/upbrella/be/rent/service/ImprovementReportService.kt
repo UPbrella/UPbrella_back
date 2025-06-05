@@ -15,8 +15,9 @@ class ImprovementReportService(
         ImprovementReportPageResponse.of(findAllImprovementReport())
 
     fun save(improvementReport: ImprovementReport) {
-
-        improvementReportRepository.save(improvementReport)
+        improvementReport.content
+            ?.takeIf { it.isNotBlank() }
+            ?.let { improvementReportRepository.save(improvementReport) }
     }
 
     private fun findAllImprovementReport(): List<ImprovementReportResponse> =
