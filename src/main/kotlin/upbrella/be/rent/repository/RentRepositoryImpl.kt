@@ -23,7 +23,11 @@ class RentRepositoryImpl(
             .join(history.umbrella, umbrella).fetchJoin()
             .join(history.rentStoreMeta, storeMeta).fetchJoin()
             .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
-            .where(filterRefunded(filter))
+            .where(
+                filterRefunded(filter),
+                filterPaid(filter),
+                filterStore(filter)
+            )
             .orderBy(history.id.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
@@ -57,7 +61,11 @@ class RentRepositoryImpl(
             .join(history.umbrella, umbrella)
             .join(history.rentStoreMeta, storeMeta)
             .leftJoin(history.returnStoreMeta, storeMeta)
-            .where(filterRefunded(filter))
+            .where(
+                filterRefunded(filter),
+                filterPaid(filter),
+                filterStore(filter)
+            )
             .orderBy(history.id.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
@@ -67,7 +75,11 @@ class RentRepositoryImpl(
     override fun countAll(filter: HistoryFilterRequest, pageable: Pageable): Long {
         return queryFactory
             .selectFrom(history)
-            .where(filterRefunded(filter))
+            .where(
+                filterRefunded(filter),
+                filterPaid(filter),
+                filterStore(filter)
+            )
             .fetch()
             .size.toLong()
     }
@@ -95,5 +107,21 @@ class RentRepositoryImpl(
         }
 
         return history.refundedAt.isNull
+    }
+
+    private fun filterPaid(filter: HistoryFilterRequest): BooleanExpression? {
+        if (filter.paid == null) {
+            return null
+        }
+
+        return if (filter.paid == true) {
+            history.paidAt.isNotNull
+        } else {
+            history.paidAt.isNull
+        }
+    }
+
+    private fun filterStore(filter: HistoryFilterRequest): BooleanExpression? {
+        return filter.storeId?.let { history.rentStoreMeta.id.eq(it) }
     }
 }
