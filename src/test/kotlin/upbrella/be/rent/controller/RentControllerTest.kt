@@ -159,7 +159,7 @@ class RentControllerTest : RestDocsSupport() {
         val returnFormResponse = ReturnFormResponse.of(storeMeta, history)
 
         given(userReader.findUserById(1L)).willReturn(userToReturn)
-        given(rentService.findReturnForm(storeMeta.id!!, userToReturn, salt, signature))
+        given(rentService.findReturnForm(storeMeta.id!!, userToReturn))
             .willReturn(returnFormResponse)
 
         // when & then
