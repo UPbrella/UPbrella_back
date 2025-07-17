@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+title 숙소 정보 등록 프로세스
+autonumber
+
+actor "사용자" as user
+
+participant "UI" as ui
+
+control "API server" as server
+
+database "DB" as db
+
+participant "Toss Pay" as toss
+
+participant Slack as slack
+autonumber
+
+user -> ui : 우산 대여 페이지 접속
+
+ui -> ui : 우산 대여 정보 입력
+
+ui -> toss : 결제 요청
+
+toss -> server : redirect
+
+server -> toss : 결제 승인 요청
+
+server -> server : 우산 대여 처리
+
+loop
+  ui -> server : 우산 대여 완료 확인
+end
+
+@enduml
