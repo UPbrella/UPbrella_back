@@ -28,7 +28,7 @@ class RentEventHandler(
             ?.takeIf { it.isNotBlank() }
             ?.let { content ->
                 ConditionReport(
-                    history = event.history,
+                    historyId = event.historyId,
                     content = content
                 ).also { conditionReport ->
                     conditionReportService.saveConditionReport(conditionReport)

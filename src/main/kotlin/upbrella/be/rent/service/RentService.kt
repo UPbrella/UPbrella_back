@@ -83,7 +83,7 @@ class RentService(
                 rentStoreName = rentalStore.name,
                 conditionReportContent = rentUmbrellaByUserRequest.conditionReport,
                 umbrellaId = umbrella.id!!,
-                history = history,
+                historyId = history.id!!,
             )
         )
     }

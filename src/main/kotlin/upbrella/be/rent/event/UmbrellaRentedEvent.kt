@@ -1,6 +1,5 @@
 package upbrella.be.rent.event
 
-import upbrella.be.rent.entity.History
 import upbrella.be.util.event.Event
 
 class UmbrellaRentedEvent(
@@ -9,5 +8,5 @@ class UmbrellaRentedEvent(
     val rentStoreName: String,
     val conditionReportContent: String? = null,
     val umbrellaId: Long,
-    val history: History,
+    val historyId: Long,
 ) : Event()
