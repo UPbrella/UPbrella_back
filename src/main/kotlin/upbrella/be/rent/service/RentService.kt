@@ -8,7 +8,6 @@ import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest
 import upbrella.be.rent.dto.response.*
 import upbrella.be.rent.entity.History
-import upbrella.be.rent.entity.ImprovementReport
 import upbrella.be.rent.event.UmbrellaRentedEvent
 import upbrella.be.rent.exception.CannotBeRentedException
 import upbrella.be.rent.exception.ExistingUmbrellaForRentException
@@ -103,18 +102,7 @@ class RentService(
         val returnedUmbrella: Umbrella = history.umbrella
         returnedUmbrella.returnUmbrella(returnStore)
 
-        val unrefundedRentCount = countUnrefundedRent()
-
-        slackAlarmService.notifyReturn(userToReturn, history, unrefundedRentCount)
         rentRepository.save(history)
-
-        request.improvementReportContent?.takeIf { it.isNotBlank() }
-            ?.let { content ->
-                ImprovementReport(history = history, content = content).also { improvementReport ->
-                    improvementReportService.save(improvementReport)
-                    slackAlarmService.notifyImprovementReport(improvementReport)
-                }
-            }
     }
 
     @Transactional

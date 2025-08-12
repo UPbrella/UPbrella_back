@@ -11,3 +11,21 @@ data class NotifyConditionReportInput(
     val rentStoreName: String,
     val content: String,
 )
+
+data class NotifyReturnInput(
+    val userId: Long,
+    val rentStoreName: String,
+    val rentedAt: String,
+    val returnStoreName: String,
+    val returnedAt: String?,
+    val unrefundedCount: Long,
+)
+
+data class NotifyImprovementReportInput(
+    val umbrellaId: Long,
+    val rentStoreName: String,
+    val rentedAt: String,
+    val returnStoreName: String,
+    val returnedAt: String?,
+    val content: String,
+)
