@@ -16,6 +16,7 @@ class ProductionCorsConfig : WebMvcConfigurer {
                 "https://upbrella.co.kr",
                 "https://www.upbrella.co.kr",
                 "https://api.upbrella.co.kr",
+                "https://appleid.apple.com",
                 "http://localhost:3000",
                 "http://www.localhost:3000"
             )
