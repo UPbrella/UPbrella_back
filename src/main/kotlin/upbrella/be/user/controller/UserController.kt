@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.servlet.view.RedirectView
 import upbrella.be.rent.service.RentService
 import upbrella.be.user.dto.request.JoinRequest
 import upbrella.be.user.dto.request.LoginCodeRequest
@@ -88,17 +89,62 @@ class UserController(
             ))
     }
 
-    @PostMapping("/users/oauth/apple/login")
-    fun appleLogin(session: HttpSession, @RequestBody code: LoginCodeRequest): ResponseEntity<CustomResponse<Unit>> {
-        val appleAccessToken: OauthToken
+    @PostMapping("/auth/apple")
+    fun appleLoginCallback(
+        session: HttpSession,
+        @RequestParam code: String,
+        @RequestParam(required = false) state: String?,
+        @RequestParam(required = false) id_token: String?,
+        @RequestParam(required = false) user: String?
+    ): RedirectView {
+        log.info("Apple login callback received - code: ${code.take(10)}...")
+
+        val appleOauthToken: OauthToken
 
         try {
-            appleAccessToken = oauthLoginService.getOauthToken(code.code, appleOauthInfo)!!
+            appleOauthToken = oauthLoginService.getOauthToken(code, appleOauthInfo)!!
+        } catch (e: HttpClientErrorException) {
+            log.error("Apple login failed", e)
+            return RedirectView("https://upbrella.co.kr/login?error=apple_login_failed")
+        } catch (e: Exception) {
+            log.error("Unexpected error during Apple login", e)
+            return RedirectView("https://upbrella.co.kr/login?error=server_error")
+        }
+
+        // id_token이 없으면 에러
+        if (appleOauthToken.idToken.isNullOrEmpty()) {
+            log.error("Apple ID token is null or empty")
+            return RedirectView("https://upbrella.co.kr/login?error=no_id_token")
+        }
+
+        try {
+            val appleLoggedInUser = oauthLoginService.processAppleLogin(appleOauthToken.idToken!!)
+            session.setAttribute("appleUser", appleLoggedInUser)
+
+            log.info("Apple social login success - redirecting to frontend")
+            return RedirectView("https://upbrella.co.kr/login?apple=success")
+        } catch (e: Exception) {
+            log.error("Apple ID token validation failed", e)
+            return RedirectView("https://upbrella.co.kr/login?error=token_validation_failed")
+        }
+    }
+
+    @PostMapping("/users/oauth/apple/login")
+    fun appleLogin(session: HttpSession, @RequestBody code: LoginCodeRequest): ResponseEntity<CustomResponse<Unit>> {
+        val appleOauthToken: OauthToken
+
+        try {
+            appleOauthToken = oauthLoginService.getOauthToken(code.code, appleOauthInfo)!!
         } catch (e: HttpClientErrorException) {
             throw InvalidLoginCodeException("[ERROR] 로그인 코드가 유효하지 않습니다.")
         }
 
-        val appleLoggedInUser = oauthLoginService.processAppleLogin(appleAccessToken.accessToken, appleOauthInfo.loginUri)
+        // id_token이 없으면 에러
+        if (appleOauthToken.idToken.isNullOrEmpty()) {
+            throw InvalidLoginCodeException("[ERROR] Apple ID token을 받지 못했습니다.")
+        }
+
+        val appleLoggedInUser = oauthLoginService.processAppleLogin(appleOauthToken.idToken!!)
         session.setAttribute("appleUser", appleLoggedInUser)
 
         return ResponseEntity

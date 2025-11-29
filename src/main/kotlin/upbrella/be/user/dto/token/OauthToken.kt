@@ -8,5 +8,6 @@ data class OauthToken(
     val accessToken: String = "",
     val refreshToken: String = "",
     val tokenType: String = "",
-    val expiresIn: Long = 0
+    val expiresIn: Long = 0,
+    val idToken: String? = null // Apple OAuth에서 사용
 )
