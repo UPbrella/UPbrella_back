@@ -129,34 +129,6 @@ class UserController(
         }
     }
 
-    @PostMapping("/users/oauth/apple/login")
-    fun appleLogin(session: HttpSession, @RequestBody code: LoginCodeRequest): ResponseEntity<CustomResponse<Unit>> {
-        val appleOauthToken: OauthToken
-
-        try {
-            appleOauthToken = oauthLoginService.getOauthToken(code.code, appleOauthInfo)!!
-        } catch (e: HttpClientErrorException) {
-            throw InvalidLoginCodeException("[ERROR] 로그인 코드가 유효하지 않습니다.")
-        }
-
-        // id_token이 없으면 에러
-        if (appleOauthToken.idToken.isNullOrEmpty()) {
-            throw InvalidLoginCodeException("[ERROR] Apple ID token을 받지 못했습니다.")
-        }
-
-        val appleLoggedInUser = oauthLoginService.processAppleLogin(appleOauthToken.idToken!!)
-        session.setAttribute("appleUser", appleLoggedInUser)
-
-        return ResponseEntity
-            .ok()
-            .body(CustomResponse(
-                "success",
-                200,
-                "애플 로그인 성공",
-                null
-            ))
-    }
-
     @PostMapping("/users/login")
     fun upbrellaLogin(session: HttpSession): ResponseEntity<CustomResponse<Unit>> {
         val kakaoUser = session.getAttribute("kakaoUser") as? KakaoLoginResponse
