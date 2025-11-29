@@ -36,14 +36,15 @@ class UserServiceDynamicTest {
     fun joinTest(): Collection<DynamicTest> {
         // given
         val user = User(
-            23132L,
-            "홍길동",
-            "010-2084-3478",
-            "email@email.com",
-            false,
-            aesEncryptor.encrypt("신한"),
-            aesEncryptor.encrypt("110-421-674103"),
-            1L
+            socialId = 23132L,
+            name = "홍길동",
+            phoneNumber = "010-2084-3478",
+            email = "email@email.com",
+            provider = "KAKAO",
+            adminStatus = false,
+            bank = aesEncryptor.encrypt("신한"),
+            accountNumber = aesEncryptor.encrypt("110-421-674103"),
+            id = 1L
         )
 
         val joinRequest = JoinRequest(

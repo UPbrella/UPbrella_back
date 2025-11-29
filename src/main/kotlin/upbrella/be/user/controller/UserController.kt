@@ -9,6 +9,7 @@ import upbrella.be.user.dto.request.JoinRequest
 import upbrella.be.user.dto.request.LoginCodeRequest
 import upbrella.be.user.dto.request.UpdateBankAccountRequest
 import upbrella.be.user.dto.response.*
+import upbrella.be.user.dto.token.AppleOauthInfo
 import upbrella.be.user.dto.token.KakaoOauthInfo
 import upbrella.be.user.dto.token.OauthToken
 import upbrella.be.user.exception.InvalidLoginCodeException
@@ -26,6 +27,7 @@ class UserController(
     private val oauthLoginService: OauthLoginService,
     private val userService: UserService,
     private val kakaoOauthInfo: KakaoOauthInfo,
+    private val appleOauthInfo: AppleOauthInfo,
     private val rentService: RentService,
     private val blackListService: BlackListService,
 ) {
@@ -86,16 +88,52 @@ class UserController(
             ))
     }
 
-    @PostMapping("/users/login")
-    fun upbrellaLogin(session: HttpSession): ResponseEntity<CustomResponse<Unit>> {
-        if (session.getAttribute("kakaoUser") == null) {
-            throw NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.")
+    @PostMapping("/users/oauth/apple/login")
+    fun appleLogin(session: HttpSession, @RequestBody code: LoginCodeRequest): ResponseEntity<CustomResponse<Unit>> {
+        val appleAccessToken: OauthToken
+
+        try {
+            appleAccessToken = oauthLoginService.getOauthToken(code.code, appleOauthInfo)!!
+        } catch (e: HttpClientErrorException) {
+            throw InvalidLoginCodeException("[ERROR] 로그인 코드가 유효하지 않습니다.")
         }
 
-        val kakaoUser = session.getAttribute("kakaoUser") as KakaoLoginResponse
-        val loggedInUser = userService.login(kakaoUser.id!!)
+        val appleLoggedInUser = oauthLoginService.processAppleLogin(appleAccessToken.accessToken, appleOauthInfo.loginUri)
+        session.setAttribute("appleUser", appleLoggedInUser)
 
-        session.removeAttribute("kakaoUser")
+        return ResponseEntity
+            .ok()
+            .body(CustomResponse(
+                "success",
+                200,
+                "애플 로그인 성공",
+                null
+            ))
+    }
+
+    @PostMapping("/users/login")
+    fun upbrellaLogin(session: HttpSession): ResponseEntity<CustomResponse<Unit>> {
+        val kakaoUser = session.getAttribute("kakaoUser") as? KakaoLoginResponse
+        val appleUser = session.getAttribute("appleUser") as? AppleLoginResponse
+
+        if (kakaoUser == null && appleUser == null) {
+            throw NotSocialLoginedException("[ERROR] 소셜 로그인을 먼저 해주세요.")
+        }
+
+        val loggedInUser = when {
+            kakaoUser != null -> {
+                val user = userService.login(kakaoUser.id!!)
+                session.removeAttribute("kakaoUser")
+                user
+            }
+            appleUser != null -> {
+                val user = userService.loginApple(appleUser.sub!!)
+                session.removeAttribute("appleUser")
+                user
+            }
+            else -> throw NotSocialLoginedException("[ERROR] 소셜 로그인을 먼저 해주세요.")
+        }
+
         session.setAttribute("user", loggedInUser)
 
         log.info("UUL 로그인 성공")
@@ -125,17 +163,30 @@ class UserController(
 
     @PostMapping("/users/join")
     fun kakaoJoin(session: HttpSession, @RequestBody @Valid joinRequest: JoinRequest): ResponseEntity<CustomResponse<Unit>> {
-        val kakaoUser = session.getAttribute("kakaoUser") as KakaoLoginResponse?
+        val kakaoUser = session.getAttribute("kakaoUser") as? KakaoLoginResponse
+        val appleUser = session.getAttribute("appleUser") as? AppleLoginResponse
 
         if (session.getAttribute("user") != null) {
             throw LoginedMemberException("[ERROR] 이미 로그인된 상태입니다.")
         }
-        if (kakaoUser == null) {
-            throw NotSocialLoginedException("[ERROR] 카카오 로그인을 먼저 해주세요.")
+        if (kakaoUser == null && appleUser == null) {
+            throw NotSocialLoginedException("[ERROR] 소셜 로그인을 먼저 해주세요.")
         }
 
-        val loggedInUser = userService.join(kakaoUser, joinRequest)
-        session.removeAttribute("kakaoId")
+        val loggedInUser = when {
+            kakaoUser != null -> {
+                val user = userService.join(kakaoUser, joinRequest)
+                session.removeAttribute("kakaoUser")
+                user
+            }
+            appleUser != null -> {
+                val user = userService.joinApple(appleUser, joinRequest)
+                session.removeAttribute("appleUser")
+                user
+            }
+            else -> throw NotSocialLoginedException("[ERROR] 소셜 로그인을 먼저 해주세요.")
+        }
+
         session.setAttribute("user", loggedInUser)
 
         log.info("UNU 회원가입 성공")
@@ -144,7 +195,7 @@ class UserController(
             .body(CustomResponse(
                 "success",
                 200,
-                "카카오 회원가입 성공",
+                "소셜 회원가입 성공",
                 null
             ))
     }

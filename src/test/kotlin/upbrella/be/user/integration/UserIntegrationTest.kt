@@ -25,6 +25,7 @@ import upbrella.be.user.controller.UserController
 import upbrella.be.user.dto.request.KakaoAccount
 import upbrella.be.user.dto.request.LoginCodeRequest
 import upbrella.be.user.dto.response.KakaoLoginResponse
+import upbrella.be.user.dto.token.AppleOauthInfo
 import upbrella.be.user.dto.token.KakaoOauthInfo
 import upbrella.be.user.dto.token.OauthToken
 import upbrella.be.user.entity.BlackList
@@ -56,6 +57,9 @@ class UserIntegrationTest : RestDocsSupport() {
     private lateinit var kakaoOauthInfo: KakaoOauthInfo
 
     @Autowired
+    private lateinit var appleOauthInfo: AppleOauthInfo
+
+    @Autowired
     private lateinit var rentService: RentService
 
     @Autowired
@@ -78,6 +82,7 @@ class UserIntegrationTest : RestDocsSupport() {
             oauthLoginService = oauthLoginService,
             userService = userService,
             kakaoOauthInfo = kakaoOauthInfo,
+            appleOauthInfo = appleOauthInfo,
             rentService = rentService,
             blackListService = blackListService,
         )
