@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
+import upbrella.be.user.dto.response.AppleLoginResponse
 import upbrella.be.user.dto.response.KakaoLoginResponse
+import upbrella.be.user.dto.token.AppleOauthInfo
 import upbrella.be.user.dto.token.KakaoOauthInfo
 import upbrella.be.user.dto.token.OauthToken
 
@@ -15,6 +17,14 @@ class OauthLoginService(
 ) {
 
     fun getOauthToken(code: String, oauthInfo: KakaoOauthInfo): OauthToken? {
+        return getOauthTokenInternal(code, oauthInfo.clientId, oauthInfo.clientSecret, oauthInfo.redirectUri)
+    }
+
+    fun getOauthToken(code: String, oauthInfo: AppleOauthInfo): OauthToken? {
+        return getOauthTokenInternal(code, oauthInfo.clientId, oauthInfo.clientSecret, oauthInfo.redirectUri)
+    }
+
+    private fun getOauthTokenInternal(code: String, clientId: String, clientSecret: String, redirectUri: String): OauthToken? {
         val headers: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>().apply {
             setAll(
                 mapOf(
@@ -28,15 +38,15 @@ class OauthLoginService(
             setAll(
                 mapOf(
                     "grant_type" to "authorization_code",
-                    "client_id" to oauthInfo.clientId,
-                    "client_secret" to oauthInfo.clientSecret,
+                    "client_id" to clientId,
+                    "client_secret" to clientSecret,
                     "code" to code
                 )
             )
         }
 
         val request = HttpEntity(requestPayloads, headers)
-        val response = restTemplate.postForEntity(oauthInfo.redirectUri, request, OauthToken::class.java)
+        val response = restTemplate.postForEntity(redirectUri, request, OauthToken::class.java)
 
         return response.body
     }
@@ -61,5 +71,9 @@ class OauthLoginService(
 
     fun processKakaoLogin(accessToken: String, loginUri: String): KakaoLoginResponse? {
         return processLogin(accessToken, loginUri, KakaoLoginResponse::class.java)
+    }
+
+    fun processAppleLogin(accessToken: String, loginUri: String): AppleLoginResponse? {
+        return processLogin(accessToken, loginUri, AppleLoginResponse::class.java)
     }
 }

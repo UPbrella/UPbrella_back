@@ -7,6 +7,7 @@ import upbrella.be.rent.service.RentService
 import upbrella.be.user.dto.request.JoinRequest
 import upbrella.be.user.dto.request.UpdateBankAccountRequest
 import upbrella.be.user.dto.response.AllUsersInfoResponse
+import upbrella.be.user.dto.response.AppleLoginResponse
 import upbrella.be.user.dto.response.KakaoLoginResponse
 import upbrella.be.user.dto.response.SessionUser
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse
@@ -36,6 +37,12 @@ class UserService(
         return SessionUser.fromUser(foundUser)
     }
 
+    fun loginApple(appleSub: String): SessionUser {
+        val foundUser = userReader.findBySocialId(appleSub.hashCode().toLong())
+
+        return SessionUser.fromUser(foundUser)
+    }
+
     fun join(kakaoUser: KakaoLoginResponse, joinRequest: JoinRequest): SessionUser {
         val socialIdHash = kakaoUser.id.hashCode().toLong()
 
@@ -49,6 +56,24 @@ class UserService(
 
         val joinedUser = userWriter.save(
             User.createNewUser(kakaoUser, joinRequest, aesEncryptor)
+        )
+
+        return SessionUser.fromUser(joinedUser)
+    }
+
+    fun joinApple(appleUser: AppleLoginResponse, joinRequest: JoinRequest): SessionUser {
+        val socialIdHash = appleUser.sub.hashCode().toLong()
+
+        if (userReader.existsBySocialId(socialIdHash)) {
+            throw ExistingMemberException("[ERROR] 이미 가입된 회원입니다. 로그인 폼으로 이동합니다.")
+        }
+
+        if (blackListReader.existsBySocialId(socialIdHash)) {
+            throw BlackListUserException("[ERROR] 정지된 회원입니다. 정지된 회원은 재가입이 불가능합니다.")
+        }
+
+        val joinedUser = userWriter.save(
+            User.createNewAppleUser(appleUser, joinRequest, aesEncryptor)
         )
 
         return SessionUser.fromUser(joinedUser)

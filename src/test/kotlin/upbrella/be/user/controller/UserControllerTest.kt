@@ -33,6 +33,7 @@ import upbrella.be.user.dto.request.JoinRequest
 import upbrella.be.user.dto.request.KakaoAccount
 import upbrella.be.user.dto.request.LoginCodeRequest
 import upbrella.be.user.dto.response.*
+import upbrella.be.user.dto.token.AppleOauthInfo
 import upbrella.be.user.dto.token.KakaoOauthInfo
 import upbrella.be.user.dto.token.OauthToken
 import upbrella.be.user.entity.User
@@ -52,6 +53,8 @@ class UserControllerTest (
     @Mock
     private val kakaoOauthInfo: KakaoOauthInfo,
     @Mock
+    private val appleOauthInfo: AppleOauthInfo,
+    @Mock
     private val rentService: RentService,
     @Mock
     private val aesEncryptor: AesEncryptor,
@@ -64,6 +67,7 @@ class UserControllerTest (
             oauthLoginService = oauthLoginService,
             userService = userService,
             kakaoOauthInfo = kakaoOauthInfo,
+            appleOauthInfo = appleOauthInfo,
             rentService = rentService,
             blackListService = blackListService,
         )
