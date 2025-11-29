@@ -24,7 +24,6 @@ class AuthConfig(
             .excludePathPatterns(
                 "/users/login/**",
                 "/users/oauth/login/**",
-                "/users/oauth/apple/login/**",
                 "/users/join/**",
                 "/auth/apple/**",
                 "/stores/**",
