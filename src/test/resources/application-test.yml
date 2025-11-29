@@ -21,3 +21,10 @@ logging:
         type:
           descriptor:
             sql: TRACE
+
+APPLE_CLIENT_ID_DEV: test-client-id
+APPLE_TEAM_ID_DEV: test-team-id
+APPLE_KEY_ID_DEV: test-key-id
+APPLE_P8_KEY_PATH_DEV: keys/AuthKey_TEST.p8
+APPLE_REDIRECT_URI_DEV: https://test.redirect.uri
+APPLE_LOGIN_URI_DEV: https://test.login.uri
