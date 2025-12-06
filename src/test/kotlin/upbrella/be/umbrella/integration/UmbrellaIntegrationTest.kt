@@ -86,13 +86,14 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
         }
 
         // 대여 중 우산 2개 생성
-        repeat(2) {
+        repeat(2) { i ->
             val umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", null)
                 .set("storeMeta", storeMeta)
                 .set("rentable", false)
                 .set("deleted", false)
                 .set("missed", false)
+                .set("uuid", 100L + i) // uuid를 100번대로 설정
                 .sample()
 
             umbrellaList.add(umbrella)
@@ -108,6 +109,7 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
                 .set("rentable", false)
                 .set("deleted", false)
                 .set("missed", true)
+                .set("uuid", 200L) // uuid를 200으로 설정
                 .sample()
 
             umbrellaList.add(umbrella)

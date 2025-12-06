@@ -133,14 +133,15 @@ class RentControllerTest : RestDocsSupport() {
         )
 
         val userToReturn = User(
-            1L,
-            "테스터1",
-            "010-1111-1111",
-            "email",
-            false,
-            null,
-            null,
-            11L
+            socialId = 1L,
+            name = "테스터1",
+            phoneNumber = "010-1111-1111",
+            email = "email",
+            provider = "KAKAO",
+            adminStatus = false,
+            bank = null,
+            accountNumber = null,
+            id = 11L
         )
 
         val storeMeta = FixtureBuilderFactory.builderStoreMeta().sample()
@@ -217,7 +218,17 @@ class RentControllerTest : RestDocsSupport() {
             conditionReport = "필요하다면 상태 신고를 해주세요."
         )
 
-        val newUser = User(1L, "테스터1", "010-1111-1111", "email", false, null, null, 11L)
+        val newUser = User(
+            socialId = 1L,
+            name = "테스터1",
+            phoneNumber = "010-1111-1111",
+            email = "email",
+            provider = "KAKAO",
+            adminStatus = false,
+            bank = null,
+            accountNumber = null,
+            id = 11L
+        )
 
         val session = MockHttpSession()
         session.setAttribute("user", sessionUser)

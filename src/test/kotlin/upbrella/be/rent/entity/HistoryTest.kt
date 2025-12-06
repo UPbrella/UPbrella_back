@@ -46,7 +46,17 @@ class HistoryTest {
             missed = false,
         )
 
-        userToRent = User(1L, "테스터", "010-1234-5678", "email", false, null, null, 11L)
+        userToRent = User(
+            socialId = 1L,
+            name = "테스터",
+            phoneNumber = "010-1234-5678",
+            email = "email",
+            provider = "KAKAO",
+            adminStatus = false,
+            bank = null,
+            accountNumber = null,
+            id = 11L
+        )
     }
 
     @Test

@@ -17,6 +17,12 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+
 management:
   endpoints:
     web:

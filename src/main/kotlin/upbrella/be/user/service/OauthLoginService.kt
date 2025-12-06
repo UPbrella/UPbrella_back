@@ -5,16 +5,28 @@ import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
+import upbrella.be.user.dto.response.AppleLoginResponse
 import upbrella.be.user.dto.response.KakaoLoginResponse
+import upbrella.be.user.dto.token.AppleOauthInfo
 import upbrella.be.user.dto.token.KakaoOauthInfo
 import upbrella.be.user.dto.token.OauthToken
+import upbrella.be.util.AppleIdTokenDecoder
 
 @Service
 class OauthLoginService(
-    private val restTemplate: RestTemplate
+    private val restTemplate: RestTemplate,
+    private val appleIdTokenDecoder: AppleIdTokenDecoder
 ) {
 
     fun getOauthToken(code: String, oauthInfo: KakaoOauthInfo): OauthToken? {
+        return getOauthTokenInternal(code, oauthInfo.clientId, oauthInfo.clientSecret, oauthInfo.redirectUri)
+    }
+
+    fun getOauthToken(code: String, oauthInfo: AppleOauthInfo): OauthToken? {
+        return getAppleOauthToken(code, oauthInfo.clientId, oauthInfo.clientSecret, oauthInfo.redirectUri)
+    }
+
+    private fun getOauthTokenInternal(code: String, clientId: String, clientSecret: String, redirectUri: String): OauthToken? {
         val headers: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>().apply {
             setAll(
                 mapOf(
@@ -28,15 +40,44 @@ class OauthLoginService(
             setAll(
                 mapOf(
                     "grant_type" to "authorization_code",
-                    "client_id" to oauthInfo.clientId,
-                    "client_secret" to oauthInfo.clientSecret,
+                    "client_id" to clientId,
+                    "client_secret" to clientSecret,
                     "code" to code
                 )
             )
         }
 
         val request = HttpEntity(requestPayloads, headers)
-        val response = restTemplate.postForEntity(oauthInfo.redirectUri, request, OauthToken::class.java)
+        val response = restTemplate.postForEntity(redirectUri, request, OauthToken::class.java)
+
+        return response.body
+    }
+
+    private fun getAppleOauthToken(code: String, clientId: String, clientSecret: String, redirectUri: String): OauthToken? {
+        val headers: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>().apply {
+            setAll(
+                mapOf(
+                    "Accept" to "application/json",
+                    "Content-Type" to "application/x-www-form-urlencoded;charset=utf-8"
+                )
+            )
+        }
+
+        val requestPayloads: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>().apply {
+            setAll(
+                mapOf(
+                    "grant_type" to "authorization_code",
+                    "client_id" to clientId,
+                    "client_secret" to clientSecret,
+                    "code" to code,
+                    "redirect_uri" to redirectUri
+                )
+            )
+        }
+
+        val request = HttpEntity(requestPayloads, headers)
+        // Apple의 토큰 엔드포인트 사용
+        val response = restTemplate.postForEntity("https://appleid.apple.com/auth/token", request, OauthToken::class.java)
 
         return response.body
     }
@@ -61,5 +102,10 @@ class OauthLoginService(
 
     fun processKakaoLogin(accessToken: String, loginUri: String): KakaoLoginResponse? {
         return processLogin(accessToken, loginUri, KakaoLoginResponse::class.java)
+    }
+
+    fun processAppleLogin(idToken: String): AppleLoginResponse {
+        // Apple ID token을 디코딩하여 사용자 정보 추출
+        return appleIdTokenDecoder.decodeIdToken(idToken)
     }
 }

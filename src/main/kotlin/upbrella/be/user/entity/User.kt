@@ -1,6 +1,7 @@
 package upbrella.be.user.entity
 
 import upbrella.be.user.dto.request.JoinRequest
+import upbrella.be.user.dto.response.AppleLoginResponse
 import upbrella.be.user.dto.response.KakaoLoginResponse
 import upbrella.be.util.AesEncryptor
 import upbrella.be.util.BaseTimeEntity
@@ -15,6 +16,7 @@ class User(
     var name: String,
     var phoneNumber: String,
     var email: String,
+    var provider: String = "KAKAO", // KAKAO or APPLE
     var adminStatus: Boolean = false,
     var bank: String? = null,
     var accountNumber: String? = null,
@@ -34,6 +36,23 @@ class User(
                 name = joinRequest.name,
                 phoneNumber = joinRequest.phoneNumber,
                 email = kakaoUser.kakaoAccount?.email ?: "",
+                provider = "KAKAO",
+                bank = aesEncryptor.encrypt(joinRequest.bank),
+                accountNumber = aesEncryptor.encrypt(joinRequest.accountNumber)
+            )
+        }
+
+        fun createNewAppleUser(
+            appleUser: AppleLoginResponse,
+            joinRequest: JoinRequest,
+            aesEncryptor: AesEncryptor
+        ): User {
+            return User(
+                socialId = appleUser.sub.hashCode().toLong(),
+                name = joinRequest.name,
+                phoneNumber = joinRequest.phoneNumber,
+                email = appleUser.email ?: "",
+                provider = "APPLE",
                 bank = aesEncryptor.encrypt(joinRequest.bank),
                 accountNumber = aesEncryptor.encrypt(joinRequest.accountNumber)
             )
