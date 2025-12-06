@@ -25,6 +25,9 @@ class OauthLoginServiceTest {
     @Mock
     private lateinit var restTemplate: RestTemplate
 
+    @Mock
+    private lateinit var appleIdTokenDecoder: upbrella.be.util.AppleIdTokenDecoder
+
     private lateinit var kakaoOauthInfo: KakaoOauthInfo
 
     @InjectMocks

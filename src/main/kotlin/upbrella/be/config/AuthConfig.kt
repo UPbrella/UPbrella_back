@@ -25,6 +25,7 @@ class AuthConfig(
                 "/users/login/**",
                 "/users/oauth/login/**",
                 "/users/join/**",
+                "/auth/apple/**",
                 "/stores/**",
                 "/index.html",
                 "/error/**",

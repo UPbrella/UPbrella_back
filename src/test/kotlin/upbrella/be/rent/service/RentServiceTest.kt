@@ -118,14 +118,15 @@ class RentServiceTest {
         )
 
         userToRent = User(
-            0L,
-            "테스터",
-            "010-1234-5678",
-            "email",
-            false,
-            null,
-            null,
-            11L
+            socialId = 0L,
+            name = "테스터",
+            phoneNumber = "010-1234-5678",
+            email = "email",
+            provider = "KAKAO",
+            adminStatus = false,
+            bank = null,
+            accountNumber = null,
+            id = 11L
         )
 
         history = History(
