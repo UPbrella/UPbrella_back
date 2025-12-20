@@ -40,7 +40,7 @@ import java.time.LocalDateTime
 import javax.persistence.EntityManager
 
 @Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserIntegrationTest : RestDocsSupport() {
 
