@@ -192,7 +192,7 @@ class UserController(
                 user
             }
             appleUser != null -> {
-                val user = userService.loginApple(appleUser.sub!!)
+                val user = userService.loginApple(appleUser.sub!!, appleUser)
                 session.removeAttribute("appleUser")
                 user
             }

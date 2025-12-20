@@ -37,8 +37,11 @@ class UserService(
         return SessionUser.fromUser(foundUser)
     }
 
-    fun loginApple(appleSub: String): SessionUser {
+    fun loginApple(appleSub: String, appleUser: AppleLoginResponse): SessionUser {
         val foundUser = userReader.findBySocialId(appleSub.hashCode().toLong())
+
+        // DB에 저장된 사용자 이름을 AppleLoginResponse에 채워줌 (세션에서 사용)
+        appleUser.name = foundUser.name
 
         return SessionUser.fromUser(foundUser)
     }
