@@ -174,6 +174,7 @@ object FixtureBuilderFactory {
         return fixtureMonkey.giveMeBuilder<JoinRequest>()
             .set("name", pickRandomString(nameList))
             .set("phoneNumber", pickPhoneNumberString())
+            .set("email", "email@email.com")
             .set("bank", pickRandomString(bankList))
             .set("accountNumber", pickAccountNumberString())
     }
