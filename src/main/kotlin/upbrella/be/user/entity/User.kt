@@ -68,7 +68,8 @@ class User(
     }
 
     fun deleteUser() {
-        this.socialId = 0L
+        // socialId unique constraint 위반 방지를 위해 음수 ID 사용 (DB ID를 음수로 변환)
+        this.socialId = -(this.id ?: System.currentTimeMillis())
         this.name = "탈퇴한 회원"
         this.phoneNumber = "deleted"
         this.email = "deleted"
@@ -78,7 +79,8 @@ class User(
     }
 
     fun withdrawUser() {
-        this.socialId = 0L
+        // socialId unique constraint 위반 방지를 위해 음수 ID 사용 (DB ID를 음수로 변환)
+        this.socialId = -(this.id ?: System.currentTimeMillis())
         this.name = "정지된 회원"
         this.phoneNumber = "deleted"
         this.email = "deleted"
