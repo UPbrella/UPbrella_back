@@ -181,7 +181,6 @@ class UserIntegrationTest : RestDocsSupport() {
             assertThat(mockHttpSession.getAttribute("kakaoUser")).isNotNull
         }
 
-        // 여기가 안됨
         @Test
         @DisplayName("사용자는 소셜 로그인 상태에서 업브렐라 로그인을 할 수 있다.")
         fun upbrellaLoginTest() {
@@ -194,7 +193,6 @@ class UserIntegrationTest : RestDocsSupport() {
                 )
             )
                 .willReturn(OauthToken("accessToken", "refreshToken", "bearer", 3600L))
-            val user = userRepository.save(FixtureBuilderFactory.builderUser(aesEncryptor).sample())
 
             mockHttpSession.setAttribute(
                 "kakaoUser",
@@ -389,10 +387,11 @@ class UserIntegrationTest : RestDocsSupport() {
             // then
             val foundUser = em.find(User::class.java, user.id)
             Assertions.assertAll(
-                { assertThat(foundUser.socialId).isEqualTo(0L) },
+                { assertThat(foundUser.socialId).isEqualTo(-(user.id!!)) },
                 { assertThat(foundUser.accountNumber).isNull() },
                 { assertThat(foundUser.bank).isNull() },
                 { assertThat(foundUser.phoneNumber).isEqualTo("deleted") },
+                { assertThat(foundUser.email).isEqualTo("deleted") },
                 { assertThat(foundUser.name).isEqualTo("탈퇴한 회원") }
             )
         }
@@ -415,10 +414,11 @@ class UserIntegrationTest : RestDocsSupport() {
             assertThat(blackListRepository.findAll().size).isEqualTo(1)
             val foundUser = em.find(User::class.java, user.id)
             Assertions.assertAll(
-                { assertThat(foundUser.socialId).isEqualTo(0L) },
+                { assertThat(foundUser.socialId).isEqualTo(-(user.id!!)) },
                 { assertThat(foundUser.accountNumber).isNull() },
                 { assertThat(foundUser.bank).isNull() },
                 { assertThat(foundUser.phoneNumber).isEqualTo("deleted") },
+                { assertThat(foundUser.email).isEqualTo("deleted") },
                 { assertThat(foundUser.name).isEqualTo("정지된 회원") }
             )
         }

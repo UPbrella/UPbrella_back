@@ -264,9 +264,10 @@ class UserServiceTest {
 
         // then
         assertAll(
-            { assertThat(user.socialId).isEqualTo(0L) },
+            { assertThat(user.socialId).isEqualTo(-(user.id!!)) },
             { assertThat(user.name).isEqualTo("탈퇴한 회원") },
             { assertThat(user.phoneNumber).isEqualTo("deleted") },
+            { assertThat(user.email).isEqualTo("deleted") },
             { assertThat(user.adminStatus).isFalse() },
             { assertThat(user.bank).isNull() },
             { assertThat(user.accountNumber).isNull() }
@@ -294,9 +295,10 @@ class UserServiceTest {
                     then(userReader).should(times(1))
                         .findUserById(user.id!!)
                 },
-                { assertThat(user.socialId).isEqualTo(0L) },
+                { assertThat(user.socialId).isEqualTo(-(user.id!!)) },
                 { assertThat(user.name).isEqualTo("정지된 회원") },
                 { assertThat(user.phoneNumber).isEqualTo("deleted") },
+                { assertThat(user.email).isEqualTo("deleted") },
                 { assertThat(user.adminStatus).isFalse() },
                 { assertThat(user.bank).isNull() },
                 { assertThat(user.accountNumber).isNull() },
