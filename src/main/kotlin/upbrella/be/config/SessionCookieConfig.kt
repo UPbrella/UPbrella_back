@@ -16,7 +16,7 @@ class SessionCookieConfig {
             val sessionCookieConfig: SessionCookieConfig = servletContext.sessionCookieConfig
             sessionCookieConfig.setSecure(true)
             sessionCookieConfig.setHttpOnly(true)
-            sessionCookieConfig.setDomain(".upbrella.co.kr")
+            sessionCookieConfig.setDomain("upbrella.co.kr")
             sessionCookieConfig.setPath("/")
         }
     }
