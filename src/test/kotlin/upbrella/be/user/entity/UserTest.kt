@@ -55,9 +55,10 @@ class UserTest {
 
         // then
         assertAll(
-            { assertThat(user.socialId).isEqualTo(0L) },
+            { assertThat(user.socialId).isEqualTo(-1L) },
             { assertThat(user.name).isEqualTo("탈퇴한 회원") },
             { assertThat(user.phoneNumber).isEqualTo("deleted") },
+            { assertThat(user.email).isEqualTo("deleted") },
             { assertThat(user.adminStatus).isEqualTo(false) },
             { assertThat(user.bank).isNull() },
             { assertThat(user.accountNumber).isNull() }
@@ -84,7 +85,7 @@ class UserTest {
 
         // then
         assertAll(
-            { assertThat(user.socialId).isEqualTo(0L) },
+            { assertThat(user.socialId).isEqualTo(-1L) },
             { assertThat(user.name).isEqualTo("정지된 회원") },
             { assertThat(user.email).isEqualTo("deleted") },
             { assertThat(user.phoneNumber).isEqualTo("deleted") },
