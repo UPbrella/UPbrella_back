@@ -49,6 +49,39 @@ class UserController(
             ))
     }
 
+    @GetMapping("/users/session/social")
+    fun getSocialUserFromSession(httpSession: HttpSession): ResponseEntity<CustomResponse<SocialUserSessionResponse>> {
+        val kakaoUser = httpSession.getAttribute("kakaoUser") as? KakaoLoginResponse
+        val appleUser = httpSession.getAttribute("appleUser") as? AppleLoginResponse
+
+        val response = when {
+            appleUser != null -> SocialUserSessionResponse(
+                name = appleUser.name,
+                email = appleUser.email,
+                provider = "APPLE"
+            )
+            kakaoUser != null -> SocialUserSessionResponse(
+                name = null, // 카카오는 이름을 제공하지 않음
+                email = kakaoUser.kakaoAccount?.email,
+                provider = "KAKAO"
+            )
+            else -> SocialUserSessionResponse(
+                name = null,
+                email = null,
+                provider = null
+            )
+        }
+
+        return ResponseEntity
+            .ok()
+            .body(CustomResponse(
+                "success",
+                200,
+                "세션 소셜 정보 조회 성공",
+                response
+            ))
+    }
+
     @GetMapping("/users/loggedIn/umbrella")
     fun findUmbrellaBorrowedByUser(httpSession: HttpSession): ResponseEntity<CustomResponse<UmbrellaBorrowedByUserResponse>> {
         val sessionUser = httpSession.getAttribute("user") as SessionUser
@@ -118,7 +151,7 @@ class UserController(
         }
 
         try {
-            val appleLoggedInUser = oauthLoginService.processAppleLogin(appleOauthToken.idToken!!)
+            val appleLoggedInUser = oauthLoginService.processAppleLogin(appleOauthToken.idToken)
 
             // 첫 로그인 시 Apple이 제공하는 user 파라미터에서 이름 추출
             if (user != null) {

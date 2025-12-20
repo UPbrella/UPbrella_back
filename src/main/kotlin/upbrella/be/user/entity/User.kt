@@ -71,6 +71,7 @@ class User(
         this.socialId = 0L
         this.name = "탈퇴한 회원"
         this.phoneNumber = "deleted"
+        this.email = "deleted"
         this.adminStatus = false
         this.bank = null
         this.accountNumber = null
