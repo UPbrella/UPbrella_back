@@ -119,6 +119,20 @@ class UserController(
 
         try {
             val appleLoggedInUser = oauthLoginService.processAppleLogin(appleOauthToken.idToken!!)
+
+            // 첫 로그인 시 Apple이 제공하는 user 파라미터에서 이름 추출
+            if (user != null) {
+                try {
+                    val userJson = com.fasterxml.jackson.databind.ObjectMapper().readTree(user)
+                    val firstName = userJson.get("name")?.get("firstName")?.asText() ?: ""
+                    val lastName = userJson.get("name")?.get("lastName")?.asText() ?: ""
+                    appleLoggedInUser.name = "$lastName$firstName"
+                    log.info("Apple user name extracted: ${appleLoggedInUser.name}")
+                } catch (e: Exception) {
+                    log.warn("Failed to parse Apple user name", e)
+                }
+            }
+
             session.setAttribute("appleUser", appleLoggedInUser)
 
             log.info("Apple social login success - redirecting to frontend")

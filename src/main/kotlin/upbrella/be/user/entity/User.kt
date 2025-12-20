@@ -49,9 +49,11 @@ class User(
         ): User {
             return User(
                 socialId = appleUser.sub.hashCode().toLong(),
-                name = joinRequest.name,
+                // Apple에서 이름을 제공한 경우 사용, 없으면 회원가입 폼의 이름 사용
+                name = appleUser.name?.takeIf { it.isNotBlank() } ?: joinRequest.name,
                 phoneNumber = joinRequest.phoneNumber,
-                email = appleUser.email ?: "",
+                // Apple에서 이메일을 제공한 경우 사용, 없으면 회원가입 폼의 이메일 사용
+                email = appleUser.email ?: joinRequest.email ?: "",
                 provider = "APPLE",
                 bank = aesEncryptor.encrypt(joinRequest.bank),
                 accountNumber = aesEncryptor.encrypt(joinRequest.accountNumber)

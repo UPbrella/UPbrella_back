@@ -10,5 +10,8 @@ data class AppleLoginResponse(
     val email: String?,
 
     @JsonProperty("email_verified")
-    val emailVerified: Boolean?
+    val emailVerified: Boolean?,
+
+    // 첫 로그인 시에만 제공되는 사용자 이름
+    var name: String? = null
 )
