@@ -25,6 +25,7 @@ class AuthConfig(
                 "/users/login/**",
                 "/users/oauth/login/**",
                 "/users/join/**",
+                "/users/session/social/**", // 회원가입 시 소셜 세션 정보 조회용
                 "/auth/apple/**",
                 "/stores/**",
                 "/index.html",
