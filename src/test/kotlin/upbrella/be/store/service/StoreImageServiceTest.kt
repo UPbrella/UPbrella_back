@@ -52,8 +52,19 @@ class StoreImageServiceTest {
     @Mock
     private lateinit var imageProcessingService: ImageProcessingService
 
-    @InjectMocks
     private lateinit var storeImageService: StoreImageService
+
+    @BeforeEach
+    fun setUp() {
+        storeImageService = StoreImageService(
+            s3Client = s3Client,
+            storeImageReader = storeImageReader,
+            storeImageWriter = storeImageWriter,
+            storeDetailReader = storeDetailReader,
+            imageProcessingService = imageProcessingService,
+            bucketName = "test-bucket"
+        )
+    }
 
     @Test
     @DisplayName("파일 업로드 테스트")
