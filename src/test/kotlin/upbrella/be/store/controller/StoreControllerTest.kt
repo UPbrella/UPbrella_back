@@ -986,7 +986,20 @@ class StoreControllerTest : RestDocsSupport() {
                     images = listOf(
                         SingleImageUrlResponse(
                             id = 1L,
-                            imageUrl = "url"
+                            imageUrl = "url",
+                            imageUrls = ImageUrlsResponse(
+                                id = 1L,
+                                webp = ImageSizeUrls(
+                                    thumb = "url/thumb.webp",
+                                    medium = "url/medium.webp",
+                                    large = "url/large.webp"
+                                ),
+                                jpeg = ImageSizeUrls(
+                                    thumb = "url/thumb.jpg",
+                                    medium = "url/medium.jpg",
+                                    large = "url/large.jpg"
+                                )
+                            )
                         )
                     )
                 )
@@ -1018,7 +1031,27 @@ class StoreControllerTest : RestDocsSupport() {
                         fieldWithPath("images[].id").type(JsonFieldType.NUMBER)
                             .description("협업 지점 이미지 고유번호"),
                         fieldWithPath("images[].imageUrl").type(JsonFieldType.STRING)
-                            .description("협업 지점 이미지 URL")
+                            .description("협업 지점 이미지 URL"),
+                        fieldWithPath("images[].imageUrls").type(JsonFieldType.OBJECT)
+                            .description("협업 지점 이미지 URLs (다양한 포맷 및 크기)"),
+                        fieldWithPath("images[].imageUrls.id").type(JsonFieldType.NUMBER)
+                            .description("이미지 고유번호"),
+                        fieldWithPath("images[].imageUrls.webp").type(JsonFieldType.OBJECT).optional()
+                            .description("WebP 포맷 이미지 URLs"),
+                        fieldWithPath("images[].imageUrls.webp.thumb").type(JsonFieldType.STRING).optional()
+                            .description("WebP 썸네일 이미지 URL"),
+                        fieldWithPath("images[].imageUrls.webp.medium").type(JsonFieldType.STRING).optional()
+                            .description("WebP 중간 크기 이미지 URL"),
+                        fieldWithPath("images[].imageUrls.webp.large").type(JsonFieldType.STRING).optional()
+                            .description("WebP 큰 크기 이미지 URL"),
+                        fieldWithPath("images[].imageUrls.jpeg").type(JsonFieldType.OBJECT)
+                            .description("JPEG 포맷 이미지 URLs"),
+                        fieldWithPath("images[].imageUrls.jpeg.thumb").type(JsonFieldType.STRING)
+                            .description("JPEG 썸네일 이미지 URL"),
+                        fieldWithPath("images[].imageUrls.jpeg.medium").type(JsonFieldType.STRING)
+                            .description("JPEG 중간 크기 이미지 URL"),
+                        fieldWithPath("images[].imageUrls.jpeg.large").type(JsonFieldType.STRING)
+                            .description("JPEG 큰 크기 이미지 URL")
                     )
                 )
             )
