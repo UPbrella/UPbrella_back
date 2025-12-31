@@ -13,6 +13,8 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectResponse
 import upbrella.be.store.dto.response.SingleImageUrlResponse
+import upbrella.be.store.dto.response.ImageUrlsResponse
+import upbrella.be.store.dto.response.ImageSizeUrls
 import upbrella.be.store.entity.StoreDetail
 import upbrella.be.store.entity.StoreImage
 import upbrella.be.store.exception.NonExistingStoreImageException
@@ -26,6 +28,10 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 import upbrella.be.store.repository.StoreDetailReader
 import upbrella.be.store.repository.StoreImageReader
 import upbrella.be.store.repository.StoreImageWriter
+import upbrella.be.store.service.ImageProcessingService
+import upbrella.be.store.service.ProcessedImageSet
+import upbrella.be.store.service.ImageVariantData
+import org.springframework.web.multipart.MultipartFile
 
 @Transactional
 @ExtendWith(MockitoExtension::class)
@@ -43,6 +49,9 @@ class StoreImageServiceTest {
     @Mock
     private lateinit var storeDetailReader: StoreDetailReader
 
+    @Mock
+    private lateinit var imageProcessingService: ImageProcessingService
+
     @InjectMocks
     private lateinit var storeImageService: StoreImageService
 
@@ -55,10 +64,24 @@ class StoreImageServiceTest {
             MockMultipartFile("image", "filename.jpg", "image/jpg", "some-image".toByteArray())
         val storeDetail = StoreDetail()
         val randomId = storeImageService.makeRandomId()
-        val expectedUrl = "https://file.upbrella.co.kr/store-image/filename.jpg$randomId"
+
+        // Mock ProcessedImageSet
+        val mockImageData = ImageVariantData(
+            webp = "webp-data".toByteArray(),
+            jpeg = "jpeg-data".toByteArray()
+        )
+        val mockProcessedImageSet = ProcessedImageSet(
+            thumbnail = mockImageData,
+            medium = mockImageData,
+            large = mockImageData
+        )
+
+        val expectedUrl = "https://file.upbrella.co.kr/store-image/$storeDetailId/${randomId}_medium.jpg"
 
         given(storeDetailReader.findByStoreMetaId(storeDetailId)).willReturn(storeDetail)
-        given(s3Client.putObject(any(PutObjectRequest::class.java), any(RequestBody::class.java)))
+        given(imageProcessingService.processImage(org.mockito.kotlin.any<MultipartFile>()))
+            .willReturn(mockProcessedImageSet)
+        given(s3Client.putObject(org.mockito.kotlin.any<PutObjectRequest>(), org.mockito.kotlin.any<RequestBody>()))
             .willReturn(PutObjectResponse.builder().build())
 
         // when
@@ -66,7 +89,7 @@ class StoreImageServiceTest {
 
         // then
         assertThat(result).isEqualTo(expectedUrl)
-        verify(s3Client, times(1))
+        verify(s3Client, times(6))
             .putObject(org.mockito.kotlin.any<PutObjectRequest>(), org.mockito.kotlin.any<RequestBody>())
         verify(storeImageWriter, times(1)).save(org.mockito.kotlin.any<StoreImage>())
     }
@@ -93,7 +116,7 @@ class StoreImageServiceTest {
             { assertEquals(testId, testImage.id) },
             { assertEquals(testUrl, testImage.imageUrl) },
             { verify(storeImageWriter, times(1)).deleteById(testImage.id!!) },
-            { verify(s3Client, times(1)).deleteObject(any(DeleteObjectRequest::class.java)) },
+            { verify(s3Client, times(3)).deleteObject(any(DeleteObjectRequest::class.java)) }, // 3 sizes x 1 format (JPEG only, no WebP for old images)
         )
     }
 
@@ -102,6 +125,7 @@ class StoreImageServiceTest {
     fun notExistImageDeleteTest() {
         // given
         val imageId = 1L
+        given(storeImageReader.findById(imageId)).willReturn(null)
 
         // when & then
         assertThatThrownBy {
@@ -121,12 +145,38 @@ class StoreImageServiceTest {
             // given
             val first = SingleImageUrlResponse(
                 id = 1L,
-                imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+                imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg",
+                imageUrls = ImageUrlsResponse(
+                    id = 1L,
+                    webp = ImageSizeUrls(
+                        thumb = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-thumb.webp",
+                        medium = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-medium.webp",
+                        large = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-large.webp"
+                    ),
+                    jpeg = ImageSizeUrls(
+                        thumb = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-thumb.jpg",
+                        medium = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-medium.jpg",
+                        large = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-large.jpg"
+                    )
+                )
             )
 
             val second = SingleImageUrlResponse(
                 id = 2L,
-                imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg"
+                imageUrl = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename.jpg",
+                imageUrls = ImageUrlsResponse(
+                    id = 2L,
+                    webp = ImageSizeUrls(
+                        thumb = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-thumb.webp",
+                        medium = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-medium.webp",
+                        large = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-large.webp"
+                    ),
+                    jpeg = ImageSizeUrls(
+                        thumb = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-thumb.jpg",
+                        medium = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-medium.jpg",
+                        large = "https://null.s3.ap-northeast-2.amazonaws.com/store-image/filename-large.jpg"
+                    )
+                )
             )
 
             val imageUrls = listOf(first, second)
@@ -135,7 +185,8 @@ class StoreImageServiceTest {
             val thumbnail = storeImageService.createThumbnail(imageUrls)
 
             // then
-            assertThat(thumbnail).isEqualTo(imageUrls[0].imageUrl)
+            // WebP 썸네일 우선 반환
+            assertThat(thumbnail).isEqualTo(imageUrls[0].imageUrls.webp?.thumb)
         }
 
         @Test
