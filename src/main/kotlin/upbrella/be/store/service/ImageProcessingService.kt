@@ -34,15 +34,42 @@ class ImageProcessingService(
      * 이미지를 3가지 크기 x 2가지 포맷(WebP, JPEG)으로 처리
      */
     fun processImage(file: MultipartFile): ProcessedImageSet {
-        val originalImage = ImageIO.read(file.inputStream)
-            ?: throw IllegalArgumentException("Invalid image file")
+        try {
+            // Thumbnailator는 EXIF orientation을 자동으로 처리
+            // 먼저 안전한 크기로 다운샘플링 (메모리 절약)
+            val inputStream = file.inputStream
+            val originalImage = ImageIO.read(inputStream)
+                ?: throw IllegalArgumentException("Invalid image file")
 
-        // 3가지 크기로 리사이징
-        val thumbnail = processSize(originalImage, config.sizes.thumbnail)
-        val medium = processSize(originalImage, config.sizes.medium)
-        val large = processSize(originalImage, config.sizes.large)
+            try {
+                // 이미지가 너무 크면 먼저 다운샘플링 (메모리 절약)
+                val workingImage = if (originalImage.width > 2000 || originalImage.height > 2000) {
+                    // Thumbnailator는 자동으로 EXIF orientation 적용
+                    Thumbnails.of(originalImage)
+                        .size(2000, 2000)
+                        .asBufferedImage()
+                        .also { originalImage.flush() }
+                } else {
+                    originalImage
+                }
 
-        return ProcessedImageSet(thumbnail, medium, large)
+                try {
+                    // 3가지 크기로 리사이징 (순차 처리)
+                    val thumbnail = processSize(workingImage, config.sizes.thumbnail)
+                    val medium = processSize(workingImage, config.sizes.medium)
+                    val large = processSize(workingImage, config.sizes.large)
+
+                    return ProcessedImageSet(thumbnail, medium, large)
+                } finally {
+                    // 작업 이미지 메모리 해제
+                    workingImage.flush()
+                }
+            } catch (e: OutOfMemoryError) {
+                throw IllegalStateException("Image is too large to process. Please use a smaller image (max 10MB).", e)
+            }
+        } catch (e: OutOfMemoryError) {
+            throw IllegalStateException("Image is too large to process. Please use a smaller image (max 10MB).", e)
+        }
     }
 
     /**
@@ -52,13 +79,18 @@ class ImageProcessingService(
         // 리사이징
         val resized = resizeImage(originalImage, targetSize)
 
-        // WebP 변환
-        val webp = convertToWebP(resized, config.quality.webp)
+        try {
+            // WebP 변환
+            val webp = convertToWebP(resized, config.quality.webp)
 
-        // JPEG 변환
-        val jpeg = convertToJpeg(resized, config.quality.jpeg)
+            // JPEG 변환
+            val jpeg = convertToJpeg(resized, config.quality.jpeg)
 
-        return ImageVariantData(webp, jpeg)
+            return ImageVariantData(webp, jpeg)
+        } finally {
+            // 리사이즈된 이미지 메모리 해제
+            resized.flush()
+        }
     }
 
     /**
@@ -74,58 +106,78 @@ class ImageProcessingService(
      * BufferedImage를 WebP 포맷으로 변환
      */
     private fun convertToWebP(image: BufferedImage, quality: Float): ByteArray {
-        val outputStream = ByteArrayOutputStream()
+        ByteArrayOutputStream().use { outputStream ->
+            val writer = ImageIO.getImageWritersByFormatName("webp").next()
+                ?: throw IllegalStateException("WebP ImageWriter not found. Make sure webp-imageio is on the classpath")
 
-        // WebP ImageWriter 설정
-        val writer = ImageIO.getImageWritersByFormatName("webp").next()
-            ?: throw IllegalStateException("WebP ImageWriter not found. Make sure webp-imageio is on the classpath")
+            try {
+                val writeParam = writer.defaultWriteParam
+                if (writeParam.canWriteCompressed()) {
+                    writeParam.compressionMode = javax.imageio.ImageWriteParam.MODE_EXPLICIT
+                    // WebP는 compression type을 먼저 설정해야 함
+                    writeParam.compressionType = writeParam.compressionTypes?.firstOrNull() ?: "Lossy"
+                    writeParam.compressionQuality = quality
+                }
 
-        val writeParam = writer.defaultWriteParam
-        if (writeParam.canWriteCompressed()) {
-            writeParam.compressionMode = javax.imageio.ImageWriteParam.MODE_EXPLICIT
-            writeParam.compressionQuality = quality
+                ImageIO.createImageOutputStream(outputStream).use { output ->
+                    writer.output = output
+                    writer.write(null, javax.imageio.IIOImage(image, null, null), writeParam)
+                }
+
+                return outputStream.toByteArray()
+            } finally {
+                writer.dispose()
+            }
         }
-
-        val output = ImageIO.createImageOutputStream(outputStream)
-        writer.output = output
-        writer.write(null, javax.imageio.IIOImage(image, null, null), writeParam)
-        writer.dispose()
-        output.close()
-
-        return outputStream.toByteArray()
     }
 
     /**
      * BufferedImage를 JPEG 포맷으로 변환
      */
     private fun convertToJpeg(image: BufferedImage, quality: Float): ByteArray {
-        val outputStream = ByteArrayOutputStream()
+        ByteArrayOutputStream().use { outputStream ->
+            // RGB 이미지로 변환 (JPEG는 투명도 미지원)
+            val needsConversion = image.type == BufferedImage.TYPE_INT_ARGB ||
+                                  image.type == BufferedImage.TYPE_4BYTE_ABGR
 
-        // RGB 이미지로 변환 (JPEG는 투명도 미지원)
-        val rgbImage = if (image.type == BufferedImage.TYPE_INT_ARGB ||
-                           image.type == BufferedImage.TYPE_4BYTE_ABGR) {
-            val newImage = BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
-            val g = newImage.createGraphics()
-            g.drawImage(image, 0, 0, null)
-            g.dispose()
-            newImage
-        } else {
-            image
+            val rgbImage = if (needsConversion) {
+                BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB).apply {
+                    val g = createGraphics()
+                    try {
+                        g.drawImage(image, 0, 0, null)
+                    } finally {
+                        g.dispose()
+                    }
+                }
+            } else {
+                image
+            }
+
+            try {
+                val writer = ImageIO.getImageWritersByFormatName("jpeg").next()
+                try {
+                    val writeParam = writer.defaultWriteParam
+                    writeParam.compressionMode = javax.imageio.ImageWriteParam.MODE_EXPLICIT
+                    writeParam.compressionQuality = quality
+
+                    ImageIO.createImageOutputStream(outputStream).use { output ->
+                        writer.output = output
+                        writer.write(null, javax.imageio.IIOImage(rgbImage, null, null), writeParam)
+                    }
+
+                    return outputStream.toByteArray()
+                } finally {
+                    writer.dispose()
+                }
+            } finally {
+                // 새로 생성한 RGB 이미지는 메모리 해제
+                if (needsConversion) {
+                    rgbImage.flush()
+                }
+            }
         }
-
-        val writer = ImageIO.getImageWritersByFormatName("jpeg").next()
-        val writeParam = writer.defaultWriteParam
-        writeParam.compressionMode = javax.imageio.ImageWriteParam.MODE_EXPLICIT
-        writeParam.compressionQuality = quality
-
-        val output = ImageIO.createImageOutputStream(outputStream)
-        writer.output = output
-        writer.write(null, javax.imageio.IIOImage(rgbImage, null, null), writeParam)
-        writer.dispose()
-        output.close()
-
-        return outputStream.toByteArray()
     }
+
 }
 
 /**
