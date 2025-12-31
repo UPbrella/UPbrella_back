@@ -7,7 +7,7 @@ import javax.validation.constraints.Size
 
 data class JoinRequest(
     @field:Size(min = 2, max = 20)
-    @field:Pattern(regexp = "^[가-힣a-zA-Z\s]{2,20}$", message = "이름은 한글, 영문, 공백 2~20자로 입력해주세요.")
+    @field:Pattern(regexp = "^[가-힣a-zA-Z\\s]{2,20}$", message = "이름은 한글, 영문, 공백 2~20자로 입력해주세요.")
     val name: String = "",
 
     @field:NotBlank
