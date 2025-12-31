@@ -1,5 +1,6 @@
 package upbrella.be.store.service
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -26,6 +27,8 @@ class StoreImageService(
     private val storeImageWriter: StoreImageWriter,
     private val storeDetailReader: StoreDetailReader,
     private val imageProcessingService: ImageProcessingService,
+    @Value("\${AWS_S3_BUCKET}")
+    private val bucketName: String,
 ) {
 
     @Transactional
@@ -140,7 +143,7 @@ class StoreImageService(
      */
     private fun uploadToS3(key: String, data: ByteArray, contentType: String): String {
         val putObjectRequest = PutObjectRequest.builder()
-            .bucket("bucketName")
+            .bucket(bucketName)
             .key(key)
             .acl("public-read")
             .contentDisposition("inline")
@@ -155,7 +158,7 @@ class StoreImageService(
         val key = parseKey(imgUrl)
 
         val deleteObjectRequest = DeleteObjectRequest.builder()
-            .bucket("bucketName")
+            .bucket(bucketName)
             .key(key)
             .build()
 
