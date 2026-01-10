@@ -166,4 +166,83 @@ class UserTest {
         // then
         assertThat(user.adminStatus).isTrue()
     }
+
+    @Test
+    @DisplayName("사용자의 전화번호를 업데이트할 수 있다.")
+    fun updatePhoneNumberTest() {
+        // given
+        val user = User(
+            id = 1L,
+            socialId = 1L,
+            name = "testUser",
+            phoneNumber = null,
+            email = "email@example.com",
+            adminStatus = false,
+            bank = "bank",
+            accountNumber = "accountNumber"
+        )
+
+        // when
+        user.updatePhoneNumber("010-1234-5678")
+
+        // then
+        assertThat(user.phoneNumber).isEqualTo("010-1234-5678")
+    }
+
+    @Test
+    @DisplayName("전화번호가 있는 사용자는 hasPhoneNumber가 true를 반환한다.")
+    fun hasPhoneNumberReturnsTrueTest() {
+        // given
+        val user = User(
+            id = 1L,
+            socialId = 1L,
+            name = "testUser",
+            phoneNumber = "010-1234-5678",
+            email = "email@example.com",
+            adminStatus = false,
+            bank = "bank",
+            accountNumber = "accountNumber"
+        )
+
+        // when & then
+        assertThat(user.hasPhoneNumber()).isTrue()
+    }
+
+    @Test
+    @DisplayName("전화번호가 없는 사용자는 hasPhoneNumber가 false를 반환한다.")
+    fun hasPhoneNumberReturnsFalseTest() {
+        // given
+        val user = User(
+            id = 1L,
+            socialId = 1L,
+            name = "testUser",
+            phoneNumber = null,
+            email = "email@example.com",
+            adminStatus = false,
+            bank = "bank",
+            accountNumber = "accountNumber"
+        )
+
+        // when & then
+        assertThat(user.hasPhoneNumber()).isFalse()
+    }
+
+    @Test
+    @DisplayName("전화번호가 빈 문자열인 사용자는 hasPhoneNumber가 false를 반환한다.")
+    fun hasPhoneNumberReturnsFalseForEmptyStringTest() {
+        // given
+        val user = User(
+            id = 1L,
+            socialId = 1L,
+            name = "testUser",
+            phoneNumber = "",
+            email = "email@example.com",
+            adminStatus = false,
+            bank = "bank",
+            accountNumber = "accountNumber"
+        )
+
+        // when & then
+        assertThat(user.hasPhoneNumber()).isFalse()
+    }
 }
