@@ -5,7 +5,7 @@ import upbrella.be.user.entity.User
 data class UserInfoResponse(
     val id: Long,
     val name: String,
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val bank: String?,
     val accountNumber: String?,
     val email: String,
