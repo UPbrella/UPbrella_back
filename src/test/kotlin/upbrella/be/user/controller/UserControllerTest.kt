@@ -369,7 +369,7 @@ class UserControllerTest (
                         getDocumentResponse(),
                         requestFields(
                             fieldWithPath("name").description("이름"),
-                            fieldWithPath("phoneNumber").description("연락처"),
+                            fieldWithPath("phoneNumber").optional().description("연락처"),
                             fieldWithPath("email").optional().description("이메일"),
                             fieldWithPath("bank").optional().description("은행"),
                             fieldWithPath("accountNumber").optional().description("계좌 번호")

@@ -31,8 +31,13 @@ class RentController(
     private val log = LoggerFactory.getLogger(RentController::class.java)
 
     @GetMapping("/rent/form/{umbrellaId}")
-    fun findRentForm(@PathVariable umbrellaId: Long): ResponseEntity<CustomResponse<RentFormResponse>> {
-        val rentForm = rentService.findRentForm(umbrellaId)
+    fun findRentForm(
+        @PathVariable umbrellaId: Long,
+        httpSession: HttpSession
+    ): ResponseEntity<CustomResponse<RentFormResponse>> {
+        val user = httpSession.getAttribute("user") as SessionUser
+        val userToRent = userReader.findUserById(user.id)
+        val rentForm = rentService.findRentForm(umbrellaId, userToRent)
 
         return ResponseEntity
             .ok()

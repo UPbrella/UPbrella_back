@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class HistoryInfoDto @QueryProjection constructor(
     val id: Long,
     val name: String,
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val rentStoreName: String,
     val rentAt: LocalDateTime,
     val umbrellaUuid: Long,

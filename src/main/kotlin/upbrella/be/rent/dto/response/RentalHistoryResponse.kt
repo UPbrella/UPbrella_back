@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class RentalHistoryResponse(
     val id: Long,
     val name: String,
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val rentStoreName: String,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
     val rentAt: LocalDateTime,
