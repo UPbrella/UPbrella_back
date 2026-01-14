@@ -79,19 +79,43 @@ class RentControllerTest : RestDocsSupport() {
     @DisplayName("사용자는 대여 폼 자동 완성에 필요한 데이터를 조회할 수 있다.")
     fun findRentalFormTest() {
         // given
+        val sessionUser = SessionUser(
+            id = 1L,
+            socialId = 1L,
+            adminStatus = false
+        )
+
+        val userToRent = User(
+            socialId = 1L,
+            name = "테스터1",
+            phoneNumber = "010-1111-1111",
+            email = "email",
+            provider = "KAKAO",
+            adminStatus = false,
+            bank = null,
+            accountNumber = null,
+            id = 1L
+        )
+
+        val session = MockHttpSession()
+        session.setAttribute("user", sessionUser)
+
         val rentFormResponse = RentFormResponse(
             classificationName = "신촌",
             storeMetaId = 233L,
             rentStoreName = "motive study cafe",
-            umbrellaUuid = 99L
+            umbrellaUuid = 99L,
+            hasPhoneNumber = true
         )
 
-        given(rentService.findRentForm(2L))
+        given(userReader.findUserById(1L)).willReturn(userToRent)
+        given(rentService.findRentForm(2L, userToRent))
             .willReturn(rentFormResponse)
 
         // when & then
         mockMvc.perform(
             get("/rent/form/{umbrellaId}", 2L)
+                .session(session)
         )
             .andDo(print())
             .andExpect(status().isOk)
@@ -113,7 +137,9 @@ class RentControllerTest : RestDocsSupport() {
                         fieldWithPath("rentStoreName").type(JsonFieldType.STRING)
                             .description("대여 지점 이름"),
                         fieldWithPath("umbrellaUuid").type(JsonFieldType.NUMBER)
-                            .description("우산 고유번호")
+                            .description("우산 고유번호"),
+                        fieldWithPath("hasPhoneNumber").type(JsonFieldType.BOOLEAN)
+                            .description("전화번호 보유 여부")
                     )
                 )
             )
@@ -215,7 +241,8 @@ class RentControllerTest : RestDocsSupport() {
             region = "신촌",
             storeId = 1L,
             umbrellaId = 1L,
-            conditionReport = "필요하다면 상태 신고를 해주세요."
+            conditionReport = "필요하다면 상태 신고를 해주세요.",
+            phoneNumber = "010-1111-1111"
         )
 
         val newUser = User(
@@ -258,7 +285,9 @@ class RentControllerTest : RestDocsSupport() {
                             .description("우산 고유번호"),
                         fieldWithPath("conditionReport").type(JsonFieldType.STRING)
                             .optional()
-                            .description("상태 신고")
+                            .description("상태 신고"),
+                        fieldWithPath("phoneNumber").type(JsonFieldType.STRING)
+                            .description("전화번호")
                     ),
                     responseFields(
                         beneathPath("data").withSubsectionId("data"),

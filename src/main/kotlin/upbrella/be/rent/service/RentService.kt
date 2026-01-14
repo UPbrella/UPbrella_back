@@ -41,12 +41,12 @@ class RentService(
     private val userReader: UserReader,
 ) {
 
-    fun findRentForm(umbrellaId: Long): RentFormResponse {
+    fun findRentForm(umbrellaId: Long, user: User): RentFormResponse {
         val umbrella = umbrellaService.findUmbrellaById(umbrellaId)
         if (umbrella.cannotBeRented()) {
             throw CannotBeRentedException("[ERROR] 해당 우산은 대여 불가능한 우산입니다.")
         }
-        return RentFormResponse.of(umbrella)
+        return RentFormResponse.of(umbrella, user.hasPhoneNumber())
     }
 
     fun findReturnForm(
@@ -65,6 +65,11 @@ class RentService(
         rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id).ifPresent {
             throw ExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 있습니다.")
         }
+
+        if (!userToRent.hasPhoneNumber()) {
+            userToRent.updatePhoneNumber(rentUmbrellaByUserRequest.phoneNumber)
+        }
+
         val umbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.umbrellaId)
         if (umbrella.storeMeta.id != rentUmbrellaByUserRequest.storeId) {
             throw UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.")

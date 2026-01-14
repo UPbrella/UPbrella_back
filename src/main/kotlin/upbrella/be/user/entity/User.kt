@@ -14,7 +14,7 @@ import javax.persistence.Id
 class User(
     var socialId: Long,
     var name: String,
-    var phoneNumber: String,
+    var phoneNumber: String? = null,
     var email: String,
     var provider: String = "KAKAO", // KAKAO or APPLE
     var adminStatus: Boolean = false,
@@ -101,5 +101,13 @@ class User(
 
     fun updateAdminStatus() {
         this.adminStatus = !this.adminStatus
+    }
+
+    fun updatePhoneNumber(phoneNumber: String) {
+        this.phoneNumber = phoneNumber
+    }
+
+    fun hasPhoneNumber(): Boolean {
+        return !phoneNumber.isNullOrBlank()
     }
 }

@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class SingleUserInfoResponse(
     val id: Long,
     val name: String,
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val email: String,
     val bank: String?,
     val accountNumber: String?,

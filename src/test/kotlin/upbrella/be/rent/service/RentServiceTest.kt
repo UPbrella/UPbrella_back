@@ -95,7 +95,8 @@ class RentServiceTest {
             region = "신촌",
             storeId = 25L,
             umbrellaId = 99L,
-            conditionReport = "상태 양호"
+            conditionReport = "상태 양호",
+            phoneNumber = "010-1234-5678"
         )
 
         foundStoreMeta = StoreMeta(
@@ -227,6 +228,64 @@ class RentServiceTest {
                     then(umbrellaService).should(times(1)).findUmbrellaById(99L)
                 }
             )
+        }
+
+        @Test
+        @DisplayName("전화번호가 없는 사용자가 대여하면 전화번호가 저장된다")
+        fun addPhoneNumberWhenUserHasNoPhoneNumber() {
+            // given
+            val userWithoutPhone = User(
+                socialId = 0L,
+                name = "테스터",
+                phoneNumber = null,
+                email = "email",
+                provider = "KAKAO",
+                adminStatus = false,
+                bank = null,
+                accountNumber = null,
+                id = 11L
+            )
+
+            given(storeMetaReader.findById(25L)).willReturn(foundStoreMeta)
+            given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
+            given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
+            doNothing().`when`(conditionReportService)
+                .saveConditionReport(any(ConditionReport::class.java) ?: conditionReport)
+
+            // when
+            rentService.addRental(rentUmbrellaByUserRequest, userWithoutPhone)
+
+            // then
+            assertThat(userWithoutPhone.phoneNumber).isEqualTo("010-1234-5678")
+        }
+
+        @Test
+        @DisplayName("전화번호가 있는 사용자가 대여해도 기존 전화번호가 유지된다")
+        fun keepPhoneNumberWhenUserHasPhoneNumber() {
+            // given
+            val userWithPhone = User(
+                socialId = 0L,
+                name = "테스터",
+                phoneNumber = "010-9999-9999",
+                email = "email",
+                provider = "KAKAO",
+                adminStatus = false,
+                bank = null,
+                accountNumber = null,
+                id = 11L
+            )
+
+            given(storeMetaReader.findById(25L)).willReturn(foundStoreMeta)
+            given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
+            given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
+            doNothing().`when`(conditionReportService)
+                .saveConditionReport(any(ConditionReport::class.java) ?: conditionReport)
+
+            // when
+            rentService.addRental(rentUmbrellaByUserRequest, userWithPhone)
+
+            // then
+            assertThat(userWithPhone.phoneNumber).isEqualTo("010-9999-9999")
         }
     }
 
