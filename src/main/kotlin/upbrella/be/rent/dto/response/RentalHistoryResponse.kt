@@ -2,18 +2,19 @@ package upbrella.be.rent.dto.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 data class RentalHistoryResponse(
     val id: Long,
     val name: String,
     val phoneNumber: String?,
     val rentStoreName: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val rentAt: LocalDateTime,
     val elapsedDay: Int, // 경과 시간
     val umbrellaUuid: Long,
     val returnStoreName: String? = null,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd kk:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     val returnAt: LocalDateTime? = null,
     val totalRentalDay: Int? = null,
     val refundCompleted: Boolean,
@@ -24,18 +25,24 @@ data class RentalHistoryResponse(
 ) {
     companion object {
 
+        private val KST = ZoneId.of("Asia/Seoul")
+
+        private fun toKst(time: LocalDateTime): LocalDateTime {
+            return time.atZone(ZoneId.systemDefault()).withZoneSameInstant(KST).toLocalDateTime()
+        }
+
         fun createReturnedHistory(history: HistoryInfoDto, elapsedDay: Int, totalRentalDay: Int): RentalHistoryResponse {
             return RentalHistoryResponse(
                 id = history.id,
                 name = history.name,
                 phoneNumber = history.phoneNumber,
                 rentStoreName = history.rentStoreName,
-                rentAt = history.rentAt,
+                rentAt = toKst(history.rentAt),
                 elapsedDay = elapsedDay,
                 paid = history.paidAt != null,
                 umbrellaUuid = history.umbrellaUuid,
                 returnStoreName = history.returnStoreName,
-                returnAt = history.returnAt,
+                returnAt = history.returnAt?.let { toKst(it) },
                 totalRentalDay = totalRentalDay,
                 refundCompleted = history.refundedAt != null,
                 bank = history.bank,
@@ -50,7 +57,7 @@ data class RentalHistoryResponse(
                 name = history.name,
                 phoneNumber = history.phoneNumber,
                 rentStoreName = history.rentStoreName,
-                rentAt = history.rentAt,
+                rentAt = toKst(history.rentAt),
                 elapsedDay = elapsedDay,
                 paid = history.paidAt != null,
                 umbrellaUuid = history.umbrellaUuid,
