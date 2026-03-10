@@ -17,6 +17,7 @@ import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -356,12 +357,12 @@ class RentControllerTest : RestDocsSupport() {
                     name = "사용자",
                     phoneNumber = "010-1234-5678",
                     rentStoreName = "대여점 이름",
-                    rentAt = LocalDateTime.of(2023, 7, 18, 0, 0, 0),
+                    rentAt = LocalDateTime.of(2023, 7, 18, 3, 30, 0),
                     elapsedDay = 3,
                     paid = true,
                     umbrellaUuid = 30L,
                     returnStoreName = "반납점 이름",
-                    returnAt = LocalDateTime.now(),
+                    returnAt = LocalDateTime.of(2023, 7, 21, 15, 45, 0),
                     totalRentalDay = 5,
                     refundCompleted = true,
                     bank = "우리은행",
@@ -385,6 +386,8 @@ class RentControllerTest : RestDocsSupport() {
         )
             .andDo(print())
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$.data.rentalHistoryResponsePage[0].rentAt").value("2023-07-18 03:30:00"))
+            .andExpect(jsonPath("$.data.rentalHistoryResponsePage[0].returnAt").value("2023-07-21 15:45:00"))
             .andDo(
                 document(
                     "show-all-rental-histories-doc",
