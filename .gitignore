@@ -3,6 +3,7 @@
 
 ### Secret ###
 **/application.properties
+src/main/resources/keys/
 
 ### Java ###
 # Compiled class file
@@ -98,3 +99,5 @@ out
 daemon
 bin
 .jqwik-database
+
+
