@@ -28,7 +28,7 @@ data class RentalHistoryResponse(
         private val KST = ZoneId.of("Asia/Seoul")
 
         private fun toKst(time: LocalDateTime): LocalDateTime {
-            return time.atZone(ZoneId.systemDefault()).withZoneSameInstant(KST).toLocalDateTime()
+            return time.atZone(ZoneId.of("UTC")).withZoneSameInstant(KST).toLocalDateTime()
         }
 
         fun createReturnedHistory(history: HistoryInfoDto, elapsedDay: Int, totalRentalDay: Int): RentalHistoryResponse {

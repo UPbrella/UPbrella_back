@@ -74,10 +74,8 @@ class History(
                 isRefunded = true
             }
 
-            return SingleHistoryResponse(
-                umbrellaUuid = history.umbrella.uuid,
-                rentedAt = history.rentedAt,
-                rentedStore = history.rentStoreMeta.name,
+            return SingleHistoryResponse.ofUserHistory(
+                history = history,
                 returnAt = returnAt!!,
                 isReturned = isReturned,
                 isRefunded = isRefunded

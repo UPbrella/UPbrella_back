@@ -1,27 +1,11 @@
 package upbrella.be.rent.dto.response
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.util.*
 
 class RentalHistoryResponseTest {
-
-    private lateinit var originalTimeZone: TimeZone
-
-    @BeforeEach
-    fun setUp() {
-        originalTimeZone = TimeZone.getDefault()
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-    }
-
-    @AfterEach
-    fun tearDown() {
-        TimeZone.setDefault(originalTimeZone)
-    }
 
     @Test
     @DisplayName("반납된 대여 내역의 rentAt은 UTC에서 KST(+9시간)로 변환되어야 한다")
@@ -72,6 +56,23 @@ class RentalHistoryResponseTest {
         // then
         assertThat(response.rentAt).isEqualTo(LocalDateTime.of(2023, 7, 18, 9, 0, 0))
         assertThat(response.returnAt).isNull()
+    }
+
+    @Test
+    @DisplayName("UTC 자정 직전 시간은 KST로 변환 시 날짜가 변경되어야 한다")
+    fun midnightBoundaryShouldChangeDate() {
+        // given
+        // UTC 2023-07-18 23:30:00 -> KST 2023-07-19 08:30:00
+        val history = createHistoryInfoDto(
+            rentAt = LocalDateTime.of(2023, 7, 18, 23, 30, 0),
+            returnAt = null
+        )
+
+        // when
+        val response = RentalHistoryResponse.createNonReturnedHistory(history, 1)
+
+        // then
+        assertThat(response.rentAt).isEqualTo(LocalDateTime.of(2023, 7, 19, 8, 30, 0))
     }
 
     private fun createHistoryInfoDto(
