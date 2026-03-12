@@ -16,6 +16,7 @@ import upbrella.be.user.exception.BlackListUserException
 import upbrella.be.user.repository.BlackListReader
 import upbrella.be.user.repository.BlackListWriter
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 @ExtendWith(MockitoExtension::class)
 class BlackListServiceTest {
@@ -68,10 +69,12 @@ class BlackListServiceTest {
             )
         )
 
+        val expectedKst = now.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime()
+
         // when & then
         assertAll(
             { assertThat(blackListService.findBlackList().blackList.size).isEqualTo(1) },
-            { assertThat(blackListService.findBlackList().blackList[0].blockedAt).isEqualTo(now) }
+            { assertThat(blackListService.findBlackList().blackList[0].blockedAt).isEqualTo(expectedKst) }
         )
     }
 

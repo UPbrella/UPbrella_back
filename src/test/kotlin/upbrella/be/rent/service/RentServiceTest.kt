@@ -43,6 +43,7 @@ import upbrella.be.user.repository.UserReader
 import upbrella.be.user.service.BlackListService
 import upbrella.be.util.AesEncryptor
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -372,12 +373,16 @@ class RentServiceTest {
             // given
             val loginedUserId = 7L
 
+            val kst = ZoneId.of("Asia/Seoul")
+            fun toKst(time: LocalDateTime): LocalDateTime =
+                time.atZone(ZoneId.of("UTC")).withZoneSameInstant(kst).toLocalDateTime()
+
             val historyResponse = AllHistoryResponse(
                 histories = listOf(
                     SingleHistoryResponse(
                         umbrellaUuid = 99L,
-                        rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
-                        returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
+                        rentedAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24)),
+                        returnAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 25)),
                         rentedStore = "motive study cafe",
                         isRefunded = true,
                         isReturned = true
