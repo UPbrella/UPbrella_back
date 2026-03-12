@@ -18,6 +18,7 @@ import upbrella.be.user.dto.response.KakaoLoginResponse
 import upbrella.be.user.dto.token.OauthToken
 import upbrella.be.user.entity.User
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 object FixtureFactory {
@@ -98,6 +99,12 @@ object FixtureFactory {
         )
     }
 
+    private val KST = ZoneId.of("Asia/Seoul")
+
+    private fun toKst(time: LocalDateTime): LocalDateTime {
+        return time.atZone(ZoneId.of("UTC")).withZoneSameInstant(KST).toLocalDateTime()
+    }
+
     @JvmStatic
     fun buildRentalHistoryResponseWithHistory(history: HistoryInfoDto): RentalHistoryResponse {
         return fixtureMonkey.giveMeBuilder<RentalHistoryResponse>()
@@ -108,12 +115,12 @@ object FixtureFactory {
             .set("name", history.name)
             .set("phoneNumber", history.phoneNumber)
             .set("rentStoreName", history.rentStoreName)
-            .set("rentAt", history.rentAt)
+            .set("rentAt", toKst(history.rentAt))
             .set("elapsedDay", calElapsedDay(history))
             .set("paid", history.paidAt != null)
             .set("umbrellaUuid", history.umbrellaUuid)
             .set("returnStoreName", history.returnStoreName)
-            .set("returnAt", history.returnAt)
+            .set("returnAt", history.returnAt?.let { toKst(it) })
             .set("totalRentalDay", history.returnAt?.let { it.dayOfYear - history.rentAt.dayOfYear } ?: 0)
             .set("refundCompleted", true)
             .set("bank", history.bank)
