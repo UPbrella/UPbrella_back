@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: ${SPRING_PROFILES_ACTIVE}
 
 image:
   processing:
