@@ -71,7 +71,7 @@ jobs:
 
             IMAGE_NAME="birdiehyun/upbrella-dev:latest"
             CONTAINER_NAME="upbrella-dev"
-            PORT="9000"
+            PORT="8765"
             APP_PORT="8080"
 
             echo "### 1. 최신 Docker 이미지 pull"
@@ -86,11 +86,16 @@ jobs:
               echo "실행 중인 컨테이너가 없습니다."
             fi
 
-            echo "### 3. 새 컨테이너 실행"
+            echo "### 3. Docker 네트워크 생성 (없으면)"
+            docker network create upbrella-network || true
+
+            echo "### 4. 새 컨테이너 실행"
             docker run -d \
               --name ${CONTAINER_NAME} \
               -p ${PORT}:${APP_PORT} \
               --restart unless-stopped \
+              --network upbrella-network \
+              --network-alias upbrella \
               ${IMAGE_NAME}
 
             echo "### 4. 사용하지 않는 Docker 이미지 정리"
