@@ -44,7 +44,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       # 5. Docker 이미지 빌드 및 Docker Hub에 푸시
       - name: Build and push Docker image to Docker Hub
