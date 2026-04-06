@@ -87,14 +87,14 @@ jobs:
             fi
 
             echo "### 3. Docker 네트워크 생성 (없으면)"
-            docker network create upbrella-network || true
+            docker network create upbrella-dev || true
 
             echo "### 4. 새 컨테이너 실행"
             docker run -d \
               --name ${CONTAINER_NAME} \
               -p ${PORT}:${APP_PORT} \
               --restart unless-stopped \
-              --network upbrella-network \
+              --network upbrella-dev \
               --network-alias upbrella \
               ${IMAGE_NAME}
 
