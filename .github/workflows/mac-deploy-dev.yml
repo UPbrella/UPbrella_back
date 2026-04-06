@@ -37,7 +37,7 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build -x test
+          ./gradlew clean build -x test -x asciidoctor
 
       # 4. Docker Hub 로그인
       - name: Login to Docker Hub
