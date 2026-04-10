@@ -3,9 +3,6 @@ name: mac prod deploy
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - chore/mac-deploy
 
 jobs:
   build-and-deploy:
