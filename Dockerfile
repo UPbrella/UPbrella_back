@@ -1,5 +1,5 @@
 # 기존의 openjdk 이미지 사용
-FROM openjdk:11-jre-slim
+FROM eclipse-temurin:17-jre-jammy
 
 # 시간대 설정을 위한 tzdata 패키지 설치
 RUN apt-get update && apt-get install -y tzdata
