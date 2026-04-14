@@ -18,7 +18,8 @@ class ProductionCorsConfig : WebMvcConfigurer {
                 "https://api.upbrella.co.kr",
                 "https://appleid.apple.com",
                 "http://localhost:3000",
-                "http://www.localhost:3000"
+                "http://www.localhost:3000",
+                "https://u-pbrella-front.vercel.app"
             )
             .allowedMethods(
                 HttpMethod.GET.name,
