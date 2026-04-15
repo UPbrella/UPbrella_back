@@ -1,8 +1,5 @@
 package upbrella.be.config
 
-import org.apache.tomcat.util.http.LegacyCookieProcessor
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
-import org.springframework.boot.web.server.WebServerFactoryCustomizer
 import org.springframework.boot.web.servlet.ServletContextInitializer
 import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier
 import org.springframework.context.annotation.Bean
@@ -13,18 +10,6 @@ import javax.servlet.SessionCookieConfig
 @Configuration
 @Profile("prod")
 class SessionCookieConfig {
-
-    @Bean
-    fun cookieProcessorCustomizer(): WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
-        return WebServerFactoryCustomizer { factory ->
-            factory.addContextCustomizers(
-                org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer { context ->
-                    // LegacyCookieProcessor를 사용하면 점으로 시작하는 도메인 허용
-                    context.cookieProcessor = LegacyCookieProcessor()
-                }
-            )
-        }
-    }
 
     @Bean
     fun cookieSameSiteSupplier(): CookieSameSiteSupplier {
