@@ -13,9 +13,6 @@
 
     <appender name="SLACK" class="upbrella.be.config.logging.SlackAppender">
       <webhookUrl>${SLACK_LOG_WEB_HOOK_URL}</webhookUrl>
-      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-        <level>ERROR</level>
-      </filter>
     </appender>
 
     <root level="INFO">
