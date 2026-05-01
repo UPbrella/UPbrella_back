@@ -1,6 +1,8 @@
 <configuration>
 
-  <!-- prod 환경에서만 파일로 저장 -->
+  <springProperty name="SLACK_LOG_WEB_HOOK_URL" source="SLACK_LOG_WEB_HOOK_URL" defaultValue=""/>
+
+  <!-- prod 환경: 콘솔 + Slack 에러 알림 -->
   <springProfile name="prod">
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -9,8 +11,16 @@
       </encoder>
     </appender>
 
+    <appender name="SLACK" class="upbrella.be.config.logging.SlackAppender">
+      <webhookUrl>${SLACK_LOG_WEB_HOOK_URL}</webhookUrl>
+      <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+        <level>ERROR</level>
+      </filter>
+    </appender>
+
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="SLACK"/>
     </root>
   </springProfile>
 
