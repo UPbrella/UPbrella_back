@@ -13,10 +13,14 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.times
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.mock
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import upbrella.be.config.FixtureBuilderFactory
 import upbrella.be.config.FixtureFactory
+import upbrella.be.config.event.NoOpPublisher
 import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.dto.response.HistoryInfoDto
@@ -42,6 +46,7 @@ import upbrella.be.user.exception.NonExistingMemberException
 import upbrella.be.user.repository.UserReader
 import upbrella.be.user.service.BlackListService
 import upbrella.be.util.AesEncryptor
+import upbrella.be.util.event.Events
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -146,9 +151,11 @@ class RentServiceTest {
         conditionReport = ConditionReport(
             id = 1L,
             content = "상태 양호",
-            history = history,
+            historyId = history.id!!,
             etc = "etc",
         )
+
+        Events.setPublisher(NoOpPublisher)
     }
 
     @Nested
@@ -162,8 +169,6 @@ class RentServiceTest {
             given(storeMetaReader.findById(25L)).willReturn(foundStoreMeta)
             given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
             given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
-            doNothing().`when`(conditionReportService)
-                .saveConditionReport(any(ConditionReport::class.java) ?: conditionReport)
 
             // when
             rentService.addRental(rentUmbrellaByUserRequest, userToRent)

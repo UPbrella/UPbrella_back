@@ -18,6 +18,7 @@ import upbrella.be.rent.dto.response.ConditionReportResponse
 import upbrella.be.rent.entity.ConditionReport
 import upbrella.be.rent.entity.History
 import upbrella.be.rent.repository.ConditionReportRepository
+import upbrella.be.rent.repository.CustomConditionReportRepository
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.user.entity.User
@@ -28,6 +29,9 @@ class ConditionReportServiceTest {
 
     @Mock
     private lateinit var conditionReportRepository: ConditionReportRepository
+
+    @Mock
+    private lateinit var customConditionReportRepository: CustomConditionReportRepository
 
     @InjectMocks
     private lateinit var conditionReportService: ConditionReportService
@@ -86,7 +90,7 @@ class ConditionReportServiceTest {
         conditionReport = ConditionReport(
             id = 1L,
             content = "content",
-            history = history,
+            historyId = history.id!!,
             etc = "etc",
         )
     }
@@ -110,8 +114,15 @@ class ConditionReportServiceTest {
                 )
             )
 
-            given(conditionReportRepository.findAll())
-                .willReturn(listOf(conditionReport))
+            given(customConditionReportRepository.findAllConditionReport())
+                .willReturn(listOf(
+                    ConditionReportResponse(
+                        id = 33L,
+                        umbrellaUuid = 99L,
+                        content = "content",
+                        etc = "etc"
+                    )
+                ))
 
             // when
             val allConditionReports = conditionReportService.findAll()
@@ -125,9 +136,6 @@ class ConditionReportServiceTest {
                 },
                 {
                     assertThat(allConditionReports.conditionReports.size).isEqualTo(1)
-                },
-                {
-                    then(conditionReportRepository).should(times(1)).findAll()
                 }
             )
         }

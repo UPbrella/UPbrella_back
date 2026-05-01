@@ -7,16 +7,17 @@ import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.dto.request.ReturnUmbrellaByUserRequest
 import upbrella.be.rent.dto.response.*
-import upbrella.be.rent.entity.ConditionReport
 import upbrella.be.rent.entity.History
-import upbrella.be.rent.entity.ImprovementReport
-import upbrella.be.rent.exception.*
+import upbrella.be.rent.event.UmbrellaRentedEvent
+import upbrella.be.rent.exception.CannotBeRentedException
+import upbrella.be.rent.exception.ExistingUmbrellaForRentException
+import upbrella.be.rent.exception.NonExistingHistoryException
+import upbrella.be.rent.exception.NonExistingUmbrellaForRentException
 import upbrella.be.rent.repository.RentRepository
 import upbrella.be.slack.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
-import upbrella.be.umbrella.exception.MissingUmbrellaException
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
 import upbrella.be.umbrella.service.UmbrellaService
 import upbrella.be.user.dto.response.AllHistoryResponse
@@ -25,6 +26,7 @@ import upbrella.be.user.dto.response.SingleHistoryResponse
 import upbrella.be.user.entity.User
 import upbrella.be.user.repository.UserReader
 import upbrella.be.user.service.BlackListService
+import upbrella.be.util.event.Events
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -35,8 +37,6 @@ class RentService(
     private val slackAlarmService: SlackAlarmService,
     private val improvementReportService: ImprovementReportService,
     private val rentRepository: RentRepository,
-    private val conditionReportService: ConditionReportService,
-    private val lockerService: LockerService,
     private val blackListService: BlackListService,
     private val userReader: UserReader,
 ) {
@@ -71,30 +71,25 @@ class RentService(
         }
 
         val umbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.umbrellaId)
-        if (umbrella.storeMeta.id != rentUmbrellaByUserRequest.storeId) {
-            throw UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.")
-        }
-        if (umbrella.missed) {
-            throw MissingUmbrellaException("[ERROR] 해당 우산은 분실되었습니다.")
-        }
-        if (!umbrella.rentable) {
-            throw NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.")
-        }
-        umbrella.rentUmbrella()
+
+        umbrella.rentUmbrella(rentUmbrellaByUserRequest.storeId)
+
         val rentalStore = storeMetaReader.findById(rentUmbrellaByUserRequest.storeId)
         val history = rentRepository.save(
             History.ofCreatedByNewRent(umbrella, userToRent, rentalStore)
         )
-        slackAlarmService.notifyRent(userToRent, history)
 
-        rentUmbrellaByUserRequest.conditionReport
-            ?.takeIf { it.isNotBlank() }
-            ?.let { content ->
-                ConditionReport(history = history, content = content).also { conditionReport ->
-                    conditionReportService.saveConditionReport(conditionReport)
-                    slackAlarmService.notifyConditionReport(conditionReport)
-                }
-            }
+        // umbrellaRentedEvent
+        Events.raise(
+            UmbrellaRentedEvent(
+                userId = userToRent.id,
+                userName = userToRent.name,
+                rentStoreName = rentalStore.name,
+                conditionReportContent = rentUmbrellaByUserRequest.conditionReport,
+                umbrellaId = umbrella.id!!,
+                historyId = history.id!!,
+            )
+        )
     }
 
     @Transactional
@@ -112,18 +107,7 @@ class RentService(
         val returnedUmbrella: Umbrella = history.umbrella
         returnedUmbrella.returnUmbrella(returnStore)
 
-        val unrefundedRentCount = countUnrefundedRent()
-
-        slackAlarmService.notifyReturn(userToReturn, history, unrefundedRentCount)
         rentRepository.save(history)
-
-        request.improvementReportContent?.takeIf { it.isNotBlank() }
-            ?.let { content ->
-                ImprovementReport(history = history, content = content).also { improvementReport ->
-                    improvementReportService.save(improvementReport)
-                    slackAlarmService.notifyImprovementReport(improvementReport)
-                }
-            }
     }
 
     @Transactional

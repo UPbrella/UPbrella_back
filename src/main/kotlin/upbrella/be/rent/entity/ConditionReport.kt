@@ -4,9 +4,7 @@ import javax.persistence.*
 
 @Entity
 class ConditionReport(
-    @OneToOne
-    @JoinColumn(name = "history_id")
-    val history: History,
+    val historyId: Long,
     val content: String? = null,
     val etc: String? = null,
     @Id

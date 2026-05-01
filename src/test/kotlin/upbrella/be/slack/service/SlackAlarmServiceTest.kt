@@ -19,6 +19,7 @@ import upbrella.be.config.SlackBotConfig
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.rent.entity.History
 import upbrella.be.slack.SlackAlarmService
+import upbrella.be.slack.dto.service.input.NotifyReturnInput
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.user.entity.User
@@ -109,7 +110,16 @@ class SlackAlarmServiceTest {
         ).willReturn(null)
 
         // when
-        slackAlarmService.notifyReturn(userToRent, history, 1L)
+        slackAlarmService.notifyReturn(
+            NotifyReturnInput(
+                userId = userToRent.id!!,
+                rentStoreName = foundStoreMeta.name,
+                rentedAt = history.rentedAt.toString(),
+                returnStoreName = foundStoreMeta.name,
+                returnedAt = history.returnedAt.toString(),
+                unrefundedCount = 1L
+            )
+        )
 
         val requestEntityCaptor =
             ArgumentCaptor.forClass(HttpEntity::class.java)
