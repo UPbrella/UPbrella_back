@@ -70,7 +70,7 @@ class RentService(
             userToRent.updatePhoneNumber(rentUmbrellaByUserRequest.phoneNumber)
         }
 
-        val umbrella = umbrellaService.findUmbrellaById(rentUmbrellaByUserRequest.umbrellaId)
+        val umbrella = umbrellaService.findUmbrellaByIdForRent(rentUmbrellaByUserRequest.umbrellaId)
         if (umbrella.storeMeta.id != rentUmbrellaByUserRequest.storeId) {
             throw UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.")
         }

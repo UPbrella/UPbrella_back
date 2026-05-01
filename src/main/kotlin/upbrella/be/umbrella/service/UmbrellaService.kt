@@ -65,6 +65,10 @@ class UmbrellaService(
         umbrellaRepository.findByIdAndDeletedIsFalse(id)
             .orElseThrow { NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.") }
 
+    fun findUmbrellaByIdForRent(id: Long): Umbrella =
+        umbrellaRepository.findByIdAndDeletedIsFalseForUpdate(id)
+            .orElseThrow { NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.") }
+
     fun countAvailableUmbrellaAtStore(storeMetaId: Long): Long =
         umbrellaRepository.countRentableUmbrellasByStore(storeMetaId)
 
