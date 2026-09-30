@@ -160,7 +160,7 @@ class RentServiceTest {
         fun success() {
             // given
             given(storeMetaReader.findById(25L)).willReturn(foundStoreMeta)
-            given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
+            given(umbrellaService.findUmbrellaByIdForRent(99L)).willReturn(foundUmbrella)
             given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
             doNothing().`when`(conditionReportService)
                 .saveConditionReport(any(ConditionReport::class.java) ?: conditionReport)
@@ -172,7 +172,7 @@ class RentServiceTest {
             assertAll(
                 {
                     then(umbrellaService).should(times(1))
-                        .findUmbrellaById(99L)
+                        .findUmbrellaByIdForRent(99L)
                 },
                 {
                     then(storeMetaReader).should(times(1))
@@ -189,7 +189,7 @@ class RentServiceTest {
         @DisplayName("협업 지점 고유 번호가 존재하지 않으면 예외 발생")
         fun isNotExistingStore() {
             // given
-            given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
+            given(umbrellaService.findUmbrellaByIdForRent(99L)).willReturn(foundUmbrella)
             given(storeMetaReader.findById(25L)).willThrow(IllegalArgumentException::class.java)
 
             // when & then
@@ -200,7 +200,7 @@ class RentServiceTest {
                     }.isInstanceOf(IllegalArgumentException::class.java)
                 },
                 {
-                    then(umbrellaService).should(times(1)).findUmbrellaById(99L)
+                    then(umbrellaService).should(times(1)).findUmbrellaByIdForRent(99L)
                 },
                 {
                     then(storeMetaReader).should(times(1)).findById(25L)
@@ -216,7 +216,7 @@ class RentServiceTest {
         @DisplayName("우산 고유번호가 존재하지 않으면 예외 발생")
         fun isNotExistingUmbrella() {
             // given
-            given(umbrellaService.findUmbrellaById(99L)).willThrow(IllegalArgumentException::class.java)
+            given(umbrellaService.findUmbrellaByIdForRent(99L)).willThrow(IllegalArgumentException::class.java)
 
             // when & then
             assertAll(
@@ -226,7 +226,7 @@ class RentServiceTest {
                     }.isInstanceOf(IllegalArgumentException::class.java)
                 },
                 {
-                    then(umbrellaService).should(times(1)).findUmbrellaById(99L)
+                    then(umbrellaService).should(times(1)).findUmbrellaByIdForRent(99L)
                 }
             )
         }
@@ -248,7 +248,7 @@ class RentServiceTest {
             )
 
             given(storeMetaReader.findById(25L)).willReturn(foundStoreMeta)
-            given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
+            given(umbrellaService.findUmbrellaByIdForRent(99L)).willReturn(foundUmbrella)
             given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
             doNothing().`when`(conditionReportService)
                 .saveConditionReport(any(ConditionReport::class.java) ?: conditionReport)
@@ -277,7 +277,7 @@ class RentServiceTest {
             )
 
             given(storeMetaReader.findById(25L)).willReturn(foundStoreMeta)
-            given(umbrellaService.findUmbrellaById(99L)).willReturn(foundUmbrella)
+            given(umbrellaService.findUmbrellaByIdForRent(99L)).willReturn(foundUmbrella)
             given(rentRepository.save(any(History::class.java) ?: history)).willReturn(history)
             doNothing().`when`(conditionReportService)
                 .saveConditionReport(any(ConditionReport::class.java) ?: conditionReport)
@@ -716,7 +716,7 @@ class RentServiceTest {
 
         given(rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id!!))
             .willReturn(Optional.empty())
-        given(umbrellaService.findUmbrellaById(99L))
+        given(umbrellaService.findUmbrellaByIdForRent(99L))
             .willReturn(umbrella)
 
         // when & then

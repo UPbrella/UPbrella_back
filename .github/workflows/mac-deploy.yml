@@ -1,0 +1,113 @@
+name: mac deploy
+
+# 비밀값 없는 이미지를 빌드해 Docker Hub(birdiehyun/upbrella:<커밋>)에 올리고 맥미니에 배포한다.
+# 비밀값은 맥미니에서 실행할 때 환경변수와 마운트한 키 파일로 넣는다 (맥미니 ~/projects/upbrella-home).
+# 배포 단계는 Tailscale(tag:ci)로 맥미니 SSH에 "upbrella <SHA>"만 요청한다. 맥미니 쪽 키는 배포 스크립트
+# (~/deploy/deploy.sh --only upbrella)만 실행하도록 제한돼 있고, 스크립트가 교체 → 헬스체크 → 실패 시 롤백 → Slack 알림을 맡는다.
+# dev에 머지되면 자동으로 배포한다. 수동 실행은 dev에서 하고, 커밋 SHA를 넣으면 그 커밋으로 다시 배포(롤백)한다.
+on:
+  push:
+    branches: [dev]
+    # 문서만 바뀐 머지는 배포하지 않는다.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 배포할 커밋 SHA (40자). 비우면 dev 최신 커밋을 배포합니다. 브랜치는 dev를 선택하세요.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+# 한 번에 하나씩 실행한다. 머지가 연달아 들어오면 대기 중인 오래된 실행은 건너뛰고 가장 최근 커밋을 배포한다.
+concurrency:
+  group: macmini-deploy-upbrella
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # 운영(맥미니)에는 dev에서 실행한 것만 배포한다. 다른 브랜치에서 수동 실행해도 돌지 않는다.
+    if: github.ref == 'refs/heads/dev'
+    # 맥미니(arm64)용 이미지를 에뮬레이션 없이 빌드한다.
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 20
+    outputs:
+      sha: ${{ steps.sha.outputs.sha }}
+    steps:
+      - name: Resolve commit
+        id: sha
+        env:
+          INPUT: ${{ inputs.sha }}
+          DEFAULT: ${{ github.sha }}
+        run: |
+          sha="${INPUT:-$DEFAULT}"
+          [[ "$sha" =~ ^[0-9a-f]{40}$ ]] || { echo "커밋 SHA는 40자리 16진수여야 합니다: $sha"; exit 1; }
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.sha.outputs.sha }}
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      # 테스트는 PR CI(dev-pr-test.yml)에서 돈다. application.properties와 p8 키 없이 빌드한다.
+      - name: Build jar
+        run: |
+          chmod +x gradlew
+          ./gradlew bootJar -x test -x asciidoctor --no-daemon
+
+      - name: Check jar has no secrets
+        run: |
+          if unzip -l build/libs/be-0.0.1-SNAPSHOT.jar | grep -E 'application\.properties|\.p8$'; then
+            echo "jar에 비밀값 파일이 들어 있습니다. 공개 이미지로 올리지 않습니다."
+            exit 1
+          fi
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          push: true
+          tags: birdiehyun/upbrella:${{ steps.sha.outputs.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: macmini
+    steps:
+      - name: Join tailnet
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: 100.118.17.97
+
+      - name: Deploy on Mac mini
+        env:
+          SHA: ${{ needs.build.outputs.sha }}
+          SSH_KEY: ${{ secrets.MACMINI_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.MACMINI_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/macmini
+          chmod 600 ~/.ssh/macmini
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/macmini -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 \
+            donghyun@100.118.17.97 "upbrella $SHA"

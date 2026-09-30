@@ -5,7 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
 import org.bouncycastle.openssl.PEMParser
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
-import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.DefaultResourceLoader
 import org.springframework.stereotype.Component
 import java.io.StringReader
 import java.security.PrivateKey
@@ -20,7 +20,8 @@ class AppleJwtGenerator {
      * @param teamId Apple Developer Team ID (10자리)
      * @param keyId p8 키 파일의 Key ID
      * @param clientId Apple Service ID (com.example.app)
-     * @param p8KeyPath 클래스패스 내 p8 파일 경로 (예: "keys/AuthKey_ABCD123456.p8")
+     * @param p8KeyPath p8 파일 위치. 접두사가 없으면 클래스패스 경로 (예: "keys/AuthKey_ABCD123456.p8"),
+     *                  이미지 밖 파일은 "file:/config/keys/AuthKey_ABCD123456.p8"처럼 쓴다.
      * @return JWT 토큰 문자열
      */
     fun generateClientSecret(
@@ -47,10 +48,10 @@ class AppleJwtGenerator {
     }
 
     /**
-     * p8 파일에서 PrivateKey 로드
+     * p8 파일에서 PrivateKey 로드 (classpath: 또는 file: 경로)
      */
     private fun loadPrivateKey(p8KeyPath: String): PrivateKey {
-        val resource = ClassPathResource(p8KeyPath)
+        val resource = DefaultResourceLoader().getResource(p8KeyPath)
         val p8Content = resource.inputStream.bufferedReader().use { it.readText() }
 
         val pemParser = PEMParser(StringReader(p8Content))

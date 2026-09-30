@@ -1,6 +1,7 @@
 spring:
   config:
-    import: "classpath:application.properties"
+    # 비밀값은 실행 환경변수로 넣는다 (예: KAKAO_CLIENT_SECRET_PROD). 파일이 있으면 그 값도 읽는다.
+    import: "optional:classpath:application.properties"
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
