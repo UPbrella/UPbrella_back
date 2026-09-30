@@ -4,19 +4,33 @@ name: mac deploy
 # 비밀값은 맥미니에서 실행할 때 환경변수와 마운트한 키 파일로 넣는다 (맥미니 ~/projects/upbrella-home).
 # 배포 단계는 Tailscale(tag:ci)로 맥미니 SSH에 "upbrella <SHA>"만 요청한다. 맥미니 쪽 키는 배포 스크립트
 # (~/deploy/deploy.sh --only upbrella)만 실행하도록 제한돼 있고, 스크립트가 교체 → 헬스체크 → 실패 시 롤백 → Slack 알림을 맡는다.
+# dev에 머지되면 자동으로 배포한다. 수동 실행은 dev에서 하고, 커밋 SHA를 넣으면 그 커밋으로 다시 배포(롤백)한다.
 on:
+  push:
+    branches: [dev]
+    # 문서만 바뀐 머지는 배포하지 않는다.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       sha:
-        description: 배포할 커밋 SHA (40자). 비우면 실행한 브랜치의 최신 커밋을 배포합니다.
+        description: 배포할 커밋 SHA (40자). 비우면 dev 최신 커밋을 배포합니다. 브랜치는 dev를 선택하세요.
         required: false
         type: string
 
 permissions:
   contents: read
 
+# 한 번에 하나씩 실행한다. 머지가 연달아 들어오면 대기 중인 오래된 실행은 건너뛰고 가장 최근 커밋을 배포한다.
+concurrency:
+  group: macmini-deploy-upbrella
+  cancel-in-progress: false
+
 jobs:
   build:
+    # 운영(맥미니)에는 dev에서 실행한 것만 배포한다. 다른 브랜치에서 수동 실행해도 돌지 않는다.
+    if: github.ref == 'refs/heads/dev'
     # 맥미니(arm64)용 이미지를 에뮬레이션 없이 빌드한다.
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 20
@@ -75,10 +89,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: macmini
-    # 배포는 한 번에 하나씩, 진행 중인 배포는 취소하지 않는다.
-    concurrency:
-      group: macmini-deploy-upbrella
-      cancel-in-progress: false
     steps:
       - name: Join tailnet
         uses: tailscale/github-action@v4
