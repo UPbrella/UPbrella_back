@@ -20,6 +20,7 @@ import upbrella.be.store.entity.ClassificationType
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.controller.UmbrellaController
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.umbrella.service.UmbrellaService
 import javax.persistence.EntityManager
 
@@ -74,9 +75,8 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             val umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", null)
                 .set("storeMeta", storeMeta)
-                .set("rentable", true)
+                .set("status", UmbrellaStatus.AVAILABLE)
                 .set("deleted", false)
-                .set("missed", false)
                 .set("uuid", 1L + i) // uuid를 (1,2,3...)로 설정
                 .sample()
 
@@ -90,9 +90,8 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             val umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", null)
                 .set("storeMeta", storeMeta)
-                .set("rentable", false)
+                .set("status", UmbrellaStatus.RENTED)
                 .set("deleted", false)
-                .set("missed", false)
                 .set("uuid", 100L + i) // uuid를 100번대로 설정
                 .sample()
 
@@ -106,9 +105,8 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             val umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", null)
                 .set("storeMeta", storeMeta)
-                .set("rentable", false)
+                .set("status", UmbrellaStatus.LOST)
                 .set("deleted", false)
-                .set("missed", true)
                 .set("uuid", 200L) // uuid를 200으로 설정
                 .sample()
 
@@ -122,9 +120,11 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
     @DisplayName("관리자는 우산을 등록할 수 있다.")
     fun addUmbrellaTest() {
         // given
+        // 기존 FE처럼 status 없이 rentable만 보낸다
         val umbrellaCreateRequest = FixtureBuilderFactory.builderUmbrellaCreateRequest()
             .set("id", 999L)
             .set("storeMetaId", storeMeta.id)
+            .set("status", null)
             .set("rentable", true)
             .set("uuid", 3000L)
             .sample()
@@ -148,7 +148,8 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             .andExpect(jsonPath("\$.data.umbrellaResponsePage.length()").value(umbrellaList.size + 1))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].storeMetaId").value(umbrellaCreateRequest.storeMetaId))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].uuid").value(umbrellaCreateRequest.uuid))
-            .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].rentable").value(umbrellaCreateRequest.rentable))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].rentable").value(true))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[6].status").value("AVAILABLE"))
     }
 
     @Test
@@ -188,9 +189,12 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
     fun modifyUmbrellaTest() {
         // given
         val id = umbrellaList[0].id
+        // 기존 FE처럼 status 없이 rentable/missed만 보낸다
         val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
             .set("storeMetaId", storeMeta.id)
+            .set("status", null)
             .set("rentable", true)
+            .set("missed", false)
             .set("uuid", 1L)
             .sample()
 
@@ -213,7 +217,90 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             .andExpect(jsonPath("\$.data.umbrellaResponsePage.length()").value(umbrellaList.size))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].storeMetaId").value(umbrellaModifyRequest.storeMetaId))
             .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].uuid").value(umbrellaModifyRequest.uuid))
-            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(umbrellaModifyRequest.rentable))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(true))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].status").value("AVAILABLE"))
+    }
+
+    @Test
+    @DisplayName("관리자는 우산 상태를 위치 미확인으로 바꿀 수 있다.")
+    fun modifyUmbrellaStatusTest() {
+        // given
+        val id = umbrellaList[0].id
+        val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
+            .set("storeMetaId", storeMeta.id)
+            .set("status", UmbrellaStatus.UNLOCATED)
+            .set("uuid", 1L)
+            .sample()
+
+        // when & then
+        mockMvc.perform(
+            patch("/admin/umbrellas/{umbrellaId}", id)
+                .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            get("/admin/umbrellas")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].status").value("UNLOCATED"))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[0].rentable").value(false))
+
+        mockMvc.perform(
+            get("/admin/umbrellas/statistics")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.data.rentableUmbrellaCount").value(2))
+            .andExpect(jsonPath("\$.data.unlocatedUmbrellaCount").value(1))
+            .andExpect(jsonPath("\$.data.lostUmbrellaCount").value(1))
+            .andExpect(jsonPath("\$.data.missingUmbrellaCount").value(2))
+    }
+
+    @Test
+    @DisplayName("기존 FE로 분실 우산의 메모만 고쳐도 분실 상태가 유지된다.")
+    fun modifyLostUmbrellaWithLegacyRequestTest() {
+        // given
+        val lostUmbrella = umbrellaList[5]
+        // 기존 FE 수정 모달은 rentable을 응답값(false)으로, missed를 항상 false로 채워 보낸다
+        val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
+            .set("storeMetaId", storeMeta.id)
+            .set("status", null)
+            .set("rentable", false)
+            .set("missed", false)
+            .set("uuid", lostUmbrella.uuid)
+            .set("etc", "메모 수정")
+            .sample()
+
+        // when & then
+        mockMvc.perform(
+            patch("/admin/umbrellas/{umbrellaId}", lostUmbrella.id)
+                .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            get("/admin/umbrellas")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[5].etc").value("메모 수정"))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[5].status").value("LOST"))
+
+        mockMvc.perform(
+            get("/admin/umbrellas/statistics")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.data.rentedUmbrellaCount").value(2))
+            .andExpect(jsonPath("\$.data.lostUmbrellaCount").value(1))
     }
 
     @Test
@@ -251,6 +338,8 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             .andExpect(jsonPath("\$.data.totalUmbrellaCount").value(6))
             .andExpect(jsonPath("\$.data.rentableUmbrellaCount").value(3))
             .andExpect(jsonPath("\$.data.rentedUmbrellaCount").value(2))
+            .andExpect(jsonPath("\$.data.unlocatedUmbrellaCount").value(0))
+            .andExpect(jsonPath("\$.data.lostUmbrellaCount").value(1))
             .andExpect(jsonPath("\$.data.missingUmbrellaCount").value(1))
             .andExpect(jsonPath("\$.data.missingRate").value(16))
             .andExpect(jsonPath("\$.data.totalRentCount").value(0))
@@ -269,6 +358,8 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
             .andExpect(jsonPath("\$.data.totalUmbrellaCount").value(6))
             .andExpect(jsonPath("\$.data.rentableUmbrellaCount").value(3))
             .andExpect(jsonPath("\$.data.rentedUmbrellaCount").value(2))
+            .andExpect(jsonPath("\$.data.unlocatedUmbrellaCount").value(0))
+            .andExpect(jsonPath("\$.data.lostUmbrellaCount").value(1))
             .andExpect(jsonPath("\$.data.missingUmbrellaCount").value(1))
             .andExpect(jsonPath("\$.data.missingRate").value(16))
             .andExpect(jsonPath("\$.data.totalRentCount").value(0))
