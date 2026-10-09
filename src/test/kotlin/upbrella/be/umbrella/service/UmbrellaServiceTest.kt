@@ -330,8 +330,10 @@ class UmbrellaServiceTest {
             id = FixtureBuilderFactory.buildLong(1000)
             umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest().sample()
             foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaModifyRequest.storeMetaId)
+            // 관리번호를 바꾸는 수정이어야 중복 검사를 한다. 무작위 값이 우연히 같아지지 않게 다르게 둔다
             umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", id)
+                .set("uuid", umbrellaModifyRequest.uuid + 1)
                 .sample()
         }
 
