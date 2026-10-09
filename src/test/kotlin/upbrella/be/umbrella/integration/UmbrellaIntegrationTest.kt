@@ -262,6 +262,48 @@ class UmbrellaIntegrationTest : RestDocsSupport() {
     }
 
     @Test
+    @DisplayName("기존 FE로 분실 우산의 메모만 고쳐도 분실 상태가 유지된다.")
+    fun modifyLostUmbrellaWithLegacyRequestTest() {
+        // given
+        val lostUmbrella = umbrellaList[5]
+        // 기존 FE 수정 모달은 rentable을 응답값(false)으로, missed를 항상 false로 채워 보낸다
+        val umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest()
+            .set("storeMetaId", storeMeta.id)
+            .set("status", null)
+            .set("rentable", false)
+            .set("missed", false)
+            .set("uuid", lostUmbrella.uuid)
+            .set("etc", "메모 수정")
+            .sample()
+
+        // when & then
+        mockMvc.perform(
+            patch("/admin/umbrellas/{umbrellaId}", lostUmbrella.id)
+                .content(objectMapper.writeValueAsString(umbrellaModifyRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+
+        mockMvc.perform(
+            get("/admin/umbrellas")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[5].etc").value("메모 수정"))
+            .andExpect(jsonPath("\$.data.umbrellaResponsePage[5].status").value("LOST"))
+
+        mockMvc.perform(
+            get("/admin/umbrellas/statistics")
+        )
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.data.rentedUmbrellaCount").value(2))
+            .andExpect(jsonPath("\$.data.lostUmbrellaCount").value(1))
+    }
+
+    @Test
     @DisplayName("관리자는 우산 정보를 삭제할 수 있다.")
     fun deleteUmbrellaTest() {
         // given

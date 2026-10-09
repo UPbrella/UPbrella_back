@@ -26,6 +26,7 @@ class UmbrellaRepositoryImplTest {
     private lateinit var em: EntityManager
 
     private var storeMetaId: Long = 0
+    private var otherStoreMetaId: Long = 0
 
     @BeforeEach
     fun setUp() {
@@ -89,17 +90,46 @@ class UmbrellaRepositoryImplTest {
             em.flush()
         }
 
+        // 삭제된 우산 1개 생성 (세지 않는다)
+        val deletedUmbrella = FixtureBuilderFactory.builderUmbrella()
+            .set("id", null)
+            .set("storeMeta", storeMeta)
+            .set("status", UmbrellaStatus.AVAILABLE)
+            .set("deleted", true)
+            .sample()
+        em.persist(deletedUmbrella)
+
+        // 다른 지점에 위치 미확인 우산 1개 생성
+        val otherStoreMeta = FixtureBuilderFactory.builderStoreMeta()
+            .set("id", null)
+            .set("classification", classification)
+            .set("subClassification", subClassification)
+            .set("businessHours", null)
+            .sample()
+        em.persist(otherStoreMeta)
+
+        val otherStoreUmbrella = FixtureBuilderFactory.builderUmbrella()
+            .set("id", null)
+            .set("storeMeta", otherStoreMeta)
+            .set("status", UmbrellaStatus.UNLOCATED)
+            .set("deleted", false)
+            .sample()
+        em.persist(otherStoreUmbrella)
+        em.flush()
+
         storeMetaId = storeMeta.id!!
+        otherStoreMetaId = otherStoreMeta.id!!
     }
 
     @Test
-    @DisplayName("삭제되지 않은 우산을 상태별로 센다")
+    @DisplayName("모든 지점의 삭제되지 않은 우산을 상태별로 센다")
     fun countUmbrellasByStatus() {
         assertThat(umbrellaRepository.countUmbrellasByStatus())
             .containsExactlyInAnyOrderEntriesOf(
                 mapOf(
                     UmbrellaStatus.AVAILABLE to 3L,
                     UmbrellaStatus.RENTED to 2L,
+                    UmbrellaStatus.UNLOCATED to 1L,
                     UmbrellaStatus.LOST to 1L
                 )
             )
@@ -119,9 +149,9 @@ class UmbrellaRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("다른 지점의 우산은 세지 않는다")
+    @DisplayName("지점별로 세면 그 지점의 우산만 센다")
     fun countUmbrellasByStatusAndOtherStore() {
-        assertThat(umbrellaRepository.countUmbrellasByStatusAndStore(storeMetaId + 1))
-            .isEmpty()
+        assertThat(umbrellaRepository.countUmbrellasByStatusAndStore(otherStoreMetaId))
+            .containsExactlyInAnyOrderEntriesOf(mapOf(UmbrellaStatus.UNLOCATED to 1L))
     }
 }

@@ -97,6 +97,8 @@ class UmbrellaTest {
         assertAll(
             { assertThat(umbrella.status).isEqualTo(UmbrellaStatus.UNLOCATED) },
             { assertThat(umbrella.uuid).isEqualTo(7L) },
+            { assertThat(umbrella.storeMeta).isEqualTo(otherStoreMeta) },
+            { assertThat(umbrella.rentable).isFalse() },
             { assertThat(umbrella.missed).isTrue() }
         )
     }
@@ -122,10 +124,38 @@ class UmbrellaTest {
         "false, true, LOST",
         "true, true, LOST"
     )
-    @DisplayName("status 없이 rentable/missed만 보내는 기존 수정 요청은 예전 통계와 같은 상태로 바꾼다")
+    @DisplayName("status 없이 rentable/missed만 보내는 기존 수정 요청은 사용 가능 우산을 예전 통계와 같은 상태로 바꾼다")
     fun updateWithLegacyFields(rentable: Boolean, missed: Boolean, expected: UmbrellaStatus) {
         // given
         val umbrella = umbrella(UmbrellaStatus.AVAILABLE)
+        val request = UmbrellaModifyRequest(storeMetaId = 1L, uuid = 1L, rentable = rentable, missed = missed)
+
+        // when
+        umbrella.update(request, storeMeta)
+
+        // then
+        assertThat(umbrella.status).isEqualTo(expected)
+    }
+
+    @ParameterizedTest(name = "{0}, rentable={1}, missed={2} → {3}")
+    @CsvSource(
+        "UNLOCATED, false, false, UNLOCATED",
+        "UNLOCATED, false, true, UNLOCATED",
+        "UNLOCATED, true, true, UNLOCATED",
+        "UNLOCATED, true, false, AVAILABLE",
+        "LOST, false, false, LOST",
+        "LOST, false, true, LOST",
+        "LOST, true, false, AVAILABLE"
+    )
+    @DisplayName("기존 수정 요청은 위치 미확인·분실 우산을 대여 가능으로 바꿀 때만 상태를 바꾼다")
+    fun updateMissingUmbrellaWithLegacyFields(
+        current: UmbrellaStatus,
+        rentable: Boolean,
+        missed: Boolean,
+        expected: UmbrellaStatus
+    ) {
+        // given
+        val umbrella = umbrella(current)
         val request = UmbrellaModifyRequest(storeMetaId = 1L, uuid = 1L, rentable = rentable, missed = missed)
 
         // when

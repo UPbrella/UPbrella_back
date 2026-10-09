@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.BDDMockito.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -33,6 +35,7 @@ import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.umbrella.entity.UmbrellaStatus
+import upbrella.be.umbrella.exception.MissingUmbrellaException
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
 import upbrella.be.umbrella.service.UmbrellaService
 import upbrella.be.user.dto.response.AllHistoryResponse
@@ -722,6 +725,36 @@ class RentServiceTest {
         assertThatThrownBy {
             rentService.addRental(rentUmbrellaByUserRequest, userToRent)
         }.isInstanceOf(NotAvailableUmbrellaException::class.java)
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UmbrellaStatus::class, names = ["UNLOCATED", "LOST"])
+    @DisplayName("우산이 위치 미확인이거나 분실이면 예외 발생")
+    fun missingUmbrellaTest(status: UmbrellaStatus) {
+        // given
+        val umbrella = Umbrella(
+            id = 1L,
+            uuid = 99L,
+            deleted = false,
+            storeMeta = foundStoreMeta,
+            status = status,
+            createdAt = LocalDateTime.now(),
+            etc = "etc",
+        )
+
+        given(rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id!!))
+            .willReturn(Optional.empty())
+        given(umbrellaService.findUmbrellaByIdForRent(99L))
+            .willReturn(umbrella)
+
+        // when & then
+        assertThatThrownBy {
+            rentService.addRental(rentUmbrellaByUserRequest, userToRent)
+        }.isInstanceOf(MissingUmbrellaException::class.java)
+        assertAll(
+            { assertThat(umbrella.status).isEqualTo(status) },
+            { then(rentRepository).should(never()).save(any(History::class.java)) }
+        )
     }
 
     @Test

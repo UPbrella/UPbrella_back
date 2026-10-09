@@ -280,7 +280,7 @@ class UmbrellaControllerTest : RestDocsSupport() {
                                 .description("지점 고유번호"),
                             fieldWithPath("status").type(JsonFieldType.STRING)
                                 .optional()
-                                .description("우산 상태: AVAILABLE(사용 가능), RENTED(대여중), UNLOCATED(위치 미확인), LOST(분실). 없으면 rentable/missed로 정하고, 셋 다 없으면 상태를 바꾸지 않음"),
+                                .description("우산 상태: AVAILABLE(사용 가능), RENTED(대여중), UNLOCATED(위치 미확인), LOST(분실). 없으면 rentable/missed로 정하고, 셋 다 없으면 상태를 바꾸지 않음. rentable/missed로는 위치 미확인·분실 우산을 사용 가능으로만 바꿀 수 있음"),
                             fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
                                 .optional()
                                 .description("대여 가능 여부 (하위 호환용, status가 없을 때만 사용)"),

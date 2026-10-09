@@ -72,6 +72,25 @@ class StoreMetaRepositoryImplTest {
             .sample()
 
         em.persist(umbrella)
+
+        // 대여 가능 개수에 들어가지 않는 우산들
+        listOf(UmbrellaStatus.RENTED, UmbrellaStatus.UNLOCATED, UmbrellaStatus.LOST).forEach { status ->
+            em.persist(
+                FixtureBuilderFactory.builderUmbrella()
+                    .set("id", null)
+                    .set("status", status)
+                    .set("storeMeta", storeMeta)
+                    .sample()
+            )
+        }
+        em.persist(
+            FixtureBuilderFactory.builderUmbrella()
+                .set("id", null)
+                .set("status", UmbrellaStatus.AVAILABLE)
+                .set("deleted", true)
+                .set("storeMeta", storeMeta)
+                .sample()
+        )
         em.flush()
 
         expectedStoreMeta =

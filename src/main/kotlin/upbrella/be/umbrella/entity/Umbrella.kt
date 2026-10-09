@@ -53,7 +53,7 @@ class Umbrella(
     fun update(request: UmbrellaModifyRequest, storeMeta: StoreMeta) {
         this.storeMeta = storeMeta
         this.uuid = request.uuid
-        request.toStatus()?.let { changeStatus(it) }
+        changeStatus(request.toStatus(status))
         this.etc = request.etc
     }
 
