@@ -377,6 +377,7 @@ class RentControllerTest : RestDocsSupport() {
         given(rentService.findAllHistories(any<HistoryFilterRequest>() ?: HistoryFilterRequest(false), any() ?: Pageable.unpaged())).willReturn(response)
         val params: MultiValueMap<String, String> = LinkedMultiValueMap()
         params.add("refunded", "true")
+        params.add("overdue", "true")
         params.add("page", "0")
         params.add("size", "5")
 
@@ -393,6 +394,16 @@ class RentControllerTest : RestDocsSupport() {
                     "show-all-rental-histories-doc",
                     getDocumentRequest(),
                     getDocumentResponse(),
+                    requestParameters(
+                        parameterWithName("refunded").optional()
+                            .description("환급 여부. true면 환급 완료, false면 환급 전 대여 내역만 조회"),
+                        parameterWithName("overdue").optional()
+                            .description("true면 대여 후 14일이 지났는데 반납하지 않은 대여 내역만 조회"),
+                        parameterWithName("page").optional()
+                            .description("페이지 번호 (0부터)"),
+                        parameterWithName("size").optional()
+                            .description("페이지 크기")
+                    ),
                     responseFields(
                         beneathPath("data").withSubsectionId("data"),
                         fieldWithPath("rentalHistoryResponsePage").type(JsonFieldType.ARRAY)

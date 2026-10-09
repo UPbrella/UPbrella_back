@@ -2,6 +2,7 @@
 ==== HTTP Request
 
 include::{snippets}/show-all-rental-histories-doc/http-request.adoc[]
+include::{snippets}/show-all-rental-histories-doc/request-parameters.adoc[]
 
 ==== HTTP Response
 

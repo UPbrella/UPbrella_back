@@ -83,7 +83,7 @@ class HistoryTest {
         val expectedResponse = SingleHistoryResponse(
             umbrellaUuid = 99L,
             rentedAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24)),
-            returnAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24).plusDays(7)),
+            returnAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24).plusDays(History.RETURN_DEADLINE_DAYS)),
             rentedStore = "motive study cafe",
             isRefunded = false,
             isReturned = false
