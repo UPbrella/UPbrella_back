@@ -2,7 +2,6 @@ package upbrella.be.rent.dto.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 data class RentalHistoryResponse(
     val id: Long,
@@ -25,24 +24,18 @@ data class RentalHistoryResponse(
 ) {
     companion object {
 
-        private val KST = ZoneId.of("Asia/Seoul")
-
-        private fun toKst(time: LocalDateTime): LocalDateTime {
-            return time.atZone(ZoneId.of("UTC")).withZoneSameInstant(KST).toLocalDateTime()
-        }
-
         fun createReturnedHistory(history: HistoryInfoDto, elapsedDay: Int, totalRentalDay: Int): RentalHistoryResponse {
             return RentalHistoryResponse(
                 id = history.id,
                 name = history.name,
                 phoneNumber = history.phoneNumber,
                 rentStoreName = history.rentStoreName,
-                rentAt = toKst(history.rentAt),
+                rentAt = history.rentAt,
                 elapsedDay = elapsedDay,
                 paid = history.paidAt != null,
                 umbrellaUuid = history.umbrellaUuid,
                 returnStoreName = history.returnStoreName,
-                returnAt = history.returnAt?.let { toKst(it) },
+                returnAt = history.returnAt,
                 totalRentalDay = totalRentalDay,
                 refundCompleted = history.refundedAt != null,
                 bank = history.bank,
@@ -57,7 +50,7 @@ data class RentalHistoryResponse(
                 name = history.name,
                 phoneNumber = history.phoneNumber,
                 rentStoreName = history.rentStoreName,
-                rentAt = toKst(history.rentAt),
+                rentAt = history.rentAt,
                 elapsedDay = elapsedDay,
                 paid = history.paidAt != null,
                 umbrellaUuid = history.umbrellaUuid,

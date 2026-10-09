@@ -49,8 +49,8 @@ class SingleHistoryResponseTest {
 
         history = History(
             id = 1L,
-            rentedAt = LocalDateTime.of(2023, 7, 18, 0, 0, 0),
-            returnedAt = LocalDateTime.of(2023, 7, 20, 0, 0, 0),
+            rentedAt = LocalDateTime.of(2023, 7, 18, 9, 0, 0),
+            returnedAt = LocalDateTime.of(2023, 7, 20, 9, 0, 0),
             umbrella = umbrella,
             user = user,
             rentStoreMeta = storeMeta,
@@ -58,11 +58,10 @@ class SingleHistoryResponseTest {
     }
 
     @Test
-    @DisplayName("rentedAt은 UTC에서 KST(+9시간)로 변환되어야 한다")
-    fun rentedAtShouldBeConvertedToKst() {
+    @DisplayName("rentedAt은 DB에 저장된 한국 시간 그대로 응답한다")
+    fun rentedAtShouldNotBeConverted() {
         // given
-        // UTC 2023-07-18 00:00:00 -> KST 2023-07-18 09:00:00
-        val returnAt = LocalDateTime.of(2023, 7, 20, 0, 0, 0)
+        val returnAt = LocalDateTime.of(2023, 7, 20, 9, 0, 0)
 
         // when
         val response = SingleHistoryResponse.ofUserHistory(history, returnAt, true, false)
@@ -72,30 +71,28 @@ class SingleHistoryResponseTest {
     }
 
     @Test
-    @DisplayName("returnAt은 UTC에서 KST(+9시간)로 변환되어야 한다")
-    fun returnAtShouldBeConvertedToKst() {
+    @DisplayName("returnAt은 전달받은 한국 시간 그대로 응답한다")
+    fun returnAtShouldNotBeConverted() {
         // given
-        // UTC 2023-07-18 15:00:00 -> KST 2023-07-19 00:00:00
         val returnAt = LocalDateTime.of(2023, 7, 18, 15, 0, 0)
 
         // when
         val response = SingleHistoryResponse.ofUserHistory(history, returnAt, true, false)
 
         // then
-        assertThat(response.returnAt).isEqualTo(LocalDateTime.of(2023, 7, 19, 0, 0, 0))
+        assertThat(response.returnAt).isEqualTo(LocalDateTime.of(2023, 7, 18, 15, 0, 0))
     }
 
     @Test
-    @DisplayName("UTC 자정 직전 시간은 KST로 변환 시 날짜가 변경되어야 한다")
-    fun midnightBoundaryShouldChangeDate() {
+    @DisplayName("15시 이후 시간도 날짜가 다음 날로 바뀌지 않는다")
+    fun afterThreePmShouldKeepDate() {
         // given
-        // UTC 2023-07-18 23:30:00 -> KST 2023-07-19 08:30:00
         val returnAt = LocalDateTime.of(2023, 7, 18, 23, 30, 0)
 
         // when
         val response = SingleHistoryResponse.ofUserHistory(history, returnAt, true, false)
 
         // then
-        assertThat(response.returnAt).isEqualTo(LocalDateTime.of(2023, 7, 19, 8, 30, 0))
+        assertThat(response.returnAt).isEqualTo(LocalDateTime.of(2023, 7, 18, 23, 30, 0))
     }
 }

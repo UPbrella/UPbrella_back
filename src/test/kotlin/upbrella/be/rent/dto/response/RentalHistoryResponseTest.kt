@@ -8,13 +8,12 @@ import java.time.LocalDateTime
 class RentalHistoryResponseTest {
 
     @Test
-    @DisplayName("반납된 대여 내역의 rentAt은 UTC에서 KST(+9시간)로 변환되어야 한다")
-    fun createReturnedHistoryRentAtShouldBeKst() {
+    @DisplayName("반납된 대여 내역의 rentAt은 DB에 저장된 한국 시간 그대로 응답한다")
+    fun createReturnedHistoryRentAtShouldNotBeConverted() {
         // given
-        // UTC 2023-07-18 00:00:00 -> KST 2023-07-18 09:00:00
         val history = createHistoryInfoDto(
-            rentAt = LocalDateTime.of(2023, 7, 18, 0, 0, 0),
-            returnAt = LocalDateTime.of(2023, 7, 20, 0, 0, 0)
+            rentAt = LocalDateTime.of(2023, 7, 18, 9, 0, 0),
+            returnAt = LocalDateTime.of(2023, 7, 20, 9, 0, 0)
         )
 
         // when
@@ -25,28 +24,27 @@ class RentalHistoryResponseTest {
     }
 
     @Test
-    @DisplayName("반납된 대여 내역의 returnAt은 UTC에서 KST(+9시간)로 변환되어야 한다")
-    fun createReturnedHistoryReturnAtShouldBeKst() {
+    @DisplayName("반납된 대여 내역의 returnAt은 DB에 저장된 한국 시간 그대로 응답한다")
+    fun createReturnedHistoryReturnAtShouldNotBeConverted() {
         // given
-        // UTC 2023-07-18 15:00:00 -> KST 2023-07-19 00:00:00
         val history = createHistoryInfoDto(
-            rentAt = LocalDateTime.of(2023, 7, 18, 0, 0, 0),
+            rentAt = LocalDateTime.of(2023, 7, 18, 9, 0, 0),
             returnAt = LocalDateTime.of(2023, 7, 18, 15, 0, 0)
         )
 
         // when
-        val response = RentalHistoryResponse.createReturnedHistory(history, 1, 1)
+        val response = RentalHistoryResponse.createReturnedHistory(history, 0, 0)
 
         // then
-        assertThat(response.returnAt).isEqualTo(LocalDateTime.of(2023, 7, 19, 0, 0, 0))
+        assertThat(response.returnAt).isEqualTo(LocalDateTime.of(2023, 7, 18, 15, 0, 0))
     }
 
     @Test
-    @DisplayName("미반납 대여 내역의 rentAt은 UTC에서 KST(+9시간)로 변환되어야 한다")
-    fun createNonReturnedHistoryRentAtShouldBeKst() {
+    @DisplayName("미반납 대여 내역의 rentAt은 DB에 저장된 한국 시간 그대로 응답한다")
+    fun createNonReturnedHistoryRentAtShouldNotBeConverted() {
         // given
         val history = createHistoryInfoDto(
-            rentAt = LocalDateTime.of(2023, 7, 18, 0, 0, 0),
+            rentAt = LocalDateTime.of(2023, 7, 18, 9, 0, 0),
             returnAt = null
         )
 
@@ -59,12 +57,12 @@ class RentalHistoryResponseTest {
     }
 
     @Test
-    @DisplayName("UTC 자정 직전 시간은 KST로 변환 시 날짜가 변경되어야 한다")
-    fun midnightBoundaryShouldChangeDate() {
+    @DisplayName("15시 이후에 대여해도 응답의 대여 날짜가 다음 날로 바뀌지 않는다")
+    fun rentAfterThreePmShouldKeepDate() {
         // given
-        // UTC 2023-07-18 23:30:00 -> KST 2023-07-19 08:30:00
+        // 10월 4일 대여가 어드민에 10월 5일로 보이던 문제 (#518)
         val history = createHistoryInfoDto(
-            rentAt = LocalDateTime.of(2023, 7, 18, 23, 30, 0),
+            rentAt = LocalDateTime.of(2026, 10, 4, 18, 30, 0),
             returnAt = null
         )
 
@@ -72,7 +70,7 @@ class RentalHistoryResponseTest {
         val response = RentalHistoryResponse.createNonReturnedHistory(history, 1)
 
         // then
-        assertThat(response.rentAt).isEqualTo(LocalDateTime.of(2023, 7, 19, 8, 30, 0))
+        assertThat(response.rentAt).isEqualTo(LocalDateTime.of(2026, 10, 4, 18, 30, 0))
     }
 
     private fun createHistoryInfoDto(

@@ -7,17 +7,10 @@ import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
 import upbrella.be.user.dto.response.SingleHistoryResponse
 import java.time.LocalDateTime
-import java.time.ZoneId
 import upbrella.be.user.entity.User
 import org.junit.jupiter.api.Assertions.assertAll
 
 class HistoryTest {
-
-    private val KST = ZoneId.of("Asia/Seoul")
-
-    private fun toKst(time: LocalDateTime): LocalDateTime {
-        return time.atZone(ZoneId.of("UTC")).withZoneSameInstant(KST).toLocalDateTime()
-    }
 
     private lateinit var rentUmbrellaByUserRequest: RentUmbrellaByUserRequest
     private lateinit var foundStoreMeta: StoreMeta
@@ -82,8 +75,8 @@ class HistoryTest {
 
         val expectedResponse = SingleHistoryResponse(
             umbrellaUuid = 99L,
-            rentedAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24)),
-            returnAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24).plusDays(7)),
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnAt = LocalDateTime.of(1000, 12, 3, 4, 24).plusDays(7),
             rentedStore = "motive study cafe",
             isRefunded = false,
             isReturned = false
@@ -116,8 +109,8 @@ class HistoryTest {
 
         val expectedResponse = SingleHistoryResponse(
             umbrellaUuid = 99L,
-            rentedAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24)),
-            returnAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 25)),
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
             rentedStore = "motive study cafe",
             isRefunded = false,
             isReturned = true
@@ -150,8 +143,8 @@ class HistoryTest {
 
         val expectedResponse = SingleHistoryResponse(
             umbrellaUuid = 99L,
-            rentedAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24)),
-            returnAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 25)),
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
             rentedStore = "motive study cafe",
             isRefunded = false,
             isReturned = true
@@ -184,8 +177,8 @@ class HistoryTest {
 
         val expectedResponse = SingleHistoryResponse(
             umbrellaUuid = 99L,
-            rentedAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 24)),
-            returnAt = toKst(LocalDateTime.of(1000, 12, 3, 4, 25)),
+            rentedAt = LocalDateTime.of(1000, 12, 3, 4, 24),
+            returnAt = LocalDateTime.of(1000, 12, 3, 4, 25),
             rentedStore = "motive study cafe",
             isRefunded = true,
             isReturned = true
