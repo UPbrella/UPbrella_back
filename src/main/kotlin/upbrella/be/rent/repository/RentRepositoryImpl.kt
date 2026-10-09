@@ -11,6 +11,7 @@ import upbrella.be.rent.entity.QHistory.history
 import upbrella.be.store.entity.QStoreMeta.storeMeta
 import upbrella.be.umbrella.entity.QUmbrella.umbrella
 import upbrella.be.user.entity.QUser.user
+import java.time.LocalDateTime
 
 class RentRepositoryImpl(
     private val queryFactory: JPAQueryFactory
@@ -23,7 +24,7 @@ class RentRepositoryImpl(
             .join(history.umbrella, umbrella).fetchJoin()
             .join(history.rentStoreMeta, storeMeta).fetchJoin()
             .leftJoin(history.returnStoreMeta, storeMeta).fetchJoin()
-            .where(filterRefunded(filter))
+            .where(filterRefunded(filter), filterOverdue(filter))
             .orderBy(history.id.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
@@ -57,7 +58,7 @@ class RentRepositoryImpl(
             .join(history.umbrella, umbrella)
             .join(history.rentStoreMeta, storeMeta)
             .leftJoin(history.returnStoreMeta, storeMeta)
-            .where(filterRefunded(filter))
+            .where(filterRefunded(filter), filterOverdue(filter))
             .orderBy(history.id.desc())
             .offset(pageable.offset)
             .limit(pageable.pageSize.toLong())
@@ -67,7 +68,7 @@ class RentRepositoryImpl(
     override fun countAll(filter: HistoryFilterRequest, pageable: Pageable): Long {
         return queryFactory
             .selectFrom(history)
-            .where(filterRefunded(filter))
+            .where(filterRefunded(filter), filterOverdue(filter))
             .fetch()
             .size.toLong()
     }
@@ -95,5 +96,15 @@ class RentRepositoryImpl(
         }
 
         return history.refundedAt.isNull
+    }
+
+    private fun filterOverdue(filter: HistoryFilterRequest): BooleanExpression? {
+        if (filter.overdue != true) {
+            return null
+        }
+
+        val deadline = LocalDateTime.now().minusDays(History.RETURN_DEADLINE_DAYS)
+        return history.returnedAt.isNull
+            .and(history.rentedAt.loe(deadline))
     }
 }

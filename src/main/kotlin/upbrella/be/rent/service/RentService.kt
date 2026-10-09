@@ -141,7 +141,7 @@ class RentService(
         AllHistoryResponse.of(findAllByUserId(userId))
 
     private fun findAllByUserId(userId: Long): List<SingleHistoryResponse> =
-        findAllByUser(userId).map { toSingleHistoryResponse(it) }
+        findAllByUser(userId).map { History.ofUserHistory(it) }
 
     private fun findAllByUser(userId: Long): List<History> =
         rentRepository.findAllByUserId(userId)
@@ -151,20 +151,6 @@ class RentService(
         pageable: Pageable
     ): List<RentalHistoryResponse> =
         findHistoryInfos(filter, pageable).map { toRentalHistoryResponse(it) }
-
-    private fun toSingleHistoryResponse(history: History): SingleHistoryResponse {
-        var isReturned = true
-        var isRefunded = false
-        var returnAt: LocalDateTime? = history.returnedAt
-        if (returnAt == null) {
-            isReturned = false
-            returnAt = history.rentedAt.plusDays(14)
-        }
-        if (history.refundedAt != null) {
-            isRefunded = true
-        }
-        return SingleHistoryResponse.ofUserHistory(history, returnAt!!, isReturned, isRefunded)
-    }
 
     private fun toRentalHistoryResponse(history: HistoryInfoDto): RentalHistoryResponse {
         var elapsedDay = ChronoUnit.DAYS.between(history.rentAt, LocalDateTime.now()).toInt()

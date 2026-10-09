@@ -50,6 +50,9 @@ class History(
 ) {
 
     companion object {
+        // 대여 후 이 기간 안에 반납해야 한다
+        const val RETURN_DEADLINE_DAYS = 14L
+
         @JvmStatic
         fun ofCreatedByNewRent(umbrella: Umbrella, user: User, rentStoreMeta: StoreMeta): History {
             return History(
@@ -67,7 +70,7 @@ class History(
 
             if (returnAt == null) {
                 isReturned = false
-                returnAt = history.rentedAt.plusDays(7)
+                returnAt = history.rentedAt.plusDays(RETURN_DEADLINE_DAYS)
             }
 
             if (history.refundedAt != null) {
