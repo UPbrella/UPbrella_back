@@ -2,6 +2,7 @@ package upbrella.be.umbrella.repository
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Import
 import upbrella.be.config.FixtureBuilderFactory
 import upbrella.be.config.QueryDslTestConfig
 import upbrella.be.store.entity.ClassificationType
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import javax.persistence.EntityManager
 
 @Import(QueryDslTestConfig::class)
@@ -56,9 +58,8 @@ class UmbrellaRepositoryImplTest {
             val umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", null)
                 .set("storeMeta", storeMeta)
-                .set("rentable", true)
+                .set("status", UmbrellaStatus.AVAILABLE)
                 .set("deleted", false)
-                .set("missed", false)
                 .sample()
             em.persist(umbrella)
             em.flush()
@@ -69,9 +70,8 @@ class UmbrellaRepositoryImplTest {
             val umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", null)
                 .set("storeMeta", storeMeta)
-                .set("rentable", false)
+                .set("status", UmbrellaStatus.RENTED)
                 .set("deleted", false)
-                .set("missed", false)
                 .sample()
             em.persist(umbrella)
             em.flush()
@@ -82,9 +82,8 @@ class UmbrellaRepositoryImplTest {
             val umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", null)
                 .set("storeMeta", storeMeta)
-                .set("rentable", false)
+                .set("status", UmbrellaStatus.LOST)
                 .set("deleted", false)
-                .set("missed", true)
                 .sample()
             em.persist(umbrella)
             em.flush()
@@ -94,50 +93,35 @@ class UmbrellaRepositoryImplTest {
     }
 
     @Test
-    fun countAllUmbrellas() {
-        assertThat(umbrellaRepository.countAllUmbrellas())
-            .isEqualTo(6)
+    @DisplayName("삭제되지 않은 우산을 상태별로 센다")
+    fun countUmbrellasByStatus() {
+        assertThat(umbrellaRepository.countUmbrellasByStatus())
+            .containsExactlyInAnyOrderEntriesOf(
+                mapOf(
+                    UmbrellaStatus.AVAILABLE to 3L,
+                    UmbrellaStatus.RENTED to 2L,
+                    UmbrellaStatus.LOST to 1L
+                )
+            )
     }
 
     @Test
-    fun countRentableUmbrellas() {
-        assertThat(umbrellaRepository.countRentableUmbrellas())
-            .isEqualTo(3)
+    @DisplayName("지점의 삭제되지 않은 우산을 상태별로 센다")
+    fun countUmbrellasByStatusAndStore() {
+        assertThat(umbrellaRepository.countUmbrellasByStatusAndStore(storeMetaId))
+            .containsExactlyInAnyOrderEntriesOf(
+                mapOf(
+                    UmbrellaStatus.AVAILABLE to 3L,
+                    UmbrellaStatus.RENTED to 2L,
+                    UmbrellaStatus.LOST to 1L
+                )
+            )
     }
 
     @Test
-    fun countRentedUmbrellas() {
-        assertThat(umbrellaRepository.countRentedUmbrellas())
-            .isEqualTo(2)
-    }
-
-    @Test
-    fun countMissingUmbrellas() {
-        assertThat(umbrellaRepository.countMissingUmbrellas())
-            .isEqualTo(1)
-    }
-
-    @Test
-    fun countRentableUmbrellasByStore() {
-        assertThat(umbrellaRepository.countRentableUmbrellasByStore(storeMetaId))
-            .isEqualTo(3)
-    }
-
-    @Test
-    fun countRentedUmbrellasByStore() {
-        assertThat(umbrellaRepository.countRentedUmbrellasByStore(storeMetaId))
-            .isEqualTo(2)
-    }
-
-    @Test
-    fun countAllUmbrellasByStore() {
-        assertThat(umbrellaRepository.countAllUmbrellasByStore(storeMetaId))
-            .isEqualTo(6)
-    }
-
-    @Test
-    fun countMissingUmbrellasByStore() {
-        assertThat(umbrellaRepository.countMissingUmbrellasByStore(storeMetaId))
-            .isEqualTo(1)
+    @DisplayName("다른 지점의 우산은 세지 않는다")
+    fun countUmbrellasByStatusAndOtherStore() {
+        assertThat(umbrellaRepository.countUmbrellasByStatusAndStore(storeMetaId + 1))
+            .isEmpty()
     }
 }

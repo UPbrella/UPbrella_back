@@ -221,6 +221,7 @@ CREATE TABLE `umbrella` (
   `created_at` timestamp NULL DEFAULT NULL,
   `etc` varchar(255) DEFAULT NULL,
   `missed` tinyint DEFAULT NULL,
+  `status` varchar(20) NOT NULL DEFAULT 'AVAILABLE' COMMENT '우산 상태: AVAILABLE(사용 가능), RENTED(대여중), UNLOCATED(위치 미확인), LOST(분실)',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=209 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

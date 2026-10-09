@@ -32,6 +32,7 @@ import upbrella.be.slack.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
 import upbrella.be.umbrella.service.UmbrellaService
 import upbrella.be.user.dto.response.AllHistoryResponse
@@ -113,10 +114,9 @@ class RentServiceTest {
             uuid = 99L,
             deleted = false,
             storeMeta = foundStoreMeta,
-            rentable = true,
+            status = UmbrellaStatus.AVAILABLE,
             createdAt = LocalDateTime.now(),
             etc = "etc",
-            missed = false,
         )
 
         userToRent = User(
@@ -708,10 +708,9 @@ class RentServiceTest {
             uuid = 99L,
             deleted = false,
             storeMeta = foundStoreMeta,
-            rentable = false,
+            status = UmbrellaStatus.RENTED,
             createdAt = LocalDateTime.now(),
             etc = "etc",
-            missed = false,
         )
 
         given(rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id!!))

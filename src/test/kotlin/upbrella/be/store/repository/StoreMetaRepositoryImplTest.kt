@@ -14,6 +14,7 @@ import upbrella.be.config.QueryDslTestConfig
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount
 import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import javax.persistence.EntityManager
 
 @Import(QueryDslTestConfig::class)
@@ -66,8 +67,7 @@ class StoreMetaRepositoryImplTest {
 
         val umbrella = FixtureBuilderFactory.builderUmbrella()
             .set("id", null)
-            .set("rentable", true)
-            .set("missed", false)
+            .set("status", UmbrellaStatus.AVAILABLE)
             .set("storeMeta", storeMeta)
             .sample()
 

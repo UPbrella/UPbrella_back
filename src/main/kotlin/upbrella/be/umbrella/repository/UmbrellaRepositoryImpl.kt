@@ -1,5 +1,6 @@
 package upbrella.be.umbrella.repository
 
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.CaseBuilder
 import com.querydsl.jpa.JPAExpressions
 import com.querydsl.jpa.impl.JPAQuery
@@ -9,79 +10,27 @@ import upbrella.be.rent.entity.QHistory
 import upbrella.be.umbrella.dto.response.QUmbrellaWithHistory
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
 import upbrella.be.umbrella.entity.QUmbrella.umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 
 class UmbrellaRepositoryImpl(
     private val queryFactory: JPAQueryFactory
 ) : UmbrellaRepositoryCustom {
 
-    override fun countAllUmbrellas(): Long {
-        return queryFactory.selectFrom(umbrella)
-            .where(umbrella.deleted.eq(false))
-            .fetch()
-            .size.toLong()
-    }
+    override fun countUmbrellasByStatus(): Map<UmbrellaStatus, Long> =
+        countByStatus(umbrella.deleted.eq(false))
 
-    override fun countRentableUmbrellas(): Long {
-        return queryFactory.selectFrom(umbrella)
-            .where(umbrella.rentable.eq(true)
-                .and(umbrella.missed.eq(false))
-                .and(umbrella.deleted.eq(false)))
-            .fetch()
-            .size.toLong()
-    }
+    override fun countUmbrellasByStatusAndStore(storeId: Long): Map<UmbrellaStatus, Long> =
+        countByStatus(umbrella.deleted.eq(false).and(umbrella.storeMeta.id.eq(storeId)))
 
-    override fun countRentedUmbrellas(): Long {
-        return queryFactory.selectFrom(umbrella)
-            .where(umbrella.rentable.eq(false)
-                .and(umbrella.missed.eq(false))
-                .and(umbrella.deleted.eq(false)))
-            .fetch()
-            .size.toLong()
-    }
+    private fun countByStatus(condition: BooleanExpression): Map<UmbrellaStatus, Long> {
+        val count = umbrella.count()
 
-    override fun countMissingUmbrellas(): Long {
-        return queryFactory.selectFrom(umbrella)
-            .where(umbrella.missed.eq(true)
-                .and(umbrella.deleted.eq(false)))
+        return queryFactory.select(umbrella.status, count)
+            .from(umbrella)
+            .where(condition)
+            .groupBy(umbrella.status)
             .fetch()
-            .size.toLong()
-    }
-
-    override fun countRentableUmbrellasByStore(storeMetaId: Long): Long {
-        return queryFactory.selectFrom(umbrella)
-            .where(umbrella.storeMeta.id.eq(storeMetaId)
-                .and(umbrella.rentable.eq(true))
-                .and(umbrella.missed.eq(false))
-                .and(umbrella.deleted.eq(false)))
-            .fetch()
-            .size.toLong()
-    }
-
-    override fun countRentedUmbrellasByStore(storeMetaId: Long): Long {
-        return queryFactory.selectFrom(umbrella)
-            .where(umbrella.storeMeta.id.eq(storeMetaId)
-                .and(umbrella.rentable.eq(false))
-                .and(umbrella.missed.eq(false))
-                .and(umbrella.deleted.eq(false)))
-            .fetch()
-            .size.toLong()
-    }
-
-    override fun countAllUmbrellasByStore(storeId: Long): Long {
-        return queryFactory.selectFrom(umbrella)
-            .where(umbrella.storeMeta.id.eq(storeId)
-                .and(umbrella.deleted.eq(false)))
-            .fetch()
-            .size.toLong()
-    }
-
-    override fun countMissingUmbrellasByStore(storeId: Long): Long {
-        return queryFactory.selectFrom(umbrella)
-            .where(umbrella.storeMeta.id.eq(storeId)
-                .and(umbrella.missed.eq(true))
-                .and(umbrella.deleted.eq(false)))
-            .fetch()
-            .size.toLong()
+            .associate { it.get(umbrella.status)!! to it.get(count)!! }
     }
 
     override fun findUmbrellaAndHistoryOrderedByUmbrellaId(pageable: Pageable): List<UmbrellaWithHistory> {
@@ -105,11 +54,10 @@ class UmbrellaRepositoryImpl(
             umbrella.id,
             umbrella.storeMeta,
             umbrella.uuid,
-            umbrella.rentable,
+            umbrella.status,
             umbrella.deleted,
             umbrella.createdAt,
             umbrella.etc,
-            umbrella.missed,
             subQuery))
             .from(umbrella)
             .where(umbrella.deleted.eq(false))
@@ -143,11 +91,10 @@ class UmbrellaRepositoryImpl(
             umbrella.id,
             umbrella.storeMeta,
             umbrella.uuid,
-            umbrella.rentable,
+            umbrella.status,
             umbrella.deleted,
             umbrella.createdAt,
             umbrella.etc,
-            umbrella.missed,
             subQuery))
             .from(umbrella)
             .where(umbrella.deleted.eq(false)

@@ -2,24 +2,13 @@ package upbrella.be.umbrella.repository
 
 import org.springframework.data.domain.Pageable
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
+import upbrella.be.umbrella.entity.UmbrellaStatus
 
 interface UmbrellaRepositoryCustom {
 
-    fun countAllUmbrellas(): Long
+    fun countUmbrellasByStatus(): Map<UmbrellaStatus, Long>
 
-    fun countRentableUmbrellas(): Long
-
-    fun countRentedUmbrellas(): Long
-
-    fun countMissingUmbrellas(): Long
-
-    fun countRentableUmbrellasByStore(storeMetaId: Long): Long
-
-    fun countRentedUmbrellasByStore(storeMetaId: Long): Long
-
-    fun countAllUmbrellasByStore(storeId: Long): Long
-
-    fun countMissingUmbrellasByStore(storeId: Long): Long
+    fun countUmbrellasByStatusAndStore(storeId: Long): Map<UmbrellaStatus, Long>
 
     fun findUmbrellaAndHistoryOrderedByUmbrellaId(pageable: Pageable): List<UmbrellaWithHistory>
 

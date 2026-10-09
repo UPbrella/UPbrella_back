@@ -21,6 +21,7 @@ import upbrella.be.rent.entity.History
 import upbrella.be.slack.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.user.entity.User
 import java.time.LocalDateTime
 
@@ -63,10 +64,9 @@ class SlackAlarmServiceTest {
             uuid = 99L,
             deleted = false,
             storeMeta = foundStoreMeta,
-            rentable = true,
+            status = UmbrellaStatus.AVAILABLE,
             createdAt = LocalDateTime.now(),
             etc = "etc",
-            missed = false,
         )
 
         userToRent = User(

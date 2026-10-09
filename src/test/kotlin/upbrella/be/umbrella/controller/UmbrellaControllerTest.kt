@@ -91,8 +91,10 @@ class UmbrellaControllerTest : RestDocsSupport() {
                             .description("보관 지점 이름"),
                         fieldWithPath("umbrellaResponsePage[].uuid").type(JsonFieldType.NUMBER)
                             .description("우산 관리번호"),
+                        fieldWithPath("umbrellaResponsePage[].status").type(JsonFieldType.STRING)
+                            .description("우산 상태: AVAILABLE(사용 가능), RENTED(대여중), UNLOCATED(위치 미확인), LOST(분실)"),
                         fieldWithPath("umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
-                            .description("대여 가능 상태"),
+                            .description("대여 가능 상태 (하위 호환용, status가 AVAILABLE이면 true)"),
                         fieldWithPath("umbrellaResponsePage[].etc").type(JsonFieldType.STRING)
                             .description("기타 특이 사항")
                     )
@@ -154,8 +156,10 @@ class UmbrellaControllerTest : RestDocsSupport() {
                             .description("보관 지점 이름"),
                         fieldWithPath("umbrellaResponsePage[].uuid").type(JsonFieldType.NUMBER)
                             .description("우산 관리번호"),
+                        fieldWithPath("umbrellaResponsePage[].status").type(JsonFieldType.STRING)
+                            .description("우산 상태: AVAILABLE(사용 가능), RENTED(대여중), UNLOCATED(위치 미확인), LOST(분실)"),
                         fieldWithPath("umbrellaResponsePage[].rentable").type(JsonFieldType.BOOLEAN)
-                            .description("대여 가능 상태"),
+                            .description("대여 가능 상태 (하위 호환용, status가 AVAILABLE이면 true)"),
                         fieldWithPath("umbrellaResponsePage[].etc").type(JsonFieldType.STRING)
                             .description("기타 특이 사항")
                     )
@@ -195,8 +199,12 @@ class UmbrellaControllerTest : RestDocsSupport() {
                                 .description("우산 관리번호"),
                             fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
                                 .description("지점 고유번호"),
+                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                .optional()
+                                .description("우산 상태: AVAILABLE(사용 가능), RENTED(대여중), UNLOCATED(위치 미확인), LOST(분실). 없으면 rentable로 정하고, 둘 다 없으면 AVAILABLE"),
                             fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                .description("대여 가능 여부"),
+                                .optional()
+                                .description("대여 가능 여부 (하위 호환용, status가 없을 때만 사용)"),
                             fieldWithPath("etc").type(JsonFieldType.STRING)
                                 .optional()
                                 .description("기타 특이 사항")
@@ -270,10 +278,15 @@ class UmbrellaControllerTest : RestDocsSupport() {
                                 .description("우산 관리번호"),
                             fieldWithPath("storeMetaId").type(JsonFieldType.NUMBER)
                                 .description("지점 고유번호"),
+                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                .optional()
+                                .description("우산 상태: AVAILABLE(사용 가능), RENTED(대여중), UNLOCATED(위치 미확인), LOST(분실). 없으면 rentable/missed로 정하고, 셋 다 없으면 상태를 바꾸지 않음"),
                             fieldWithPath("rentable").type(JsonFieldType.BOOLEAN)
-                                .description("대여 가능 여부"),
+                                .optional()
+                                .description("대여 가능 여부 (하위 호환용, status가 없을 때만 사용)"),
                             fieldWithPath("missed").type(JsonFieldType.BOOLEAN)
-                                .description("분실 여부"),
+                                .optional()
+                                .description("분실 여부 (하위 호환용, status가 없을 때만 사용)"),
                             fieldWithPath("etc").type(JsonFieldType.STRING)
                                 .optional()
                                 .description("기타 특이 사항")
@@ -430,13 +443,17 @@ class UmbrellaControllerTest : RestDocsSupport() {
                         fieldWithPath("totalUmbrellaCount").type(JsonFieldType.NUMBER)
                             .description("전체 우산 개수"),
                         fieldWithPath("rentableUmbrellaCount").type(JsonFieldType.NUMBER)
-                            .description("대여 가능 우산 개수"),
+                            .description("사용 가능 우산 개수"),
                         fieldWithPath("rentedUmbrellaCount").type(JsonFieldType.NUMBER)
                             .description("대여 중 우산 개수"),
-                        fieldWithPath("missingUmbrellaCount").type(JsonFieldType.NUMBER)
+                        fieldWithPath("unlocatedUmbrellaCount").type(JsonFieldType.NUMBER)
+                            .description("위치 미확인 우산 개수"),
+                        fieldWithPath("lostUmbrellaCount").type(JsonFieldType.NUMBER)
                             .description("분실 우산 개수"),
+                        fieldWithPath("missingUmbrellaCount").type(JsonFieldType.NUMBER)
+                            .description("위치 미확인 + 분실 우산 개수"),
                         fieldWithPath("missingRate").type(JsonFieldType.NUMBER)
-                            .description("분실률(%)")
+                            .description("위치 미확인 + 분실 비율(%)")
                     )
                 )
             )
@@ -476,13 +493,17 @@ class UmbrellaControllerTest : RestDocsSupport() {
                             fieldWithPath("totalUmbrellaCount").type(JsonFieldType.NUMBER)
                                 .description("지점 전체 우산 개수"),
                             fieldWithPath("rentableUmbrellaCount").type(JsonFieldType.NUMBER)
-                                .description("지점 대여 가능 우산 개수"),
+                                .description("지점 사용 가능 우산 개수"),
                             fieldWithPath("rentedUmbrellaCount").type(JsonFieldType.NUMBER)
                                 .description("지점 대여 중 우산 개수"),
-                            fieldWithPath("missingUmbrellaCount").type(JsonFieldType.NUMBER)
+                            fieldWithPath("unlocatedUmbrellaCount").type(JsonFieldType.NUMBER)
+                                .description("지점 위치 미확인 우산 개수"),
+                            fieldWithPath("lostUmbrellaCount").type(JsonFieldType.NUMBER)
                                 .description("지점 분실 우산 개수"),
+                            fieldWithPath("missingUmbrellaCount").type(JsonFieldType.NUMBER)
+                                .description("지점 위치 미확인 + 분실 우산 개수"),
                             fieldWithPath("missingRate").type(JsonFieldType.NUMBER)
-                                .description("지점 분실률(%)")
+                                .description("지점 위치 미확인 + 분실 비율(%)")
                         )
                     )
                 )

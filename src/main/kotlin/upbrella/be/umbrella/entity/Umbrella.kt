@@ -12,15 +12,25 @@ class Umbrella(
     @JoinColumn(name = "store_meta_id")
     var storeMeta: StoreMeta,
     var uuid: Long,
-    var rentable: Boolean,
+    status: UmbrellaStatus,
     var deleted: Boolean,
     val createdAt: LocalDateTime,
     var etc: String?,
-    var missed: Boolean,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 ) {
+
+    @Enumerated(EnumType.STRING)
+    var status: UmbrellaStatus = status
+        private set
+
+    // 하위 호환용 컬럼. status가 바뀔 때 같이 바뀐다. FE가 status로 옮기면 지운다
+    var rentable: Boolean = status == UmbrellaStatus.AVAILABLE
+        private set
+
+    var missed: Boolean = status.isMissing()
+        private set
 
     companion object {
         @JvmStatic
@@ -28,11 +38,10 @@ class Umbrella(
             return Umbrella(
                 storeMeta = storeMeta,
                 uuid = request.uuid,
-                rentable = request.rentable,
+                status = request.toStatus(),
                 deleted = false,
                 createdAt = LocalDateTime.now(),
-                etc = request.etc,
-                missed = false
+                etc = request.etc
             )
         }
     }
@@ -44,21 +53,26 @@ class Umbrella(
     fun update(request: UmbrellaModifyRequest, storeMeta: StoreMeta) {
         this.storeMeta = storeMeta
         this.uuid = request.uuid
-        this.rentable = request.rentable
+        request.toStatus()?.let { changeStatus(it) }
         this.etc = request.etc
-        this.missed = request.missed
     }
 
     fun rentUmbrella() {
-        this.rentable = false
+        changeStatus(UmbrellaStatus.RENTED)
     }
 
     fun returnUmbrella(storeMeta: StoreMeta) {
         this.storeMeta = storeMeta
-        this.rentable = true
+        changeStatus(UmbrellaStatus.AVAILABLE)
     }
 
     fun cannotBeRented(): Boolean {
-        return missed || deleted || !rentable
+        return deleted || status != UmbrellaStatus.AVAILABLE
+    }
+
+    private fun changeStatus(status: UmbrellaStatus) {
+        this.status = status
+        this.rentable = status == UmbrellaStatus.AVAILABLE
+        this.missed = status.isMissing()
     }
 }
