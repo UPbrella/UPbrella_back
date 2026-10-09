@@ -9,7 +9,11 @@
 -- "지금 값이 스냅샷 값과 같을 때만" 보정한다. 스냅샷은 백업도 겸한다.
 -- 스냅샷 테이블을 지우고 다시 만들면 보정된 값이 원래 값으로 저장되므로, 보정이 끝난 뒤 다시 만들지 않는다.
 --
--- toKst()를 없앤 코드를 배포한 직후에 실행한다. 앱과 같은 세션 시간대로 실행한다. (SET time_zone 을 바꾸지 않는다)
+-- toKst()를 없앤 코드를 배포한 직후에 실행한다.
+--
+-- umbrella.created_at(TIMESTAMP)은 보정하지 않는다. 어떤 API 응답에도 나가지 않고, TIMESTAMP라 보정이 필요한지가
+-- 기록 당시 DB 연결의 세션 시간대에 달려 있어 저장소만으로는 판단할 수 없다.
+-- locker.last_access도 1분 재요청 제한에만 쓰여서 보정하지 않는다.
 
 -- 맥미니 서버가 운영 DB에 처음 쓴 시각(UTC). 첫 mac-deploy 실행은 2026-09-30 03:13:51 UTC(12:13 KST).
 -- 예전 서버를 내린 시각을 확인해서 맞게 고친다. 다시 실행할 때도 같은 값을 쓴다.
@@ -24,9 +28,6 @@ SELECT 'history.rented_at' AS col, COUNT(*) FROM history WHERE rented_at >= @cut
 UNION ALL SELECT 'history.returned_at', COUNT(*) FROM history WHERE returned_at >= @cutover AND returned_at < @cutover + INTERVAL 9 HOUR
 UNION ALL SELECT 'history.paid_at', COUNT(*) FROM history WHERE paid_at >= @cutover AND paid_at < @cutover + INTERVAL 9 HOUR
 UNION ALL SELECT 'history.refunded_at', COUNT(*) FROM history WHERE refunded_at >= @cutover AND refunded_at < @cutover + INTERVAL 9 HOUR;
-
--- 4번(umbrella) 판단용
-SELECT @@global.time_zone, @@session.time_zone, @@system_time_zone;
 
 -- 2. 원래 값 스냅샷 (이미 있으면 에러로 멈춘다. 보정 전에 실패했다면 스냅샷은 원래 값이므로 3번만 다시 실행하면 된다)
 CREATE TABLE kst_fix_518_history AS
@@ -60,15 +61,3 @@ UPDATE black_list b JOIN kst_fix_518_black_list o ON o.id = b.id
 SET b.blocked_at = IF(b.blocked_at = o.blocked_at, o.blocked_at + INTERVAL 9 HOUR, b.blocked_at);
 
 COMMIT;
-
--- 4. (조건부) umbrella.created_at
--- TIMESTAMP 컬럼이라 MySQL이 세션 시간대 기준으로 변환해 저장하고 읽는다.
--- - DB 서버를 옮기지 않았거나, 옮긴 서버의 시간대 설정이 예전과 같다면: DATETIME처럼 9시간 밀려 있으므로 아래 주석을 풀어 실행한다.
--- - 시간대가 다른 서버로 옮겼다면: 옮기면서 이미 바뀌어 보일 수 있으니 실제 값을 보고 판단한다.
--- locker.last_access도 TIMESTAMP지만 1분 재요청 제한에만 쓰여서 보정하지 않는다.
---
--- CREATE TABLE kst_fix_518_umbrella AS
--- SELECT id, created_at FROM umbrella WHERE created_at < @cutover;
---
--- UPDATE umbrella m JOIN kst_fix_518_umbrella o ON o.id = m.id
--- SET m.created_at = IF(m.created_at = o.created_at, o.created_at + INTERVAL 9 HOUR, m.created_at);

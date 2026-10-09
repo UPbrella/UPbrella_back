@@ -32,18 +32,17 @@
 | `history` | `rented_at`, `returned_at`, `paid_at`, `refunded_at` |
 | `user` | `created_at`, `updated_at`, `deleted_at` |
 | `black_list` | `blocked_at` |
-| `umbrella` | `created_at` (조건부, 아래 참고) |
 
 - 다시 실행해도 9시간이 두 번 더해지지 않게, 원래 값을 스냅샷 테이블(`kst_fix_518_*`)에 저장하고 지금 값이 스냅샷 값과 같을 때만 보정한다. 스냅샷은 백업도 겸한다.
 - `user.updated_at`에 `ON UPDATE NOW()`가 걸려 있어서, 같은 UPDATE 문에서 직접 지정해야 현재 시각으로 덮어써지지 않는다.
-- `umbrella.created_at`은 TIMESTAMP라서 MySQL이 세션 시간대 기준으로 변환한다. DB 서버를 옮기지 않았거나 시간대 설정이 같다면 DATETIME처럼 보정하고, 시간대가 다른 서버로 옮겼다면 실제 값을 보고 판단한다. 그래서 SQL에서는 주석으로 남겨 뒀다.
+- `umbrella.created_at`(TIMESTAMP)은 보정하지 않는다. 어떤 API 응답에도 나가지 않고, TIMESTAMP라 보정이 필요한지가 기록 당시 DB 연결의 세션 시간대에 달려 있어 저장소만으로는 판단할 수 없다.
 
 ## 배포 순서
 
 1. 전환 시각 확정 (맥미니 서버가 운영 DB에 처음 쓴 시각, 첫 mac-deploy 실행은 2026-09-30 03:13:51 UTC)
 2. DB 백업
 3. 이 PR 머지 → 맥미니 자동 배포
-4. 배포 직후 `518_fix_kst.sql` 실행 (확인 쿼리 → 스냅샷 → 보정 → 필요하면 umbrella)
+4. 배포 직후 `518_fix_kst.sql` 실행 (확인 쿼리 → 스냅샷 → 보정)
 5. 확인이 끝나면 스냅샷 테이블(`kst_fix_518_*`)은 백업으로 보관하다가 지운다
 
 3과 4 사이에는 전환 전 대여 건이 9시간 이르게 보인다. 사이 시간을 짧게 한다.
