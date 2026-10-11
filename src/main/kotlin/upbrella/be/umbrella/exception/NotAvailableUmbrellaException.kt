@@ -1,3 +1,3 @@
-package upbrella.be.rent.exception
+package upbrella.be.umbrella.exception
 
 class NotAvailableUmbrellaException(message: String) : RuntimeException(message)

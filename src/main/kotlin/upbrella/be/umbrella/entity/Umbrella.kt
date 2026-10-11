@@ -3,6 +3,9 @@ package upbrella.be.umbrella.entity
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest
+import upbrella.be.umbrella.exception.MissingUmbrellaException
+import upbrella.be.umbrella.exception.NotAvailableUmbrellaException
+import upbrella.be.umbrella.exception.UmbrellaStoreMissMatchException
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -57,8 +60,17 @@ class Umbrella(
         this.etc = request.etc
     }
 
-    fun rentUmbrella() {
-        changeStatus(UmbrellaStatus.RENTED)
+    // 빌리려는 매장에 있는 사용 가능 우산만 대여중으로 바꾼다
+    fun rentUmbrella(storeId: Long) {
+        if (storeMeta.id != storeId) {
+            throw UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.")
+        }
+        when (status) {
+            UmbrellaStatus.AVAILABLE -> changeStatus(UmbrellaStatus.RENTED)
+            UmbrellaStatus.RENTED -> throw NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.")
+            UmbrellaStatus.UNLOCATED, UmbrellaStatus.LOST ->
+                throw MissingUmbrellaException("[ERROR] 해당 우산은 분실되었습니다.")
+        }
     }
 
     fun returnUmbrella(storeMeta: StoreMeta) {

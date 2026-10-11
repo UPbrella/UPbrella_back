@@ -1,14 +1,19 @@
 package upbrella.be.umbrella.entity
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.EnumSource
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest
+import upbrella.be.umbrella.exception.MissingUmbrellaException
+import upbrella.be.umbrella.exception.NotAvailableUmbrellaException
+import upbrella.be.umbrella.exception.UmbrellaStoreMissMatchException
 import java.time.LocalDateTime
 
 class UmbrellaTest {
@@ -33,7 +38,7 @@ class UmbrellaTest {
         val umbrella = umbrella(UmbrellaStatus.AVAILABLE)
 
         // when
-        umbrella.rentUmbrella()
+        umbrella.rentUmbrella(storeMeta.id!!)
 
         // then
         assertAll(
@@ -42,6 +47,48 @@ class UmbrellaTest {
             { assertThat(umbrella.missed).isFalse() },
             { assertThat(umbrella.cannotBeRented()).isTrue() }
         )
+    }
+
+    @Test
+    @DisplayName("대여중인 우산을 대여하면 예외가 발생하고 상태는 그대로다")
+    fun rentRentedUmbrella() {
+        // given
+        val umbrella = umbrella(UmbrellaStatus.RENTED)
+
+        // when & then
+        assertThatThrownBy { umbrella.rentUmbrella(storeMeta.id!!) }
+            .isInstanceOf(NotAvailableUmbrellaException::class.java)
+        assertThat(umbrella.status).isEqualTo(UmbrellaStatus.RENTED)
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UmbrellaStatus::class, names = ["UNLOCATED", "LOST"])
+    @DisplayName("위치 미확인·분실 우산을 대여하면 분실 예외가 발생하고 상태는 그대로다")
+    fun rentMissingUmbrella(status: UmbrellaStatus) {
+        // given
+        val umbrella = umbrella(status)
+
+        // when & then
+        assertThatThrownBy { umbrella.rentUmbrella(storeMeta.id!!) }
+            .isInstanceOf(MissingUmbrellaException::class.java)
+        assertAll(
+            { assertThat(umbrella.status).isEqualTo(status) },
+            { assertThat(umbrella.rentable).isFalse() },
+            { assertThat(umbrella.missed).isTrue() }
+        )
+    }
+
+    @ParameterizedTest
+    @EnumSource(UmbrellaStatus::class)
+    @DisplayName("다른 매장의 우산을 대여하면 상태와 관계없이 매장 불일치 예외가 먼저 발생한다")
+    fun rentUmbrellaAtOtherStore(status: UmbrellaStatus) {
+        // given
+        val umbrella = umbrella(status)
+
+        // when & then
+        assertThatThrownBy { umbrella.rentUmbrella(otherStoreMeta.id!!) }
+            .isInstanceOf(UmbrellaStoreMissMatchException::class.java)
+        assertThat(umbrella.status).isEqualTo(status)
     }
 
     @Test

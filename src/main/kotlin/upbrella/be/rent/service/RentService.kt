@@ -16,8 +16,6 @@ import upbrella.be.slack.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
-import upbrella.be.umbrella.entity.UmbrellaStatus
-import upbrella.be.umbrella.exception.MissingUmbrellaException
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
 import upbrella.be.umbrella.service.UmbrellaService
 import upbrella.be.user.dto.response.AllHistoryResponse
@@ -72,16 +70,7 @@ class RentService(
         }
 
         val umbrella = umbrellaService.findUmbrellaByIdForRent(rentUmbrellaByUserRequest.umbrellaId)
-        if (umbrella.storeMeta.id != rentUmbrellaByUserRequest.storeId) {
-            throw UmbrellaStoreMissMatchException("[ERROR] 해당 우산은 해당 매장에 존재하지 않습니다.")
-        }
-        if (umbrella.status.isMissing()) {
-            throw MissingUmbrellaException("[ERROR] 해당 우산은 분실되었습니다.")
-        }
-        if (umbrella.status == UmbrellaStatus.RENTED) {
-            throw NotAvailableUmbrellaException("[ERROR] 해당 우산은 대여중입니다.")
-        }
-        umbrella.rentUmbrella()
+        umbrella.rentUmbrella(rentUmbrellaByUserRequest.storeId)
         val rentalStore = storeMetaReader.findById(rentUmbrellaByUserRequest.storeId)
         val history = rentRepository.save(
             History.ofCreatedByNewRent(umbrella, userToRent, rentalStore)
