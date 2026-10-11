@@ -1,6 +1,13 @@
 spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
+  # 스키마 변경은 db/migration의 V<번호>__<설명>.sql로 한다. 앱이 뜰 때 아직 적용하지 않은 파일을 차례로 실행한다.
+  flyway:
+    # 테이블은 있는데 Flyway 이력이 없는 기존 DB는 V1(도입 시점 운영 스키마)까지 적용된 것으로 보고 시작한다
+    baseline-on-migrate: true
+    baseline-version: 1
+    # 이름 규칙이 틀린 파일을 조용히 건너뛰지 않고 실패시킨다
+    validate-migration-naming: true
 
 image:
   processing:

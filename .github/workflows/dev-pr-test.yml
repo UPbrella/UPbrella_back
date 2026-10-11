@@ -12,6 +12,19 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # FlywayMigrationTest가 db/migration을 적용해 볼 MySQL. 운영(맥미니 mysql8)과 같은 버전
+    services:
+      mysql:
+        image: mysql:8.0.30
+        env:
+          MYSQL_ROOT_PASSWORD: test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
     steps:
 
       - name: checkout
@@ -29,6 +42,10 @@ jobs:
           echo "${{ secrets.APPLICATION_PROPERTIES_DEV }}" > src/main/resources/application.properties
           echo "${{ secrets.APPLICATION_PROPERTIES_TEST }}" > src/test/resources/application.properties
       - name: Test with Gradle
+        env:
+          FLYWAY_TEST_DB_URL: jdbc:mysql://127.0.0.1:3306
+          FLYWAY_TEST_DB_USERNAME: root
+          FLYWAY_TEST_DB_PASSWORD: test
         run: |
           chmod +x gradlew
           ./gradlew --info test

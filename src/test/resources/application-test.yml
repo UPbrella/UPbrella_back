@@ -4,6 +4,9 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+  # H2 테스트는 엔티티로 스키마를 만든다(ddl-auto). 마이그레이션은 FlywayMigrationTest가 MySQL에서 확인한다
+  flyway:
+    enabled: false
   jpa:
     hibernate:
       ddl-auto: create-drop
