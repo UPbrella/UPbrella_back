@@ -3,6 +3,7 @@ package upbrella.be.db
 import org.assertj.core.api.Assertions.assertThat
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.MigrationType
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.config.YamlPropertiesFactoryBean
 import org.springframework.core.io.FileSystemResource
 import java.sql.DriverManager
 import java.util.Properties
+import java.util.UUID
 
 // CI(dev-pr-test.yml)가 띄운 MySQL에서 db/migration을 실제로 적용해 본다. FLYWAY_TEST_DB_URL이 없으면 건너뛴다
 @EnabledIfEnvironmentVariable(named = "FLYWAY_TEST_DB_URL", matches = ".+")
@@ -25,11 +27,19 @@ class FlywayMigrationTest {
         .apply { setResources(FileSystemResource("src/main/resources/application.yml")) }
         .getObject()!!
 
+    // 테스트가 만든 DB만 지운다. 이름이 겹치지 않아서 서버에 원래 있던 DB는 건드리지 않는다
+    private val createdDatabases = mutableListOf<String>()
+
+    @AfterEach
+    fun dropCreatedDatabases() {
+        createdDatabases.forEach { execute(serverOnlyUrl(), "DROP DATABASE IF EXISTS $it") }
+    }
+
     @Test
     @DisplayName("빈 DB에는 V1부터 모든 마이그레이션을 적용한다")
     fun migrateEmptyDatabase() {
         // given
-        val url = recreateDatabase("flyway_empty")
+        val url = createDatabase()
         val pendingCount = flyway(url).info().pending().size
 
         // when
@@ -47,7 +57,7 @@ class FlywayMigrationTest {
     @DisplayName("Flyway 도입 전 운영 DB는 V1을 기준으로 삼아 건너뛰고 그 뒤 마이그레이션만 적용한다")
     fun migrateExistingDatabase() {
         // given: V1 스키마만 있고 Flyway 이력은 없는 도입 전 운영 DB
-        val url = recreateDatabase("flyway_existing")
+        val url = createDatabase()
         flyway(url, target = "1").migrate()
         execute(url, "DROP TABLE flyway_schema_history")
 
@@ -75,14 +85,15 @@ class FlywayMigrationTest {
         return configuration.load()
     }
 
-    private fun recreateDatabase(name: String): String {
-        execute(
-            "$serverUrl/$CONNECTION_OPTIONS",
-            "DROP DATABASE IF EXISTS $name",
-            "CREATE DATABASE $name DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci"
-        )
+    // 실행마다 새 이름으로 만든다. 같은 이름이 이미 있으면 CREATE DATABASE가 실패할 뿐 지우지 않는다
+    private fun createDatabase(): String {
+        val name = "flyway_test_" + UUID.randomUUID().toString().replace("-", "").take(12)
+        execute(serverOnlyUrl(), "CREATE DATABASE $name DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci")
+        createdDatabases.add(name)
         return "$serverUrl/$name$CONNECTION_OPTIONS"
     }
+
+    private fun serverOnlyUrl() = "$serverUrl/$CONNECTION_OPTIONS"
 
     private fun tables(url: String): List<String> {
         DriverManager.getConnection(url, username, password).use { connection ->
