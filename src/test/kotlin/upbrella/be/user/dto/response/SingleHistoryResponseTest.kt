@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.user.entity.User
 import java.time.LocalDateTime
 
@@ -29,10 +30,9 @@ class SingleHistoryResponseTest {
             uuid = 100L,
             deleted = false,
             storeMeta = storeMeta,
-            rentable = true,
+            status = UmbrellaStatus.AVAILABLE,
             createdAt = LocalDateTime.now(),
             etc = "etc",
-            missed = false,
         )
 
         val user = User(

@@ -15,6 +15,7 @@ import upbrella.be.rent.dto.request.HistoryFilterRequest
 import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.user.entity.User
 import java.time.LocalDateTime
 import javax.persistence.EntityManager
@@ -41,11 +42,10 @@ class RentRepositoryImplTest {
         val umbrella = Umbrella(
             storeMeta = storeMeta,
             uuid = 1L,
-            rentable = false,
+            status = UmbrellaStatus.RENTED,
             deleted = false,
             createdAt = LocalDateTime.now(),
-            etc = null,
-            missed = false
+            etc = null
         )
         em.persist(umbrella)
 

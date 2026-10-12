@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.BDDMockito.*
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -25,14 +27,17 @@ import upbrella.be.rent.dto.response.RentalHistoryResponse
 import upbrella.be.rent.entity.ConditionReport
 import upbrella.be.rent.entity.History
 import upbrella.be.rent.exception.NonExistingHistoryException
-import upbrella.be.rent.exception.NotAvailableUmbrellaException
 import upbrella.be.rent.exception.NotRefundedException
 import upbrella.be.rent.repository.RentRepository
 import upbrella.be.slack.SlackAlarmService
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
+import upbrella.be.umbrella.exception.MissingUmbrellaException
 import upbrella.be.umbrella.exception.NonExistingBorrowedHistoryException
+import upbrella.be.umbrella.exception.NotAvailableUmbrellaException
+import upbrella.be.umbrella.exception.UmbrellaStoreMissMatchException
 import upbrella.be.umbrella.service.UmbrellaService
 import upbrella.be.user.dto.response.AllHistoryResponse
 import upbrella.be.user.dto.response.SingleHistoryResponse
@@ -113,10 +118,9 @@ class RentServiceTest {
             uuid = 99L,
             deleted = false,
             storeMeta = foundStoreMeta,
-            rentable = true,
+            status = UmbrellaStatus.AVAILABLE,
             createdAt = LocalDateTime.now(),
             etc = "etc",
-            missed = false,
         )
 
         userToRent = User(
@@ -708,10 +712,9 @@ class RentServiceTest {
             uuid = 99L,
             deleted = false,
             storeMeta = foundStoreMeta,
-            rentable = false,
+            status = UmbrellaStatus.RENTED,
             createdAt = LocalDateTime.now(),
             etc = "etc",
-            missed = false,
         )
 
         given(rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id!!))
@@ -723,6 +726,72 @@ class RentServiceTest {
         assertThatThrownBy {
             rentService.addRental(rentUmbrellaByUserRequest, userToRent)
         }.isInstanceOf(NotAvailableUmbrellaException::class.java)
+        then(rentRepository).should(never()).save(any(History::class.java))
+    }
+
+    @Test
+    @DisplayName("대여하려는 매장에 없는 우산이면 예외 발생")
+    fun umbrellaStoreMissMatchTest() {
+        // given
+        val otherStoreMeta = StoreMeta(
+            id = 26L,
+            name = "다른 매장",
+            deleted = false,
+            category = "category",
+            activated = true
+        )
+        val umbrella = Umbrella(
+            id = 1L,
+            uuid = 99L,
+            deleted = false,
+            storeMeta = otherStoreMeta,
+            status = UmbrellaStatus.AVAILABLE,
+            createdAt = LocalDateTime.now(),
+            etc = "etc",
+        )
+
+        given(umbrellaService.findUmbrellaByIdForRent(99L))
+            .willReturn(umbrella)
+
+        // when & then
+        assertThatThrownBy {
+            rentService.addRental(rentUmbrellaByUserRequest, userToRent)
+        }.isInstanceOf(UmbrellaStoreMissMatchException::class.java)
+        assertAll(
+            { assertThat(umbrella.status).isEqualTo(UmbrellaStatus.AVAILABLE) },
+            { then(storeMetaReader).should(never()).findById(25L) },
+            { then(rentRepository).should(never()).save(any(History::class.java)) }
+        )
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UmbrellaStatus::class, names = ["UNLOCATED", "LOST"])
+    @DisplayName("우산이 위치 미확인이거나 분실이면 예외 발생")
+    fun missingUmbrellaTest(status: UmbrellaStatus) {
+        // given
+        val umbrella = Umbrella(
+            id = 1L,
+            uuid = 99L,
+            deleted = false,
+            storeMeta = foundStoreMeta,
+            status = status,
+            createdAt = LocalDateTime.now(),
+            etc = "etc",
+        )
+
+        given(rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id!!))
+            .willReturn(Optional.empty())
+        given(umbrellaService.findUmbrellaByIdForRent(99L))
+            .willReturn(umbrella)
+
+        // when & then
+        assertThatThrownBy {
+            rentService.addRental(rentUmbrellaByUserRequest, userToRent)
+        }.isInstanceOf(MissingUmbrellaException::class.java)
+        assertAll(
+            { assertThat(umbrella.status).isEqualTo(status) },
+            { then(rentRepository).should(never()).save(any(History::class.java)) }
+        )
     }
 
     @Test

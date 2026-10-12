@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*
 import upbrella.be.rent.dto.request.RentUmbrellaByUserRequest
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.user.dto.response.SingleHistoryResponse
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -47,10 +48,9 @@ class HistoryTest {
             uuid = 99L,
             deleted = false,
             storeMeta = foundStoreMeta,
-            rentable = true,
+            status = UmbrellaStatus.AVAILABLE,
             createdAt = LocalDateTime.now(),
             etc = "etc",
-            missed = false,
         )
 
         userToRent = User(

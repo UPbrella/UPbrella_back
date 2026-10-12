@@ -24,6 +24,7 @@ import upbrella.be.store.exception.DeletedStoreDetailException
 import upbrella.be.store.exception.EssentialImageException
 import upbrella.be.store.repository.*
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.repository.UmbrellaRepository
 import java.time.DayOfWeek
@@ -80,10 +81,9 @@ class StoreMetaServiceTest {
                 uuid = 45L,
                 deleted = false,
                 storeMeta = storeMeta,
-                rentable = true,
+                status = UmbrellaStatus.AVAILABLE,
                 createdAt = LocalDateTime.now(),
                 etc = "etc",
-                missed = false,
             )
 
             given(umbrellaRepository.findByIdAndDeletedIsFalse(2L))
@@ -120,10 +120,9 @@ class StoreMetaServiceTest {
                 uuid = 45L,
                 deleted = false,
                 storeMeta = storeMeta,
-                rentable = true,
+                status = UmbrellaStatus.AVAILABLE,
                 createdAt = LocalDateTime.now(),
                 etc = "etc",
-                missed = false,
             )
 
             given(umbrellaRepository.findByIdAndDeletedIsFalse(2L))

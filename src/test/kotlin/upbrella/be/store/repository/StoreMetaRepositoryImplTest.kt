@@ -14,6 +14,7 @@ import upbrella.be.config.QueryDslTestConfig
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount
 import upbrella.be.store.entity.Classification
 import upbrella.be.store.entity.ClassificationType
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import javax.persistence.EntityManager
 
 @Import(QueryDslTestConfig::class)
@@ -66,12 +67,30 @@ class StoreMetaRepositoryImplTest {
 
         val umbrella = FixtureBuilderFactory.builderUmbrella()
             .set("id", null)
-            .set("rentable", true)
-            .set("missed", false)
+            .set("status", UmbrellaStatus.AVAILABLE)
             .set("storeMeta", storeMeta)
             .sample()
 
         em.persist(umbrella)
+
+        // 대여 가능 개수에 들어가지 않는 우산들
+        listOf(UmbrellaStatus.RENTED, UmbrellaStatus.UNLOCATED, UmbrellaStatus.LOST).forEach { status ->
+            em.persist(
+                FixtureBuilderFactory.builderUmbrella()
+                    .set("id", null)
+                    .set("status", status)
+                    .set("storeMeta", storeMeta)
+                    .sample()
+            )
+        }
+        em.persist(
+            FixtureBuilderFactory.builderUmbrella()
+                .set("id", null)
+                .set("status", UmbrellaStatus.AVAILABLE)
+                .set("deleted", true)
+                .set("storeMeta", storeMeta)
+                .sample()
+        )
         em.flush()
 
         expectedStoreMeta =

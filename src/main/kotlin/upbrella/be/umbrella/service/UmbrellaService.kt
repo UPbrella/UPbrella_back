@@ -12,6 +12,7 @@ import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse
 import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.repository.UmbrellaRepository
@@ -70,40 +71,22 @@ class UmbrellaService(
             .orElseThrow { NonExistingUmbrellaException("[ERROR] 존재하지 않는 우산 고유번호입니다.") }
 
     fun countAvailableUmbrellaAtStore(storeMetaId: Long): Long =
-        umbrellaRepository.countRentableUmbrellasByStore(storeMetaId)
+        umbrellaRepository.countUmbrellasByStatusAndStore(storeMetaId)[UmbrellaStatus.AVAILABLE] ?: 0L
 
-    fun getUmbrellaAllStatistics(): UmbrellaStatisticsResponse {
-        val totalUmbrella = umbrellaRepository.countAllUmbrellas()
-        val availableUmbrella = umbrellaRepository.countRentableUmbrellas()
-        val rentedUmbrella = umbrellaRepository.countRentedUmbrellas()
-        val missingUmbrella = umbrellaRepository.countMissingUmbrellas()
-        val totalRent = rentService.countTotalRent()
-
-        return UmbrellaStatisticsResponse.fromCounts(
-            totalUmbrella,
-            availableUmbrella,
-            rentedUmbrella,
-            missingUmbrella,
-            totalRent
+    fun getUmbrellaAllStatistics(): UmbrellaStatisticsResponse =
+        UmbrellaStatisticsResponse.of(
+            umbrellaRepository.countUmbrellasByStatus(),
+            rentService.countTotalRent()
         )
-    }
 
     fun getUmbrellaStatisticsByStoreId(storeId: Long): UmbrellaStatisticsResponse {
         if (!storeMetaReader.existsById(storeId)) {
             throw NonExistingStoreMetaException("[ERROR] 존재하지 않는 매장 고유번호입니다.")
         }
-        val totalUmbrellaByStoreId = umbrellaRepository.countAllUmbrellasByStore(storeId)
-        val availableUmbrellaByStoreId = umbrellaRepository.countRentableUmbrellasByStore(storeId)
-        val rentedUmbrellaByStoreId = umbrellaRepository.countRentedUmbrellasByStore(storeId)
-        val missingUmbrellaByStoreId = umbrellaRepository.countMissingUmbrellasByStore(storeId)
-        val totalRentByStoreId = rentService.countTotalRentByStoreId(storeId)
 
-        return UmbrellaStatisticsResponse.fromCounts(
-            totalUmbrellaByStoreId,
-            availableUmbrellaByStoreId,
-            rentedUmbrellaByStoreId,
-            missingUmbrellaByStoreId,
-            totalRentByStoreId
+        return UmbrellaStatisticsResponse.of(
+            umbrellaRepository.countUmbrellasByStatusAndStore(storeId),
+            rentService.countTotalRentByStoreId(storeId)
         )
     }
 }

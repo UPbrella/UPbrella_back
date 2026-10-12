@@ -16,6 +16,7 @@ import upbrella.be.umbrella.dto.response.UmbrellaResponse
 import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.user.dto.request.JoinRequest
 import upbrella.be.user.dto.request.UpdateBankAccountRequest
 import upbrella.be.user.dto.response.SessionUser
@@ -139,6 +140,8 @@ object FixtureBuilderFactory {
         return fixtureMonkey.giveMeBuilder<UmbrellaCreateRequest>()
             .set("storeMetaId", buildLong(100))
             .set("uuid", buildLong(100))
+            .set("status", UmbrellaStatus.AVAILABLE)
+            .set("rentable", null)
             .set("etc", pickRandomString(nameList))
     }
 
@@ -147,6 +150,9 @@ object FixtureBuilderFactory {
         return fixtureMonkey.giveMeBuilder<UmbrellaModifyRequest>()
             .set("storeMetaId", buildLong(100))
             .set("uuid", buildLong(100))
+            .set("status", UmbrellaStatus.AVAILABLE)
+            .set("rentable", null)
+            .set("missed", null)
             .set("etc", pickRandomString(nameList))
     }
 
@@ -188,7 +194,9 @@ object FixtureBuilderFactory {
 
     @JvmStatic
     fun builderUmbrellaStatisticsResponse(): ArbitraryBuilder<UmbrellaStatisticsResponse> {
-        val missingUmbrellaCount = buildInteger(100)
+        val unlocatedUmbrellaCount = buildInteger(100)
+        val lostUmbrellaCount = buildInteger(100)
+        val missingUmbrellaCount = unlocatedUmbrellaCount + lostUmbrellaCount
         val rentableUmbrellaCount = buildInteger(100)
         val rentedUmbrellaCount = buildInteger(100)
         val totalUmbrellaCount = missingUmbrellaCount + rentableUmbrellaCount + rentedUmbrellaCount
@@ -198,6 +206,8 @@ object FixtureBuilderFactory {
             .set("totalUmbrellaCount", totalUmbrellaCount)
             .set("rentableUmbrellaCount", rentableUmbrellaCount)
             .set("rentedUmbrellaCount", rentedUmbrellaCount)
+            .set("unlocatedUmbrellaCount", unlocatedUmbrellaCount)
+            .set("lostUmbrellaCount", lostUmbrellaCount)
             .set("missingUmbrellaCount", missingUmbrellaCount)
             .set("totalRentCount", buildLong(1000))
             .set("missingRate", missingRate)

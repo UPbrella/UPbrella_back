@@ -12,6 +12,7 @@ import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.user.dto.request.JoinRequest
 import upbrella.be.user.dto.request.KakaoAccount
 import upbrella.be.user.dto.response.KakaoLoginResponse
@@ -44,7 +45,7 @@ object FixtureFactory {
         return FixtureBuilderFactory.builderUmbrella()
             .set("storeMeta", storeMeta)
             .set("uuid", umbrellaCreateRequest.uuid)
-            .set("rentable", umbrellaCreateRequest.rentable)
+            .set("status", umbrellaCreateRequest.toStatus())
             .sample()
     }
 
@@ -60,7 +61,8 @@ object FixtureFactory {
             .set("id", umbrella.id)
             .set("storeMetaId", storeMeta.id)
             .set("uuid", umbrella.uuid)
-            .set("rentable", umbrella.rentable)
+            .set("status", umbrella.status)
+            .set("rentable", umbrella.status == UmbrellaStatus.AVAILABLE)
             .set("storeName", storeMeta.name)
             .set("historyId", umbrella.historyId)
             .set("etc", umbrella.etc)

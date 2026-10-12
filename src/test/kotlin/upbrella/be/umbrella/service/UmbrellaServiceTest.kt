@@ -25,8 +25,10 @@ import upbrella.be.store.repository.StoreMetaReader
 import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import upbrella.be.umbrella.dto.request.UmbrellaModifyRequest
 import upbrella.be.umbrella.dto.response.UmbrellaResponse
+import upbrella.be.umbrella.dto.response.UmbrellaStatisticsResponse
 import upbrella.be.umbrella.dto.response.UmbrellaWithHistory
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 import upbrella.be.umbrella.exception.ExistingUmbrellaUuidException
 import upbrella.be.umbrella.exception.NonExistingUmbrellaException
 import upbrella.be.umbrella.repository.UmbrellaRepository
@@ -47,6 +49,24 @@ class UmbrellaServiceTest {
 
     @InjectMocks
     private lateinit var umbrellaService: UmbrellaService
+
+    private val countByStatus = mapOf(
+        UmbrellaStatus.AVAILABLE to 5L,
+        UmbrellaStatus.RENTED to 3L,
+        UmbrellaStatus.UNLOCATED to 1L,
+        UmbrellaStatus.LOST to 1L
+    )
+
+    private fun expectedStatistics(totalRentCount: Long) = UmbrellaStatisticsResponse(
+        totalUmbrellaCount = 10L,
+        rentableUmbrellaCount = 5L,
+        rentedUmbrellaCount = 3L,
+        unlocatedUmbrellaCount = 1L,
+        lostUmbrellaCount = 1L,
+        missingUmbrellaCount = 2L,
+        missingRate = 20.0,
+        totalRentCount = totalRentCount
+    )
 
     @Nested
     @DisplayName("페이지 번호와 페이지 크기를 입력받아")
@@ -310,8 +330,10 @@ class UmbrellaServiceTest {
             id = FixtureBuilderFactory.buildLong(1000)
             umbrellaModifyRequest = FixtureBuilderFactory.builderUmbrellaModifyRequest().sample()
             foundStoreMeta = FixtureFactory.buildStoreMetaWithId(umbrellaModifyRequest.storeMetaId)
+            // 관리번호를 바꾸는 수정이어야 중복 검사를 한다. 무작위 값이 우연히 같아지지 않게 다르게 둔다
             umbrella = FixtureBuilderFactory.builderUmbrella()
                 .set("id", id)
+                .set("uuid", umbrellaModifyRequest.uuid + 1)
                 .sample()
         }
 
@@ -509,10 +531,8 @@ class UmbrellaServiceTest {
         fun success() {
             // given
             val id = FixtureBuilderFactory.buildLong(1000)
-            val availableCount = FixtureBuilderFactory.buildInteger(100).toLong()
-
-            given(umbrellaRepository.countRentableUmbrellasByStore(id))
-                .willReturn(availableCount)
+            given(umbrellaRepository.countUmbrellasByStatusAndStore(id))
+                .willReturn(mapOf(UmbrellaStatus.AVAILABLE to 3L, UmbrellaStatus.RENTED to 2L))
 
             // when
             val count = umbrellaService.countAvailableUmbrellaAtStore(id)
@@ -520,13 +540,28 @@ class UmbrellaServiceTest {
             // then
             assertAll(
                 {
-                    assertThat(count).isEqualTo(availableCount)
+                    assertThat(count).isEqualTo(3L)
                 },
                 {
                     then(umbrellaRepository).should(times(1))
-                        .countRentableUmbrellasByStore(id)
+                        .countUmbrellasByStatusAndStore(id)
                 }
             )
+        }
+
+        @Test
+        @DisplayName("이용 가능한 우산이 없으면 0을 반환한다.")
+        fun noAvailableUmbrella() {
+            // given
+            val id = FixtureBuilderFactory.buildLong(1000)
+            given(umbrellaRepository.countUmbrellasByStatusAndStore(id))
+                .willReturn(mapOf(UmbrellaStatus.RENTED to 2L))
+
+            // when
+            val count = umbrellaService.countAvailableUmbrellaAtStore(id)
+
+            // then
+            assertThat(count).isEqualTo(0L)
         }
     }
 
@@ -534,18 +569,10 @@ class UmbrellaServiceTest {
     @DisplayName("전체 우산의 통계를 조회할 수 있다.")
     fun getUmbrellaAllStatisticsTest() {
         // given
-        val expected = FixtureBuilderFactory.builderUmbrellaStatisticsResponse().sample()
-
-        given(umbrellaRepository.countAllUmbrellas())
-            .willReturn(expected.totalUmbrellaCount)
-        given(umbrellaRepository.countRentableUmbrellas())
-            .willReturn(expected.rentableUmbrellaCount)
-        given(umbrellaRepository.countRentedUmbrellas())
-            .willReturn(expected.rentedUmbrellaCount)
-        given(umbrellaRepository.countMissingUmbrellas())
-            .willReturn(expected.missingUmbrellaCount)
+        given(umbrellaRepository.countUmbrellasByStatus())
+            .willReturn(countByStatus)
         given(rentService.countTotalRent())
-            .willReturn(expected.totalRentCount)
+            .willReturn(30L)
 
         // when
         val umbrellaAllStatistics = umbrellaService.getUmbrellaAllStatistics()
@@ -555,23 +582,11 @@ class UmbrellaServiceTest {
             {
                 assertThat(umbrellaAllStatistics)
                     .usingRecursiveComparison()
-                    .isEqualTo(expected)
+                    .isEqualTo(expectedStatistics(totalRentCount = 30L))
             },
             {
                 then(umbrellaRepository).should(times(1))
-                    .countAllUmbrellas()
-            },
-            {
-                then(umbrellaRepository).should(times(1))
-                    .countRentableUmbrellas()
-            },
-            {
-                then(umbrellaRepository).should(times(1))
-                    .countRentedUmbrellas()
-            },
-            {
-                then(umbrellaRepository).should(times(1))
-                    .countMissingUmbrellas()
+                    .countUmbrellasByStatus()
             },
             {
                 then(rentService).should(times(1))
@@ -588,22 +603,14 @@ class UmbrellaServiceTest {
         @DisplayName("지점 우산의 통계를 조회할 수 있다.")
         fun success() {
             // given
-            val expected = FixtureBuilderFactory.builderUmbrellaStatisticsResponse().sample()
-
             val storeId = FixtureBuilderFactory.buildLong(1000)
 
             given(storeMetaReader.existsById(storeId))
                 .willReturn(true)
-            given(umbrellaRepository.countAllUmbrellasByStore(storeId))
-                .willReturn(expected.totalUmbrellaCount)
-            given(umbrellaRepository.countRentableUmbrellasByStore(storeId))
-                .willReturn(expected.rentableUmbrellaCount)
-            given(umbrellaRepository.countRentedUmbrellasByStore(storeId))
-                .willReturn(expected.rentedUmbrellaCount)
-            given(umbrellaRepository.countMissingUmbrellasByStore(storeId))
-                .willReturn(expected.missingUmbrellaCount)
+            given(umbrellaRepository.countUmbrellasByStatusAndStore(storeId))
+                .willReturn(countByStatus)
             given(rentService.countTotalRentByStoreId(storeId))
-                .willReturn(expected.totalRentCount)
+                .willReturn(12L)
 
             // when
             val umbrellaStatistics = umbrellaService.getUmbrellaStatisticsByStoreId(storeId)
@@ -613,23 +620,11 @@ class UmbrellaServiceTest {
                 {
                     assertThat(umbrellaStatistics)
                         .usingRecursiveComparison()
-                        .isEqualTo(expected)
+                        .isEqualTo(expectedStatistics(totalRentCount = 12L))
                 },
                 {
                     then(umbrellaRepository).should(times(1))
-                        .countAllUmbrellasByStore(storeId)
-                },
-                {
-                    then(umbrellaRepository).should(times(1))
-                        .countRentableUmbrellasByStore(storeId)
-                },
-                {
-                    then(umbrellaRepository).should(times(1))
-                        .countRentedUmbrellasByStore(storeId)
-                },
-                {
-                    then(umbrellaRepository).should(times(1))
-                        .countMissingUmbrellasByStore(storeId)
+                        .countUmbrellasByStatusAndStore(storeId)
                 },
                 {
                     then(storeMetaReader).should(times(1))

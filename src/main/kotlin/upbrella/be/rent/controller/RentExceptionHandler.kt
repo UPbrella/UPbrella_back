@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import upbrella.be.rent.exception.*
 import upbrella.be.umbrella.exception.MissingUmbrellaException
+import upbrella.be.umbrella.exception.NotAvailableUmbrellaException
+import upbrella.be.umbrella.exception.UmbrellaStoreMissMatchException
 import upbrella.be.util.CustomErrorResponse
 
 @RestControllerAdvice

@@ -6,6 +6,7 @@ import upbrella.be.store.dto.response.QStoreMetaWithUmbrellaCount
 import upbrella.be.store.dto.response.StoreMetaWithUmbrellaCount
 import upbrella.be.store.entity.QStoreMeta
 import upbrella.be.umbrella.entity.QUmbrella
+import upbrella.be.umbrella.entity.UmbrellaStatus
 
 class StoreMetaRepositoryImpl(
     private val queryFactory: JPAQueryFactory
@@ -23,8 +24,7 @@ class StoreMetaRepositoryImpl(
                         .from(umbrella)
                         .where(
                             umbrella.storeMeta.id.eq(storeMeta.id),
-                            umbrella.rentable.isTrue(),
-                            umbrella.missed.isFalse(),
+                            umbrella.status.eq(UmbrellaStatus.AVAILABLE),
                             umbrella.deleted.isFalse()
                         )
                 )
