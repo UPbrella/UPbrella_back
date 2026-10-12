@@ -33,8 +33,12 @@ SELECT COUNT(*) AS listed_umbrellas FROM umbrella_cleanup_513;
 -- 3. 정리
 START TRANSACTION;
 
--- 새 관리번호와 겹치는 목록 밖 우산을 가장 큰 관리번호 뒤로 옮긴다
-SET @next_uuid = (SELECT MAX(uuid) FROM umbrella);
+-- 새 관리번호와 겹치는 목록 밖 우산을 가장 큰 관리번호 뒤로 옮긴다.
+-- 새 관리번호가 지금 가장 큰 관리번호보다 크면 옮긴 번호와 겹칠 수 있어서, 둘 중 큰 값 뒤로 옮긴다
+SET @next_uuid = GREATEST(
+    COALESCE((SELECT MAX(uuid) FROM umbrella), 0),
+    COALESCE((SELECT MAX(new_uuid) FROM umbrella_cleanup_513), 0)
+);
 UPDATE umbrella u
 SET u.uuid = (@next_uuid := @next_uuid + 1)
 WHERE u.deleted = 0
