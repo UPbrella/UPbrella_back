@@ -1,97 +1,40 @@
 package upbrella.be.config.interceptor
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.*
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.mock.web.MockHttpSession
-import upbrella.be.config.FixtureBuilderFactory
-import javax.servlet.RequestDispatcher
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import org.mockito.kotlin.*
+import java.util.Optional
+import upbrella.be.user.entity.User
+import upbrella.be.user.repository.UserRepository
+import org.assertj.core.api.Assertions.assertThat
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.mock.web.MockHttpServletResponse
+import upbrella.be.user.dto.response.SessionUser
 
-@ExtendWith(MockitoExtension::class)
 class AdminInterceptorTest {
-
-    @Mock
-    private lateinit var httpServletRequest: HttpServletRequest
-
-    @Mock
-    private lateinit var httpServletResponse: HttpServletResponse
-
-    @Mock
-    private lateinit var requestDispatcher: RequestDispatcher
-
-    @Mock
-    private lateinit var handler: Any
-
-    @InjectMocks
-    private lateinit var adminInterceptor: AdminInterceptor
-
-    @Test
-    @DisplayName("로그인된 사용자가 어드민이 아닌 경우 false를 반환한다.")
-    fun isNotAdmin() {
-        // given
-        val mockHttpSession = MockHttpSession()
-        val sessionUser = FixtureBuilderFactory.builderSessionUser().sample()
-        mockHttpSession.setAttribute("user", sessionUser)
-
-        given(httpServletRequest.getSession(false))
-            .willReturn(mockHttpSession)
-        given(httpServletRequest.getRequestDispatcher(any()))
-            .willReturn(requestDispatcher)
-        willDoNothing().given(requestDispatcher)
-            .forward(any(HttpServletRequest::class.java), any(HttpServletResponse::class.java))
-
-        // when
-        val result = adminInterceptor.preHandle(httpServletRequest, httpServletResponse, handler)
-
-        // then
-        assertAll(
-            { assertThat(result).isEqualTo(false) },
-            { then(httpServletRequest).should(times(1)).getSession(false) },
-            { then(httpServletRequest).should(times(1)).getRequestDispatcher("/api/error") },
-            {
-                then(requestDispatcher).should(times(1)).forward(
-                    any(HttpServletRequest::class.java),
-                    any(HttpServletResponse::class.java)
-                )
-            }
-        )
+    private val users=mock<UserRepository>()
+    private val interceptor=AdminInterceptor(users)
+    @Test fun `session without member information gets HTTP 401`() {
+        val request = MockHttpServletRequest()
+        request.getSession(true)
+        val response = MockHttpServletResponse()
+        assertThat(interceptor.preHandle(request, response, Any())).isFalse()
+        assertThat(response.status).isEqualTo(401)
     }
-
-    @Test
-    @DisplayName("로그인된 사용자가 어드민인 경우 true를 반환한다.")
-    fun isAdmin() {
-        // given
-        val mockHttpSession = MockHttpSession()
-        val sessionUser =
-            FixtureBuilderFactory.builderSessionUser().set("adminStatus", true).sample()
-        mockHttpSession.setAttribute("user", sessionUser)
-
-        given(httpServletRequest.getSession(false))
-            .willReturn(mockHttpSession)
-
-        // when
-        val result = adminInterceptor.preHandle(httpServletRequest, httpServletResponse, handler)
-
-        // then
-        assertAll(
-            { assertThat(result).isEqualTo(true) },
-            { then(httpServletRequest).should(times(1)).getSession(false) },
-            { then(httpServletRequest).should(never()).getRequestDispatcher("/api/error") },
-            {
-                then(requestDispatcher).should(never()).forward(
-                    any(HttpServletRequest::class.java),
-                    any(HttpServletResponse::class.java)
-                )
-            }
-        )
+    @Test fun `member without administrator role gets HTTP 403`() {
+        val request=MockHttpServletRequest();request.getSession(true)!!.setAttribute("user",SessionUser(1))
+        val response=MockHttpServletResponse()
+        assertThat(interceptor.preHandle(request,response,Any())).isFalse();assertThat(response.status).isEqualTo(403)
+        assertThat(response.contentAsString).contains("forbidden")
+    }
+    @Test fun `administrator is accepted`() {
+        val request=MockHttpServletRequest();request.getSession(true)!!.setAttribute("user",SessionUser(1,adminStatus=true))
+        whenever(users.findById(1)).thenReturn(Optional.of(User(1,"운영진",email="",adminStatus=true,id=1)))
+        assertThat(interceptor.preHandle(request,MockHttpServletResponse(),Any())).isTrue()
+    }
+    @Test fun `revoked administrator session is denied immediately`() {
+        val request=MockHttpServletRequest();request.getSession(true)!!.setAttribute("user",SessionUser(1,adminStatus=true))
+        whenever(users.findById(1)).thenReturn(Optional.of(User(1,"회원",email="",adminStatus=false,id=1)))
+        val response=MockHttpServletResponse()
+        assertThat(interceptor.preHandle(request,response,Any())).isFalse();assertThat(response.status).isEqualTo(403)
     }
 }

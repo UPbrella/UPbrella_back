@@ -1,4 +1,6 @@
 spring:
+  session:
+    store-type: none
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
 
