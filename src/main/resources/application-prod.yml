@@ -13,6 +13,11 @@ spring:
         default_batch_fetch_size: 1000
         format_sql: true
 
+  session:
+    store-type: jdbc
+    timeout: 30d
+    jdbc:
+      initialize-schema: never
   servlet:
     multipart:
       max-file-size: 10MB
@@ -21,7 +26,9 @@ spring:
 server:
   servlet:
     session:
+      timeout: 30d
       cookie:
+        max-age: 30d
         same-site: none
 
 management:

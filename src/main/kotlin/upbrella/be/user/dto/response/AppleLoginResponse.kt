@@ -14,4 +14,4 @@ data class AppleLoginResponse(
 
     // 첫 로그인 시에만 제공되는 사용자 이름
     var name: String? = null
-)
+) : java.io.Serializable

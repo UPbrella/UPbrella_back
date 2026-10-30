@@ -10,6 +10,7 @@ import upbrella.be.user.dto.response.AllUsersInfoResponse
 import upbrella.be.user.dto.response.AppleLoginResponse
 import upbrella.be.user.dto.response.KakaoLoginResponse
 import upbrella.be.user.dto.response.SessionUser
+import upbrella.be.user.dto.response.SingleUserInfoResponse
 import upbrella.be.user.dto.response.UmbrellaBorrowedByUserResponse
 import upbrella.be.user.entity.BlackList
 import upbrella.be.user.entity.User
@@ -84,9 +85,12 @@ class UserService(
 
     fun findUsers(): AllUsersInfoResponse {
         val users = userReader.findAll()
-        users.forEach { it.decryptData(aesEncryptor) }
-
-        return AllUsersInfoResponse.fromUsers(users)
+        return AllUsersInfoResponse(users.map { user ->
+            SingleUserInfoResponse.fromUser(user).copy(
+                bank = aesEncryptor.decrypt(user.bank),
+                accountNumber = aesEncryptor.decrypt(user.accountNumber)
+            )
+        })
     }
 
     fun findUmbrellaBorrowedByUser(sessionUser: SessionUser): UmbrellaBorrowedByUserResponse {
@@ -131,9 +135,17 @@ class UserService(
         val user = userRepository.findById(id)
             .orElseThrow { NonExistingMemberException("[ERROR] 존재하지 않는 회원입니다.") }
 
-        user.decryptData(aesEncryptor)
-
-        return user
+        // Keep decrypted response values out of the managed persistence entity.
+        return User(
+            socialId = user.socialId, name = user.name, phoneNumber = user.phoneNumber,
+            email = user.email, provider = user.provider, adminStatus = user.adminStatus,
+            bank = aesEncryptor.decrypt(user.bank), accountNumber = aesEncryptor.decrypt(user.accountNumber),
+            id = user.id
+        ).apply {
+            createdAt = user.createdAt
+            updatedAt = user.updatedAt
+            deletedAt = user.deletedAt
+        }
     }
 
     @Transactional

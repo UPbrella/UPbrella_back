@@ -15,23 +15,29 @@ class LoginInterceptor(
     private val userRepository: UserRepository
 ) : HandlerInterceptor {
 
+    private fun unauthorized(response: HttpServletResponse) {
+        response.status = 401
+        response.contentType = "application/json;charset=UTF-8"
+        response.writer.write("""{"status":"unauthorized","code":401,"message":"로그인이 필요합니다.","data":null}""")
+    }
+
     @Throws(IOException::class, ServletException::class)
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val session = request.getSession(false)
             ?: run {
-                request.getRequestDispatcher("/api/error").forward(request, response)
+                unauthorized(response)
                 return false
             }
 
         val user = session.getAttribute("user") as? SessionUser
             ?: run {
                 // For cases where Kakao authentication isn't done or session doesn't exist
-                request.getRequestDispatcher("/api/error").forward(request, response)
+                unauthorized(response)
                 return false
             }
 
         if (!userRepository.existsById(user.id)) {
-            request.getRequestDispatcher("/api/error").forward(request, response)
+            unauthorized(response)
             return false
         }
 
