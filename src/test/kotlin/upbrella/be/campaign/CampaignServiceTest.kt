@@ -10,6 +10,7 @@ import upbrella.be.rent.repository.RentRepository
 import upbrella.be.rent.entity.History
 import upbrella.be.store.entity.StoreMeta
 import upbrella.be.umbrella.entity.Umbrella
+import upbrella.be.umbrella.dto.request.UmbrellaCreateRequest
 import java.time.*
 import java.util.Optional
 
@@ -23,7 +24,7 @@ class CampaignServiceTest {
     private val service = CampaignService(settings, ledger, surveys, users, rents, clock)
     private val user = User(socialId = -1, name = "테스트", email = "", id = 1)
     private val store = StoreMeta(name = "테스트", activated = true, category = "테스트", id = 1)
-    private val umbrella = Umbrella(store, 77, true, false, LocalDateTime.now(clock), null, false, 1)
+    private val umbrella = Umbrella.ofCreated(UmbrellaCreateRequest(1, 77, true, null), store)
     @BeforeEach fun prepare() {
         whenever(settings.findById(1)).thenReturn(Optional.of(CampaignSettings(enabled = true)))
         whenever(users.findLockedById(1)).thenReturn(Optional.of(user))
