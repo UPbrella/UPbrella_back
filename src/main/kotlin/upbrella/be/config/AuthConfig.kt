@@ -28,6 +28,8 @@ class AuthConfig(
                 "/users/session/social/**", // 회원가입 시 소셜 세션 정보 조회용
                 "/auth/apple/**",
                 "/stores/**",
+                "/banners",
+                "/uploads/**",
                 "/index.html",
                 "/error/**",
                 "/api/error/**",

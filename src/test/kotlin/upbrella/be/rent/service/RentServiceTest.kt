@@ -79,6 +79,12 @@ class RentServiceTest {
     @Mock
     private lateinit var slackAlarmService: SlackAlarmService
 
+    @Mock
+    private lateinit var campaignService: upbrella.be.campaign.CampaignService
+
+    @Mock
+    private lateinit var userRepository: upbrella.be.user.repository.UserRepository
+
     @InjectMocks
     private lateinit var rentService: RentService
 

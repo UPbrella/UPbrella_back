@@ -5,6 +5,7 @@ import upbrella.be.rent.entity.History
 import java.util.Optional
 
 interface RentRepository : JpaRepository<History, Long>, RentRepositoryCustom {
+    fun countByUserId(userId: Long): Long
     fun findByUserIdAndReturnedAtIsNull(userId: Long): Optional<History>
 
     fun countByRentStoreMetaId(storeId: Long): Long
