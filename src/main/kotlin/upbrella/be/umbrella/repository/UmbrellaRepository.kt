@@ -14,6 +14,7 @@ interface UmbrellaRepository : JpaRepository<Umbrella, Long>, UmbrellaRepository
 
     fun findByIdAndDeletedIsFalse(id: Long): Optional<Umbrella>
     fun existsByUuidAndDeletedIsFalse(uuid: Long): Boolean
+    fun findAllByDeletedFalseOrderByIdAsc(): List<Umbrella>
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @QueryHints(QueryHint(name = "javax.persistence.lock.timeout", value = "3000"))
