@@ -39,6 +39,8 @@ class RentService(
     private val lockerService: LockerService,
     private val blackListService: BlackListService,
     private val userReader: UserReader,
+    private val campaignService: upbrella.be.campaign.CampaignService,
+    private val userRepository: upbrella.be.user.repository.UserRepository,
 ) {
 
     fun findRentForm(umbrellaId: Long, user: User): RentFormResponse {
@@ -61,6 +63,7 @@ class RentService(
 
     @Transactional
     fun addRental(rentUmbrellaByUserRequest: RentUmbrellaByUserRequest, userToRent: User) {
+        userRepository.findLockedById(userToRent.id!!)
         blackListService.checkBlackList(userToRent.id!!)
         rentRepository.findByUserIdAndReturnedAtIsNull(userToRent.id).ifPresent {
             throw ExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 있습니다.")
@@ -85,6 +88,7 @@ class RentService(
         val history = rentRepository.save(
             History.ofCreatedByNewRent(umbrella, userToRent, rentalStore)
         )
+        campaignService.rentalCompleted(history)
         slackAlarmService.notifyRent(userToRent, history)
 
         rentUmbrellaByUserRequest.conditionReport
@@ -99,6 +103,7 @@ class RentService(
 
     @Transactional
     fun returnUmbrellaByUser(userToReturn: User, request: ReturnUmbrellaByUserRequest) {
+        userRepository.findLockedById(userToReturn.id!!)
         blackListService.checkBlackList(userToReturn.id!!)
         val history = rentRepository.findByUserIdAndReturnedAtIsNull(userToReturn.id)
             .orElseThrow { NonExistingUmbrellaForRentException("[ERROR] 해당 유저가 대여 중인 우산이 없습니다.") }
@@ -109,13 +114,14 @@ class RentService(
         history.returnStoreMeta = returnStore
         history.returnedAt = LocalDateTime.now()
 
-        val returnedUmbrella: Umbrella = history.umbrella
+        val returnedUmbrella: Umbrella = umbrellaService.findUmbrellaByIdForRent(history.umbrella.id!!)
         returnedUmbrella.returnUmbrella(returnStore)
 
         val unrefundedRentCount = countUnrefundedRent()
 
         slackAlarmService.notifyReturn(userToReturn, history, unrefundedRentCount)
         rentRepository.save(history)
+        campaignService.returnCompleted(history)
 
         request.improvementReportContent?.takeIf { it.isNotBlank() }
             ?.let { content ->
@@ -183,6 +189,7 @@ class RentService(
         val history = findHistoryById(historyId)
         history.refund(loginedUser, LocalDateTime.now())
         rentRepository.save(history)
+        campaignService.returnCompleted(history)
     }
 
     @Transactional
@@ -191,6 +198,7 @@ class RentService(
         val history = findHistoryById(historyId)
         history.paid(loginedUser, LocalDateTime.now())
         rentRepository.save(history)
+        campaignService.returnCompleted(history)
     }
 
     private fun findHistoryById(historyId: Long): History =
