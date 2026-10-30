@@ -1,0 +1,66 @@
+name: upbrella-dev
+services:
+  db:
+    image: mysql:8.0.40
+    restart: unless-stopped
+    env_file: secret.env
+    environment:
+      MYSQL_DATABASE: upbrella_dev
+      MYSQL_USER: upbrella_dev
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci", "--innodb-buffer-pool-size=128M", "--max-connections=30", "--performance-schema=OFF", "--event-scheduler=OFF"]
+    volumes: ["dev-db:/var/lib/mysql"]
+    mem_limit: 512m
+    cpus: 0.5
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql -h127.0.0.1 -u$$MYSQL_USER -D$$MYSQL_DATABASE -e 'SELECT 1' >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    logging: &logging
+      driver: json-file
+      options: {max-size: "5m", max-file: "2"}
+  api:
+    build: {context: ., dockerfile: Dockerfile.api}
+    restart: unless-stopped
+    env_file: secret.env
+    environment:
+      SPRING_PROFILES_ACTIVE: home-dev
+      DATABASE_URL: jdbc:mysql://db:3306/${UPBRELLA_DEV_DATABASE_NAME:-upbrella_dev}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      DATABASE_USERNAME: upbrella_dev
+      TZ: Asia/Seoul
+      JAVA_TOOL_OPTIONS: -Xms128m -Xmx320m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC -Duser.timezone=Asia/Seoul
+      UPBRELLA_COOKIE_PATH: /upbrella-dev
+      UPBRELLA_UPLOADS_DIRECTORY: /data/uploads
+      UPBRELLA_DEV_LOGIN_ENABLED: "true"
+      SESSION_COOKIE_SECURE: "true"
+    ports: ["127.0.0.1:18090:8080"]
+    volumes: ["dev-uploads:/data/uploads"]
+    depends_on: {db: {condition: service_healthy}}
+    mem_limit: 640m
+    cpus: 0.75
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+    logging: *logging
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports: ["127.0.0.1:13000:80"]
+    volumes:
+      - ./frontend:/usr/share/nginx/html/upbrella-dev:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    mem_limit: 64m
+    cpus: 0.25
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/upbrella-dev/ && wget -q -O /dev/null http://127.0.0.1/upbrella-dev/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    depends_on: [api]
+    logging: *logging
+volumes:
+  dev-db:
+  dev-uploads:

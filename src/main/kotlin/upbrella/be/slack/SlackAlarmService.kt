@@ -3,6 +3,7 @@ package upbrella.be.slack
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod.POST
 import org.springframework.stereotype.Service
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.client.RestTemplate
 import upbrella.be.config.SlackBotConfig
 import upbrella.be.rent.entity.ConditionReport
@@ -15,6 +16,8 @@ class SlackAlarmService(
     private val slackBotConfig: SlackBotConfig,
     private val restTemplate: RestTemplate
 ) {
+    @Value("\${upbrella.slack-enabled:true}")
+    private var enabled: Boolean = true
 
     fun notifyRent(user: User, history: History) {
         val message = buildString {
@@ -40,6 +43,7 @@ class SlackAlarmService(
     }
 
     private fun send(message: String) {
+        if (!enabled) return
         val request = mutableMapOf<String, Any>(
             "text" to message
         )

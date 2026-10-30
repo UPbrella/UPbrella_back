@@ -30,6 +30,8 @@ class AuthConfig(
                 "/stores/**",
                 "/banners",
                 "/uploads/**",
+                "/health",
+                "/dev/login",
                 "/index.html",
                 "/error/**",
                 "/api/error/**",
