@@ -10,4 +10,6 @@ interface RentRepository : JpaRepository<History, Long>, RentRepositoryCustom {
     fun countByRentStoreMetaId(storeId: Long): Long
 
     fun countAllByReturnedAtIsNotNullAndPaidAtIsNotNullAndRefundedAtIsNull(): Long
+
+    fun findFirstByUmbrellaIdOrderByRentedAtDesc(umbrellaId: Long): Optional<History>
 }

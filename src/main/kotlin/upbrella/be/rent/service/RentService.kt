@@ -122,7 +122,7 @@ class RentService(
         pageable: Pageable
     ): RentalHistoriesPageResponse {
         val countOfAllHistories = rentRepository.countAll(filter, pageable)
-        val countOfAllPages = countOfAllHistories / pageable.pageSize
+        val countOfAllPages = (countOfAllHistories + pageable.pageSize - 1) / pageable.pageSize
         val rentalHistories = findAllRentalHistory(filter, pageable)
         return RentalHistoriesPageResponse.of(rentalHistories, countOfAllHistories, countOfAllPages)
     }

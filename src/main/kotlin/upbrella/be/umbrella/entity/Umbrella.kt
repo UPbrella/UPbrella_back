@@ -22,6 +22,7 @@ class Umbrella(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
+    var inventoryVerifiedAt: LocalDateTime? = null,
 ) {
 
     @Enumerated(EnumType.STRING)
@@ -80,6 +81,11 @@ class Umbrella(
 
     fun cannotBeRented(): Boolean {
         return deleted || status != UmbrellaStatus.AVAILABLE
+    }
+
+    fun reconcileInventory(status: UmbrellaStatus, verifiedAt: LocalDateTime?) {
+        changeStatus(status)
+        if (verifiedAt != null) inventoryVerifiedAt = verifiedAt
     }
 
     private fun changeStatus(status: UmbrellaStatus) {

@@ -367,6 +367,15 @@ class RentServiceTest {
         }
     }
 
+    @Test
+    fun `partial final history page is counted`() {
+        val page = PageRequest.of(0, 10)
+        val filter = HistoryFilterRequest()
+        given(rentRepository.countAll(filter, page)).willReturn(11L)
+        given(rentRepository.findHistoryInfos(filter, page)).willReturn(emptyList())
+        assertThat(rentService.findAllHistories(filter, page).countOfAllPages).isEqualTo(2L)
+    }
+
     @Nested
     @DisplayName("사용자의 고유 번호를 입력 받아")
     inner class FindUserJavaHistoryTest {
