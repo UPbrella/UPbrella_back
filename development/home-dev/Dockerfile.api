@@ -1,0 +1,6 @@
+FROM eclipse-temurin:17-jre-jammy
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/* && useradd -u 10001 -m app && mkdir -p /data/uploads && chown app:app /data/uploads
+WORKDIR /app
+COPY app.jar /app/app.jar
+USER app
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

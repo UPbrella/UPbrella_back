@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Seoul
+  session:
+    store-type: jdbc
+    timeout: 30d
+    jdbc:
+      initialize-schema: always
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+server:
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      timeout: 30d
+      cookie:
+        max-age: 30d
+        secure: ${SESSION_COOKIE_SECURE:true}
+        http-only: true
+        same-site: lax
+upbrella:
+  session-cookie-name: UPBRELLA_DEV_SESSION
+  session-same-site: Lax
+  uploads-directory: ${UPBRELLA_UPLOADS_DIRECTORY:/data/uploads}
+  cookie-path: ${UPBRELLA_COOKIE_PATH:/}
+  slack-enabled: false
+  dev-login:
+    enabled: ${UPBRELLA_DEV_LOGIN_ENABLED:false}
+    key: ${UPBRELLA_DEV_LOGIN_KEY:}

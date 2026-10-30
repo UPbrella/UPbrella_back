@@ -90,3 +90,12 @@ class ProdAppleOauthInfo(
         )
     }
 }
+
+@Component
+@Profile("home-dev")
+class HomeDevelopmentAppleOauthInfo : AppleOauthInfo {
+    override val clientId = "disabled-in-home-development"
+    override val redirectUri = "https://porodev.asuscomm.com/upbrella-dev/auth/apple"
+    override val loginUri = "https://porodev.asuscomm.com/upbrella-dev/login"
+    override val clientSecret = "disabled-in-home-development"
+}

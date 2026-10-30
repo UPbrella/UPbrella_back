@@ -1,0 +1,9 @@
+secret.env
+.env
+.private/
+backups/
+.run/
+frontend/
+app.jar
+*.log
+__pycache__/
